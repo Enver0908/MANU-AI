@@ -1,0 +1,844 @@
+{
+  "phase": "AIya Performance Plan 1 - Phase 2 Measurement Harness and Negative Controls",
+  "generatedAt": "2026-09-10T13:27:23.425Z",
+  "startedAt": "2026-09-10T13:27:19.290Z",
+  "runId": "aiya-phase2-20260910T132719291Z-56b32d34-6949-4bf3-9294-f0fb1a03ce59",
+  "status": "COMPLETE",
+  "outcome": "HARNESS_READY_WITH_NEGATIVE_CONTROLS",
+  "productionDecision": "NO-GO",
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+    "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "statusShortBranch": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+    "diffCheck": "PASS",
+    "liveRelease": [
+      {
+        "endpoint": "https://aiyaworkspace.com/api/health/release",
+        "httpStatus": 200,
+        "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+        "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+        "compatibilityVersion": "0.0.0+1c97560"
+      },
+      {
+        "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+        "httpStatus": 200,
+        "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+        "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+        "compatibilityVersion": "0.0.0+1c97560"
+      }
+    ]
+  },
+  "historicalEvidence": {
+    "unchangedAtPhaseStart": true,
+    "files": [
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+        "sha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+        "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+        "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+        "sha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md",
+        "sha256": "92b77e175b912e276c9956edf83de6f23561b26c175d83e500882e3d6838af75"
+      }
+    ],
+    "phase1Status": "COMPLETE",
+    "phase1Outcome": "NO_RUNTIME_CAUSE_CONFIRMED"
+  },
+  "scenarioContract": {
+    "scenarioCount": 9,
+    "sampleCountPerScenario": 20,
+    "transitionModes": {
+      "cold": [
+        "post_login_dashboard"
+      ],
+      "warm": [
+        "client_roster",
+        "client_forms_workspace",
+        "nutrition_workspace",
+        "menu_workspace",
+        "messages",
+        "alerts",
+        "notifications",
+        "ai_chat"
+      ]
+    }
+  },
+  "budgets": {
+    "loginToDashboardReadyP75Ms": 3000,
+    "warmNavigationReadyP75Ms": 1000,
+    "warmNavigationReadyP95Ms": 2000,
+    "eventToNextPaintP75Ms": 200,
+    "eventToNextPaintP95Ms": 500,
+    "requiredReadBodyFinishedP75Ms": 900,
+    "initialDashboardLcpP75Ms": 2500,
+    "clsMax": 0.1,
+    "maxForegroundLongTaskMs": 500,
+    "slowNetworkTaskReadyP75Ms": 4000
+  },
+  "harnessContract": {
+    "status": "PASS",
+    "failures": []
+  },
+  "negativeControlMatrix": {
+    "status": "PASS",
+    "caseCount": 14,
+    "cases": [
+      {
+        "id": "required_read_401",
+        "scenarioId": "ai_chat",
+        "expected": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "required_read_403",
+        "scenarioId": "ai_chat",
+        "expected": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "required_read_500",
+        "scenarioId": "ai_chat",
+        "expected": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "required_read_timeout",
+        "scenarioId": "ai_chat",
+        "expected": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "request_failed",
+        "scenarioId": "ai_chat",
+        "expected": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "required_read_missing",
+        "scenarioId": "ai_chat",
+        "expected": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "required_selector_missing",
+        "scenarioId": "client_roster",
+        "expected": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "target_control_missing",
+        "scenarioId": "client_roster",
+        "expected": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "FAIL",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "event_timing_missing",
+        "scenarioId": "client_roster",
+        "expected": {
+          "functionalStatus": "PASS",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "PASS",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "lcp_missing",
+        "scenarioId": "post_login_dashboard",
+        "expected": {
+          "functionalStatus": "PASS",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "PASS",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "forbidden_mutation",
+        "scenarioId": "messages",
+        "expected": {
+          "functionalStatus": "PASS",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "PASS",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "fallback_and_demo",
+        "scenarioId": "post_login_dashboard",
+        "expected": {
+          "functionalStatus": "PASS",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "PASS",
+          "validityStatus": "FAIL",
+          "budgetStatus": "PASS"
+        }
+      },
+      {
+        "id": "budget_miss_separate_from_validity",
+        "scenarioId": "client_roster",
+        "expected": {
+          "functionalStatus": "PASS",
+          "validityStatus": "PASS",
+          "budgetStatus": "FAIL"
+        },
+        "actual": {
+          "functionalStatus": "PASS",
+          "validityStatus": "PASS",
+          "budgetStatus": "FAIL"
+        }
+      },
+      {
+        "id": "valid_success",
+        "scenarioId": "client_roster",
+        "expected": {
+          "functionalStatus": "PASS",
+          "validityStatus": "PASS",
+          "budgetStatus": "PASS"
+        },
+        "actual": {
+          "functionalStatus": "PASS",
+          "validityStatus": "PASS",
+          "budgetStatus": "PASS"
+        }
+      }
+    ],
+    "failures": []
+  },
+  "controlledHttpNegativeControls": {
+    "status": "PASS",
+    "caseCount": 8,
+    "results": [
+      {
+        "caseId": "status-401",
+        "status": 401,
+        "headerReceivedMs": 8.248,
+        "bodyFinishedMs": 8.526,
+        "failure": null,
+        "timeout": false
+      },
+      {
+        "caseId": "status-403",
+        "status": 403,
+        "headerReceivedMs": 2.642,
+        "bodyFinishedMs": 2.833,
+        "failure": null,
+        "timeout": false
+      },
+      {
+        "caseId": "status-500",
+        "status": 500,
+        "headerReceivedMs": 1.36,
+        "bodyFinishedMs": 1.625,
+        "failure": null,
+        "timeout": false
+      },
+      {
+        "caseId": "delayed-header",
+        "status": 200,
+        "headerReceivedMs": 37.545,
+        "bodyFinishedMs": 107.725,
+        "failure": null,
+        "timeout": false
+      },
+      {
+        "caseId": "delayed-body",
+        "status": 200,
+        "headerReceivedMs": 2.301,
+        "bodyFinishedMs": 66.178,
+        "failure": null,
+        "timeout": false
+      },
+      {
+        "caseId": "request-failed",
+        "status": null,
+        "headerReceivedMs": null,
+        "bodyFinishedMs": null,
+        "failure": "request_failed",
+        "timeout": false
+      },
+      {
+        "caseId": "timeout",
+        "status": null,
+        "headerReceivedMs": null,
+        "bodyFinishedMs": null,
+        "failure": "timeout",
+        "timeout": true
+      },
+      {
+        "caseId": "success",
+        "status": 200,
+        "headerReceivedMs": 5.106,
+        "bodyFinishedMs": 5.294,
+        "failure": null,
+        "timeout": false
+      }
+    ],
+    "failures": []
+  },
+  "redaction": {
+    "status": true,
+    "sanitizedKeys": [
+      "authorization",
+      "cookie",
+      "prompt",
+      "body",
+      "url"
+    ]
+  },
+  "stageLedger": [
+    {
+      "stageId": "2.1",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T13:27:23.424Z",
+      "finishedAt": "2026-09-10T13:27:23.424Z",
+      "prerequisiteEvidence": [
+        "Plan 1 Phase 1 evidence",
+        "Phase 1.2 evidence",
+        "combined finding manifest"
+      ],
+      "performedActions": [
+        "Read current source identity and both release-health endpoints",
+        "Computed historical evidence hashes without rewriting historical files"
+      ],
+      "verificationResults": {
+        "phase1Ready": true,
+        "liveIdentityReady": true,
+        "historicalHashesPresent": true,
+        "liveReleaseCount": 2
+      },
+      "outputEvidence": [
+        "sourceIdentity",
+        "historicalEvidence"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "2.2",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T13:27:23.425Z",
+      "finishedAt": "2026-09-10T13:27:23.425Z",
+      "prerequisiteEvidence": [
+        "2.1"
+      ],
+      "performedActions": [
+        "Validated nine task-specific scenarios",
+        "Locked cold goto and warm same-context click modes",
+        "Required header and body-finished timing fields"
+      ],
+      "verificationResults": {
+        "harnessContract": {
+          "status": "PASS",
+          "failures": []
+        },
+        "scenarioContract": {
+          "scenarioCount": 9,
+          "sampleCountPerScenario": 20,
+          "transitionModes": {
+            "cold": [
+              "post_login_dashboard"
+            ],
+            "warm": [
+              "client_roster",
+              "client_forms_workspace",
+              "nutrition_workspace",
+              "menu_workspace",
+              "messages",
+              "alerts",
+              "notifications",
+              "ai_chat"
+            ]
+          }
+        },
+        "budgets": {
+          "loginToDashboardReadyP75Ms": 3000,
+          "warmNavigationReadyP75Ms": 1000,
+          "warmNavigationReadyP95Ms": 2000,
+          "eventToNextPaintP75Ms": 200,
+          "eventToNextPaintP95Ms": 500,
+          "requiredReadBodyFinishedP75Ms": 900,
+          "initialDashboardLcpP75Ms": 2500,
+          "clsMax": 0.1,
+          "maxForegroundLongTaskMs": 500,
+          "slowNetworkTaskReadyP75Ms": 4000
+        },
+        "measurementContract": {
+          "coldTransition": "page_goto",
+          "warmTransition": "same_browser_context_real_click",
+          "requestTimingFields": [
+            "headerReceivedMs",
+            "bodyFinishedMs"
+          ],
+          "requiredReadTimeoutMs": 30000,
+          "postReadyObservationWindowMs": 5000,
+          "backgroundObservationWindowMs": 60000,
+          "normalProfiler": "off",
+          "diagnosticProfiler": "on",
+          "sampleCountPerScenario": 20
+        }
+      },
+      "outputEvidence": [
+        "harnessContract",
+        "scenarioContract",
+        "budgets"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "2.3",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T13:27:23.425Z",
+      "finishedAt": "2026-09-10T13:27:23.425Z",
+      "prerequisiteEvidence": [
+        "2.2"
+      ],
+      "performedActions": [
+        "Ran the in-process negative-control classification matrix",
+        "Ran controlled localhost HTTP responses for status, delay, connection failure, timeout, and success"
+      ],
+      "verificationResults": {
+        "negativeControlMatrix": {
+          "status": "PASS",
+          "caseCount": 14,
+          "cases": [
+            {
+              "id": "required_read_401",
+              "scenarioId": "ai_chat",
+              "expected": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "required_read_403",
+              "scenarioId": "ai_chat",
+              "expected": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "required_read_500",
+              "scenarioId": "ai_chat",
+              "expected": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "required_read_timeout",
+              "scenarioId": "ai_chat",
+              "expected": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "request_failed",
+              "scenarioId": "ai_chat",
+              "expected": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "required_read_missing",
+              "scenarioId": "ai_chat",
+              "expected": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "required_selector_missing",
+              "scenarioId": "client_roster",
+              "expected": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "target_control_missing",
+              "scenarioId": "client_roster",
+              "expected": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "FAIL",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "event_timing_missing",
+              "scenarioId": "client_roster",
+              "expected": {
+                "functionalStatus": "PASS",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "PASS",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "lcp_missing",
+              "scenarioId": "post_login_dashboard",
+              "expected": {
+                "functionalStatus": "PASS",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "PASS",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "forbidden_mutation",
+              "scenarioId": "messages",
+              "expected": {
+                "functionalStatus": "PASS",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "PASS",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "fallback_and_demo",
+              "scenarioId": "post_login_dashboard",
+              "expected": {
+                "functionalStatus": "PASS",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "PASS",
+                "validityStatus": "FAIL",
+                "budgetStatus": "PASS"
+              }
+            },
+            {
+              "id": "budget_miss_separate_from_validity",
+              "scenarioId": "client_roster",
+              "expected": {
+                "functionalStatus": "PASS",
+                "validityStatus": "PASS",
+                "budgetStatus": "FAIL"
+              },
+              "actual": {
+                "functionalStatus": "PASS",
+                "validityStatus": "PASS",
+                "budgetStatus": "FAIL"
+              }
+            },
+            {
+              "id": "valid_success",
+              "scenarioId": "client_roster",
+              "expected": {
+                "functionalStatus": "PASS",
+                "validityStatus": "PASS",
+                "budgetStatus": "PASS"
+              },
+              "actual": {
+                "functionalStatus": "PASS",
+                "validityStatus": "PASS",
+                "budgetStatus": "PASS"
+              }
+            }
+          ],
+          "failures": []
+        },
+        "controlledHttpNegativeControls": {
+          "status": "PASS",
+          "caseCount": 8,
+          "results": [
+            {
+              "caseId": "status-401",
+              "status": 401,
+              "headerReceivedMs": 8.248,
+              "bodyFinishedMs": 8.526,
+              "failure": null,
+              "timeout": false
+            },
+            {
+              "caseId": "status-403",
+              "status": 403,
+              "headerReceivedMs": 2.642,
+              "bodyFinishedMs": 2.833,
+              "failure": null,
+              "timeout": false
+            },
+            {
+              "caseId": "status-500",
+              "status": 500,
+              "headerReceivedMs": 1.36,
+              "bodyFinishedMs": 1.625,
+              "failure": null,
+              "timeout": false
+            },
+            {
+              "caseId": "delayed-header",
+              "status": 200,
+              "headerReceivedMs": 37.545,
+              "bodyFinishedMs": 107.725,
+              "failure": null,
+              "timeout": false
+            },
+            {
+              "caseId": "delayed-body",
+              "status": 200,
+              "headerReceivedMs": 2.301,
+              "bodyFinishedMs": 66.178,
+              "failure": null,
+              "timeout": false
+            },
+            {
+              "caseId": "request-failed",
+              "status": null,
+              "headerReceivedMs": null,
+              "bodyFinishedMs": null,
+              "failure": "request_failed",
+              "timeout": false
+            },
+            {
+              "caseId": "timeout",
+              "status": null,
+              "headerReceivedMs": null,
+              "bodyFinishedMs": null,
+              "failure": "timeout",
+              "timeout": true
+            },
+            {
+              "caseId": "success",
+              "status": 200,
+              "headerReceivedMs": 5.106,
+              "bodyFinishedMs": 5.294,
+              "failure": null,
+              "timeout": false
+            }
+          ],
+          "failures": []
+        }
+      },
+      "outputEvidence": [
+        "negativeControlMatrix",
+        "controlledHttpNegativeControls"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "2.4",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T13:27:23.425Z",
+      "finishedAt": "2026-09-10T13:27:23.425Z",
+      "prerequisiteEvidence": [
+        "2.2",
+        "2.3"
+      ],
+      "performedActions": [
+        "Verified evidence redaction for authorization, cookie, prompt, body, and dynamic URL fields",
+        "Created a unique run identifier"
+      ],
+      "verificationResults": {
+        "redaction": {
+          "status": true,
+          "sanitizedKeys": [
+            "authorization",
+            "cookie",
+            "prompt",
+            "body",
+            "url"
+          ]
+        },
+        "uniqueRunId": "aiya-phase2-20260910T132719291Z-56b32d34-6949-4bf3-9294-f0fb1a03ce59"
+      },
+      "outputEvidence": [
+        "redaction",
+        "runId"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "2.5",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T13:27:23.425Z",
+      "finishedAt": "2026-09-10T13:27:23.425Z",
+      "prerequisiteEvidence": [
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4"
+      ],
+      "performedActions": [
+        "Recorded Phase 2 harness closure and kept real authenticated baseline outside this phase"
+      ],
+      "verificationResults": {
+        "phase2HarnessReady": true,
+        "validAuthenticatedBaselineCaptured": false,
+        "runtimeRemediationApplied": false
+      },
+      "outputEvidence": [
+        "phase2Closure"
+      ],
+      "blockingReason": null
+    }
+  ],
+  "constraints": {
+    "runtimeUiApiChange": "NOT_EXECUTED",
+    "schemaMigration": "NOT_EXECUTED",
+    "dependencyChange": "NOT_EXECUTED",
+    "localSupabaseFixtureOrReset": "NOT_EXECUTED",
+    "hostedSyntheticAccount": "NOT_EXECUTED",
+    "physicalAndroidOrPwaCapture": "NOT_EXECUTED",
+    "externalSystemMutation": "NOT_EXECUTED",
+    "deploy": "NOT_EXECUTED",
+    "pushPrMerge": "NOT_EXECUTED",
+    "productionGateChange": "NOT_EXECUTED",
+    "rawPayloadTraceHarCookieTokenPromptClinicalCapture": "<redacted>"
+  },
+  "nextEligibleAction": "Plan 1 Phase 3 - Real authenticated local synthetic environment, after explicit user approval; no valid authenticated performance baseline was captured in Phase 2.",
+  "closureRule": "Phase 2 closes only after the ordered stages 2.1-2.5 are complete and every harness/negative-control result is PASS. This evidence closes harness readiness only; it does not prove a runtime cause or performance improvement."
+}

@@ -8,8 +8,9 @@
  * authenticated performance evidence.
  */
 
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createServer } from "node:http";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
@@ -38,24 +39,39 @@ export const PHASE_2_BUDGETS = {
   slowNetworkTaskReadyP75Ms: 4000,
 };
 
+export const PHASE_2_HARNESS_CONTRACT = {
+  coldTransition: "page_goto",
+  warmTransition: "same_browser_context_real_click",
+  requestTimingFields: ["headerReceivedMs", "bodyFinishedMs"],
+  requiredReadTimeoutMs: 30_000,
+  postReadyObservationWindowMs: 5_000,
+  backgroundObservationWindowMs: 60_000,
+  normalProfiler: "off",
+  diagnosticProfiler: "on",
+  sampleCountPerScenario: 20,
+};
+
 export const PHASE_2_SCENARIOS = [
   {
     scenarioId: "post_login_dashboard",
     startRoute: "/login",
     expectedRoute: "/dashboard",
     userAction: "submit_password_login",
+    transitionMode: "cold",
     requiredReadySelector: '[data-testid="authenticated-shell"]',
     requiredReads: ["/api/shell/bootstrap", "/api/app-state"],
     allowedMutations: ["/api/auth/password-login", "/api/session/activity"],
     forbiddenMutations: [],
     budget: "loginToDashboardReadyP75Ms",
     sampleCount: 20,
+    requiresPaintMetrics: true,
   },
   {
     scenarioId: "client_roster",
     startRoute: "/dashboard",
     expectedRoute: "/dashboard?section=clients",
     userAction: "click_shell_clients",
+    transitionMode: "warm",
     requiredReadySelector: '[data-testid="client-roster"]',
     requiredReads: ["/api/shell/bootstrap", "/api/app-state", "/api/clients"],
     allowedMutations: ["/api/session/activity"],
@@ -68,6 +84,7 @@ export const PHASE_2_SCENARIOS = [
     startRoute: "/dashboard?section=clients",
     expectedRoute: "/dashboard?section=clients&clientTask=forms",
     userAction: "click_client_forms_task",
+    transitionMode: "warm",
     requiredReadySelector: '[data-testid="client-form-panel"]',
     requiredReads: ["/api/clients/:clientId", "/api/clients/:clientId/forms"],
     allowedMutations: ["/api/session/activity"],
@@ -80,6 +97,7 @@ export const PHASE_2_SCENARIOS = [
     startRoute: "/dashboard?section=clients",
     expectedRoute: "/dashboard?section=clients&clientTask=nutrition",
     userAction: "click_client_nutrition_task",
+    transitionMode: "warm",
     requiredReadySelector: '[data-testid="active-nutrition-plan-panel"]',
     requiredReads: ["/api/clients/:clientId", "/api/clients/:clientId/food-rule-profile"],
     allowedMutations: ["/api/session/activity"],
@@ -92,6 +110,7 @@ export const PHASE_2_SCENARIOS = [
     startRoute: "/dashboard?section=clients",
     expectedRoute: "/dashboard?section=clients&clientTask=menu",
     userAction: "click_client_menu_task",
+    transitionMode: "warm",
     requiredReadySelector: '[data-testid="menu-workflow-panel"]',
     requiredReads: ["/api/clients/:clientId", "/api/clients/:clientId/menu-plans"],
     allowedMutations: ["/api/session/activity"],
@@ -104,6 +123,7 @@ export const PHASE_2_SCENARIOS = [
     startRoute: "/dashboard",
     expectedRoute: "/dashboard?section=messages",
     userAction: "click_shell_messages",
+    transitionMode: "warm",
     requiredReadySelector: '[data-testid="messaging-panel"]',
     requiredReads: ["/api/conversations"],
     allowedMutations: ["/api/session/activity"],
@@ -116,6 +136,7 @@ export const PHASE_2_SCENARIOS = [
     startRoute: "/dashboard",
     expectedRoute: "/dashboard?section=alerts",
     userAction: "click_shell_alerts",
+    transitionMode: "warm",
     requiredReadySelector: '[data-testid="alerts-panel"]',
     requiredReads: ["/api/alerts"],
     allowedMutations: ["/api/session/activity"],
@@ -128,6 +149,7 @@ export const PHASE_2_SCENARIOS = [
     startRoute: "/dashboard",
     expectedRoute: "/dashboard?section=notifications",
     userAction: "click_shell_notifications",
+    transitionMode: "warm",
     requiredReadySelector: '[data-testid="notifications-panel"]',
     requiredReads: ["/api/notifications"],
     allowedMutations: ["/api/session/activity"],
@@ -140,6 +162,7 @@ export const PHASE_2_SCENARIOS = [
     startRoute: "/dashboard",
     expectedRoute: "/dashboard/ai-chat",
     userAction: "click_ai_chat_entry",
+    transitionMode: "warm",
     requiredReadySelector: '[data-testid="ai-chat-workspace"]',
     requiredReads: ["/api/ai-chat/conversations"],
     allowedMutations: ["/api/session/activity"],
@@ -249,6 +272,7 @@ export function classifyPhase2Sample(sample, scenario) {
   const requiredReads = scenario.requiredReads ?? [];
   const requests = sample.requests ?? [];
   const failedRequests = requests.filter((request) => {
+    if (request.timeout === true) return true;
     if (request.failure) return true;
     if (request.status == null) return true;
     return request.status < 200 || request.status >= 400;
@@ -261,6 +285,7 @@ export function classifyPhase2Sample(sample, scenario) {
           routeMatches(request.route, expected) &&
           request.status >= 200 &&
           request.status < 300 &&
+          Number.isFinite(request.headerReceivedMs) &&
           Number.isFinite(request.bodyFinishedMs),
       ),
   );
@@ -273,11 +298,16 @@ export function classifyPhase2Sample(sample, scenario) {
   if (!sample.authenticated) validityProblems.push("not_authenticated");
   if (sample.fallbackStore === true) validityProblems.push("fallback_store_used");
   if (sample.demoCookieInjected === true) validityProblems.push("demo_cookie_used");
+  if (sample.measurementMode !== scenario.transitionMode) validityProblems.push("measurement_mode_mismatch");
+  if (sample.readySelectorMatched !== true) validityProblems.push("required_ready_selector_missing");
+  if (sample.targetUsable !== true) validityProblems.push("target_not_usable");
   if (missingReads.length) validityProblems.push("required_read_missing_or_non_2xx");
   if (failedRequests.length) validityProblems.push("failed_request_observed");
   if (forbiddenMutations.length) validityProblems.push("forbidden_mutation_observed");
   if (!Number.isFinite(sample.taskReadyMs)) validityProblems.push("task_ready_missing");
   if (!Number.isFinite(sample.eventToNextPaintMs)) validityProblems.push("event_to_next_paint_missing");
+  if (scenario.requiresPaintMetrics === true && !Number.isFinite(sample.lcpMs)) validityProblems.push("lcp_missing");
+  if (scenario.requiresPaintMetrics === true && !Number.isFinite(sample.cls)) validityProblems.push("cls_missing");
   const budgetProblems = [];
   const budgetMs = PHASE_2_BUDGETS[scenario.budget] ?? null;
   if (budgetMs != null && Number.isFinite(sample.taskReadyMs) && sample.taskReadyMs > budgetMs) {
@@ -288,6 +318,12 @@ export function classifyPhase2Sample(sample, scenario) {
   }
   if (Number.isFinite(sample.maxLongTaskMs) && sample.maxLongTaskMs > PHASE_2_BUDGETS.maxForegroundLongTaskMs) {
     budgetProblems.push(`maxLongTask:${sample.maxLongTaskMs}>${PHASE_2_BUDGETS.maxForegroundLongTaskMs}`);
+  }
+  if (scenario.requiresPaintMetrics === true && Number.isFinite(sample.lcpMs) && sample.lcpMs > PHASE_2_BUDGETS.initialDashboardLcpP75Ms) {
+    budgetProblems.push(`lcp:${sample.lcpMs}>${PHASE_2_BUDGETS.initialDashboardLcpP75Ms}`);
+  }
+  if (scenario.requiresPaintMetrics === true && Number.isFinite(sample.cls) && sample.cls > PHASE_2_BUDGETS.clsMax) {
+    budgetProblems.push(`cls:${sample.cls}>${PHASE_2_BUDGETS.clsMax}`);
   }
   return {
     sampleId: sample.sampleId,
@@ -322,7 +358,19 @@ export function summarizePhase2Scenario(samples, scenario) {
     p75: {
       taskReadyMs: percentile(taskReadyValues, 75),
       eventToNextPaintMs: percentile(eventValues, 75),
+      lcpMs: percentile(samples.map((sample) => sample.lcpMs), 75),
+      cls: percentile(samples.map((sample) => sample.cls), 75),
       requiredReadBodyFinishedMs: percentile(requiredReadValues, 75),
+      requiredReadHeaderReceivedMs: percentile(
+        samples.flatMap((sample) =>
+          (sample.requests ?? [])
+            .filter((request) =>
+              (scenario.requiredReads ?? []).some((expected) => request.method === "GET" && routeMatches(request.route, expected)),
+            )
+            .map((request) => request.headerReceivedMs),
+        ),
+        75,
+      ),
     },
     p95: {
       taskReadyMs: percentile(taskReadyValues, 95),
@@ -330,6 +378,208 @@ export function summarizePhase2Scenario(samples, scenario) {
     },
     classifications,
   };
+}
+
+function buildContractSample(scenario, overrides = {}) {
+  const requests = (scenario.requiredReads ?? []).map((route, index) => ({
+    route,
+    method: "GET",
+    status: 200,
+    headerReceivedMs: 20 + index,
+    bodyFinishedMs: 40 + index,
+  }));
+  return {
+    sampleId: `${scenario.scenarioId}-contract-sample`,
+    authenticated: true,
+    fallbackStore: false,
+    demoCookieInjected: false,
+    measurementMode: scenario.transitionMode,
+    readySelectorMatched: true,
+    targetUsable: true,
+    taskReadyMs: 400,
+    eventToNextPaintMs: 80,
+    maxLongTaskMs: 100,
+    lcpMs: 120,
+    cls: 0.02,
+    observationWindowMs: PHASE_2_HARNESS_CONTRACT.postReadyObservationWindowMs,
+    backgroundObservationWindowMs: PHASE_2_HARNESS_CONTRACT.backgroundObservationWindowMs,
+    requests,
+    ...overrides,
+  };
+}
+
+export function runPhase2NegativeControlMatrix() {
+  const cases = [];
+  const failures = [];
+  const scenario = (scenarioId) => PHASE_2_SCENARIOS.find((item) => item.scenarioId === scenarioId);
+  const addCase = (id, scenarioId, overrides, expected) => {
+    const selectedScenario = scenario(scenarioId);
+    const result = classifyPhase2Sample(buildContractSample(selectedScenario, overrides), selectedScenario);
+    const actual = {
+      functionalStatus: result.functionalStatus,
+      validityStatus: result.validityStatus,
+      budgetStatus: result.budgetStatus,
+    };
+    cases.push({ id, scenarioId, expected, actual });
+    for (const [key, value] of Object.entries(expected)) {
+      if (actual[key] !== value) failures.push(`${id}:${key}:${actual[key]}!=${value}`);
+    }
+  };
+
+  for (const [id, status] of [
+    ["required_read_401", 401],
+    ["required_read_403", 403],
+    ["required_read_500", 500],
+  ]) {
+    addCase(
+      id,
+      "ai_chat",
+      { requests: [{ route: "/api/ai-chat/conversations", method: "GET", status, headerReceivedMs: 20, bodyFinishedMs: 30 }] },
+      { functionalStatus: "FAIL", validityStatus: "FAIL", budgetStatus: "PASS" },
+    );
+  }
+  addCase(
+    "required_read_timeout",
+    "ai_chat",
+    { requests: [{ route: "/api/ai-chat/conversations", method: "GET", status: null, timeout: true, failure: "timeout" }] },
+    { functionalStatus: "FAIL", validityStatus: "FAIL", budgetStatus: "PASS" },
+  );
+  addCase(
+    "request_failed",
+    "ai_chat",
+    { requests: [{ route: "/api/ai-chat/conversations", method: "GET", status: null, failure: "connection_reset" }] },
+    { functionalStatus: "FAIL", validityStatus: "FAIL", budgetStatus: "PASS" },
+  );
+  addCase("required_read_missing", "ai_chat", { requests: [] }, { functionalStatus: "FAIL", validityStatus: "FAIL", budgetStatus: "PASS" });
+  addCase("required_selector_missing", "client_roster", { readySelectorMatched: false }, { functionalStatus: "FAIL", validityStatus: "FAIL", budgetStatus: "PASS" });
+  addCase("target_control_missing", "client_roster", { targetUsable: false }, { functionalStatus: "FAIL", validityStatus: "FAIL", budgetStatus: "PASS" });
+  addCase("event_timing_missing", "client_roster", { eventToNextPaintMs: null }, { functionalStatus: "PASS", validityStatus: "FAIL", budgetStatus: "PASS" });
+  addCase("lcp_missing", "post_login_dashboard", { lcpMs: null }, { functionalStatus: "PASS", validityStatus: "FAIL", budgetStatus: "PASS" });
+  addCase(
+    "forbidden_mutation",
+    "messages",
+    { requests: [{ route: "/api/conversations", method: "GET", status: 200, headerReceivedMs: 20, bodyFinishedMs: 40 }, { route: "/api/messages/manual", method: "POST", status: 204 }] },
+    { functionalStatus: "PASS", validityStatus: "FAIL", budgetStatus: "PASS" },
+  );
+  addCase(
+    "fallback_and_demo",
+    "post_login_dashboard",
+    { fallbackStore: true, demoCookieInjected: true },
+    { functionalStatus: "PASS", validityStatus: "FAIL", budgetStatus: "PASS" },
+  );
+  addCase(
+    "budget_miss_separate_from_validity",
+    "client_roster",
+    { taskReadyMs: 1_500 },
+    { functionalStatus: "PASS", validityStatus: "PASS", budgetStatus: "FAIL" },
+  );
+  addCase(
+    "valid_success",
+    "client_roster",
+    {},
+    { functionalStatus: "PASS", validityStatus: "PASS", budgetStatus: "PASS" },
+  );
+
+  return { status: failures.length ? "FAIL" : "PASS", caseCount: cases.length, cases, failures };
+}
+
+function listen(server) {
+  return new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => resolve(server.address().port));
+  });
+}
+
+function closeServer(server) {
+  return new Promise((resolve) => server.close(() => resolve()));
+}
+
+async function probeControlledHttpCase(baseUrl, caseId, timeoutMs = 250) {
+  const startedAt = performance.now();
+  const controller = new AbortController();
+  const abortTimer = setTimeout(() => controller.abort(), timeoutMs);
+  let headerReceivedMs = null;
+  let bodyFinishedMs = null;
+  try {
+    const response = await fetch(`${baseUrl}/phase2/${caseId}`, { signal: controller.signal });
+    headerReceivedMs = Number((performance.now() - startedAt).toFixed(3));
+    await response.text();
+    bodyFinishedMs = Number((performance.now() - startedAt).toFixed(3));
+    return {
+      caseId,
+      status: response.status,
+      headerReceivedMs,
+      bodyFinishedMs,
+      failure: null,
+      timeout: false,
+    };
+  } catch (error) {
+    return {
+      caseId,
+      status: null,
+      headerReceivedMs,
+      bodyFinishedMs,
+      failure: error?.name === "AbortError" ? "timeout" : "request_failed",
+      timeout: error?.name === "AbortError",
+    };
+  } finally {
+    clearTimeout(abortTimer);
+  }
+}
+
+export async function runControlledHttpNegativeControls() {
+  const server = createServer((request, response) => {
+    const caseId = request.url?.split("/").pop();
+    if (caseId === "timeout") return;
+    if (caseId === "request-failed") return request.socket.destroy();
+    if (caseId === "delayed-header") {
+      return setTimeout(() => {
+        response.writeHead(200, { "content-type": "text/plain" });
+        response.flushHeaders();
+        setTimeout(() => response.end("ok"), 60);
+      }, 35);
+    }
+    if (caseId === "delayed-body") {
+      response.writeHead(200, { "content-type": "text/plain" });
+      response.flushHeaders();
+      return setTimeout(() => response.end("ok"), 60);
+    }
+    const statusByCase = { "status-401": 401, "status-403": 403, "status-500": 500, success: 200 };
+    response.writeHead(statusByCase[caseId] ?? 500, { "content-type": "text/plain" });
+    response.end("ok");
+  });
+  const port = await listen(server);
+  const baseUrl = `http://127.0.0.1:${port}`;
+  const results = [];
+  try {
+    for (const caseId of ["status-401", "status-403", "status-500", "delayed-header", "delayed-body", "request-failed", "timeout", "success"]) {
+      results.push(await probeControlledHttpCase(baseUrl, caseId));
+    }
+  } finally {
+    await closeServer(server);
+  }
+  const failures = [];
+  for (const result of results) {
+    if (["status-401", "status-403", "status-500"].includes(result.caseId) && result.status < 400) {
+      failures.push(`${result.caseId}:status_not_preserved`);
+    }
+    if (["delayed-header", "delayed-body"].includes(result.caseId)) {
+      if (result.status !== 200 || !Number.isFinite(result.headerReceivedMs) || !Number.isFinite(result.bodyFinishedMs)) {
+        failures.push(`${result.caseId}:header_body_timing_missing`);
+      }
+      if (result.bodyFinishedMs <= result.headerReceivedMs) failures.push(`${result.caseId}:body_not_after_header`);
+    }
+    if (result.caseId === "request-failed" && result.failure !== "request_failed") failures.push("request-failed:not_failed");
+    if (result.caseId === "timeout" && (result.timeout !== true || result.failure !== "timeout")) failures.push("timeout:not_timeout");
+    if (result.caseId === "success" && (result.status !== 200 || !Number.isFinite(result.bodyFinishedMs))) {
+      failures.push("success:not_success");
+    }
+  }
+  return { status: failures.length ? "FAIL" : "PASS", caseCount: results.length, results, failures };
+}
+
+export function createPhase2RunId() {
+  return `aiya-phase2-${new Date().toISOString().replace(/[-:.]/g, "")}-${randomUUID()}`;
 }
 
 export function validatePhase2HarnessContract() {
@@ -349,50 +599,31 @@ export function validatePhase2HarnessContract() {
     if (!ids.has(required)) failures.push(`${required}:missing`);
   }
   for (const scenario of PHASE_2_SCENARIOS) {
+    if (!["cold", "warm"].includes(scenario.transitionMode)) failures.push(`${scenario.scenarioId}:invalid_transition_mode`);
+    if (scenario.transitionMode === "cold" && scenario.startRoute !== "/login") {
+      failures.push(`${scenario.scenarioId}:cold_transition_must_start_at_login`);
+    }
+    if (scenario.transitionMode === "warm" && !scenario.userAction.startsWith("click_")) {
+      failures.push(`${scenario.scenarioId}:warm_transition_requires_click_action`);
+    }
     if (scenario.requiredReadySelector === "main") failures.push(`${scenario.scenarioId}:weak_ready_selector`);
     if (!scenario.requiredReads?.length) failures.push(`${scenario.scenarioId}:missing_required_reads`);
-    if (scenario.sampleCount < 20) failures.push(`${scenario.scenarioId}:insufficient_sample_count`);
+    if (scenario.sampleCount < PHASE_2_HARNESS_CONTRACT.sampleCountPerScenario) {
+      failures.push(`${scenario.scenarioId}:insufficient_sample_count`);
+    }
     for (const mutation of scenario.forbiddenMutations ?? []) {
       if (!mutation.startsWith("/api/")) failures.push(`${scenario.scenarioId}:forbidden_mutation_not_api`);
     }
   }
-  const negativeAiChat = classifyPhase2Sample(
-    {
-      sampleId: "negative-ai-chat-401",
-      authenticated: true,
-      fallbackStore: false,
-      demoCookieInjected: false,
-      readySelectorMatched: true,
-      targetUsable: true,
-      taskReadyMs: 400,
-      eventToNextPaintMs: 80,
-      maxLongTaskMs: 100,
-      requests: [{ route: "/api/ai-chat/conversations", method: "GET", status: 401, bodyFinishedMs: 30 }],
-    },
-    PHASE_2_SCENARIOS.find((scenario) => scenario.scenarioId === "ai_chat"),
-  );
-  if (negativeAiChat.validityStatus !== "FAIL" || negativeAiChat.functionalStatus !== "FAIL") {
-    failures.push("negative_ai_chat_401_not_failed");
+  if (PHASE_2_HARNESS_CONTRACT.requiredReadTimeoutMs !== 30_000) failures.push("required_read_timeout_not_30_seconds");
+  if (PHASE_2_HARNESS_CONTRACT.postReadyObservationWindowMs !== 5_000) {
+    failures.push("post_ready_observation_window_not_5_seconds");
   }
-  const fallbackDashboard = classifyPhase2Sample(
-    {
-      sampleId: "negative-fallback-dashboard",
-      authenticated: true,
-      fallbackStore: true,
-      demoCookieInjected: false,
-      readySelectorMatched: true,
-      targetUsable: true,
-      taskReadyMs: 300,
-      eventToNextPaintMs: 80,
-      maxLongTaskMs: 100,
-      requests: [
-        { route: "/api/shell/bootstrap", method: "GET", status: 200, bodyFinishedMs: 20 },
-        { route: "/api/app-state", method: "GET", status: 200, bodyFinishedMs: 20 },
-      ],
-    },
-    PHASE_2_SCENARIOS.find((scenario) => scenario.scenarioId === "post_login_dashboard"),
-  );
-  if (fallbackDashboard.validityStatus !== "FAIL") failures.push("fallback_store_not_failed");
+  if (PHASE_2_HARNESS_CONTRACT.backgroundObservationWindowMs !== 60_000) {
+    failures.push("background_observation_window_not_60_seconds");
+  }
+  const negativeMatrix = runPhase2NegativeControlMatrix();
+  if (negativeMatrix.status !== "PASS") failures.push(...negativeMatrix.failures);
   return { status: failures.length ? "FAIL" : "PASS", failures };
 }
 
@@ -568,10 +799,13 @@ function buildStageLedger(input) {
       performedActions: [
         "Validated strong scenario selectors",
         "Required 2xx authenticated reads for ready state",
-        "Ran in-process negative controls for AI Chat 401 and fallback-store samples",
+        "Ran the complete in-process negative-control matrix for status, timeout, selector, timing, mutation, fallback, demo, and budget cases",
       ],
-      verificationResults: input.harnessContract,
-      outputEvidence: ["phase2Scenarios", "harnessContract"],
+      verificationResults: {
+        ...input.harnessContract,
+        negativeControls: input.negativeControlMatrix,
+      },
+      outputEvidence: ["phase2Scenarios", "harnessContract", "negativeControlMatrix"],
       blockingReason: input.harnessContract.status === "PASS" ? null : "phase_2_harness_contract_failed",
     },
     {
@@ -700,10 +934,12 @@ function writeJson(path, value) {
 
 export async function buildPhase2Evidence() {
   const startedAt = new Date().toISOString();
+  const runId = createPhase2RunId();
   const git = collectGitEvidence();
   const liveRelease = await collectLiveReleaseEvidence();
   const historical = collectHistoricalEvidence();
   const harnessContract = validatePhase2HarnessContract();
+  const negativeControlMatrix = runPhase2NegativeControlMatrix();
   const localPrerequisites = collectLocalPrerequisites();
   const android = collectAndroidEvidence();
   const finishedAt = new Date().toISOString();
@@ -714,6 +950,7 @@ export async function buildPhase2Evidence() {
     liveRelease,
     historical,
     harnessContract,
+    negativeControlMatrix,
     localPrerequisites,
     android,
   };
@@ -727,6 +964,7 @@ export async function buildPhase2Evidence() {
     generatedAt: finishedAt,
     startedAt,
     sourceHead: git.head,
+    runId,
     productionDecision: "NO-GO",
     outcome: blockers.length ? "PERFORMANCE_BLOCKED" : "LOCAL_REMEDIATION_VERIFIED",
     status: blockers.length ? "BLOCKED" : "COMPLETE",
@@ -746,6 +984,7 @@ export async function buildPhase2Evidence() {
     liveRelease,
     historicalEvidence: historical,
     harnessContract,
+    negativeControlMatrix,
     localPrerequisites,
     android,
     stageLedger,

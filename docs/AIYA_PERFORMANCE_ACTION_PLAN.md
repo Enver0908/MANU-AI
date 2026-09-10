@@ -10,15 +10,25 @@ Production karari bu planla degismez: `NO-GO`.
 
 `docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md` alt planinin Faz 1 asamalari 1.1-1.5 sirayla tamamlandi ve kapanis kontrolu `PASS` oldu. Local Docker/Supabase erisimi kullanici tarafindan acildiktan sonra yalniz local DB resetlendi. Tum full-rehearsal bayraklari acikken temiz full-repo kosusu 288/288 test dosyasi ve 1726/1726 test ile PASS verdi; failed/skipped yoktur. Evidence: `docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json`; finding manifest: `docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json`. Bes bulgu ayri disposition kayitlarinda korunmustur; runtime kok nedeni kanitlanmadi ve runtime degisikligi yetkilendirilmedi. Local/upstream `568a1ffba833db0dd182a3d9fad5b034f7cf98e5`, live customer/admin release commit `1c9756046b01cb1bd224fb601ec9094a7f471606` olarak ayri tutuldu. Production `NO-GO` kalir.
 
-Plan 1 Phase 2 artik eligible durumdadir ancak acik kullanici onayi olmadan baslatilmaz. Faz 2 baslatilmadi; hosted sentetik hesap, fiziksel Android/PWA authenticated capture ve runtime remediasyon bu kapanisin kapsami disindadir. Tarihsel Faz 1, Faz 1.2, Faz 2 ve Faz 3 evidence dosyalari yeniden yazilmadi. Production `NO-GO` kalir.
+Plan 1 Phase 2 tamamlandi ve `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json` icinde `HARNESS_READY_WITH_NEGATIVE_CONTROLS` olarak kaydedildi. Faz 2 harness'i dokuz senaryoyu, cold/warm gecis modlarini, header/body-finish timing ayrimini ve 30 saniye timeout kurali ile 5 saniye/60 saniye gozlem pencerelerini kilitledi. 14 in-process ve 8 localhost HTTP negatif kontrolu PASS oldu. Authenticated baseline, hosted sentetik hesap, fiziksel Android/PWA authenticated capture, kok neden kaniti ve runtime remediasyonu yapilmadi; Plan 1 Faz 3 daha sonra acik kullanici onayi ile baslatildi ve local sentetik auth/store evidence'i ile kapatildi. Tarihsel Faz 1, Faz 1.2 ve eski Revizyon 2 Faz 2/Faz 3 evidence dosyalari yeniden yazilmadi. Production `NO-GO` kalir.
 
-## Faz 3 Uygulama Sonucu - 2026-09-10
+## AIya Performans Plani 1 Phase 2 Sonucu - 2026-09-10
+
+Plan 1 Faz 2 asamalari 2.1-2.5 sirayla tamamlandi. Evidence: `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json`. Harness contract, negative-control matrix, controlled HTTP timing probe, redaction ve unique run identity PASS oldu. Bu kapanis yalnizca gecerli olcum aracinin ve negatif kontrollerin hazir oldugunu kanitlar; kullaniciya ait authenticated oturumda kasmanin yeniden uretildigini veya kok neden bulundugunu kanitlamaz. Production `NO-GO` kalir.
+
+## AIya Performans Plani 1 Phase 3 Sonucu - 2026-09-10
+
+Plan 1 Faz 3 asamalari 3.1-3.6 sirayla tamamlandi. Evidence: `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json`; sonuc `SYNTHETIC_AUTH_STORE_READY`. Local Docker/Supabase hedefi `http://127.0.0.1:54321` olarak kilitlendi, migration/schema kontrolu PASS oldu ve tam DB resetlenmeden yalnizca Phase 3'e ait sabit tenant/auth prefix temizlenip yeniden seed edildi.
+
+Iki local tenantta toplam sekiz sentetik password hesabi kuruldu. Small fixture 3 client ve 20 mesaj; normal fixture 50 client, 20 mesajli ve 200 mesajli iki conversation, toplam 220 mesaj iceriyor. Owner, assistant, viewer assignment ve auditor rolleri; owner cross-tenant izolasyonu, assigned/unassigned client, AI Chat, viewer write block, auditor/anonymous denial ve owner store-read matrisi normal authenticated client ile PASS oldu. Service-role yalniz seed/temizlik ve local session-activity RPC icin kullanildi; demo/fallback auth yolu, hosted hesap, provider/channel egress, fiziksel cihaz/PWA capture, performans baseline'i, kok neden ve runtime remediasyonu yapilmadi. Fixture Phase 4 icin local DB'de birakildi. Production `NO-GO` kalir; sonraki tek uygun adim Plan 1 Faz 4'tur.
+
+## Historical Revizyon 2 Faz 3 Uygulama Sonucu - 2026-09-10
 
 Revizyon 2 Faz 3 baslatildi ve Asama 3.1 aday dondurma kapisinda `PERFORMANCE_BLOCKED` olarak durduruldu. Kanit: `docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json`. Mevcut aday HEAD `887865c8b24c546d128d16f4e284cb8b542dd366` olarak kaydedildi; aday release identity hesaplandi, ancak aday artifact'i uretilmedi.
 
 Faz 2 evidence'i `PERFORMANCE_BLOCKED` oldugu icin Faz 3 yerel kapanis on kosulu saglanmadi. Hosted synthetic hesap/fixture, hosted apply ve rollback icin gereken ayri onaylar yoktur. ADB su an cihaz gostermedigi icin fiziksel Android Chrome/PWA kabul kaydi da yoktur. Asama 3.2-3.8 plan geregi baslatilmadi; runtime, CI, schema, deploy ve dis sistem degisikligi yapilmadi. Production karari `NO-GO` kalir.
 
-## Faz 2 Uygulama Sonucu - 2026-09-10
+## Historical Revizyon 2 Faz 2 Uygulama Sonucu - 2026-09-10
 
 Faz 2 uygulamasi `docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json` icinde `PERFORMANCE_BLOCKED` olarak kaydedildi. Yeni harness `app/scripts/measure-aiya-performance-phase-2.mjs` ve testi `app/scripts/performance-phase-2.test.mjs` eklendi; `npm run test:performance-phase2` 7/7 PASS verdi. `npm run audit:performance:phase2` kaniti uretip beklenen sekilde non-zero kapandi, cunku lokal real-Supabase authenticated baseline, hosted synthetic account onayi ve authenticated Android/PWA capture on kosullari saglanmadi.
 

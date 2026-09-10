@@ -2,7 +2,7 @@
 
 ## Guncel uygulama durumu
 
-Plan 1 Faz 1 asamalari 1.1-1.5 sirayla tamamlandi ve faz kapanis kontrolu `PASS` oldu. Local Docker/Supabase kullanici tarafindan baslatildiktan sonra yalniz local DB resetlendi; tum full-rehearsal cevre bayraklari acikken `npm test` 288/288 test dosyasi ve 1726/1726 test ile PASS verdi; failed ve skipped sonucu yoktur. Evidence: `docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json`; finding manifest: `docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json`. Bes bulgu korunmustur, ancak hicbir runtime kok nedeni kanitlanmadi ve runtime degisikligi yetkilendirilmedi. Plan 1 Phase 2 artik uygulanabilir durumdadir ancak acik kullanici onayi olmadan baslatilmaz. Hosted sentetik hesap, fiziksel Android/PWA performans capture ve runtime remediasyon bu fazda yapilmadi; production `NO-GO` kalir.
+Plan 1 Faz 1 asamalari 1.1-1.5 sirayla tamamlandi ve faz kapanis kontrolu `PASS` oldu. Faz 2 asamalari 2.1-2.5 de sirayla tamamlandi; evidence: `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json`. Faz 3 asamalari 3.1-3.6 da sirayla tamamlandi; evidence: `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json`; sonuc `COMPLETE / SYNTHETIC_AUTH_STORE_READY`. Local fixture, gercek password session ve normal RLS/store sinirlari hazirlandi; gecerli authenticated performans baseline'i, donma yeniden uretimi, kok neden atfi ve runtime degisikligi yapilmadi. Plan 1 Faz 4 bir sonraki tek uygun adimdir; production `NO-GO` kalir.
 
 ## Durum
 
@@ -71,9 +71,23 @@ Degisecek alanlar yalniz Plan 1 dokumani, evidence, finding manifesti ve bunlari
 
 Plan 1 Faz 1 kapandiktan sonra baslatilir. Mevcut Phase 2 harness sozlesmesi korunur; warm SPA gecisleri ayni browser context/app instance icinde gercek tiklamalarla olculur. Header timing ile body-finish ayrilir. `401`, `403`, `5xx`, timeout, request failure, eksik selector, fallback/demo session ve yasak mutation `FAIL` olur. Normal kabul kosusu profiler kapali, tanisal kosu profiler acik tutulur.
 
+### Faz 2 Uygulama Sonucu - 2026-09-10
+
+Asamalar 2.1-2.5 sirayla tamamlandi ve `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json` icinde `COMPLETE / HARNESS_READY_WITH_NEGATIVE_CONTROLS` olarak kaydedildi. Dokuz senaryo ve senaryo basina 20 ornek sozlesmesi; cold login `page.goto`, warm ayni browser context icinde gercek click, 30 saniye required-read timeout, 5 saniye post-ready gozlem ve 60 saniye background gozlem metadata'si ile kilitlendi. 401, 403, 500, timeout, request failure, gecikmeli header/body, eksik read/selector/target/timing, forbidden mutation, fallback/demo ve butce asimi kontrolleri PASS ile siniflandi; 14 siniflandirma vakasi ve 8 kontrollu localhost HTTP vakasi calistirildi.
+
+Bu fazda Supabase fixture/authenticated login, hosted synthetic hesap, fiziksel Android/PWA authenticated capture, gercek performans baseline'i, kok neden atfi ve runtime remediasyonu yapilmadi. Plan 1 Faz 3 daha sonra acik user onayi ile baslatildi ve asagidaki kapanis kaydiyla tamamlandi.
+
 ## Faz 3 - Sentetik auth/store ortamlarinin hazirlanmasi
 
 Plan 1 Faz 2 kapandiktan sonra local Docker/Supabase izole hedefi baslatilir, mevcut migrationlar uygulanir ve deterministik sentetik fixture kurulur. Iki tenant, dietitian, assistant, auditor ve viewer assignment senaryolari; small, normal ve scale veri hacimleriyle olusturulur. Olcum gercek password session ve normal RLS yolu uzerinden yapilir. Hosted sentetik hesap, invite/onboarding ve hosted veri kurulumu ayri owner onayi olmadan baslatilmaz. Fiziksel Android ve PWA capture, ADB/CDP/display-mode/service-worker kontrolleriyle hazirlanir.
+
+### Faz 3 Uygulama Sonucu - 2026-09-10
+
+Asamalar 3.1-3.6 sirayla tamamlandi ve `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json` icinde `COMPLETE / SYNTHETIC_AUTH_STORE_READY` olarak kaydedildi. Local migration listesi ve required store schema `PASS` oldu; tam veritabani resetlenmedi. Yalnizca sabit Phase 3 tenant kimlikleri ve `aiya-phase3-local-*` sentetik auth hesaplari temizlenip yeniden olusturuldu.
+
+Fixture iki local tenant ve sekiz local sentetik hesap icerir: her tenantta owner, assistant, viewer-assignment ve auditor; small tenantta 3 client ve 20 mesaj; normal tenantta 50 client, 20 mesajli ve 200 mesajli iki conversation, toplam 220 mesaj. `scale_synthetic`, ayri bir 5000 client yuk testi degil, normal tenanttaki 200 mesajli yogun conversation varyantidir. Fixture hash'i `6bedeba5628b8ea3677dae464143f01d59a2dc0f51e1353dd52767827c642819` olarak kaydedildi.
+
+Tum hesaplar local anon key ile `signInWithPassword` kullanilarak authenticated session aldi; session claim ve local session-activity sozlesmesi dogrulandi. RLS/store matrisi owner cross-tenant gizleme, assistant assigned/unassigned client ve AI Chat siniri, viewer read-only update siniri, auditor ve anonymous raw-data gizleme kontrollerini `PASS` verdi. Service-role yalniz local seed/temizlik ve server-verified local session-activity RPC icin kullanildi; RLS iddialari normal authenticated client ile yapildi. Demo cookie, fallback store, provider/channel egress, hosted hesap, fiziksel cihaz/PWA capture, baseline, kok neden ve runtime remediasyonu bu fazda calistirilmadi. Fixture Phase 4 icin local DB'de birakildi; production karari `NO-GO` kalir.
 
 ## Faz 4 - Gecerli baseline ve yeniden uretim
 
@@ -89,6 +103,12 @@ Bir neden ancak en az uc tekrar eden ornek/trace, belirli dosya/fonksiyon eslesm
 
 - `docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json`
 - `docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json`
+- `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json`
+- `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json`
+- `app/scripts/performance-plan-1-phase-2.mjs`
+- `app/scripts/performance-plan-1-phase-2.test.mjs`
+- `app/scripts/performance-plan-1-phase-3.mjs`
+- `app/scripts/performance-plan-1-phase-3.test.mjs`
 - `HANDOFF_FOR_NEXT_CODEX.md`
 - `docs/RISK_REGISTER.md`
 - `docs/NEXT_PHASE_EXECUTION_PLAN.md`

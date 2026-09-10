@@ -1,0 +1,1157 @@
+{
+  "phase": "AIya Performance Plan 1 - Phase 3 Real Auth and Store Synthetic Environment",
+  "schemaVersion": "aiya-performance-plan1-phase3-v1",
+  "generatedAt": "2026-09-10T14:17:57.595Z",
+  "startedAt": "2026-09-10T14:17:41.839Z",
+  "status": "COMPLETE",
+  "outcome": "SYNTHETIC_AUTH_STORE_READY",
+  "productionDecision": "NO-GO",
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+    "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+    "diffCheck": "PASS"
+  },
+  "liveRelease": [
+    {
+      "endpoint": "https://aiyaworkspace.com/api/health/release",
+      "httpStatus": 200,
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560"
+    },
+    {
+      "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+      "httpStatus": 200,
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560"
+    }
+  ],
+  "localTarget": {
+    "kind": "local_supabase",
+    "projectId": "manu-ai-local",
+    "apiUrl": "http://127.0.0.1:54321",
+    "urlIsLocal": true,
+    "credentialsRecorded": false,
+    "databaseReset": false,
+    "remoteMigration": false
+  },
+  "migrationFingerprint": {
+    "fileCount": 125,
+    "sha256": "f88ba8813fcc0a1ca727a6f2e60d66d50ea357fc79e91e65417633c40349748c",
+    "names": [
+      "20260522000000_initial_manu_ai_schema.sql",
+      "20260523000000_app_state_schema_fixes.sql",
+      "20260524000000_restore_auxiliary_rls_policies.sql",
+      "20260525000000_risk_assessment_message_uniqueness.sql",
+      "20260525010000_add_opted_out_permission_state.sql",
+      "20260525020000_ai_provider_decision_metadata.sql",
+      "20260525030000_notifications.sql",
+      "20260525040000_client_assignments.sql",
+      "20260525050000_data_requests.sql",
+      "20260530000000_phase_23_context_send_safety.sql",
+      "20260530010000_phase_24_25_voice_forms.sql",
+      "20260530020000_phase_26_internal_copilot.sql",
+      "20260530030000_phase_27_client_context_updates.sql",
+      "20260530040000_ai_security_remediation.sql",
+      "20260531010000_phase_43_multilingual_language_support.sql",
+      "20260601000000_phase_44_red_risk_reactivation_lock.sql",
+      "20260601010000_phase_45_client_removal_lifecycle.sql",
+      "20260601020000_phase_46_inbound_quarantine.sql",
+      "20260602030000_phase_50_production_hardening_foundation.sql",
+      "20260603000000_phase_57_yellow_risk_hold.sql",
+      "20260604000000_phase_61_scope_corpus.sql",
+      "20260608000000_phase_76_dietitian_chat_form_update_proposals.sql",
+      "20260608120000_phase_76n_food_rule_lifecycle_rpc.sql",
+      "20260610120000_phase_77e_client_food_rule_profile.sql",
+      "20260610130000_phase_77f_client_menu_plan.sql",
+      "20260622130000_phase_77ae_channel_delivery_ledger.sql",
+      "20260701120000_phase_83b_commercial_entitlement_model.sql",
+      "20260701130000_phase_83c_commercial_checkout_session.sql",
+      "20260701140000_phase_83f_commercial_admin_audit.sql",
+      "20260702120000_phase_84c_commercial_leads.sql",
+      "20260702140000_phase_84e_commercial_onboarding_events.sql",
+      "20260703120000_phase_84g_commercial_admin_audit_extension.sql",
+      "20260710120000_phase_85_if_b_trust_root_provenance.sql",
+      "20260710140000_phase_85_if_d_external_human_control_reason.sql",
+      "20260710150000_phase_85_if_e_conversation_message_search.sql",
+      "20260710160000_phase_85_if_f_conversation_revision.sql",
+      "20260710170000_phase_85_if_g_context_intake.sql",
+      "20260710180000_phase_85_if_r1_persistence_tenant_integrity.sql",
+      "20260710190000_phase_85_if_r2_search_return_type.sql",
+      "20260710191000_phase_85_if_r2_structured_update_notifications.sql",
+      "20260710200000_phase_85_if_remediation_atomic_activation.sql",
+      "20260710210000_phase_85_if_remediation_client_safe_context_intake.sql",
+      "20260710220000_phase_85_if_remediation_operational_access_boundaries.sql",
+      "20260710230000_phase_85_if_remediation_lifecycle_reclosure.sql",
+      "20260711090000_phase_85_stage_4b_alerts_notifications.sql",
+      "20260711200000_phase_85_if_postclosure_r1_message_tenant_integrity.sql",
+      "20260711201000_phase_85_if_postclosure_r2_structured_resolution.sql",
+      "20260711202000_phase_85_if_postclosure_r3_lock_order.sql",
+      "20260712120000_phase_85_stage_4b_postclosure_remediation.sql",
+      "20260712140000_phase_85_stage_4b2_receipt_persistence_rls.sql",
+      "20260712150000_phase_85_stage_4b2_read_api_projection_rpcs.sql",
+      "20260712160000_phase_85_stage_4b2_mutation_idempotency.sql",
+      "20260712170000_phase_85_stage_4b2_r2_bounded_reads_rls.sql",
+      "20260712180000_phase_85_stage_4b2_r3_atomic_mutations.sql",
+      "20260713024000_phase_85_stage_4b2_rls_local_reclosure.sql",
+      "20260713030000_phase_85_stage_4b2_security_advisory_rls_hardening.sql",
+      "20260713120000_phase_85_stage_4b3_media_foundation.sql",
+      "20260713130000_phase_85_stage_4b3_atomic_bundle_decisions.sql",
+      "20260713140000_phase_85_stage_4b3_bounded_media_reads.sql",
+      "20260713150000_phase_85_stage_4b3_media_lifecycle.sql",
+      "20260714100000_phase_85_stage_4b3_remediation_contract_rls.sql",
+      "20260714110000_phase_85_stage_4b3_durable_media_queue.sql",
+      "20260714120000_phase_85_stage_4b3_canonical_ingress_v2.sql",
+      "20260714130000_phase_85_stage_4b3_bundle_correlation_v2.sql",
+      "20260714150000_phase_85_stage_4b3_atomic_decision_correction.sql",
+      "20260714160000_phase_85_stage_4b3_lifecycle_saga.sql",
+      "20260714170000_phase_85_stage_4b4_audio_foundation.sql",
+      "20260714180000_phase_85_stage_4b4_audio_queue.sql",
+      "20260714190000_phase_85_stage_4b4_canonical_ingress_v3.sql",
+      "20260714195000_phase_85_stage_4b4_audio_lifecycle_signature_transition.sql",
+      "20260714200000_phase_85_stage_4b4_audio_lifecycle_bounded_reads.sql",
+      "20260714210000_phase_85_stage_4b4_atomic_transcription_correction.sql",
+      "20260714220000_phase_85_stage_4b4_bounded_audio_reads.sql",
+      "20260715100000_phase_85_stage_4b4_remediation_contracts.sql",
+      "20260715110000_phase_85_stage_4b4_durable_pipeline.sql",
+      "20260715120000_phase_85_stage_4b4_fail_closed_quality_gate.sql",
+      "20260715130000_phase_85_stage_4b4_transcript_bridge_pipeline.sql",
+      "20260715140000_phase_85_stage_4b4_correction_lineage.sql",
+      "20260715150000_phase_85_stage_4b4_bounded_reads_v2.sql",
+      "20260715160000_phase_85_stage_4b4_lifecycle_workers.sql",
+      "20260722100000_phase_85_stage_4c_domain.sql",
+      "20260722110000_phase_85_stage_4c_rls.sql",
+      "20260722120000_phase_85_stage_4c_bounded_api_rpcs.sql",
+      "20260722130000_phase_85_stage_4c_run_queue_streaming.sql",
+      "20260722140000_phase_85_stage_4c_context_gateway.sql",
+      "20260722150000_phase_85_stage_4c_sources_answerability.sql",
+      "20260722160000_phase_85_stage_4c_multimodal.sql",
+      "20260722170000_phase_85_stage_4c_risk_draft_handoff.sql",
+      "20260722180000_phase_85_stage_4c_lifecycle.sql",
+      "20260725085000_phase_85_stage_4c_pgcrypto_search_path_compatibility.sql",
+      "20260725090000_phase_85_stage_4c_remediation_core_run_rpcs.sql",
+      "20260725100000_phase_85_stage_4c_remediation_context_safety.sql",
+      "20260725110000_phase_85_stage_4c_remediation_multimodal_runtime.sql",
+      "20260725120000_phase_85_stage_4c_remediation_risk_workflow.sql",
+      "20260725130000_phase_85_stage_4c_remediation_lifecycle_export.sql",
+      "20260725140000_phase_85_stage_4c_remediation_event_stream.sql",
+      "20260725150000_phase_85_stage_4c_remediation_scale_indexes.sql",
+      "20260725155000_phase_85_stage_4c_remediation_rls_helper_grants.sql",
+      "20260725160000_phase_85_stage_4c_remediation_db_lint_reclosure.sql",
+      "20260725161000_phase_85_stage_4c_remediation_scale_fixture_reclosure.sql",
+      "20260725162000_phase_85_stage_4c_remediation_scale_explain_reclosure.sql",
+      "20260725163000_phase_85_stage_4c_operational_tables_rls_reclosure.sql",
+      "20260728120000_phase_85_stage_4d_own_profile.sql",
+      "20260728130000_phase_85_stage_4d_account_security_audit.sql",
+      "20260728170000_phase_85_stage_4d_remediation_account_foundation.sql",
+      "20260728180000_phase_85_stage_4d_remediation_security_billing_pwa.sql",
+      "20260728190000_phase_85_stage_4d_pre_faz3_rls_reclosure.sql",
+      "20260802090000_phase_85_stage_5_shell_foundation.sql",
+      "20260802120000_phase_85_stage_5_shell_api_foundation.sql",
+      "20260803090000_phase_85_stage_5_foundation_remediation.sql",
+      "20260819120000_phase_85_stage_6_r1_mutation_idempotency.sql",
+      "20260825120000_hosted_sandbox_faz3_security_rls_backup.sql",
+      "20260826120000_hosted_sandbox_demo_cleanup_rpc.sql",
+      "20260826130000_rls_default_privileges_hardening.sql",
+      "20260830180000_production_readiness_stage_1_phase_2_manual_entitlements.sql",
+      "20260830190000_production_readiness_stage_1_phase_3_whatsapp_real_contracts.sql",
+      "20260830200000_production_readiness_stage_1_phase_4_ai_media_security.sql",
+      "20260831090000_zai_glm_provider_rebaseline.sql",
+      "20260903090000_public_surface_session_idle_timeout.sql",
+      "20260903100000_commercial_entitlement_reactivation.sql",
+      "20260904120000_aiya_workspace_tenant_fallback.sql",
+      "20260904180000_public_surface_faz8_session_service_role.sql",
+      "20260904181000_public_surface_faz8_admin_bulk_invite.sql",
+      "20260904182000_public_surface_faz8_onboarding_claim_pending.sql",
+      "20260907181000_hosted_shell_schema_reconciliation.sql"
+    ]
+  },
+  "migrationStatus": {
+    "status": "PASS",
+    "exitCode": 0,
+    "timedOut": false,
+    "migrationLineCount": 125
+  },
+  "prerequisiteEvidence": {
+    "phase2Path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+    "phase2Status": "COMPLETE",
+    "phase2Outcome": "HARNESS_READY_WITH_NEGATIVE_CONTROLS",
+    "phase2HarnessReady": true
+  },
+  "fixture": {
+    "fixtureVersion": "aiya-performance-plan1-phase3-fixture-v1",
+    "classes": [
+      "small_synthetic",
+      "normal_synthetic",
+      "scale_synthetic"
+    ],
+    "scaleDefinition": "normal tenant 200-message conversation; no hosted or 5000-client load test",
+    "tenants": [
+      {
+        "class": "small",
+        "clientCount": 3,
+        "conversationCount": 1,
+        "messageCount": 20,
+        "conversationMessageCounts": [
+          20
+        ],
+        "filledFormCount": 1,
+        "filledNutritionProfileCount": 1,
+        "filledMenuPlanCount": 1,
+        "notificationCount": 1,
+        "aiChatCount": 1,
+        "assignmentScenario": {
+          "assistant": "care_team",
+          "viewer": "viewer",
+          "auditor": "denied_raw_client_data"
+        }
+      },
+      {
+        "class": "normal",
+        "clientCount": 50,
+        "conversationCount": 2,
+        "messageCount": 220,
+        "conversationMessageCounts": [
+          20,
+          200
+        ],
+        "filledFormCount": 1,
+        "filledNutritionProfileCount": 1,
+        "filledMenuPlanCount": 1,
+        "notificationCount": 1,
+        "aiChatCount": 2,
+        "assignmentScenario": {
+          "assistant": "care_team",
+          "viewer": "viewer",
+          "auditor": "denied_raw_client_data"
+        }
+      }
+    ],
+    "hash": "6bedeba5628b8ea3677dae464143f01d59a2dc0f51e1353dd52767827c642819",
+    "rawRowsRecorded": false,
+    "rawMessageBodiesRecorded": false,
+    "clinicalDataRecorded": false
+  },
+  "accountContract": {
+    "tenantCount": 2,
+    "accountCount": 8,
+    "roles": [
+      "owner",
+      "assistant",
+      "viewer",
+      "auditor"
+    ],
+    "passwordSessionFlow": "signInWithPassword via local anon key",
+    "demoCookieUsed": false,
+    "fallbackStoreUsed": false,
+    "tokensRecorded": false,
+    "passwordsRecorded": false
+  },
+  "authenticationAndRls": {
+    "status": "PASS",
+    "assertions": {
+      "ownerSmallClients": true,
+      "ownerSmallCrossTenantHidden": true,
+      "ownerNormalClients": true,
+      "ownerNormalMessages": true,
+      "ownerNormalAiChat": true,
+      "assistantAssignedClientVisible": true,
+      "assistantUnassignedClientHidden": true,
+      "assistantAiChatHidden": true,
+      "viewerAssignedClientVisible": true,
+      "viewerUnassignedClientHidden": true,
+      "auditorClientsHidden": true,
+      "auditorMessagesHidden": true,
+      "auditorAiChatHidden": true,
+      "anonymousClientsHidden": true,
+      "ownerStoreReadsPass": true,
+      "passwordSessionCount": true
+    },
+    "sessionChecks": [
+      {
+        "tenantClass": "small",
+        "role": "owner",
+        "passwordSession": true,
+        "sessionActivity": true
+      },
+      {
+        "tenantClass": "small",
+        "role": "assistant",
+        "passwordSession": true,
+        "sessionActivity": true
+      },
+      {
+        "tenantClass": "small",
+        "role": "viewer",
+        "passwordSession": true,
+        "sessionActivity": true
+      },
+      {
+        "tenantClass": "small",
+        "role": "auditor",
+        "passwordSession": true,
+        "sessionActivity": true
+      },
+      {
+        "tenantClass": "normal",
+        "role": "owner",
+        "passwordSession": true,
+        "sessionActivity": true
+      },
+      {
+        "tenantClass": "normal",
+        "role": "assistant",
+        "passwordSession": true,
+        "sessionActivity": true
+      },
+      {
+        "tenantClass": "normal",
+        "role": "viewer",
+        "passwordSession": true,
+        "sessionActivity": true
+      },
+      {
+        "tenantClass": "normal",
+        "role": "auditor",
+        "passwordSession": true,
+        "sessionActivity": true
+      }
+    ],
+    "storeReads": [
+      {
+        "table": "tenants",
+        "status": "PASS"
+      },
+      {
+        "table": "dietitians",
+        "status": "PASS"
+      },
+      {
+        "table": "clients",
+        "status": "PASS"
+      },
+      {
+        "table": "client_assignments",
+        "status": "PASS"
+      },
+      {
+        "table": "client_channels",
+        "status": "PASS"
+      },
+      {
+        "table": "conversations",
+        "status": "PASS"
+      },
+      {
+        "table": "conversation_memories",
+        "status": "PASS"
+      },
+      {
+        "table": "messages",
+        "status": "PASS"
+      },
+      {
+        "table": "notifications",
+        "status": "PASS"
+      },
+      {
+        "table": "client_form_schemas",
+        "status": "PASS"
+      },
+      {
+        "table": "client_form_responses",
+        "status": "PASS"
+      },
+      {
+        "table": "dietitian_form_schemas",
+        "status": "PASS"
+      },
+      {
+        "table": "dietitian_form_responses",
+        "status": "PASS"
+      },
+      {
+        "table": "client_food_rule_profiles",
+        "status": "PASS"
+      },
+      {
+        "table": "client_menu_plans",
+        "status": "PASS"
+      },
+      {
+        "table": "tenant_entitlements",
+        "status": "PASS"
+      }
+    ],
+    "counts": {
+      "ownerSmallClients": 3,
+      "ownerNormalClients": 50,
+      "ownerNormalMessages": 220,
+      "ownerNormalChat": 2,
+      "assistantAssigned": 1,
+      "viewerAssigned": 1,
+      "auditorClients": 0,
+      "anonymousClients": 0
+    }
+  },
+  "evidenceIntegrity": {
+    "status": true,
+    "historicalAtStart": {
+      "files": [
+        {
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+          "exists": true,
+          "sha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1",
+          "expectedSha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+          "exists": true,
+          "sha256": "94b3e8b4f38ae0488bb2ab011fcda7165ac20a03f61406042e7eb49911148c5a",
+          "expectedSha256": null,
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+          "exists": true,
+          "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6",
+          "expectedSha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+          "exists": true,
+          "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc",
+          "expectedSha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+          "exists": true,
+          "sha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7",
+          "expectedSha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+          "exists": true,
+          "sha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205",
+          "expectedSha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json",
+          "exists": true,
+          "sha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a",
+          "expectedSha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+          "exists": true,
+          "sha256": "d21c6ebe4b4c353be9b0b1509ecc277258adc4fcb5d2933f699eebb9a69006eb",
+          "expectedSha256": null,
+          "unchanged": true
+        }
+      ],
+      "allPresent": true,
+      "allUnchanged": true
+    },
+    "historicalAtEnd": {
+      "files": [
+        {
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+          "exists": true,
+          "sha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1",
+          "expectedSha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+          "exists": true,
+          "sha256": "94b3e8b4f38ae0488bb2ab011fcda7165ac20a03f61406042e7eb49911148c5a",
+          "expectedSha256": null,
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+          "exists": true,
+          "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6",
+          "expectedSha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+          "exists": true,
+          "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc",
+          "expectedSha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+          "exists": true,
+          "sha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7",
+          "expectedSha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+          "exists": true,
+          "sha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205",
+          "expectedSha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json",
+          "exists": true,
+          "sha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a",
+          "expectedSha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a",
+          "unchanged": true
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+          "exists": true,
+          "sha256": "d21c6ebe4b4c353be9b0b1509ecc277258adc4fcb5d2933f699eebb9a69006eb",
+          "expectedSha256": null,
+          "unchanged": true
+        }
+      ],
+      "allPresent": true,
+      "allUnchanged": true
+    },
+    "redaction": {
+      "status": true,
+      "recordedFields": [
+        "authorization",
+        "cookie",
+        "password",
+        "messageBody",
+        "email"
+      ]
+    },
+    "diffCheck": "PASS"
+  },
+  "stageLedger": [
+    {
+      "stageId": "3.1",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T14:17:51.044Z",
+      "finishedAt": "2026-09-10T14:17:51.044Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "diffCheck": "PASS"
+      },
+      "prerequisiteEvidence": [
+        "Plan 1 Phase 2 evidence",
+        "Docker/local Supabase target",
+        "current migration tree"
+      ],
+      "performedActions": [
+        "Read the completed Phase 2 evidence",
+        "Read-only checked local Supabase status and rejected non-local URLs",
+        "Read-only checked migration status and required store tables"
+      ],
+      "verificationResults": {
+        "phase2Ready": true,
+        "localTarget": {
+          "status": "PASS",
+          "apiUrlIsLocal": true,
+          "projectId": "manu-ai-local",
+          "credentialsAvailable": true
+        },
+        "migrationStatus": {
+          "status": "PASS",
+          "exitCode": 0,
+          "timedOut": false,
+          "migrationLineCount": 125
+        },
+        "requiredSchema": {
+          "status": "PASS",
+          "checks": [
+            {
+              "table": "personas",
+              "status": "PASS"
+            },
+            {
+              "table": "tenants",
+              "status": "PASS"
+            },
+            {
+              "table": "tenant_memberships",
+              "status": "PASS"
+            },
+            {
+              "table": "dietitians",
+              "status": "PASS"
+            },
+            {
+              "table": "clients",
+              "status": "PASS"
+            },
+            {
+              "table": "client_channels",
+              "status": "PASS"
+            },
+            {
+              "table": "client_assignments",
+              "status": "PASS"
+            },
+            {
+              "table": "conversations",
+              "status": "PASS"
+            },
+            {
+              "table": "conversation_memories",
+              "status": "PASS"
+            },
+            {
+              "table": "messages",
+              "status": "PASS"
+            },
+            {
+              "table": "notifications",
+              "status": "PASS"
+            },
+            {
+              "table": "client_form_schemas",
+              "status": "PASS"
+            },
+            {
+              "table": "client_form_responses",
+              "status": "PASS"
+            },
+            {
+              "table": "dietitian_form_schemas",
+              "status": "PASS"
+            },
+            {
+              "table": "dietitian_form_responses",
+              "status": "PASS"
+            },
+            {
+              "table": "client_food_rule_profiles",
+              "status": "PASS"
+            },
+            {
+              "table": "client_menu_plans",
+              "status": "PASS"
+            },
+            {
+              "table": "tenant_entitlements",
+              "status": "PASS"
+            },
+            {
+              "table": "ai_chat_conversations",
+              "status": "PASS"
+            }
+          ]
+        }
+      },
+      "outputEvidence": [
+        "sourceIdentity",
+        "liveRelease",
+        "localTarget",
+        "migrationFingerprint"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "3.2",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T14:17:54.275Z",
+      "finishedAt": "2026-09-10T14:17:54.275Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "diffCheck": "PASS"
+      },
+      "prerequisiteEvidence": [
+        "3.1"
+      ],
+      "performedActions": [
+        "Deleted only the fixed Phase 3 tenant IDs and synthetic auth-user prefix",
+        "Created two local tenants with small=3 and normal=50 clients",
+        "Created owner, assistant, viewer-assignment, and auditor accounts per tenant",
+        "Created 20-message and 200-message conversations, form, nutrition, menu, notification, and AI Chat read fixtures",
+        "Kept provider/channel egress and real health data absent"
+      ],
+      "verificationResults": {
+        "fixture": {
+          "fixtureVersion": "aiya-performance-plan1-phase3-fixture-v1",
+          "classes": [
+            "small_synthetic",
+            "normal_synthetic",
+            "scale_synthetic"
+          ],
+          "scaleDefinition": "normal tenant 200-message conversation; no hosted or 5000-client load test",
+          "tenants": [
+            {
+              "class": "small",
+              "clientCount": 3,
+              "conversationCount": 1,
+              "messageCount": 20,
+              "conversationMessageCounts": [
+                20
+              ],
+              "filledFormCount": 1,
+              "filledNutritionProfileCount": 1,
+              "filledMenuPlanCount": 1,
+              "notificationCount": 1,
+              "aiChatCount": 1,
+              "assignmentScenario": {
+                "assistant": "care_team",
+                "viewer": "viewer",
+                "auditor": "denied_raw_client_data"
+              }
+            },
+            {
+              "class": "normal",
+              "clientCount": 50,
+              "conversationCount": 2,
+              "messageCount": 220,
+              "conversationMessageCounts": [
+                20,
+                200
+              ],
+              "filledFormCount": 1,
+              "filledNutritionProfileCount": 1,
+              "filledMenuPlanCount": 1,
+              "notificationCount": 1,
+              "aiChatCount": 2,
+              "assignmentScenario": {
+                "assistant": "care_team",
+                "viewer": "viewer",
+                "auditor": "denied_raw_client_data"
+              }
+            }
+          ],
+          "hash": "6bedeba5628b8ea3677dae464143f01d59a2dc0f51e1353dd52767827c642819",
+          "rawRowsRecorded": false,
+          "rawMessageBodiesRecorded": false,
+          "clinicalDataRecorded": false
+        },
+        "accounts": {
+          "tenantCount": 2,
+          "accountCount": 8,
+          "roles": [
+            "owner",
+            "assistant",
+            "viewer",
+            "auditor"
+          ],
+          "passwordSessionFlow": "signInWithPassword via local anon key",
+          "demoCookieUsed": false,
+          "fallbackStoreUsed": false,
+          "tokensRecorded": false,
+          "passwordsRecorded": false
+        }
+      },
+      "outputEvidence": [
+        "fixtureSummary",
+        "fixtureHash",
+        "roleMatrixContract"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "3.3",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T14:17:57.587Z",
+      "finishedAt": "2026-09-10T14:17:57.587Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "diffCheck": "PASS"
+      },
+      "prerequisiteEvidence": [
+        "3.2"
+      ],
+      "performedActions": [
+        "Signed in each synthetic account with Supabase password authentication through the local anon key",
+        "Verified getUser, access-token session claim, and local session activity contract",
+        "Used authenticated clients for tenant/store reads; service-role was not used for RLS assertions"
+      ],
+      "verificationResults": {
+        "status": "PASS",
+        "sessionChecks": [
+          {
+            "tenantClass": "small",
+            "role": "owner",
+            "passwordSession": true,
+            "sessionActivity": true
+          },
+          {
+            "tenantClass": "small",
+            "role": "assistant",
+            "passwordSession": true,
+            "sessionActivity": true
+          },
+          {
+            "tenantClass": "small",
+            "role": "viewer",
+            "passwordSession": true,
+            "sessionActivity": true
+          },
+          {
+            "tenantClass": "small",
+            "role": "auditor",
+            "passwordSession": true,
+            "sessionActivity": true
+          },
+          {
+            "tenantClass": "normal",
+            "role": "owner",
+            "passwordSession": true,
+            "sessionActivity": true
+          },
+          {
+            "tenantClass": "normal",
+            "role": "assistant",
+            "passwordSession": true,
+            "sessionActivity": true
+          },
+          {
+            "tenantClass": "normal",
+            "role": "viewer",
+            "passwordSession": true,
+            "sessionActivity": true
+          },
+          {
+            "tenantClass": "normal",
+            "role": "auditor",
+            "passwordSession": true,
+            "sessionActivity": true
+          }
+        ]
+      },
+      "outputEvidence": [
+        "passwordSessions",
+        "sessionActivity",
+        "noDemoCookie",
+        "noFallbackStore"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "3.4",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T14:17:57.587Z",
+      "finishedAt": "2026-09-10T14:17:57.587Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "diffCheck": "PASS"
+      },
+      "prerequisiteEvidence": [
+        "3.3"
+      ],
+      "performedActions": [
+        "Verified owner cross-tenant isolation and authenticated app-state store reads",
+        "Verified assistant care-team assignment access and AI Chat denial",
+        "Verified viewer assignment read-only boundary and blocked update",
+        "Verified auditor raw client/message/AI Chat denial and anonymous denial"
+      ],
+      "verificationResults": {
+        "status": "PASS",
+        "assertions": {
+          "ownerSmallClients": true,
+          "ownerSmallCrossTenantHidden": true,
+          "ownerNormalClients": true,
+          "ownerNormalMessages": true,
+          "ownerNormalAiChat": true,
+          "assistantAssignedClientVisible": true,
+          "assistantUnassignedClientHidden": true,
+          "assistantAiChatHidden": true,
+          "viewerAssignedClientVisible": true,
+          "viewerUnassignedClientHidden": true,
+          "auditorClientsHidden": true,
+          "auditorMessagesHidden": true,
+          "auditorAiChatHidden": true,
+          "anonymousClientsHidden": true,
+          "ownerStoreReadsPass": true,
+          "passwordSessionCount": true
+        },
+        "counts": {
+          "ownerSmallClients": 3,
+          "ownerNormalClients": 50,
+          "ownerNormalMessages": 220,
+          "ownerNormalChat": 2,
+          "assistantAssigned": 1,
+          "viewerAssigned": 1,
+          "auditorClients": 0,
+          "anonymousClients": 0
+        }
+      },
+      "outputEvidence": [
+        "rlsMatrix",
+        "storeReadMatrix",
+        "aiChatReadBoundary"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "3.5",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T14:17:57.595Z",
+      "finishedAt": "2026-09-10T14:17:57.595Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "diffCheck": "PASS"
+      },
+      "prerequisiteEvidence": [
+        "3.4"
+      ],
+      "performedActions": [
+        "Hashed the deterministic fixture contract and counts without recording raw rows",
+        "Compared historical evidence hashes before and after the local fixture run",
+        "Ran secret/token/password/cookie/message redaction checks"
+      ],
+      "verificationResults": {
+        "status": true,
+        "historicalAtStart": {
+          "files": [
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+              "exists": true,
+              "sha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1",
+              "expectedSha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+              "exists": true,
+              "sha256": "94b3e8b4f38ae0488bb2ab011fcda7165ac20a03f61406042e7eb49911148c5a",
+              "expectedSha256": null,
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+              "exists": true,
+              "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6",
+              "expectedSha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+              "exists": true,
+              "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc",
+              "expectedSha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+              "exists": true,
+              "sha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7",
+              "expectedSha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+              "exists": true,
+              "sha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205",
+              "expectedSha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json",
+              "exists": true,
+              "sha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a",
+              "expectedSha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+              "exists": true,
+              "sha256": "d21c6ebe4b4c353be9b0b1509ecc277258adc4fcb5d2933f699eebb9a69006eb",
+              "expectedSha256": null,
+              "unchanged": true
+            }
+          ],
+          "allPresent": true,
+          "allUnchanged": true
+        },
+        "historicalAtEnd": {
+          "files": [
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+              "exists": true,
+              "sha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1",
+              "expectedSha256": "1e9bb733e84e2bf33072754dcc04586fda7d5e8d8bed4f867ab16075a5f982b1",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+              "exists": true,
+              "sha256": "94b3e8b4f38ae0488bb2ab011fcda7165ac20a03f61406042e7eb49911148c5a",
+              "expectedSha256": null,
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+              "exists": true,
+              "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6",
+              "expectedSha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+              "exists": true,
+              "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc",
+              "expectedSha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+              "exists": true,
+              "sha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7",
+              "expectedSha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+              "exists": true,
+              "sha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205",
+              "expectedSha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json",
+              "exists": true,
+              "sha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a",
+              "expectedSha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a",
+              "unchanged": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+              "exists": true,
+              "sha256": "d21c6ebe4b4c353be9b0b1509ecc277258adc4fcb5d2933f699eebb9a69006eb",
+              "expectedSha256": null,
+              "unchanged": true
+            }
+          ],
+          "allPresent": true,
+          "allUnchanged": true
+        },
+        "redaction": {
+          "status": true,
+          "recordedFields": [
+            "authorization",
+            "cookie",
+            "password",
+            "messageBody",
+            "email"
+          ]
+        },
+        "diffCheck": "PASS"
+      },
+      "outputEvidence": [
+        "fixtureHash",
+        "historicalIntegrity",
+        "redaction"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "3.6",
+      "status": "COMPLETE",
+      "startedAt": "2026-09-10T14:17:57.595Z",
+      "finishedAt": "2026-09-10T14:17:57.595Z",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "diffCheck": "PASS"
+      },
+      "prerequisiteEvidence": [
+        "3.1",
+        "3.2",
+        "3.3",
+        "3.4",
+        "3.5"
+      ],
+      "performedActions": [
+        "Applied the ordered phase closure gate",
+        "Recorded that fixture readiness is not a performance baseline and does not authorize runtime remediation",
+        "Recorded hosted/device/provider/deploy exclusions"
+      ],
+      "verificationResults": {
+        "finalControls": {
+          "orderedStagesComplete": true,
+          "localOnly": true,
+          "schemaReady": true,
+          "fixtureReady": true,
+          "authenticatedSessionReady": true,
+          "normalRlsPathReady": true,
+          "validPerformanceBaselineCaptured": false,
+          "rootCauseConfirmed": false,
+          "runtimeRemediationApplied": false,
+          "hostedSyntheticAccountCreated": false,
+          "physicalAndroidOrPwaCapture": false,
+          "productionDecision": "NO-GO"
+        },
+        "blockerCount": 0
+      },
+      "outputEvidence": [
+        "phase3Closure",
+        "nextEligibleAction"
+      ],
+      "blockingReason": null
+    }
+  ],
+  "blockers": [],
+  "constraints": {
+    "serviceRoleUse": "fixture_seed_cleanup_and_local_session_activity_only",
+    "browserOrRouteAuthBypass": "NOT_USED",
+    "demoCookie": "NOT_USED",
+    "fallbackStore": "NOT_USED",
+    "providerEgress": "NOT_EXECUTED",
+    "whatsappOrTelegramTraffic": "NOT_EXECUTED",
+    "hostedSyntheticAccount": "NOT_EXECUTED",
+    "hostedInviteOrOnboarding": "NOT_EXECUTED",
+    "physicalAndroidOrPwaCapture": "NOT_EXECUTED",
+    "performanceBaseline": "NOT_EXECUTED",
+    "rootCauseAttribution": "NOT_EXECUTED",
+    "runtimeUiApiChange": "NOT_EXECUTED",
+    "schemaMigration": "NOT_EXECUTED",
+    "dependencyChange": "NOT_EXECUTED",
+    "deploy": "NOT_EXECUTED",
+    "pushPrMerge": "NOT_EXECUTED",
+    "productionGateChange": "NOT_EXECUTED",
+    "rawPayloadTraceHarCookieTokenPromptClinicalCapture": "NOT_RECORDED"
+  },
+  "finalControls": {
+    "orderedStagesComplete": true,
+    "localOnly": true,
+    "schemaReady": true,
+    "fixtureReady": true,
+    "authenticatedSessionReady": true,
+    "normalRlsPathReady": true,
+    "validPerformanceBaselineCaptured": false,
+    "rootCauseConfirmed": false,
+    "runtimeRemediationApplied": false,
+    "hostedSyntheticAccountCreated": false,
+    "physicalAndroidOrPwaCapture": false,
+    "productionDecision": "NO-GO"
+  },
+  "nextEligibleAction": "Plan 1 Phase 4 - matched authenticated baseline measurements and freeze reproduction; no runtime optimization is authorized.",
+  "closureRule": "Phase 3 closes only when stages 3.1-3.5 are complete, stage 3.6 confirms the ordered ledger, local password sessions and normal RLS/store reads pass, and no blocker remains. Fixture readiness does not prove a performance baseline, root cause, or remediation."
+}
