@@ -60,6 +60,8 @@
     "test:stage-7-lab-perf": "node scripts/measure-stage-7-lab-perf.mjs",
     "audit:performance:phase1": "node scripts/measure-aiya-performance.mjs",
     "test:performance-audit": "node --test scripts/performance-audit.test.mjs",
+    "audit:performance:phase1.2": "node scripts/measure-aiya-performance-phase-1-2.mjs",
+    "test:performance-phase1.2": "node --test scripts/performance-phase-1-2.test.mjs",
     "analyze:frontend-import-graph": "node scripts/analyze-frontend-import-graph.mjs",
     "test:rls": "node scripts/verify-stage-5-rls.mjs",
     "test:rls:raw": "vitest run src/lib/supabase-rls.integration.test.ts",

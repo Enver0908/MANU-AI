@@ -27,11 +27,34 @@ Asamalar:
 
 Son kontrol ve testler: `npm run test:performance-audit`, `npm run audit:performance:phase1`, `git diff --check`, `git status --short --branch`. Faz 1 ancak 8 asama evidence icinde temsil edildiginde kapanabilir; testlerin gecmesi tek basina yeterli degildir.
 
+## Faz 1.2 - Olcum Gecerliligi ve Nedensel Kok Neden Teshisi
+
+Amac: Faz 2 runtime degisikligine gecmeden once Faz 1 olcumlerinin kullanicinin bildirdigi gercek post-login sikayetini yakalayip yakalamadigini dogrulamak, eski rota parametreleri ve zayif selector kaynakli yanlis PASS/FAIL riskini gidermek, fiziksel Android hazirligini ayri kanitlamak ve Faz 1 bulgularini Faz 1.2 kanitlariyla birlestirmek.
+
+Kapsam: `app/package.json`, `app/scripts/measure-aiya-performance-phase-1-2.mjs`, `app/scripts/performance-phase-1-2.test.mjs`, `docs/AIYA_PERFORMANCE_PHASE_1_2_PLAN.md`, `docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json`, `docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json`, `docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md`, `HANDOFF_FOR_NEXT_CODEX.md`, `docs/RISK_REGISTER.md`.
+
+Kapsam disi: Runtime UI/API davranis degisikligi, Supabase schema veya migration degisikligi, dependency ekleme, deploy, production gate degisikligi, canli login/seed/reset, provider/channel egress, live billing, production worker, secret/env degisikligi, raw payload/HAR/cookie/token/prompt/klinik icerik kaydi.
+
+Zorunlu siralama:
+
+1. Branch, HEAD, upstream, `git diff --check`, package scriptleri ve iki live release-health endpoint'ini evidence'a yaz.
+2. Faz 1'deki `workspace=` tabanli eski senaryolari canonical post-login rotalarla degistir: `/dashboard`, `section=clients`, `clientId=client-mert`, `clientTask=forms|nutrition|menu`, `/dashboard/ai-chat`, `section=messages|alerts|notifications`.
+3. Harness sozlesmesini testle: gercek `click()`, feature-specific success selector, 401/403/500/timeout/missing-action FAIL, body-finish timing, missing LCP'nin `null` kalmasi, hassas veri redaksiyonu.
+4. Local production build uret; `output: standalone` oldugu icin `.next/standalone/server.js` sunucusunu standalone calisma dizininden baslat ve `.next/static` ile `public` asset'lerini standalone runtime altinda hazirla.
+5. Tek persistent desktop Chrome context ile authenticated warm-session senaryolarini olc.
+6. Tek persistent Android Chrome emulation context ile ayni senaryolari ayni local server uzerinde olc.
+7. ADB cihaz listesi, model, Android surumu, Chrome surumu ve `devtools_remote` durumunu kaydet; cihaz veya CDP hedefi yoksa bunu PASS degil BLOCKED olarak yaz.
+8. Browser/API/body-finish/long-task/click-feedback korelasyonunu her senaryo icin yaz; API fail olan authenticated senaryo PASS sayilamaz.
+9. Faz 1 bulgularini Faz 1.2 kanitlariyla yeniden siniflandir ve sadece kanitli finding'leri `docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json` icine tasi.
+10. Faz 2 kapsamini yalniz combined manifestteki finding'lere bagla; runtime degisikligi icin dosya ve test sinirlarini `docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md` icinde kilitle.
+
+Son kontrol ve testler: `npm run test:performance-phase1.2`, `npm run audit:performance:phase1.2`, `npm run test:performance-audit`, `git diff --check`, `git status --short --branch`. Faz 1.2 yalniz bu asamalar evidence icinde temsil edildiginde ilerleme icin kullanilabilir; fiziksel Android/PWA yakalama yoksa sonuc BLOCKED olarak kalir ve PASS sayilmaz.
+
 ## Faz 2 - Kanitla Sinirli Performans Duzeltmeleri
 
-Amac: Faz 1 finding manifestinde kilitlenen kok nedenlere gore en kucuk kod degisikliklerini uygulamak.
+Amac: Faz 1 ve Faz 1.2 combined finding manifestinde kilitlenen kok nedenlere gore en kucuk kod degisikliklerini uygulamak.
 
-Kapsam: Yalniz `docs/AIYA_PERFORMANCE_PHASE_1_FINDING_MANIFEST.json` icinde listelenen dosyalar ve onlarin hedefli testleri.
+Kapsam: Yalniz `docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json` ve `docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md` icinde listelenen dosyalar ve onlarin hedefli testleri.
 
 Kapsam disi: Manifestte olmayan performans fikirleri, yeni governance katmani, offline health-data cache, offline mutation queue, yetki/RLS gevsetme, service-role ile son kullanici yetkisi ikamesi, dependency ekleme.
 

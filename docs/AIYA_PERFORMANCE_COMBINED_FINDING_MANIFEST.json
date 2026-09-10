@@ -1,0 +1,124 @@
+{
+  "generatedAt": "2026-09-10T08:05:36.077Z",
+  "status": "LOCKED_WITH_PHASE_1_AND_1_2_FINDINGS",
+  "productionDecision": "NO-GO",
+  "physicalAndroidStatus": "READY_FOR_CDP_CAPTURE",
+  "phase2ScopeRule": "Phase 2 can start only from findings in this combined manifest. Runtime fixes must target a confirmed failed request, over-budget scenario, or a Phase 1 finding still supported after Phase 1.2.",
+  "findings": [
+    {
+      "id": "PERF-F2-001",
+      "severity": "high",
+      "title": "Dashboard mount still performs broad /api/app-state hydration before measured task readiness is proven safe.",
+      "evidenceRefs": [
+        "staticArchitecture.observations.app_state_initial_full_hydration"
+      ],
+      "affectedFiles": [
+        "app/src/lib/use-aiya-state.ts",
+        "app/src/app/api/app-state/route.ts",
+        "app/src/lib/supabase-store.ts",
+        "app/src/components/dashboard-app.tsx"
+      ],
+      "phase2RequiredChange": "Replace default dashboard bootstrap dependence on full ManuAppState only after consumer compatibility is mapped; use bounded/windowed DTOs without casting incomplete data to full state.",
+      "requiredTests": [
+        "workspace task navigation does not request broad /api/app-state",
+        "bounded active-client data stays tenant/account authorized",
+        "legacy mutation paths still return expected revisions and conflict codes"
+      ],
+      "phase12Classification": "SUPPORTED_UNDER_REVIEW",
+      "sourcePhases": [
+        "phase_1"
+      ]
+    },
+    {
+      "id": "PERF-F2-002",
+      "severity": "medium",
+      "title": "Timer-driven inbox, messaging, and AI chat refreshes can compete with initial navigation.",
+      "evidenceRefs": [
+        "staticArchitecture.observations.background_polling_surfaces"
+      ],
+      "affectedFiles": [
+        "app/src/lib/use-stage-4b-inbox.ts",
+        "app/src/lib/use-stage-4b2-messaging.ts",
+        "app/src/lib/use-ai-chat.ts"
+      ],
+      "phase2RequiredChange": "Gate background refresh by visible route, stable resource owner key, in-flight dedupe, and post-readiness scheduling while preserving abort/sequence invalidation.",
+      "requiredTests": [
+        "initial dashboard task readiness has no duplicate background fetch burst",
+        "hidden tab does not extend session",
+        "route change aborts stale resource refresh"
+      ],
+      "phase12Classification": "SUPPORTED_UNDER_REVIEW",
+      "sourcePhases": [
+        "phase_1"
+      ]
+    },
+    {
+      "id": "PERF-F2-003",
+      "severity": "medium",
+      "title": "Dashboard client entry statically imports a broad interaction surface.",
+      "evidenceRefs": [
+        "staticArchitecture.observations.dashboard_static_import_surface",
+        "localLab.bundle.largestStaticJs"
+      ],
+      "affectedFiles": [
+        "app/src/components/dashboard-app.tsx",
+        "app/src/components/dashboard/**",
+        "app/src/app/dashboard/**"
+      ],
+      "phase2RequiredChange": "Split only measured heavy panels using Next.js dynamic import after reading local Next docs; keep first visible dashboard and active workspace controls eager.",
+      "requiredTests": [
+        "dashboard first screen visual and accessibility pass",
+        "forms/nutrition/menu/ai-chat deep links render after chunk load",
+        "bundle gzip and long-task metrics improve against Phase 1 baseline"
+      ],
+      "phase12Classification": "SUPPORTED_UNDER_REVIEW",
+      "sourcePhases": [
+        "phase_1"
+      ]
+    },
+    {
+      "id": "PERF-F12-001",
+      "severity": "high",
+      "title": "AI Chat must not be considered performance-ready when authenticated data requests fail.",
+      "evidenceRefs": [
+        "phase12.localDiagnostic.ai_chat.failedRequests"
+      ],
+      "affectedFiles": [
+        "app/scripts/measure-aiya-performance.mjs",
+        "app/scripts/measure-aiya-performance-phase-1-2.mjs",
+        "app/src/app/dashboard/ai-chat/page.tsx",
+        "app/src/lib/phase-85-stage-4c-route.ts"
+      ],
+      "phase2RequiredChange": "Before optimizing AI Chat speed, separate authorization/session failures from render latency and require 2xx authenticated conversation-list reads in the measurement gate.",
+      "requiredTests": [
+        "AI Chat diagnostic marks 401/403/500 API responses as FAIL",
+        "AI Chat ready state requires ai-chat-workspace, not only main"
+      ],
+      "phase12Classification": "CONFIRMED_MEASUREMENT_GAP",
+      "sourcePhases": [
+        "phase_1_2"
+      ]
+    },
+    {
+      "id": "PERF-F12-002",
+      "severity": "high",
+      "title": "Warm authenticated journeys have failing or over-budget samples under the corrected harness.",
+      "evidenceRefs": [
+        "phase12.localDiagnostic.desktop_chrome_persistent_warm_session.ai_chat",
+        "phase12.localDiagnostic.android_chrome_emulation_warm_session.ai_chat"
+      ],
+      "affectedFiles": [
+        "locked_by_phase_1_2_measurement"
+      ],
+      "phase2RequiredChange": "Phase 2 may touch runtime code only for scenarios that failed or missed a budget under the corrected Phase 1.2 harness.",
+      "requiredTests": [
+        "repeat corrected warm-session diagnostic after every Phase 2 change",
+        "compare against Phase 1.2 p75 values and failed request counts"
+      ],
+      "phase12Classification": "CAUSE_CANDIDATE_MEASURED",
+      "sourcePhases": [
+        "phase_1_2"
+      ]
+    }
+  ]
+}
