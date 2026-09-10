@@ -1,0 +1,283 @@
+{
+  "phase": "AIya Performance Plan 1 - Phase 1 Source, Finding, and Closure Contract Lock",
+  "generatedAt": "2026-09-10T13:09:18.9102198Z",
+  "status": "COMPLETE",
+  "outcome": "NO_RUNTIME_CAUSE_CONFIRMED",
+  "productionDecision": "NO-GO",
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "worktreeAtStart": "clean",
+    "remote": "https://github.com/Enver0908/MANU-AI.git",
+    "remoteProductionReadinessBranch": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "remoteDefaultBranchRef": "refs/heads/codex/phase-29-baseline-checkpoint",
+    "remoteDefaultBranchHeadObserved": "00729e53cf6c8617e9655c03eb519e16214e8727",
+    "liveRelease": {
+      "customerEndpoint": {
+        "url": "https://aiyaworkspace.com/api/health/release",
+        "httpStatus": 200,
+        "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+        "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+        "compatibilityVersion": "0.0.0+1c97560"
+      },
+      "adminEndpoint": {
+        "url": "https://admin.aiyaworkspace.com/api/health/release",
+        "httpStatus": 200,
+        "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+        "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+        "compatibilityVersion": "0.0.0+1c97560"
+      }
+    }
+  },
+  "identitySeparation": {
+    "localHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "liveCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "liveHeadDrift": true,
+    "interpretation": "The current local HEAD is pushed to the performance-readiness branch but is not the deployed live commit."
+  },
+  "historicalEvidence": {
+    "unchangedAtPhaseStart": true,
+    "files": [
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_EVIDENCE.json",
+        "sha256": "a8644c491f5b4bda8f8670b17bd02552a5d9e2febf02be44cbcb51c77cb651d6"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json",
+        "sha256": "735892f3c31b9107b6fed1083b4fbd050bfe745eeef0c861264f15e083f622bc"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_1_FINDING_MANIFEST.json",
+        "sha256": "318ff5e9d6e755afb04910850b780b443b1849652b91e9a88f8d4cf34d45b2f2"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json",
+        "sha256": "829bfe2487758c43b970ffcfaace509193e92071f5e16ed6b73e4c6d22bbaef7"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md",
+        "sha256": "92b77e175b912e276c9956edf83de6f23561b26c175d83e500882e3d6838af75"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_2_EVIDENCE.json",
+        "sha256": "2bb68aed418e92afc9acb443be46a5bc460d66a2219ca3a41d6ab4ee788d5205"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PHASE_3_EVIDENCE.json",
+        "sha256": "006079ba81573072008d0a15a0119c4a8d5250293a9bc917a437c7a2f4c5422a"
+      }
+    ]
+  },
+  "findingManifest": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+    "findingCount": 5,
+    "findingIds": [
+      "PERF-F2-001",
+      "PERF-F2-002",
+      "PERF-F2-003",
+      "PERF-F12-001",
+      "PERF-F12-002"
+    ],
+    "runtimeCausesConfirmed": 0,
+    "runtimeChangesAuthorized": false
+  },
+  "scenarioContract": {
+    "scenarioCount": 9,
+    "sampleCountPerScenario": 20,
+    "requiredReadySelectors": [
+      "[data-testid=\"authenticated-shell\"]",
+      "[data-testid=\"client-roster\"]",
+      "[data-testid=\"client-form-panel\"]",
+      "[data-testid=\"active-nutrition-plan-panel\"]",
+      "[data-testid=\"menu-workflow-panel\"]",
+      "[data-testid=\"messaging-panel\"]",
+      "[data-testid=\"alerts-panel\"]",
+      "[data-testid=\"notifications-panel\"]",
+      "[data-testid=\"ai-chat-workspace\"]"
+    ],
+    "budgets": {
+      "loginToDashboardReadyP75Ms": 3000,
+      "warmNavigationReadyP75Ms": 1000,
+      "warmNavigationReadyP95Ms": 2000,
+      "eventToNextPaintP75Ms": 200,
+      "eventToNextPaintP95Ms": 500,
+      "requiredReadBodyFinishedP75Ms": 900,
+      "initialDashboardLcpP75Ms": 2500,
+      "clsMax": 0.1,
+      "maxForegroundLongTaskMs": 500,
+      "slowNetworkTaskReadyP75Ms": 4000
+    },
+    "validSampleRules": [
+      "real_authenticated_session",
+      "no_demo_cookie",
+      "no_fallback_store",
+      "required_reads_are_2xx_and_body_finished",
+      "required_ready_selector_matched",
+      "no_forbidden_mutation",
+      "task_ready_and_next_paint_are_numeric"
+    ]
+  },
+  "stageLedger": [
+    {
+      "stageId": "1.1",
+      "status": "COMPLETE",
+      "performedActions": [
+        "Read current branch, status, HEAD, upstream, log, remotes, branch tracking, diff check, and remote symref.",
+        "Read both customer and admin release-health endpoints with GET."
+      ],
+      "verificationResults": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+        "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+        "worktree": "clean",
+        "diffCheck": "PASS",
+        "liveEndpoints": "PASS",
+        "liveHeadDrift": true
+      },
+      "outputEvidence": [
+        "sourceIdentity",
+        "identitySeparation"
+      ]
+    },
+    {
+      "stageId": "1.2",
+      "status": "COMPLETE",
+      "performedActions": [
+        "Computed SHA-256 for historical Phase 1, Phase 1.2, combined, Phase 2 scope/evidence, and Phase 3 evidence files.",
+        "Recorded that historical files remain unchanged inputs."
+      ],
+      "verificationResults": {
+        "historicalEvidenceHashesRecorded": true,
+        "historicalFilesRewritten": false
+      },
+      "outputEvidence": [
+        "historicalEvidence"
+      ]
+    },
+    {
+      "stageId": "1.3",
+      "status": "COMPLETE",
+      "performedActions": [
+        "Converted the five combined findings into separate Plan 1 disposition records.",
+        "Assigned closure evidence and Plan 2 eligibility rules without confirming a runtime cause."
+      ],
+      "verificationResults": {
+        "findingCount": 5,
+        "runtimeCausesConfirmed": 0,
+        "runtimeChangesAuthorized": false
+      },
+      "outputEvidence": [
+        "findingManifest"
+      ]
+    },
+    {
+      "stageId": "1.4",
+      "status": "COMPLETE",
+      "performedActions": [
+        "Locked nine authenticated performance scenarios, task-specific selectors, required reads, sample count, and budgets.",
+        "Required AI Chat authenticated 2xx conversation-list read and ai-chat-workspace selector."
+      ],
+      "verificationResults": {
+        "scenarioCount": 9,
+        "sampleCountPerScenario": 20,
+        "weakGenericSelectorAllowed": false,
+        "aiChatAuthenticated2xxRequired": true
+      },
+      "outputEvidence": [
+        "scenarioContract"
+      ]
+    },
+    {
+      "stageId": "1.5",
+      "status": "COMPLETE",
+      "performedActions": [
+        "Created the Plan 1 action plan, evidence contract, finding manifest, and schema test.",
+        "Applied redaction and no-raw-payload requirements to the new evidence contract.",
+        "Updated current handoff, risk register, and next-phase status references.",
+        "Started local Docker/Supabase and reset only the local database after the user made Docker available.",
+        "Ran all previously skipped full-rehearsal controls with every required environment flag enabled.",
+        "Ran the full repository suite with all environment-gated controls enabled."
+      ],
+      "verificationResults": {
+        "evidenceSchemaDefined": true,
+        "sensitiveFieldRedactionDefined": true,
+        "nextPhaseLocked": "Plan 1 Phase 2 - Measurement harness and negative controls (eligible after explicit approval)",
+        "finalControlsZeroFailed": true,
+        "finalControlsZeroSkipped": true,
+        "localSupabaseRehearsalDependencyResolved": true,
+        "phaseClosureGate": "PASS",
+        "phaseClosureBlockingReasons": []
+      },
+      "outputEvidence": [
+        "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+        "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+      ]
+    }
+  ],
+  "finalControls": {
+    "targetedPlan1Test": {
+      "status": "PASS",
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    "jsonParse": "PASS",
+    "typecheck": "PASS",
+    "lint": {
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 74
+    },
+    "build": "PASS",
+    "existingPhase2HarnessTest": {
+      "status": "PASS",
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    "fullRepoTest": {
+      "status": "PASS",
+      "exitCode": 0,
+      "passed": 1726,
+      "failed": 0,
+      "skipped": 0,
+      "total": 1726,
+      "testFiles": 288,
+      "environmentFlagsEnabled": [
+        "PHASE_77AG_FULL_REPLAY=1",
+        "PHASE_79G_FULL_REHEARSAL=1",
+        "STAGE_4B_FULL_SCALE=1",
+        "STAGE_4B2_FULL_SCALE=1",
+        "STAGE_4B3_FULL_SCALE=1",
+        "STAGE_4B4_FULL_SCALE=1",
+        "STAGE_4C_FULL_REHEARSAL=1"
+      ]
+    },
+    "enabledPreviouslySkippedSuites": {
+      "status": "PASS",
+      "passed": 53,
+      "failed": 0,
+      "skipped": 0,
+      "testFiles": 7,
+      "notes": "The fresh full-repository run included all seven targeted environment-gated files; the earlier combined-process timeout was not retained as the final result."
+    },
+    "phaseClosureGate": "PASS"
+  },
+  "constraints": {
+    "runtimeUiApiChange": "NOT_EXECUTED",
+    "schemaMigration": "NOT_EXECUTED",
+    "dependencyChange": "NOT_EXECUTED",
+    "externalSystemMutation": "NOT_EXECUTED",
+    "deploy": "NOT_EXECUTED",
+    "pushPrMerge": "NOT_EXECUTED",
+    "productionGateChange": "NOT_EXECUTED",
+    "rawPayloadTraceHarCookieTokenPromptClinicalCapture": "NOT_RECORDED"
+  },
+  "nextEligibleAction": "Plan 1 Phase 2 - Measurement harness and negative controls is eligible to begin after explicit user approval; Phase 2 has not started. Production remains NO-GO.",
+  "closureRule": "Phase 1 closes only after all five stages are complete in order and final controls record zero failed or skipped results. This phase is complete because both conditions are evidenced; tests alone are insufficient."
+}

@@ -1,0 +1,122 @@
+{
+  "manifestVersion": 1,
+  "plan": "AIya Performance Plan 1 - Valid Measurement and Root Cause Evidence",
+  "phase": "1 - Source, finding, and closure contract lock",
+  "generatedAt": "2026-09-10T11:00:26.384Z",
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "worktree": "clean",
+    "liveReleaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "liveCommitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "liveMigrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+  },
+  "productionDecision": "NO-GO",
+  "findingStatusDefinitions": {
+    "PENDING_VALID_AUTHENTICATED_REPRODUCTION": "Static or historical candidate; no runtime change is authorized.",
+    "MEASUREMENT_GAP_CONFIRMED": "The measurement contract is incomplete or invalid; this is not a runtime performance root cause.",
+    "MEASURED_CANDIDATE_PENDING_VALID_AUTHENTICATED_REPRODUCTION": "A prior failure exists, but valid real-auth reproduction and exact code attribution are still required.",
+    "CAUSE_CONFIRMED": "At least three matching valid samples/traces and a controlled single-variable causal result identify the cause and exact code path.",
+    "CONTRIBUTING_FACTOR_CONFIRMED": "A repeatable contributor is measured but does not independently meet the primary cause threshold.",
+    "NOT_REPRODUCED": "Valid required samples do not reproduce the candidate behavior.",
+    "OPEN_BLOCKED": "Required evidence or environment is unavailable."
+  },
+  "findings": [
+    {
+      "id": "PERF-F2-001",
+      "severity": "high",
+      "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "historicalClassification": "static_risk",
+      "candidateSurface": [
+        "app/src/lib/use-aiya-state.ts",
+        "app/src/app/api/app-state/route.ts",
+        "app/src/lib/supabase-store.ts",
+        "app/src/components/dashboard-app.tsx"
+      ],
+      "reproductionScenarios": [
+        "post_login_dashboard",
+        "client_roster",
+        "client_forms_workspace",
+        "nutrition_workspace",
+        "menu_workspace"
+      ],
+      "causalExperiment": "Compare small, normal, and scale fixture volumes while keeping build, device, network, session, and route action fixed; compare app-state request fanout, body-finish, parse, render, and task-ready.",
+      "closureEvidence": "Three or more matching valid samples/traces tie broad app-state hydration to the missed task budget and identify the exact loader/consumer path.",
+      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+    },
+    {
+      "id": "PERF-F2-002",
+      "severity": "medium",
+      "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "historicalClassification": "static_risk",
+      "candidateSurface": [
+        "app/src/lib/use-stage-4b-inbox.ts",
+        "app/src/lib/use-stage-4b2-messaging.ts",
+        "app/src/lib/use-ai-chat.ts"
+      ],
+      "reproductionScenarios": [
+        "post_login_dashboard",
+        "client_roster",
+        "messages",
+        "ai_chat"
+      ],
+      "causalExperiment": "Compare natural background refresh with a diagnostic pause after initial readiness while keeping the same authenticated route, fixture, device, network, and user action; record overlapping requests, request count, long tasks, and task-ready.",
+      "closureEvidence": "Three or more matching valid samples/traces show background refresh overlap and a repeatable task-ready or interaction delta without losing required freshness behavior.",
+      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+    },
+    {
+      "id": "PERF-F2-003",
+      "severity": "medium",
+      "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "historicalClassification": "static_bundle_render_risk",
+      "candidateSurface": [
+        "app/src/components/dashboard-app.tsx",
+        "app/src/components/dashboard/**",
+        "app/src/app/dashboard/**"
+      ],
+      "reproductionScenarios": [
+        "post_login_dashboard",
+        "client_roster",
+        "client_forms_workspace",
+        "nutrition_workspace",
+        "menu_workspace",
+        "ai_chat"
+      ],
+      "causalExperiment": "Compare main-thread parse/evaluate, long-task, layout, paint, and task-ready data across the unchanged eager import graph and measured panel-specific trace points; no speculative split is applied.",
+      "closureEvidence": "Three or more matching valid traces identify a heavy bundle/panel/render path and its contribution to the missed interaction or readiness budget.",
+      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+    },
+    {
+      "id": "PERF-F12-001",
+      "severity": "high",
+      "phase1Status": "MEASUREMENT_GAP_CONFIRMED",
+      "historicalClassification": "measurement_gate_gap",
+      "candidateSurface": [
+        "app/scripts/measure-aiya-performance.mjs",
+        "app/scripts/measure-aiya-performance-phase-1-2.mjs",
+        "app/src/app/dashboard/ai-chat/page.tsx",
+        "app/src/lib/phase-85-stage-4c-route.ts"
+      ],
+      "reproductionScenarios": [
+        "ai_chat"
+      ],
+      "causalExperiment": "Run AI Chat with a real authenticated tenant/account/actor and require a 2xx conversation-list response plus ai-chat-workspace; compare auth failure, response completion, parse, and render as separate outcomes.",
+      "closureEvidence": "The measurement gap is resolved only when valid authenticated AI Chat samples have 2xx conversation-list reads and the required workspace selector; a 401 remains an auth/store failure.",
+      "plan2Eligibility": "Measurement-gap closure alone does not authorize a runtime speed fix."
+    },
+    {
+      "id": "PERF-F12-002",
+      "severity": "high",
+      "phase1Status": "MEASURED_CANDIDATE_PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "historicalClassification": "warm_journey_candidate",
+      "candidateSurface": [],
+      "reproductionScenarios": [
+        "ai_chat"
+      ],
+      "causalExperiment": "Repeat the corrected warm-session AI Chat measurement on real auth/store paths and separate failed reads from task-ready, event-to-paint, and render timing.",
+      "closureEvidence": "At least three valid authenticated samples/traces identify whether the failure is auth, store, network, parse, render, or polling related and map it to exact files/functions.",
+      "plan2Eligibility": "Only after exact affected files/functions and causal evidence are recorded."
+    }
+  ]
+}
