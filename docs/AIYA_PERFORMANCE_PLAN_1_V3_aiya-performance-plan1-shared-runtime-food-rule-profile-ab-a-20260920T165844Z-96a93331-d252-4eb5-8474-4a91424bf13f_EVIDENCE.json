@@ -1,0 +1,254 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-food-rule-profile-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-food-rule-profile-ab-a",
+  "stageId": "aiya-performance-plan1-shared-runtime-food-rule-profile-ab-a-20260920T165844Z-96a93331-d252-4eb5-8474-4a91424bf13f",
+  "runId": "aiya-performance-plan1-shared-runtime-food-rule-profile-ab-a-20260920T165844Z-96a93331-d252-4eb5-8474-4a91424bf13f",
+  "generatedAt": "2026-09-20T16:58:44Z",
+  "status": "COMPLETE",
+  "outcome": "FOOD_RULE_PROFILE_NARROW_READ_REPEATABLE_LOCAL_STORE_IMPROVEMENT_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Local authenticated desktop A-B-A diagnosis of the food-rule-profile server loader inside the shared request-cost boundary.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "runtimeCandidateKeptInCheckout": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "healthDataUsed": false,
+    "liveProviderTraffic": false,
+    "fixture": "local-normal synthetic owner with real password session and normal RLS/API path",
+    "journeyBoundary": "J1 selected from each run's valid normal observations; three diagnostic repetitions per variant",
+    "localSupabaseOrigin": "http://127.0.0.1:54321"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "hypothesis": {
+    "id": "shared-runtime-food-rule-profile-loader-cost",
+    "statement": "The food-rule-profile route pays unnecessary broad operation-state reads before returning the profile; switching only that loader to the narrow client/form/profile state should reduce its server store and route time.",
+    "candidateVariable": "AIYA_PERF_FOOD_RULE_PROFILE_READ_POLICY",
+    "AValue": "broad",
+    "BValue": "narrow",
+    "AImplementation": "loadSupabaseClientFoodRuleProfile delegates to loadSupabaseClientOperationState",
+    "BImplementation": "loadSupabaseClientFoodRuleProfile delegates to loadSupabaseClientFoodRuleProfileNarrowState",
+    "heldConstant": [
+      "branch and HEAD",
+      "authenticated fixture and credentials",
+      "local Supabase target",
+      "J1 journey, three diagnostic repetitions, and 2000 ms second-action delay",
+      "auth, route, client, React, build, and runner source files",
+      "normal RLS/API path"
+    ]
+  },
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "runner": {
+      "path": "app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs",
+      "sha256": "e26093997c29628cdac0a0c30fd6e49cc9926e820612ad4885dbb09154d61594"
+    },
+    "configurationRunner": {
+      "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+      "sha256": "0d15cbefe2658b002b515fb1db43234920b0da35c39555f7bc6ca096b00cb854"
+    },
+    "candidateFiles": {
+      "store": {
+        "path": "app/src/lib/supabase-store.ts",
+        "sha256": "b65f45ea1fba32331a5076c94261ae5073c27145bc906a9e234841da227d8025"
+      },
+      "route": {
+        "path": "app/src/app/api/clients/[id]/food-rule-profile/route.ts",
+        "sha256": "edda2bbaba3dcb0e0bb6859e25c1b0787c32b3e9a3d78849c38ba00298716179"
+      }
+    },
+    "invariantSourceHashesEqualAcrossRuns": true,
+    "checkoutStateAfterA2": "broad default; no narrow process environment persisted"
+  },
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+    "checkpointSchemaVersion": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "journeyId": "J1",
+    "normalRepetitionsPerVariant": 3,
+    "diagnosticRepetitionsPerVariant": 3,
+    "secondActionDelayMs": 2000,
+    "countedAsOfficialSample": false
+  },
+  "runReferences": {
+    "A1": {
+      "policy": "broad",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T162759588Z-6c8a143d-dbde-4de6-beae-d07eeb70f778",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T162759588Z-6c8a143d-dbde-4de6-beae-d07eeb70f778_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "9357599c3f4251609be9fdb2f999abe4c59af8903ad6ed005f20f1ea888adcdd",
+      "status": "COMPLETE",
+      "observationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3",
+      "sampler": {
+        "status": "PASS",
+        "sampleCount": 751,
+        "sampleErrorCount": 0,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0
+      }
+    },
+    "B": {
+      "policy": "narrow",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T163707411Z-b89e5df6-efca-4c99-87e0-53dbdd4bc015",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T163707411Z-b89e5df6-efca-4c99-87e0-53dbdd4bc015_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "0c5bff5711bad80acd940ef8363816b678d4fd64860faf1ccbc611cbdcaff39e",
+      "status": "COMPLETE",
+      "observationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3",
+      "sampler": {
+        "status": "PARTIAL",
+        "sampleCount": 651,
+        "sampleErrorCount": 1,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0
+      }
+    },
+    "A2": {
+      "policy": "broad",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T164656932Z-a425d3df-79bc-4380-b70a-7dcdc4f3d445",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T164656932Z-a425d3df-79bc-4380-b70a-7dcdc4f3d445_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "0fdfe46c3af61b5a7743950f227c7bc625f3458a9c9940230fd9deac5e537a4e",
+      "status": "COMPLETE",
+      "observationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3",
+      "sampler": {
+        "status": "PASS",
+        "sampleCount": 710,
+        "sampleErrorCount": 0,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0
+      }
+    }
+  },
+  "selectedJ1DiagnosticMetrics": {
+    "A1": [
+      { "repetition": 1, "foodResponseHeaderMs": 332, "foodBodyMs": 344, "foodStoreMs": 113.02, "foodRouteMs": 316.03, "bodyToReadyMs": 178, "dispatchToReadyMs": 653, "trustedToReadyMs": 540, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 409, "longTaskCount": 2, "fullReactCommitCount": 2221, "secondWindowReactCommitCount": 119, "secondWindowReactActualDurationMs": 261.6, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" },
+      { "repetition": 2, "foodResponseHeaderMs": 434, "foodBodyMs": 445, "foodStoreMs": 155.97, "foodRouteMs": 416.26, "bodyToReadyMs": 578, "dispatchToReadyMs": 1168, "trustedToReadyMs": 1045, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 262, "longTaskCount": 1, "fullReactCommitCount": 2047, "secondWindowReactCommitCount": 147, "secondWindowReactActualDurationMs": 462, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" },
+      { "repetition": 3, "foodResponseHeaderMs": 411, "foodBodyMs": 418, "foodStoreMs": 106.19, "foodRouteMs": 400.24, "bodyToReadyMs": 593, "dispatchToReadyMs": 1146, "trustedToReadyMs": 1033, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 230, "longTaskCount": 1, "fullReactCommitCount": 1898, "secondWindowReactCommitCount": 164, "secondWindowReactActualDurationMs": 504.3, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" }
+    ],
+    "B": [
+      { "repetition": 1, "foodResponseHeaderMs": 310, "foodBodyMs": 318, "foodStoreMs": 40.57, "foodRouteMs": 288.7, "bodyToReadyMs": 167, "dispatchToReadyMs": 637, "trustedToReadyMs": 506, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 224, "longTaskCount": 2, "fullReactCommitCount": 1865, "secondWindowReactCommitCount": 58, "secondWindowReactActualDurationMs": 265.6, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" },
+      { "repetition": 2, "foodResponseHeaderMs": 215, "foodBodyMs": 221, "foodStoreMs": 23.94, "foodRouteMs": 201.84, "bodyToReadyMs": 164, "dispatchToReadyMs": 495, "trustedToReadyMs": 401, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 229, "longTaskCount": 0, "fullReactCommitCount": 1836, "secondWindowReactCommitCount": 70, "secondWindowReactActualDurationMs": 180.2, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" },
+      { "repetition": 3, "foodResponseHeaderMs": 292, "foodBodyMs": 299, "foodStoreMs": 29.56, "foodRouteMs": 282.19, "bodyToReadyMs": 186, "dispatchToReadyMs": 625, "trustedToReadyMs": 506, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 290, "longTaskCount": 0, "fullReactCommitCount": 1831, "secondWindowReactCommitCount": 73, "secondWindowReactActualDurationMs": 238.7, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" }
+    ],
+    "A2": [
+      { "repetition": 1, "foodResponseHeaderMs": 387, "foodBodyMs": 392, "foodStoreMs": 147.95, "foodRouteMs": 364.37, "bodyToReadyMs": 163, "dispatchToReadyMs": 676, "trustedToReadyMs": 572, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 347, "longTaskCount": 4, "fullReactCommitCount": 1960, "secondWindowReactCommitCount": 64, "secondWindowReactActualDurationMs": 278.9, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" },
+      { "repetition": 2, "foodResponseHeaderMs": 312, "foodBodyMs": 319, "foodStoreMs": 104.09, "foodRouteMs": 297.27, "bodyToReadyMs": 199, "dispatchToReadyMs": 609, "trustedToReadyMs": 533, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 263, "longTaskCount": 0, "fullReactCommitCount": 2057, "secondWindowReactCommitCount": 84, "secondWindowReactActualDurationMs": 245, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" },
+      { "repetition": 3, "foodResponseHeaderMs": 286, "foodBodyMs": 294, "foodStoreMs": 83.68, "foodRouteMs": 268.27, "bodyToReadyMs": 96, "dispatchToReadyMs": 509, "trustedToReadyMs": 411, "requestCount": 53, "apiRequestCount": 24, "documentRequestCount": 3, "overlapCount": 359, "longTaskCount": 1, "fullReactCommitCount": 2012, "secondWindowReactCommitCount": 73, "secondWindowReactActualDurationMs": 209.4, "foodStatus": 200, "requiredReadValid": true, "functionalOutcome": "SUCCESS" }
+    ]
+  },
+  "measuredEffect": {
+    "containedServerBoundary": {
+      "status": "REPEATABLE_EFFECT_MEASURED",
+      "foodStoreMsA1": [113.02, 155.97, 106.19],
+      "foodStoreMsB": [40.57, 23.94, 29.56],
+      "foodStoreMsA2": [147.95, 104.09, 83.68],
+      "BLowerThanA1AllThree": true,
+      "BLowerThanA2AllThree": true,
+      "interpretation": "The narrow loader removes broad operation-state work from this endpoint's server store boundary in all three B repetitions against both baseline runs."
+    },
+    "requestFanout": {
+      "status": "INVARIANT",
+      "A1": "53 total / 24 API / 3 document",
+      "B": "53 total / 24 API / 3 document",
+      "A2": "53 total / 24 API / 3 document",
+      "interpretation": "The candidate does not reduce the navigation fan-out or RSC request count."
+    },
+    "foodRouteResponse": {
+      "headerMsA1": [332, 434, 411],
+      "headerMsB": [310, 215, 292],
+      "headerMsA2": [387, 312, 286],
+      "allFunctional": true
+    },
+    "secondAction": {
+      "dispatchToReadyMsA1": [653, 1168, 1146],
+      "dispatchToReadyMsB": [637, 495, 625],
+      "dispatchToReadyMsA2": [676, 609, 509],
+      "direction": "NOT_REPEATABLE_GLOBAL_IMPROVEMENT",
+      "interpretation": "B is faster than A2 in two of three repetitions and slower in one; A2 itself is faster than A1 in parts of the trace. The A-B-A pattern does not show a stable return-to-baseline relationship for the user-visible second action."
+    },
+    "clientWork": {
+      "fullReactCommitCountA1": [2221, 2047, 1898],
+      "fullReactCommitCountB": [1865, 1836, 1831],
+      "fullReactCommitCountA2": [1960, 2057, 2012],
+      "longTaskCountA1": [2, 1, 1],
+      "longTaskCountB": [2, 0, 0],
+      "longTaskCountA2": [4, 0, 1],
+      "interpretation": "The B trace is compatible with less work in this captured window, but commit and long-task variability prevents attributing the global freeze to this loader."
+    }
+  },
+  "validity": {
+    "A1": {
+      "observationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3"
+    },
+    "B": {
+      "observationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3"
+    },
+    "A2": {
+      "observationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3"
+    },
+    "functionalOutcome": "All selected J1 diagnostic observations returned the required reads with status 200, body completion, accepted second action, and SUCCESS functional outcome.",
+    "performanceOutcome": "The runner marks the individual trace performance boundary NOT_EVALUABLE by its official acceptance contract; this evidence reports raw diagnostic timings without converting them into official samples.",
+    "samplerInterpretation": "B had one sampler error; lock absence is not claimed."
+  },
+  "behaviorAndSafety": {
+    "tenantAndAuth": "Real local authenticated session and normal RLS/API path retained in all variants.",
+    "candidateScope": "Only the server environment selector changed between A and B; no product file was changed between the three runs.",
+    "runtimeStateAfterA2": "Broad/default loader behavior restored by process termination; no narrow environment variable persisted.",
+    "safetyBoundary": "No tenant, role, mutation, migration, production, provider, billing, worker, PWA, or real health-data path was used or changed."
+  },
+  "conclusion": {
+    "candidateStatus": "FOOD_RULE_PROFILE_NARROW_READ_SERVER_STORE_EFFECT_CONFIRMED_CONTAINED",
+    "serverStoreBoundaryEffectConfirmed": true,
+    "globalSharedRuntimeCauseConfirmed": false,
+    "globalFreezeRootCauseConfirmed": false,
+    "requestFanoutCauseResolved": false,
+    "performanceProblemSolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnosticBoundary": "Cross-route fan-out and React commit ownership remain in scope; the food-rule-profile loader is a measurable local contributor, not the global diagnosis."
+  },
+  "explicitNonClaims": [
+    "The narrow loader is not an approved production fix.",
+    "The contained food-rule-profile store reduction is not proof that this loader caused the global panel freeze.",
+    "The unchanged 53/24/3 request fan-out means this experiment did not test or solve navigation request multiplication.",
+    "The B sampler error prevents any global database lock absence claim.",
+    "This diagnostic continuation is not an official nine-scenario acceptance run and does not reopen Plan 1 closure or authorize Plan 2."
+  ],
+  "redaction": {
+    "status": "PASS",
+    "scope": "This record contains hashes, run identifiers, synthetic route metrics, and bounded timing summaries only; no credentials, tokens, cookies, raw response bodies, raw prompts, or health data are included.",
+    "rawPayloadsIncluded": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "FOOD_RULE_PROFILE_NARROW_READ_REPEATABLE_LOCAL_STORE_IMPROVEMENT_GLOBAL_FREEZE_UNRESOLVED",
+    "runtimeState": "A2 broad baseline completed; B was process-scoped only. The latent narrow branch remains unaccepted and is not enabled by default.",
+    "acceptedProductionFix": false,
+    "performanceProblemSolved": false,
+    "remainingWork": [
+      "Keep the food-rule-profile loader as a contained server-cost contributor in the diagnosis record.",
+      "Do not treat the loader result as an explanation for the unchanged cross-route fan-out or global freeze.",
+      "Continue with a separately bounded cross-route fan-out or React commit ownership diagnostic under the same non-production contract.",
+      "Keep Plan 1 closure, Plan 2 eligibility, and production NO-GO unchanged."
+    ],
+    "nextAction": "Reconcile this evidence into the handoff, next-phase plan, risk register, and finding manifest, then define the next single-variable boundary diagnostic."
+  }
+}

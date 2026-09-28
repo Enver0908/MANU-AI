@@ -7,6 +7,7 @@ import {
   commitDashboardHref,
   mergeDashboardUrlState,
   parseDashboardSearchParams,
+  shouldUseClientOnlyDashboardNavigation,
   subscribeDashboardHrefChange,
   type DashboardSection,
   type DashboardUrlState,
@@ -47,6 +48,7 @@ export function useDashboardUrl() {
       const next = mergeDashboardUrlState(urlState, patch);
       const href = buildDashboardHref(pathname, next);
       commitDashboardHref(href, options?.replace ? "replace" : "push");
+      if (shouldUseClientOnlyDashboardNavigation(pathname, href)) return;
       if (options?.replace) {
         router.replace(href);
         return;

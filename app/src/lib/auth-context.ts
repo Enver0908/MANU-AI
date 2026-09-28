@@ -19,6 +19,17 @@ export type AppTenantContext = {
   dietitianId: string;
   userId: string;
   role: TenantRole;
+  authTiming?: AuthTimingBreakdown;
+};
+
+export type AuthTimingBreakdown = {
+  getUserMs?: number;
+  membershipMs?: number;
+  dietitianMs?: number;
+  getSessionMs?: number;
+  sessionActivityMs?: number;
+  totalMs?: number;
+  entitlementMs?: number;
 };
 
 export type AccountTenantContext = AppTenantContext & {
@@ -42,12 +53,21 @@ export class AppAuthError extends Error {
 
 export async function resolveAppTenantContext(): Promise<AppTenantContext> {
   const accountContext = await resolveAccountTenantContext();
+  const entitlementStartedAt = performance.now();
   await assertActiveCommercialEntitlement(accountContext.tenantId);
   return {
     tenantId: accountContext.tenantId,
     dietitianId: accountContext.dietitianId,
     userId: accountContext.userId,
     role: accountContext.role,
+    ...(process.env.AIYA_PERF_DIAGNOSTIC === "1"
+      ? {
+          authTiming: {
+            ...accountContext.authTiming,
+            entitlementMs: performance.now() - entitlementStartedAt,
+          },
+        }
+      : {}),
   };
 }
 
@@ -80,20 +100,28 @@ export async function resolveAccountTenantContext(
     throw new AppAuthError(401, "supabase_not_configured");
   }
 
+  const diagnosticEnabled = process.env.AIYA_PERF_DIAGNOSTIC === "1";
+  const authStartedAt = performance.now();
+  const authTiming: AuthTimingBreakdown | undefined = diagnosticEnabled ? {} : undefined;
+
+  const getUserStartedAt = performance.now();
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
+  if (authTiming) authTiming.getUserMs = performance.now() - getUserStartedAt;
 
   if (userError || !user) {
     throw new AppAuthError(401, "unauthenticated");
   }
 
+  const membershipStartedAt = performance.now();
   const memberships = await supabase
     .from("tenant_memberships")
     .select("tenant_id, role")
     .eq("user_id", user.id)
     .order("created_at", { ascending: true });
+  if (authTiming) authTiming.membershipMs = performance.now() - membershipStartedAt;
 
   if (memberships.error) {
     throw memberships.error;
@@ -101,12 +129,14 @@ export async function resolveAccountTenantContext(
 
   const membership = resolveUniqueTenantMembership(memberships.data ?? []);
 
+  const dietitianStartedAt = performance.now();
   const dietitian = await supabase
     .from("dietitians")
     .select("id")
     .eq("tenant_id", membership.tenant_id)
     .eq("auth_user_id", user.id)
     .maybeSingle();
+  if (authTiming) authTiming.dietitianMs = performance.now() - dietitianStartedAt;
 
   if (dietitian.error) {
     throw dietitian.error;
@@ -116,10 +146,12 @@ export async function resolveAccountTenantContext(
     throw new AppAuthError(403, "no_dietitian_profile");
   }
 
+  const getSessionStartedAt = performance.now();
   const {
     data: { session },
     error: sessionError,
   } = await supabase.auth.getSession();
+  if (authTiming) authTiming.getSessionMs = performance.now() - getSessionStartedAt;
 
   const verifiedSessionId = readVerifiedSessionIdFromAccessToken(session?.access_token);
   if (sessionError || !verifiedSessionId) {
@@ -137,9 +169,14 @@ export async function resolveAccountTenantContext(
     tenantId: membership.tenant_id,
     dietitianId: dietitian.data.id,
   };
+  const sessionActivityStartedAt = performance.now();
   const sessionActivity = options.recordSessionActivity
     ? await touchShellSessionActivity(admin, actor)
     : await assertShellSessionActivity(admin, actor);
+  if (authTiming) {
+    authTiming.sessionActivityMs = performance.now() - sessionActivityStartedAt;
+    authTiming.totalMs = performance.now() - authStartedAt;
+  }
 
   const context = {
     tenantId: membership.tenant_id,
@@ -148,6 +185,7 @@ export async function resolveAccountTenantContext(
     role: membership.role as TenantRole,
     sessionId: sessionActivity.sessionId || verifiedSessionId,
     supabase,
+    ...(authTiming ? { authTiming } : {}),
   };
 
   return context;

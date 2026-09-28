@@ -1,0 +1,252 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-diagnostic-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime",
+  "stageId": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+  "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T141645396Z-e7eee486-bd26-4b8b-9741-e14627babd6c",
+  "generatedAt": "2026-09-20T14:22:45.647Z",
+  "status": "BLOCKED",
+  "outcome": "SHARED_RUNTIME_DIAGNOSTIC_RUNNER_BLOCKED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Local desktop shared-runtime localization around the two-second second-action boundary.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "normalObservationCount": 0,
+    "diagnosticObservationCount": 0,
+    "countedAsOfficialSample": false,
+    "externalOperations": []
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "currentStage": "aiya-performance-plan1-shared-runtime-diagnostic-v3"
+  },
+  "sourceIdentity": {
+    "cwd": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 155,
+    "statusHash": "57a53033e1d8b5c42223ecc7f7ced52ded26e76004a9e83cedcda0026f332684",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/src/lib/auth-context.ts",
+        "sha256": "606e3dbe7f3be9e01110a825464e96f253f65e342fdb76902e687dca98b9f05c"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-route.ts",
+        "sha256": "f5932eae48cb1254107898a54eda26f5b60bba2c6f785689dc209765f76209ef"
+      },
+      {
+        "path": "app/src/app/api/shell/bootstrap/route.ts",
+        "sha256": "76e7ae08573be857bb9db08914b95547fbd401a0bd3c6fcdb8007a33ff7261fa"
+      },
+      {
+        "path": "app/src/app/api/app-state/route.ts",
+        "sha256": "a36bb82f774ec17721055cecdb23a973dbb1c9f7d3cc4b3d7caf98c2ddc597f4"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "sha256": "c9b8da4b74788459b3eccd0436230f4a161bfbe8118655e47fb5e113d252d2b1"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "7d5dbdd07b6ae71d9af338353412549621f212235b01f68360e951795430752a"
+      },
+      {
+        "path": "app/src/lib/dashboard-server-auth.ts",
+        "sha256": "142c3aab1d836eeedb38d807c23b42d00a339c40823d8aaa7927666d67a5773f"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "13293d7124f02c8aa57167a4ecb33861eee0340ee2a0584b9927d2f674a2b047"
+      },
+      {
+        "path": "app/src/lib/use-stage-4b-inbox.ts",
+        "sha256": "9b92f6a25454c56d207d2271d98279951e690d960e3d90f3585b9f2b6f4c6eee"
+      },
+      {
+        "path": "app/src/lib/use-stage-4b2-messaging.ts",
+        "sha256": "fcaeda79bbbca550f987cad9255baa21715ca52fce64fac30c7e33002164c237"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "4ef72469d0b3a9f3279d311b88901f614dd484625a1397ed2d2b8ba547768e52"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs",
+        "sha256": "ce81b2573dd6390b536219f6fdbf604e5c8918c2ccf8dde6b2bd4919fa058f94"
+      },
+      {
+        "path": "app/scripts/lib/diagnostic-db-lock-sampler.mjs",
+        "sha256": "70a6888a083291f90664e87bee5745295bdd2cf184058af7c8344d2b64e40387"
+      },
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "sha256": "c380b881f4a5ab10b2f8b819c992f7f26b9def794f2b5f352dc92820ec84ab43"
+      }
+    ]
+  },
+  "parentRunReferences": [
+    "aiya-performance-plan1-phase5-7-plan1-closure-v3-20260918T125452Z-f5305ee2-b35b-43c5-91df-42f313d0da29",
+    "worktree-reconciliation-supplemental-audit-20260918T172214Z"
+  ],
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+    "checkpointSchemaVersion": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "journeyIds": [
+      "J1",
+      "J2",
+      "J3"
+    ],
+    "normalRepetitions": 3,
+    "diagnosticRepetitions": 3,
+    "secondActionDelayMs": 2000,
+    "databaseLockSamplingIntervalMs": 50,
+    "countedAsOfficialSample": false
+  },
+  "stageLedger": [
+    {
+      "stageId": "SRD.1",
+      "name": "Identity and local input preflight",
+      "prerequisites": [],
+      "status": "PASS"
+    },
+    {
+      "stageId": "SRD.2",
+      "name": "Normal J1-J3 observations",
+      "prerequisites": [
+        "SRD.1 PASS"
+      ],
+      "status": "BLOCKED"
+    },
+    {
+      "stageId": "SRD.3",
+      "name": "Selected journey diagnostic repeat",
+      "prerequisites": [
+        "SRD.2 COMPLETE"
+      ],
+      "status": "BLOCKED"
+    },
+    {
+      "stageId": "SRD.4",
+      "name": "Evidence and candidate narrowing",
+      "prerequisites": [
+        "SRD.1 COMPLETE"
+      ],
+      "status": "COMPLETE"
+    }
+  ],
+  "inputPreflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "authentication": "real_password_session_required",
+    "storePath": "normal_rls_api_path_required",
+    "fallbackStoreAllowed": false,
+    "targetOrigin": "http://127.0.0.1:3150",
+    "credentialsAvailable": "<redacted>",
+    "localSupabase": {
+      "status": "PASS",
+      "apiUrl": "/",
+      "urlIsLocal": true,
+      "credentialsPresent": "<redacted>",
+      "reason": null
+    },
+    "dbLockSampler": {
+      "status": "NO_SAMPLES",
+      "unavailableReason": null,
+      "sampleErrorCount": 0,
+      "lastSampleErrorReason": null,
+      "fallbackCount": 0,
+      "commandAttempts": {
+        "psql": 0,
+        "docker": 0
+      },
+      "commandSuccesses": {
+        "psql": 0,
+        "docker": 0
+      },
+      "intervalMs": 50,
+      "sampleCount": 0,
+      "lockWaitSampleCount": 0,
+      "blockedActivitySampleCount": 0,
+      "maxLockWaitCount": 0,
+      "maxBlockedActivityCount": 0,
+      "maxBlockerCount": 0,
+      "queryDurationMs": {
+        "min": null,
+        "max": null
+      },
+      "samples": []
+    },
+    "blockers": []
+  },
+  "candidateSelection": null,
+  "dbLockObservation": {
+    "status": "NO_SAMPLES",
+    "unavailableReason": null,
+    "sampleErrorCount": 0,
+    "lastSampleErrorReason": null,
+    "fallbackCount": 0,
+    "commandAttempts": {
+      "psql": 0,
+      "docker": 0
+    },
+    "commandSuccesses": {
+      "psql": 0,
+      "docker": 0
+    },
+    "intervalMs": 50,
+    "sampleCount": 0,
+    "lockWaitSampleCount": 0,
+    "blockedActivitySampleCount": 0,
+    "maxLockWaitCount": 0,
+    "maxBlockedActivityCount": 0,
+    "maxBlockerCount": 0,
+    "queryDurationMs": {
+      "min": null,
+      "max": null
+    },
+    "samples": []
+  },
+  "sampleSummary": {
+    "attempted": 0,
+    "observationValid": 0,
+    "normal": 0,
+    "diagnostic": 0,
+    "officialBaselineSamples": 0
+  },
+  "normalObservations": [],
+  "diagnosticObservations": [],
+  "blockers": [
+    "shared_runtime_normal_build_blocked"
+  ],
+  "explicitNonClaims": [
+    "No root cause or accepted runtime fix is claimed from this trace-only continuation.",
+    "The two-second interaction trace is not an official nine-scenario acceptance run.",
+    "An unavailable database sampler does not establish absence of session-row lock waits.",
+    "A Server-Timing auth span is a contained timing label, not proof that auth alone caused the freeze.",
+    "Production remains NO-GO."
+  ],
+  "closure": {
+    "status": "BLOCKED",
+    "outcome": "SHARED_RUNTIME_DIAGNOSTIC_RUNNER_BLOCKED",
+    "nextAction": "Repair the listed local input or measurement prerequisite before resuming this run."
+  }
+}

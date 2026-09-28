@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-localization-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "shared-runtime-localization",
+  "stage": "first-three-stages",
+  "stageId": "aiya-performance-plan1-shared-runtime-localization-v1",
+  "runId": "aiya-performance-plan1-shared-runtime-localization-v1-20260920T160215Z-7f672bcb-8f49-4b20-bc11-c26c578f7021",
+  "generatedAt": "2026-09-20T16:02:15.655Z",
+  "status": "COMPLETE",
+  "outcome": "SECOND_ACTION_BOUNDARY_LOCALIZED_TO_REQUIRED_READ_AND_POST_RESPONSE_COMMIT_EXTERNAL_SERVICES_NOT_OBSERVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "externalOperations": [],
+    "zAiWhatsapp": "out_of_scope_and_not_observed"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false
+  },
+  "sourceIdentity": {
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "measurementRunId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T155027577Z-280f2120-5abd-41d8-b093-74615eba9cc1",
+    "measurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T155027577Z-280f2120-5abd-41d8-b093-74615eba9cc1_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "measurementEvidenceSha256": "007020ec192a6d724a0f6a9b8ea6b418905e24eb414cfd5e54f061a056400013",
+    "diagnosticRunnerPath": "app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs",
+    "diagnosticRunnerSha256": "db111633bdf170c744c980d8ad791ade17b72357f2c6857d0a650528c700dfc2",
+    "routeInstrumentationPath": "app/src/app/api/clients/[id]/food-rule-profile/route.ts",
+    "routeInstrumentationSha256": "edda2bbaba3dcb0e0bb6859e25c1b0787c32b3e9a3d78849c38ba00298716179"
+  },
+  "connectionBoundary": {
+    "browserAppOrigin": "http://127.0.0.1:3150",
+    "supabaseTargetUsedByRunner": "http://127.0.0.1:54321",
+    "supabasePreflight": "PASS",
+    "runnerOverridesEnvTarget": true,
+    "activeEnvFileContainsHostedTarget": true,
+    "hostedNetworkLatencyMeasured": false,
+    "browserUniqueAppRouteCount": 25,
+    "externalRoutesObserved": [],
+    "note": "The runner replaces the test server Supabase target with the local Docker status endpoint. The exact hosted origin is intentionally omitted from this evidence."
+  },
+  "stageLedger": [
+    {
+      "stageId": "L1",
+      "name": "Existing records and connection path",
+      "status": "COMPLETE",
+      "result": "The current diagnostic records and local connection boundary were verified; hosted Supabase latency is not represented."
+    },
+    {
+      "stageId": "L2",
+      "name": "Single timeline measurement",
+      "status": "COMPLETE",
+      "result": "The v3 runner completed 12 observation-valid units: 9 normal and 3 selected J1 diagnostic repetitions."
+    },
+    {
+      "stageId": "L3",
+      "name": "Second-action boundary localization",
+      "status": "COMPLETE",
+      "result": "The repeated J1 boundary is the required food-rule-profile read followed by the client readiness and React commit interval."
+    }
+  ],
+  "validity": {
+    "attempted": 12,
+    "observationValid": 12,
+    "normalObservations": 9,
+    "diagnosticObservations": 3,
+    "normalValidSamples": 6,
+    "normalIncompleteSamples": 3,
+    "diagnosticSelectedJourney": "J1",
+    "diagnosticValidSamples": "3/3",
+    "functionalOutcome": "All three selected diagnostic J1 traces were SUCCESS. J3 normal observations remain observation-valid but INCOMPLETE and were excluded from candidate selection."
+  },
+  "measurement": {
+    "secondActionDelayMs": 2000,
+    "candidateSelection": "J1; highest normal trusted-event-to-ready tail 546 ms",
+    "diagnosticJ1": [
+      {
+        "repetition": 1,
+        "trustedToReadyMs": 464,
+        "dispatchToReadyMs": 534,
+        "acceptedDelayAfterTrustedEventMs": 38,
+        "requiredRead": "/api/clients/:clientId/food-rule-profile",
+        "requiredResponseHeaderLatencyMs": 312,
+        "requiredBodyDurationMs": 326,
+        "bodyToReadyMs": 129,
+        "routeMs": 295.65,
+        "authMs": 171.56,
+        "getUserMs": 94.6,
+        "sessionActivityMs": 24.31,
+        "storeMs": 123.13,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "overlapCount": 241,
+        "secondActionReactCommitWindow": {
+          "window": "trusted event through ready state",
+          "commitCount": 47,
+          "actualDurationMs": 141.9
+        },
+        "fullTraceLongTaskCount": 0
+      },
+      {
+        "repetition": 2,
+        "trustedToReadyMs": 505,
+        "dispatchToReadyMs": 579,
+        "acceptedDelayAfterTrustedEventMs": 89,
+        "requiredRead": "/api/clients/:clientId/food-rule-profile",
+        "requiredResponseHeaderLatencyMs": 320,
+        "requiredBodyDurationMs": 336,
+        "bodyToReadyMs": 163,
+        "routeMs": 302.13,
+        "authMs": 207.43,
+        "getUserMs": 138.17,
+        "sessionActivityMs": 14.79,
+        "storeMs": 94.44,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "overlapCount": 245,
+        "secondActionReactCommitWindow": {
+          "window": "trusted event through ready state",
+          "commitCount": 46,
+          "actualDurationMs": 138.0
+        },
+        "fullTraceLongTaskCount": 0
+      },
+      {
+        "repetition": 3,
+        "trustedToReadyMs": 567,
+        "dispatchToReadyMs": 652,
+        "acceptedDelayAfterTrustedEventMs": 53,
+        "requiredRead": "/api/clients/:clientId/food-rule-profile",
+        "requiredResponseHeaderLatencyMs": 395,
+        "requiredBodyDurationMs": 428,
+        "bodyToReadyMs": 144,
+        "routeMs": 375.75,
+        "authMs": 245.5,
+        "getUserMs": 184.94,
+        "sessionActivityMs": 15.13,
+        "storeMs": 129.9,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "overlapCount": 360,
+        "secondActionReactCommitWindow": {
+          "window": "trusted event through ready state",
+          "commitCount": 44,
+          "actualDurationMs": 174.4
+        },
+        "fullTraceLongTaskCount": 1
+      }
+    ],
+    "requiredReadValidation": "The required food-rule-profile response was 200 and body-finished in all three selected diagnostic traces. The ancillary request tracker retained body-finish timeouts on unrelated requests; these do not invalidate the required read."
+  },
+  "dbLockSampler": {
+    "status": "PASS",
+    "sampleCount": 720,
+    "sampleErrorCount": 0,
+    "lockWaitSampleCount": 2,
+    "blockedActivitySampleCount": 2,
+    "lockWaitsDuringSecondActionWindow": 0,
+    "lockSampleWallTimesMs": [
+      1789919875197,
+      1789919876731
+    ],
+    "comparison": {
+      "diagnosticJ1Repetition": 2,
+      "secondActionWindowStartWallMs": 1789919878249,
+      "secondActionWindowEndWallMs": 1789919878754,
+      "relationship": "Both lock samples occurred before the second trusted event."
+    },
+    "interpretation": "A bounded local lock signal was observed before the second-action window; this run does not establish DB lock contention as the second-click cause or prove its absence elsewhere."
+  },
+  "externalServiceObservation": {
+    "status": "NOT_OBSERVED",
+    "routes": [],
+    "services": ["Z.ai", "WhatsApp", "Telegram", "Stripe"],
+    "interpretation": "No listed provider route was observed in the browser trace, and the server-side Supabase target was the local runner override. External provider latency remains unmeasured and out of scope for this continuation."
+  },
+  "interpretation": {
+    "supported": "Across three valid diagnostic J1 records, the required food-rule-profile read has a 312-395 ms response-header latency and 295.65-375.75 ms diagnostic route timing, followed by 129-163 ms from body finish to ready state. The same traces retain 53 total requests, 24 API requests, 241-360 overlaps, and a measurable React commit window.",
+    "notSupported": "The co-occurrence of auth cost, request fan-out, store timing, and React commits does not identify one causal variable. These records do not prove the global freeze root cause, hosted latency, or a production performance regression threshold.",
+    "measurementGapClosed": "The food-rule-profile route now emits diagnostic Server-Timing only when AIYA_PERF_DIAGNOSTIC=1; normal production responses are unchanged.",
+    "rootCauseStatus": "UNRESOLVED"
+  },
+  "nextAction": "Define one reversible single-variable A-B-A experiment around either required-read scheduling or post-response state/commit scheduling, after selecting one variable and one timing boundary. Do not combine them and do not begin Plan 2."
+  ,"closure": {
+    "status": "COMPLETE",
+    "outcome": "FIRST_THREE_STAGES_COMPLETE",
+    "plan1ClosureUnchanged": true,
+    "plan2EntryAuthorized": false,
+    "findingDispositionsChanged": false,
+    "runtimeFixAccepted": false,
+    "globalFreezeResolved": false
+  }
+}

@@ -1,0 +1,1331 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase4-7-reconciliation-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "4",
+  "stage": "4.7",
+  "stageId": "4.7",
+  "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+  "generatedAt": "2026-09-17T13:00:07.205Z",
+  "status": "COMPLETE",
+  "outcome": "DIAGNOSIS_BLOCKED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Reconcile v3 diagnostic observations, finding coverage, environment coverage, and evidence integrity.",
+    "executionMode": "phase4_7_offline_reconciliation",
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "countedAsOfficialSample": false,
+    "preservedExistingChanges": true
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.1 IDENTITY_LOCKED",
+      "4.2 REFERENCE_SEPARATED",
+      "4.3 GENERAL_DIAGNOSTIC_HARNESS_READY",
+      "4.4 LOCAL_CAPTURE_AND_OBSERVATION_CONTRACT",
+      "4.5 HOSTED_OBSERVATIONS_CAPTURED",
+      "4.6 ANDROID_PWA_OBSERVATIONS_CAPTURED"
+    ],
+    "currentStage": "4.7",
+    "nextEligibleStage": "5.1 only after explicit follow-up authorization"
+  },
+  "sourceIdentity": {
+    "worktreePath": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI",
+    "branchMode": "DETACHED_HEAD",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "",
+    "detachedHeadUpstream": "NOT_AVAILABLE_BECAUSE_HEAD_IS_DETACHED",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "exists": true,
+        "sha256": "a9d740c1629069249c0fd17245dc7ad4c04addcce5aa66f031c86ad80a944c73"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4.mjs",
+        "exists": true,
+        "sha256": "881bcb9a76fcbef15b5fd8d217c84e7bfc7a3d08183835ad88ed498e90039cc6"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "exists": true,
+        "sha256": "40c0625b5d78c087c5c7d142c149bd91bc59ecd2e6187bf3bc4790baf040eecf"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "exists": true,
+        "sha256": "b70ccd7abd892c81589f8ff4c1d195cff03a35784bcc97ba9f9b470dc11becb4"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.test.mjs",
+        "exists": true,
+        "sha256": "63f3e0893100b26cdc30dafa285f871d9e5875df0c563ec2a41b17f71fb67f2a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-5-4-6.mjs",
+        "exists": true,
+        "sha256": "f5abd971d5e04000da9838e901818f68ce547e8c0ead72be0e48c262f5817546"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-5-4-6.test.mjs",
+        "exists": true,
+        "sha256": "c76773de04ff093923863eb99b2b4cc9bb6d1d0212a3702dcfb7de181e11dfa1"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-7-reconciliation.mjs",
+        "exists": true,
+        "sha256": "cbfe3d6164abffcab6f237afb29d05144d043362282e09b939110a1bd4590a81"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-7-reconciliation.test.mjs",
+        "exists": true,
+        "sha256": "6703eaf901a4008673a3048dc70c5b8e0c9179f20f72e0a8467a28f18b9c7b73"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "exists": true,
+        "sha256": "81457265b6c58091c22b4104239dc06580bd46b1dfa583c46670dbf8f2d3bf4a"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_3_EVIDENCE.json",
+        "exists": true,
+        "sha256": "a1f1c809bb65fd0f58c26b05e54e3933bd8ee1a8e7cf71222c007aac3475db3e"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+        "exists": true,
+        "sha256": "0e7bb596a7b1877d946c20c594b372b49d078dcf85305e1845ac4be18a7d707b"
+      }
+    ],
+    "dirtyTreePreserved": true,
+    "diffCheck": "PASS"
+  },
+  "parentRunReferences": [
+    "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a_EVIDENCE.json",
+    "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2_ENVIRONMENT_EVIDENCE.json",
+    "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T123931810Z-9b3ff41f-266d-4878-b6ea-9f686f8a90dd_ENVIRONMENT_EVIDENCE.json",
+    "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+  ],
+  "inputEvidence": {
+    "local": {
+      "path": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+      "status": "IN_PROGRESS",
+      "outcome": "LOCAL_OBSERVATIONS_RECONCILED"
+    },
+    "environments": {
+      "path": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2_ENVIRONMENT_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+      "status": "COMPLETE",
+      "outcome": "ENVIRONMENT_OBSERVATIONS_CAPTURED"
+    },
+    "blockedRetry": {
+      "runId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T123931810Z-9b3ff41f-266d-4878-b6ea-9f686f8a90dd",
+      "status": "BLOCKED",
+      "outcome": "ENVIRONMENT_OBSERVATIONS_BLOCKED",
+      "excludedFromCurrentCounts": true,
+      "reason": "Incompatible temporary runner identity and blocked Android/PWA capture; never merge into completed evidence."
+    },
+    "findingManifest": {
+      "path": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+      "findingCount": 5
+    },
+    "identityChecks": [
+      {
+        "status": "PASS",
+        "mismatches": [],
+        "documentationOnlyMismatches": [],
+        "headMatches": true,
+        "documentationOnlyEditsAllowed": true
+      },
+      {
+        "status": "PASS",
+        "mismatches": [],
+        "documentationOnlyMismatches": [
+          "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md"
+        ],
+        "headMatches": true,
+        "documentationOnlyEditsAllowed": true
+      }
+    ]
+  },
+  "stageLedger": [
+    {
+      "stageId": "4.7",
+      "name": "Coverage, finding, environment, and evidence reconciliation",
+      "prerequisites": [
+        "4.4",
+        "4.5",
+        "4.6"
+      ],
+      "status": "COMPLETE"
+    }
+  ],
+  "coverage": {
+    "attemptedCount": 36,
+    "observationValidCount": 36,
+    "validFunctionalSampleCount": 23,
+    "functionalOutcomes": {
+      "SUCCESS": 23,
+      "INCOMPLETE": 5,
+      "FAILURE": 8
+    },
+    "byEnvironment": {
+      "local_desktop": {
+        "attemptedCount": 9,
+        "observationValidCount": 9,
+        "validFunctionalSampleCount": 6,
+        "functionalOutcomes": {
+          "SUCCESS": 6,
+          "INCOMPLETE": 3
+        },
+        "failureBoundaries": {
+          "none": 6,
+          "first_target_abandoned_after_navigation": 3
+        }
+      },
+      "hosted": {
+        "attemptedCount": 9,
+        "observationValidCount": 9,
+        "validFunctionalSampleCount": 8,
+        "functionalOutcomes": {
+          "SUCCESS": 8,
+          "INCOMPLETE": 1
+        },
+        "failureBoundaries": {
+          "none": 8,
+          "first_target_abandoned_after_navigation": 1
+        }
+      },
+      "android_chrome": {
+        "attemptedCount": 9,
+        "observationValidCount": 9,
+        "validFunctionalSampleCount": 3,
+        "functionalOutcomes": {
+          "FAILURE": 5,
+          "SUCCESS": 3,
+          "INCOMPLETE": 1
+        },
+        "failureBoundaries": {
+          "missing_click_or_not_ready": 3,
+          "j2_preloaded_inbox_read_not_linked_to_data_ready": 2,
+          "none": 3,
+          "first_target_abandoned_after_navigation": 1
+        }
+      },
+      "android_pwa": {
+        "attemptedCount": 9,
+        "observationValidCount": 9,
+        "validFunctionalSampleCount": 6,
+        "functionalOutcomes": {
+          "FAILURE": 3,
+          "SUCCESS": 6
+        },
+        "failureBoundaries": {
+          "missing_click_or_not_ready": 3,
+          "none": 6
+        }
+      }
+    },
+    "byJourney": {
+      "J1": {
+        "attemptedCount": 12,
+        "observationValidCount": 12,
+        "validFunctionalSampleCount": 6,
+        "functionalOutcomes": {
+          "SUCCESS": 6,
+          "FAILURE": 6
+        },
+        "failureBoundaries": {
+          "none": 6,
+          "missing_click_or_not_ready": 6
+        }
+      },
+      "J2": {
+        "attemptedCount": 12,
+        "observationValidCount": 12,
+        "validFunctionalSampleCount": 10,
+        "functionalOutcomes": {
+          "SUCCESS": 10,
+          "FAILURE": 2
+        },
+        "failureBoundaries": {
+          "none": 10,
+          "j2_preloaded_inbox_read_not_linked_to_data_ready": 2
+        }
+      },
+      "J3": {
+        "attemptedCount": 12,
+        "observationValidCount": 12,
+        "validFunctionalSampleCount": 7,
+        "functionalOutcomes": {
+          "INCOMPLETE": 5,
+          "SUCCESS": 7
+        },
+        "failureBoundaries": {
+          "first_target_abandoned_after_navigation": 5,
+          "none": 7
+        }
+      }
+    },
+    "allRequiredEnvironmentOutcomesRecorded": true,
+    "environments": [
+      {
+        "environment": "local_desktop",
+        "attemptedCount": 9,
+        "observationValidCount": 9,
+        "validFunctionalSampleCount": 6,
+        "functionalOutcomes": {
+          "SUCCESS": 6,
+          "INCOMPLETE": 3
+        },
+        "failureBoundaries": {
+          "none": 6,
+          "first_target_abandoned_after_navigation": 3
+        },
+        "requiredOutcomeRecorded": true,
+        "officialAcceptance": "NOT_STARTED"
+      },
+      {
+        "environment": "hosted",
+        "attemptedCount": 9,
+        "observationValidCount": 9,
+        "validFunctionalSampleCount": 8,
+        "functionalOutcomes": {
+          "SUCCESS": 8,
+          "INCOMPLETE": 1
+        },
+        "failureBoundaries": {
+          "none": 8,
+          "first_target_abandoned_after_navigation": 1
+        },
+        "requiredOutcomeRecorded": true,
+        "officialAcceptance": "NOT_STARTED"
+      },
+      {
+        "environment": "android_chrome",
+        "attemptedCount": 9,
+        "observationValidCount": 9,
+        "validFunctionalSampleCount": 3,
+        "functionalOutcomes": {
+          "FAILURE": 5,
+          "SUCCESS": 3,
+          "INCOMPLETE": 1
+        },
+        "failureBoundaries": {
+          "missing_click_or_not_ready": 3,
+          "j2_preloaded_inbox_read_not_linked_to_data_ready": 2,
+          "none": 3,
+          "first_target_abandoned_after_navigation": 1
+        },
+        "requiredOutcomeRecorded": true,
+        "officialAcceptance": "NOT_STARTED"
+      },
+      {
+        "environment": "android_pwa",
+        "attemptedCount": 9,
+        "observationValidCount": 9,
+        "validFunctionalSampleCount": 6,
+        "functionalOutcomes": {
+          "FAILURE": 3,
+          "SUCCESS": 6
+        },
+        "failureBoundaries": {
+          "missing_click_or_not_ready": 3,
+          "none": 6
+        },
+        "requiredOutcomeRecorded": true,
+        "officialAcceptance": "NOT_STARTED"
+      }
+    ],
+    "journeys": [
+      {
+        "journeyId": "J1",
+        "findingId": "PERF-F2-001",
+        "attemptedCount": 12,
+        "observationValidCount": 12,
+        "validFunctionalSampleCount": 6,
+        "functionalOutcomes": {
+          "SUCCESS": 6,
+          "FAILURE": 6
+        },
+        "failureBoundaries": {
+          "none": 6,
+          "missing_click_or_not_ready": 6
+        }
+      },
+      {
+        "journeyId": "J2",
+        "findingId": "PERF-F2-002",
+        "attemptedCount": 12,
+        "observationValidCount": 12,
+        "validFunctionalSampleCount": 10,
+        "functionalOutcomes": {
+          "SUCCESS": 10,
+          "FAILURE": 2
+        },
+        "failureBoundaries": {
+          "none": 10,
+          "j2_preloaded_inbox_read_not_linked_to_data_ready": 2
+        }
+      },
+      {
+        "journeyId": "J3",
+        "findingId": "PERF-F2-003",
+        "attemptedCount": 12,
+        "observationValidCount": 12,
+        "validFunctionalSampleCount": 7,
+        "functionalOutcomes": {
+          "INCOMPLETE": 5,
+          "SUCCESS": 7
+        },
+        "failureBoundaries": {
+          "first_target_abandoned_after_navigation": 5,
+          "none": 7
+        }
+      }
+    ],
+    "observationMappings": [
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J1:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J1",
+        "repetition": 1,
+        "unitKey": "normal:J1:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J1:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J1",
+        "repetition": 2,
+        "unitKey": "normal:J1:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J1:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J1",
+        "repetition": 3,
+        "unitKey": "normal:J1:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J2:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J2",
+        "repetition": 1,
+        "unitKey": "normal:J2:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J2:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J2",
+        "repetition": 2,
+        "unitKey": "normal:J2:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J2:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J2",
+        "repetition": 3,
+        "unitKey": "normal:J2:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J3:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J3",
+        "repetition": 1,
+        "unitKey": "normal:J3:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "first_target_abandoned_after_navigation"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J3:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J3",
+        "repetition": 2,
+        "unitKey": "normal:J3:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "first_target_abandoned_after_navigation"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a:local_desktop:normal:J3:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a",
+        "environment": "local_desktop",
+        "journeyId": "J3",
+        "repetition": 3,
+        "unitKey": "normal:J3:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "first_target_abandoned_after_navigation"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J1:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J1",
+        "repetition": 1,
+        "unitKey": "hosted:J1:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J1:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J1",
+        "repetition": 2,
+        "unitKey": "hosted:J1:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J1:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J1",
+        "repetition": 3,
+        "unitKey": "hosted:J1:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J2:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J2",
+        "repetition": 1,
+        "unitKey": "hosted:J2:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J2:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J2",
+        "repetition": 2,
+        "unitKey": "hosted:J2:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J2:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J2",
+        "repetition": 3,
+        "unitKey": "hosted:J2:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J3:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J3",
+        "repetition": 1,
+        "unitKey": "hosted:J3:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J3:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J3",
+        "repetition": 2,
+        "unitKey": "hosted:J3:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "first_target_abandoned_after_navigation"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:hosted:hosted:J3:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "hosted",
+        "journeyId": "J3",
+        "repetition": 3,
+        "unitKey": "hosted:J3:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J1:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J1",
+        "repetition": 1,
+        "unitKey": "android_chrome:J1:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "missing_click_or_not_ready"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J1:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J1",
+        "repetition": 2,
+        "unitKey": "android_chrome:J1:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "missing_click_or_not_ready"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J1:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J1",
+        "repetition": 3,
+        "unitKey": "android_chrome:J1:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "missing_click_or_not_ready"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J2:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J2",
+        "repetition": 1,
+        "unitKey": "android_chrome:J2:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "preloaded_data",
+          "actionId": "first",
+          "reason": "j2_preloaded_inbox_read_not_linked_to_data_ready"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J2:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J2",
+        "repetition": 2,
+        "unitKey": "android_chrome:J2:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J2:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J2",
+        "repetition": 3,
+        "unitKey": "android_chrome:J2:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "preloaded_data",
+          "actionId": "first",
+          "reason": "j2_preloaded_inbox_read_not_linked_to_data_ready"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J3:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J3",
+        "repetition": 1,
+        "unitKey": "android_chrome:J3:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J3:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J3",
+        "repetition": 2,
+        "unitKey": "android_chrome:J3:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_chrome:android_chrome:J3:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_chrome",
+        "journeyId": "J3",
+        "repetition": 3,
+        "unitKey": "android_chrome:J3:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "first_target_abandoned_after_navigation"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J1:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J1",
+        "repetition": 1,
+        "unitKey": "android_pwa:J1:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "missing_click_or_not_ready"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J1:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J1",
+        "repetition": 2,
+        "unitKey": "android_pwa:J1:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "missing_click_or_not_ready"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J1:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J1",
+        "repetition": 3,
+        "unitKey": "android_pwa:J1:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": false,
+        "findingId": "PERF-F2-001",
+        "failureBoundary": {
+          "phase": "first_action",
+          "actionId": "first",
+          "reason": "missing_click_or_not_ready"
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J2:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J2",
+        "repetition": 1,
+        "unitKey": "android_pwa:J2:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J2:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J2",
+        "repetition": 2,
+        "unitKey": "android_pwa:J2:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J2:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J2",
+        "repetition": 3,
+        "unitKey": "android_pwa:J2:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-002",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J3:r1",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J3",
+        "repetition": 1,
+        "unitKey": "android_pwa:J3:r1",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J3:r2",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J3",
+        "repetition": 2,
+        "unitKey": "android_pwa:J3:r2",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      },
+      {
+        "observationId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2:android_pwa:android_pwa:J3:r3",
+        "sourceRunId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2",
+        "environment": "android_pwa",
+        "journeyId": "J3",
+        "repetition": 3,
+        "unitKey": "android_pwa:J3:r3",
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "validFunctionalSample": true,
+        "findingId": "PERF-F2-003",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        }
+      }
+    ],
+    "recurringFailureBoundaries": [
+      {
+        "reason": "none",
+        "validObservationCount": 23,
+        "environments": [
+          "android_chrome",
+          "android_pwa",
+          "hosted",
+          "local_desktop"
+        ],
+        "journeys": [
+          "J1",
+          "J2",
+          "J3"
+        ]
+      },
+      {
+        "reason": "missing_click_or_not_ready",
+        "validObservationCount": 6,
+        "environments": [
+          "android_chrome",
+          "android_pwa"
+        ],
+        "journeys": [
+          "J1"
+        ]
+      },
+      {
+        "reason": "first_target_abandoned_after_navigation",
+        "validObservationCount": 5,
+        "environments": [
+          "android_chrome",
+          "hosted",
+          "local_desktop"
+        ],
+        "journeys": [
+          "J3"
+        ]
+      },
+      {
+        "reason": "j2_preloaded_inbox_read_not_linked_to_data_ready",
+        "validObservationCount": 2,
+        "environments": [
+          "android_chrome"
+        ],
+        "journeys": [
+          "J2"
+        ]
+      }
+    ]
+  },
+  "findingReconciliation": [
+    {
+      "findingId": "PERF-F2-001",
+      "severity": "high",
+      "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "currentStatus": "OBSERVED_DIAGNOSTIC_COVERAGE",
+      "dispositionChanged": false,
+      "mappedJourneys": [
+        "J1"
+      ],
+      "mappedObservationCount": 12,
+      "observationValidCount": 12,
+      "validFunctionalSampleCount": 6,
+      "sourceEvidence": [
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T123931810Z-9b3ff41f-266d-4878-b6ea-9f686f8a90dd_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+      ],
+      "conclusion": "No finding disposition changes from diagnostic observation alone."
+    },
+    {
+      "findingId": "PERF-F2-002",
+      "severity": "medium",
+      "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "currentStatus": "OBSERVED_DIAGNOSTIC_COVERAGE",
+      "dispositionChanged": false,
+      "mappedJourneys": [
+        "J2"
+      ],
+      "mappedObservationCount": 12,
+      "observationValidCount": 12,
+      "validFunctionalSampleCount": 10,
+      "sourceEvidence": [
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T123931810Z-9b3ff41f-266d-4878-b6ea-9f686f8a90dd_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+      ],
+      "conclusion": "No finding disposition changes from diagnostic observation alone."
+    },
+    {
+      "findingId": "PERF-F2-003",
+      "severity": "medium",
+      "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "currentStatus": "OBSERVED_DIAGNOSTIC_COVERAGE",
+      "dispositionChanged": false,
+      "mappedJourneys": [
+        "J3"
+      ],
+      "mappedObservationCount": 12,
+      "observationValidCount": 12,
+      "validFunctionalSampleCount": 7,
+      "sourceEvidence": [
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T123931810Z-9b3ff41f-266d-4878-b6ea-9f686f8a90dd_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+      ],
+      "conclusion": "No finding disposition changes from diagnostic observation alone."
+    },
+    {
+      "findingId": "PERF-F12-001",
+      "severity": "high",
+      "phase1Status": "MEASUREMENT_GAP_CONFIRMED",
+      "currentStatus": "NOT_EXERCISED_IN_CURRENT_JOURNEYS",
+      "dispositionChanged": false,
+      "mappedJourneys": [],
+      "mappedObservationCount": 0,
+      "observationValidCount": 0,
+      "validFunctionalSampleCount": 0,
+      "sourceEvidence": [
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T123931810Z-9b3ff41f-266d-4878-b6ea-9f686f8a90dd_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+      ],
+      "conclusion": "No finding disposition changes from diagnostic observation alone."
+    },
+    {
+      "findingId": "PERF-F12-002",
+      "severity": "high",
+      "phase1Status": "MEASURED_CANDIDATE_PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "currentStatus": "NOT_EXERCISED_IN_CURRENT_JOURNEYS",
+      "dispositionChanged": false,
+      "mappedJourneys": [],
+      "mappedObservationCount": 0,
+      "observationValidCount": 0,
+      "validFunctionalSampleCount": 0,
+      "sourceEvidence": [
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T123931810Z-9b3ff41f-266d-4878-b6ea-9f686f8a90dd_ENVIRONMENT_EVIDENCE.json",
+        "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI/docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+      ],
+      "conclusion": "No finding disposition changes from diagnostic observation alone."
+    }
+  ],
+  "diagnosticConclusion": {
+    "status": "DIAGNOSIS_BLOCKED",
+    "commonLayerDelay": {
+      "status": "NOT_ESTABLISHED",
+      "repeatedValidTraceCount": 0,
+      "timingBoundaryKnown": false,
+      "performanceOutcome": "NOT_EVALUABLE",
+      "reason": "Observed action and readiness boundaries do not establish a repeated common-layer delay without an accepted performance boundary.",
+      "repeatedObservedBoundaries": [
+        {
+          "reason": "missing_click_or_not_ready",
+          "validObservationCount": 6,
+          "environments": [
+            "android_chrome",
+            "android_pwa"
+          ],
+          "journeys": [
+            "J1"
+          ]
+        },
+        {
+          "reason": "first_target_abandoned_after_navigation",
+          "validObservationCount": 5,
+          "environments": [
+            "android_chrome",
+            "hosted",
+            "local_desktop"
+          ],
+          "journeys": [
+            "J3"
+          ]
+        }
+      ]
+    },
+    "observedFailuresRemainDiagnostic": true,
+    "performanceOutcome": "NOT_EVALUABLE",
+    "openGaps": [
+      "No repeated common-layer delay with an accepted timing boundary was established.",
+      "Observed navigation-away, click/readiness, and preloaded-data boundaries are not root-cause attribution.",
+      "AI Chat-specific findings were not exercised by J1-J3 and retain their existing dispositions."
+    ]
+  },
+  "reconciliation": {
+    "status": "PASS",
+    "outcome": "DIAGNOSIS_BLOCKED",
+    "checks": [
+      {
+        "id": "local_4_4_reconciliation",
+        "status": "PASS",
+        "failures": []
+      },
+      {
+        "id": "environment_4_5_4_6_capture",
+        "status": "PASS",
+        "failures": []
+      },
+      {
+        "id": "local_stage_reconciliation",
+        "status": "PASS",
+        "failures": []
+      },
+      {
+        "id": "environment_stage_coverage",
+        "status": "PASS",
+        "failures": []
+      },
+      {
+        "id": "observation_mapping",
+        "status": "PASS",
+        "observationCount": 36,
+        "unmappedObservationCount": 0
+      },
+      {
+        "id": "current_source_identity",
+        "status": "PASS",
+        "diffCheck": "PASS"
+      },
+      {
+        "id": "finding_manifest_integrity",
+        "status": "PASS",
+        "findingCount": 5
+      }
+    ],
+    "failedChecks": [],
+    "findingDispositionChanges": [],
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "historicalPhase4EvidenceRewritten": false
+  },
+  "blockers": [
+    "common_layer_delay_not_repeated_with_known_timing",
+    "performance_outcome_not_evaluable"
+  ],
+  "constraints": [
+    "No official nine-scenario x 20-valid-sample baseline was started.",
+    "No runtime change is accepted as a Plan 1 fix.",
+    "Finding dispositions remain unchanged.",
+    "Production remains NO-GO.",
+    "Historical evidence remains preserved and separate.",
+    "No credentials, cookies, tokens, raw bodies, prompts, clinical data, or device serials are recorded."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "redactionFailures": [],
+    "inputEvidenceParsed": true,
+    "localReconciliationPass": true,
+    "environmentCoverageComplete": true,
+    "everyObservationMapped": true,
+    "findingManifestIntegrity": true,
+    "sourceIdentityPass": true,
+    "documentationOnlyIdentityMismatches": [
+      "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md"
+    ],
+    "blockedRetryExcluded": true,
+    "historicalPhase4EvidenceRewritten": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "DIAGNOSIS_BLOCKED",
+    "diagnosisStatus": "DIAGNOSIS_BLOCKED",
+    "phase4Closed": true,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "nextAction": "Keep Plan 1 at DIAGNOSIS_BLOCKED; do not start Plan 2 or runtime remediation. A separately authorized hypothesis and accepted timing boundary are required for any follow-up."
+  },
+  "checkpointReconciliation": {
+    "status": "COMPLETE",
+    "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+    "eventCount": 4,
+    "hashChainRead": true,
+    "lastEventType": "run.status"
+  }
+}

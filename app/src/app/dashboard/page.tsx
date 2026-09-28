@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { DashboardApp } from "@/components/dashboard-app";
 import { DashboardGatedState } from "@/components/auth-states";
+import { DashboardRscAuthDiagnosticMarker } from "@/components/dashboard/authenticated-shell-boundary";
 import { resolveMobileInstallAccess } from "@/lib/commercial-install-access";
 import {
   deriveDashboardAccessGate,
@@ -16,9 +17,15 @@ export default async function DashboardPage() {
 
   if (auth.gate === "fallback" || !isSupabaseStoreConfigured()) {
     return (
-      <Suspense fallback={null}>
-        <DashboardApp aiChatEnabled={aiChatEnabled} />
-      </Suspense>
+      <>
+        <DashboardRscAuthDiagnosticMarker
+          scope="page"
+          timing={auth.gate === "resolved" ? auth.authTiming : undefined}
+        />
+        <Suspense fallback={null}>
+          <DashboardApp aiChatEnabled={aiChatEnabled} />
+        </Suspense>
+      </>
     );
   }
 
@@ -29,21 +36,35 @@ export default async function DashboardPage() {
   });
 
   if (gate !== "ok") {
-    return <DashboardGatedState gate={gate} />;
+    return (
+      <>
+        <DashboardRscAuthDiagnosticMarker
+          scope="page"
+          timing={auth.gate === "resolved" ? auth.authTiming : undefined}
+        />
+        <DashboardGatedState gate={gate} />
+      </>
+    );
   }
 
   const installAccess = await resolveMobileInstallAccess();
 
   return (
-    <Suspense fallback={null}>
-      <DashboardApp
-        authInfo={{ displayName: auth.displayName, role: auth.role }}
-        commercialInfo={{
-          subscriptionStatus: auth.entitlementStatus,
-          installReady: installAccess.gate === "granted",
-        }}
-        aiChatEnabled={aiChatEnabled}
+    <>
+      <DashboardRscAuthDiagnosticMarker
+        scope="page"
+        timing={auth.gate === "resolved" ? auth.authTiming : undefined}
       />
-    </Suspense>
+      <Suspense fallback={null}>
+        <DashboardApp
+          authInfo={{ displayName: auth.displayName, role: auth.role }}
+          commercialInfo={{
+            subscriptionStatus: auth.entitlementStatus,
+            installReady: installAccess.gate === "granted",
+          }}
+          aiChatEnabled={aiChatEnabled}
+        />
+      </Suspense>
+    </>
   );
 }

@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "aiya-global-freeze-browser-observation-v1",
+  "evidenceId": "aiya-global-freeze-hosted-edge-12-click-navigation-20260928T135230Z-c669a43a-d4c5-4951-8c36-0ceabbe32ad2",
+  "createdAtUtc": "2026-09-28T13:52:30Z",
+  "status": "INFORMATIVE_UNPAIRED_LOADING_STATE_OBSERVED",
+  "userRequest": "Send 10 to 15 sequential clicks rather than a two-click test.",
+  "scope": "One authenticated hosted Dashboard run with 12 visible navigation clicks; no form, client record, or message was opened or submitted.",
+  "origin": "https://aiyaworkspace.com",
+  "identity": {
+    "branch": "codex/production-readiness-stage-1",
+    "checkoutHead": "a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a",
+    "hostedReleaseIndependentlyVerifiedInThisCapture": false,
+    "lastRecordedHostedRelease": "hs-1c9756046b01-b55ed4ff550f"
+  },
+  "environment": {
+    "browser": "Edge",
+    "dashboardSessionAuthenticated": true,
+    "extensionPresence": "unknown",
+    "hostSample": false,
+    "sourceOrDatabaseWrite": false,
+    "browserSettingsChanged": false
+  },
+  "interaction": {
+    "initialPath": "/dashboard",
+    "sequence": [
+      "Ayarlar", "Diğer", "Ana Sayfa",
+      "Ayarlar", "Diğer", "Ana Sayfa",
+      "Ayarlar", "Diğer", "Ana Sayfa",
+      "Ayarlar", "Diğer", "Ana Sayfa"
+    ],
+    "mechanism": "Sequential CUA clicks on visible navigation rail coordinates",
+    "clickCoordinates": {
+      "Ayarlar": [40, 430],
+      "Diğer": [40, 315],
+      "Ana Sayfa": [40, 95]
+    },
+    "requestedClickCount": 12,
+    "successfulClickCalls": 12,
+    "clickCallDurationsMs": [137, 1018, 1011, 991, 1020, 987, 989, 1071, 935, 1004, 1014, 1006],
+    "sumOfClickCallDurationsMs": 11183,
+    "timingLimitation": "These are high-level automation call durations, not browser input-event timestamps. Calls were awaited serially, so starts were approximately one second apart after the first click; exact mouse-event gaps were not independently measured.",
+    "finalPath": "/dashboard",
+    "typingOrFormSubmit": false
+  },
+  "finalVisibleState": {
+    "screenshotObserved": true,
+    "screenshotObservation": "Dashboard navigation rail remained visible; main content consisted of loading skeleton placeholders.",
+    "accessibilityStateObserved": true,
+    "accessibilityState": "Loading AIya workspace",
+    "statePersistedThroughScreenshotAndAccessibilityRead": true,
+    "finalDashboardContentConfirmedLoaded": false
+  },
+  "diagnostics": {
+    "rawTraceCaptured": false,
+    "networkTimelineCaptured": false,
+    "requestDurationsAvailable": false,
+    "mainThreadLongTasksAvailable": false,
+    "hostOrDatabaseMetricsAvailable": false
+  },
+  "assessment": {
+    "loadingStallObservedAfterSequence": true,
+    "reportedSustainedFreezeProven": false,
+    "rootCauseEstablished": false,
+    "interpretation": "After 12 sequential navigation actions, the final URL was /dashboard but the visible page remained in its workspace-loading skeleton state through a screenshot and accessibility-state read. This is a user-visible loading stall observation. The test lacks browser input timestamps, request timing, a raw trace, and host pairing; it cannot establish how long the loading state persisted or whether the delay was in network, server, database, or client coordination. The roughly one-second awaited automation call durations also mean this was not a verified sub-500-ms input cadence."
+  },
+  "formalStatus": {
+    "hostedPhase1": "unchanged: BLOCKED, 0/3 valid paired records, 5/5 attempts consumed",
+    "countedAsPhase1Record": false,
+    "reasonNotCounted": "No aligned host sample or sanitized browser trace; separate UI observation."
+  },
+  "privacyAndSideEffects": {
+    "responseBodiesCaptured": false,
+    "requestHeadersOrCookiesPersisted": false,
+    "clientOrHealthDataReadOrPersisted": false,
+    "formSubmitted": false,
+    "productionDataChanged": false,
+    "applicationSourceChanged": false,
+    "browserSettingsChanged": false,
+    "rawScreenshotPersisted": false
+  },
+  "nextAction": "Do not repeat the same click sequence or infer a cause. A causal follow-up needs one supported browser capture that timestamps the actual input events and correlates them with request/RSC completion and the visible loading-state transition; do not reopen the exhausted Phase 1 identity."
+}

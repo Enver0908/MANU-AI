@@ -1,0 +1,2798 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase5-2-single-variable-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "5",
+  "stage": "5.2",
+  "stageId": "5.2",
+  "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+  "generatedAt": "2026-09-17T13:51:54.158Z",
+  "status": "COMPLETE",
+  "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Measure H-5.1-001 with three matched A -> B -> A local desktop cycles.",
+    "environment": "local_desktop",
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": true,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true,
+    "countedAsOfficialSample": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.7 COMPLETE / DIAGNOSIS_BLOCKED",
+      "5.1 COMPLETE / HYPOTHESES_PRE_REGISTERED"
+    ],
+    "currentStage": "5.2",
+    "nextEligibleStage": "5.3"
+  },
+  "sourceIdentity": {
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branchMode": "DETACHED_HEAD",
+    "branch": "",
+    "statusLineCount": 81,
+    "statusHash": "ff8cd4cc6d4e8ffd593851739ca962974684047a94dbcd855733bf51312f6b33",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "e06da5b1457b102cb86a689fcb9d996bdfbeb6dfc4a3e4dbd71a6b23b2971634"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "1a89fe6dfcf3a0ee926012c1b7efba6d52eb586606ff991a09f6cd1ebaf6ad9d"
+      },
+      {
+        "path": "app/src/lib/use-aiya-state.ts",
+        "sha256": "3bee61e1b91de703a6b1ce9016d4c4d92b46366447bea8a350949894878c1d27"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "4424179730f0b88231e9b4cac04c04457b32fb600596d79ae8a99291b752d458"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-2-experiment.mjs",
+        "sha256": "5dc78764075c662b0cb50f1076c75a83fc8746f5e32d29cd412f44418a758703"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-2-experiment.test.mjs",
+        "sha256": "3997fa08d69de981ad8388da896c9584a57e5ad3bde180180e0ef1c2f89405e9"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "40c0625b5d78c087c5c7d142c149bd91bc59ecd2e6187bf3bc4790baf040eecf"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "b70ccd7abd892c81589f8ff4c1d195cff03a35784bcc97ba9f9b470dc11becb4"
+      },
+      {
+        "path": "app/package.json",
+        "sha256": "a9d740c1629069249c0fd17245dc7ad4c04addcce5aa66f031c86ad80a944c73"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "sha256": "4388df3600affa486792f9453f8ade009737ef0efd312fa2deb1a83b63fac11b"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+        "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+      }
+    ]
+  },
+  "parentEvidence": {
+    "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+    "status": "COMPLETE",
+    "outcome": "HYPOTHESES_PRE_REGISTERED",
+    "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+  },
+  "experimentContract": {
+    "candidateId": "H-5.1-001",
+    "title": "Shared shell and app-state hydration fan-out",
+    "variableId": "shared_read_start_policy",
+    "variable": {
+      "A": "independent",
+      "B": "bootstrap_gate",
+      "BDescription": "Gate the first app-state hydration trigger until shell bootstrap has completed.",
+      "runtimeDefault": "independent",
+      "traceOnlyEnablement": "window.__aiyaPhase52TraceEnabled=true plus policy flag"
+    },
+    "exactFilesAndFunctions": [
+      "app/src/components/dashboard-app.tsx:138-149 hydration trigger and policy gate",
+      "app/src/components/dashboard/shell-provider.tsx:253-337 runBootstrap lifecycle",
+      "app/src/lib/use-aiya-state.ts:157-184 hydrate single-flight lifecycle",
+      "app/src/lib/phase-52-diagnostic.ts:1-46 trace-only policy/event helper"
+    ],
+    "journey": {
+      "id": "P5.2-H-5.1-001-dashboard-initial-load",
+      "linkedPlanJourneys": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "environment": "local_desktop",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "startBoundary": "trusted_password_login_submit",
+      "routeCommitBoundary": "dashboard_url_observed_after_authenticated_navigation",
+      "endBoundary": "overview_work_areas_visible_after_client_hydration",
+      "requiredSubboundaries": [
+        "trusted_action",
+        "route_commit",
+        "shell_bootstrap_request_start_and_body_finish",
+        "app_state_request_start_and_body_finish",
+        "client_hydration_start_and_complete",
+        "target_ready"
+      ]
+    },
+    "matchedControls": [
+      "same synthetic password-authenticated account and local normal tenant fixture",
+      "same build and release identity for all nine traces",
+      "same Chromium headless desktop browser, cold context, and service worker blocked",
+      "same network, local Supabase, route order, target selector, and request contract",
+      "same diagnostic instrumentation and request observation deadline"
+    ],
+    "safetyChecks": [
+      "tenant/session/role/capability and RLS identity remain unchanged",
+      "full app-state completeness and freshness remain unchanged",
+      "hydration single-flight and late-response behavior remain unchanged",
+      "no mutation, provider egress, PWA cache, or offline privacy behavior is exercised"
+    ],
+    "rollback": "Remove only the trace-only policy gate and diagnostic event hooks; restore A as the default.",
+    "repetitionContract": {
+      "cycles": 3,
+      "order": [
+        "A_before",
+        "B",
+        "A_after"
+      ],
+      "maxRepetitions": 5,
+      "countedAsOfficialSample": false
+    }
+  },
+  "buildIdentity": {
+    "status": "PASS",
+    "httpStatus": 200,
+    "apiStatus": "ok",
+    "release": null
+  },
+  "inputPreflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "environment": "local_desktop",
+    "credentialsAvailable": "<redacted>",
+    "app": {
+      "label": "local_app",
+      "status": "PASS",
+      "httpStatus": 200,
+      "targetOrigin": "http://127.0.0.1:3142",
+      "failureBoundary": null
+    },
+    "supabase": {
+      "label": "local_supabase",
+      "status": "PASS",
+      "httpStatus": 200,
+      "targetOrigin": "http://127.0.0.1:54321",
+      "failureBoundary": null
+    },
+    "blockers": [],
+    "release": {
+      "status": "PASS",
+      "httpStatus": 200,
+      "apiStatus": "ok",
+      "release": null
+    },
+    "localSupabase": {
+      "status": "PASS",
+      "apiUrl": "http://127.0.0.1:54321",
+      "urlIsLocal": true,
+      "credentialsPresent": "<redacted>",
+      "reason": null
+    }
+  },
+  "cycleSummary": {
+    "cycles": [
+      {
+        "cycle": 1,
+        "traceIds": [
+          "cycle-1-A_before",
+          "cycle-1-B",
+          "cycle-1-A_after"
+        ],
+        "observationValid": true,
+        "aBoundaryMs": 1242.5,
+        "bBoundaryMs": 1271,
+        "deltaBMinusAMs": 28.5,
+        "direction": "B_SLOWER"
+      },
+      {
+        "cycle": 2,
+        "traceIds": [
+          "cycle-2-A_before",
+          "cycle-2-B",
+          "cycle-2-A_after"
+        ],
+        "observationValid": true,
+        "aBoundaryMs": 864.5,
+        "bBoundaryMs": 1157,
+        "deltaBMinusAMs": 292.5,
+        "direction": "B_SLOWER"
+      },
+      {
+        "cycle": 3,
+        "traceIds": [
+          "cycle-3-A_before",
+          "cycle-3-B",
+          "cycle-3-A_after"
+        ],
+        "observationValid": true,
+        "aBoundaryMs": 1177,
+        "bBoundaryMs": 1266,
+        "deltaBMinusAMs": 89,
+        "direction": "B_SLOWER"
+      }
+    ],
+    "repeatable": true,
+    "conclusion": "REPEATABLE_PROVISIONAL_EFFECT",
+    "noCauseConfirmed": true,
+    "findingDispositionChanged": false
+  },
+  "sampleSummary": {
+    "attemptedTraces": 9,
+    "plannedTraces": 9,
+    "observationValidTraces": 9,
+    "observationInvalidTraces": 0,
+    "allNineAttempted": true,
+    "validTracesAreNotOfficialBaseline": true
+  },
+  "traces": [
+    {
+      "traceId": "cycle-1-A_before",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 1,
+      "position": "A_before",
+      "policy": "independent",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 4,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 2000,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 2033,
+          "responseHeaderAtMs": 2599,
+          "bodyFinishedAtMs": 2648,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 490.03
+            },
+            {
+              "name": "store",
+              "durationMs": 59.44
+            },
+            {
+              "name": "json",
+              "durationMs": 0.6
+            },
+            {
+              "name": "route",
+              "durationMs": 550.07
+            }
+          ],
+          "clientStartedAtMs": 2023,
+          "clientCompletedAtMs": 2599
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 2623,
+          "responseHeaderAtMs": 3218,
+          "bodyFinishedAtMs": 3240,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 267.69
+            },
+            {
+              "name": "store",
+              "durationMs": 318.37
+            },
+            {
+              "name": "json",
+              "durationMs": 1.86
+            },
+            {
+              "name": "route",
+              "durationMs": 587.92
+            }
+          ],
+          "clientStartedAtMs": 2611,
+          "clientCompletedAtMs": 3220
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 2611,
+        "startedAtMs": 2611,
+        "completedAtMs": 3220
+      },
+      "targetReadyAtMs": 3272,
+      "targetInteractivePaintAtMs": 3284,
+      "routeEvents": [
+        {
+          "atMs": 1983,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 2023,
+          "atPerformanceMs": 1360.7,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 2599,
+          "atPerformanceMs": 1936.1,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 2611,
+          "atPerformanceMs": 1948.2,
+          "policy": "independent"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 2611,
+          "atPerformanceMs": 1948.4
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 3220,
+          "atPerformanceMs": 2557.2
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -445,
+            "responseHeaderAtMs": -398,
+            "bodyFinishedAtMs": -378,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 84,
+            "responseHeaderAtMs": 663,
+            "bodyFinishedAtMs": 1900,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 666,
+            "responseHeaderAtMs": 1886,
+            "bodyFinishedAtMs": 1923,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2033,
+            "responseHeaderAtMs": 2599,
+            "bodyFinishedAtMs": 2648,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 490.03
+              },
+              {
+                "name": "store",
+                "durationMs": 59.44
+              },
+              {
+                "name": "json",
+                "durationMs": 0.6
+              },
+              {
+                "name": "route",
+                "durationMs": 550.07
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2623,
+            "responseHeaderAtMs": 3218,
+            "bodyFinishedAtMs": 3240,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 267.69
+              },
+              {
+                "name": "store",
+                "durationMs": 318.37
+              },
+              {
+                "name": "json",
+                "durationMs": 1.86
+              },
+              {
+                "name": "route",
+                "durationMs": 587.92
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 2033,
+            "overlapEndAtMs": 2549
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 2034,
+            "overlapEndAtMs": 2534
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 2623,
+            "overlapEndAtMs": 2648
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 2653,
+            "overlapEndAtMs": 3240
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 2654,
+            "overlapEndAtMs": 3240
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 1248,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 3268,
+        "routeCommitToTargetReadyMs": 1272,
+        "routeCommitToHydrationStartMs": 611,
+        "hydrationStartToCompleteMs": 609
+      }
+    },
+    {
+      "traceId": "cycle-1-B",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 1,
+      "position": "B",
+      "policy": "bootstrap_gate",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 2,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 690,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 713,
+          "responseHeaderAtMs": 1015,
+          "bodyFinishedAtMs": 1062,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 211.5
+            },
+            {
+              "name": "store",
+              "durationMs": 83.51
+            },
+            {
+              "name": "json",
+              "durationMs": 0.4
+            },
+            {
+              "name": "route",
+              "durationMs": 295.41
+            }
+          ],
+          "clientStartedAtMs": 708,
+          "clientCompletedAtMs": 1015
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 1039,
+          "responseHeaderAtMs": 1615,
+          "bodyFinishedAtMs": 1630,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 215.48
+            },
+            {
+              "name": "store",
+              "durationMs": 347.94
+            },
+            {
+              "name": "json",
+              "durationMs": 2.29
+            },
+            {
+              "name": "route",
+              "durationMs": 565.71
+            }
+          ],
+          "clientStartedAtMs": 1029,
+          "clientCompletedAtMs": 1613
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 1029,
+        "startedAtMs": 1029,
+        "completedAtMs": 1613
+      },
+      "targetReadyAtMs": 1961,
+      "targetInteractivePaintAtMs": 1972,
+      "routeEvents": [
+        {
+          "atMs": 675,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 708,
+          "atPerformanceMs": 392.9,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 1015,
+          "atPerformanceMs": 699.7,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 1029,
+          "atPerformanceMs": 713.8,
+          "policy": "bootstrap_gate"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 1029,
+          "atPerformanceMs": 713.8
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 1613,
+          "atPerformanceMs": 1297.7
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -251,
+            "responseHeaderAtMs": -225,
+            "bodyFinishedAtMs": -211,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 56,
+            "responseHeaderAtMs": 315,
+            "bodyFinishedAtMs": 598,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 318,
+            "responseHeaderAtMs": 588,
+            "bodyFinishedAtMs": 629,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 713,
+            "responseHeaderAtMs": 1015,
+            "bodyFinishedAtMs": 1062,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 211.5
+              },
+              {
+                "name": "store",
+                "durationMs": 83.51
+              },
+              {
+                "name": "json",
+                "durationMs": 0.4
+              },
+              {
+                "name": "route",
+                "durationMs": 295.41
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1039,
+            "responseHeaderAtMs": 1615,
+            "bodyFinishedAtMs": 1630,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 215.48
+              },
+              {
+                "name": "store",
+                "durationMs": 347.94
+              },
+              {
+                "name": "json",
+                "durationMs": 2.29
+              },
+              {
+                "name": "route",
+                "durationMs": 565.71
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 714,
+            "overlapEndAtMs": 993
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 715,
+            "overlapEndAtMs": 961
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 1039,
+            "overlapEndAtMs": 1062
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 1067,
+            "overlapEndAtMs": 1630
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 1069,
+            "overlapEndAtMs": 1630
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 300,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 1959,
+        "routeCommitToTargetReadyMs": 1271,
+        "routeCommitToHydrationStartMs": 339,
+        "hydrationStartToCompleteMs": 584
+      }
+    },
+    {
+      "traceId": "cycle-1-A_after",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 1,
+      "position": "A_after",
+      "policy": "independent",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 1,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 601,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 621,
+          "responseHeaderAtMs": 867,
+          "bodyFinishedAtMs": 930,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 163.89
+            },
+            {
+              "name": "store",
+              "durationMs": 75.89
+            },
+            {
+              "name": "json",
+              "durationMs": 0.32
+            },
+            {
+              "name": "route",
+              "durationMs": 240.11
+            }
+          ],
+          "clientStartedAtMs": 617,
+          "clientCompletedAtMs": 867
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 903,
+          "responseHeaderAtMs": 1358,
+          "bodyFinishedAtMs": 1399,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 251.56
+            },
+            {
+              "name": "store",
+              "durationMs": 199.6
+            },
+            {
+              "name": "json",
+              "durationMs": 2.02
+            },
+            {
+              "name": "route",
+              "durationMs": 453.17
+            }
+          ],
+          "clientStartedAtMs": 891,
+          "clientCompletedAtMs": 1360
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 891,
+        "startedAtMs": 891,
+        "completedAtMs": 1360
+      },
+      "targetReadyAtMs": 1814,
+      "targetInteractivePaintAtMs": 1818,
+      "routeEvents": [
+        {
+          "atMs": 599,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 617,
+          "atPerformanceMs": 303.2,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 867,
+          "atPerformanceMs": 553.4,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 891,
+          "atPerformanceMs": 577.4,
+          "policy": "independent"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 891,
+          "atPerformanceMs": 577.5
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 1360,
+          "atPerformanceMs": 1046.6
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -289,
+            "responseHeaderAtMs": -266,
+            "bodyFinishedAtMs": -249,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 57,
+            "responseHeaderAtMs": 314,
+            "bodyFinishedAtMs": 529,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 316,
+            "responseHeaderAtMs": 518,
+            "bodyFinishedAtMs": 562,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 621,
+            "responseHeaderAtMs": 867,
+            "bodyFinishedAtMs": 930,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 163.89
+              },
+              {
+                "name": "store",
+                "durationMs": 75.89
+              },
+              {
+                "name": "json",
+                "durationMs": 0.32
+              },
+              {
+                "name": "route",
+                "durationMs": 240.11
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 903,
+            "responseHeaderAtMs": 1358,
+            "bodyFinishedAtMs": 1399,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 251.56
+              },
+              {
+                "name": "store",
+                "durationMs": 199.6
+              },
+              {
+                "name": "json",
+                "durationMs": 2.02
+              },
+              {
+                "name": "route",
+                "durationMs": 453.17
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 621,
+            "overlapEndAtMs": 798
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 622,
+            "overlapEndAtMs": 792
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 903,
+            "overlapEndAtMs": 930
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 935,
+            "overlapEndAtMs": 1399
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 936,
+            "overlapEndAtMs": 1399
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 244,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 1813,
+        "routeCommitToTargetReadyMs": 1213,
+        "routeCommitToHydrationStartMs": 290,
+        "hydrationStartToCompleteMs": 469
+      }
+    },
+    {
+      "traceId": "cycle-2-A_before",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 2,
+      "position": "A_before",
+      "policy": "independent",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 1,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 515,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 530,
+          "responseHeaderAtMs": 718,
+          "bodyFinishedAtMs": 755,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 144.26
+            },
+            {
+              "name": "store",
+              "durationMs": 37.95
+            },
+            {
+              "name": "json",
+              "durationMs": 0.12
+            },
+            {
+              "name": "route",
+              "durationMs": 182.33
+            }
+          ],
+          "clientStartedAtMs": 526,
+          "clientCompletedAtMs": 718
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 736,
+          "responseHeaderAtMs": 1090,
+          "bodyFinishedAtMs": 1102,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 145.94
+            },
+            {
+              "name": "store",
+              "durationMs": 203.86
+            },
+            {
+              "name": "json",
+              "durationMs": 1.28
+            },
+            {
+              "name": "route",
+              "durationMs": 351.07
+            }
+          ],
+          "clientStartedAtMs": 729,
+          "clientCompletedAtMs": 1093
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 729,
+        "startedAtMs": 729,
+        "completedAtMs": 1093
+      },
+      "targetReadyAtMs": 1120,
+      "targetInteractivePaintAtMs": 1144,
+      "routeEvents": [
+        {
+          "atMs": 504,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 526,
+          "atPerformanceMs": 280.4,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 718,
+          "atPerformanceMs": 472,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 729,
+          "atPerformanceMs": 483.4,
+          "policy": "independent"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 729,
+          "atPerformanceMs": 483.5
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 1093,
+          "atPerformanceMs": 846.6
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -201,
+            "responseHeaderAtMs": -187,
+            "bodyFinishedAtMs": -175,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 44,
+            "responseHeaderAtMs": 246,
+            "bodyFinishedAtMs": 445,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 247,
+            "responseHeaderAtMs": 436,
+            "bodyFinishedAtMs": 466,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 530,
+            "responseHeaderAtMs": 718,
+            "bodyFinishedAtMs": 755,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 144.26
+              },
+              {
+                "name": "store",
+                "durationMs": 37.95
+              },
+              {
+                "name": "json",
+                "durationMs": 0.12
+              },
+              {
+                "name": "route",
+                "durationMs": 182.33
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 736,
+            "responseHeaderAtMs": 1090,
+            "bodyFinishedAtMs": 1102,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 145.94
+              },
+              {
+                "name": "store",
+                "durationMs": 203.86
+              },
+              {
+                "name": "json",
+                "durationMs": 1.28
+              },
+              {
+                "name": "route",
+                "durationMs": 351.07
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 532,
+            "overlapEndAtMs": 696
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 532,
+            "overlapEndAtMs": 685
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 736,
+            "overlapEndAtMs": 755
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 760,
+            "overlapEndAtMs": 1102
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 761,
+            "overlapEndAtMs": 1102
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 204,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 1119,
+        "routeCommitToTargetReadyMs": 605,
+        "routeCommitToHydrationStartMs": 214,
+        "hydrationStartToCompleteMs": 364
+      }
+    },
+    {
+      "traceId": "cycle-2-B",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 2,
+      "position": "B",
+      "policy": "bootstrap_gate",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 1,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 519,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 535,
+          "responseHeaderAtMs": 735,
+          "bodyFinishedAtMs": 780,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 139.82
+            },
+            {
+              "name": "store",
+              "durationMs": 55
+            },
+            {
+              "name": "json",
+              "durationMs": 0.57
+            },
+            {
+              "name": "route",
+              "durationMs": 195.39
+            }
+          ],
+          "clientStartedAtMs": 529,
+          "clientCompletedAtMs": 735
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 759,
+          "responseHeaderAtMs": 1258,
+          "bodyFinishedAtMs": 1277,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 204.06
+            },
+            {
+              "name": "store",
+              "durationMs": 290.24
+            },
+            {
+              "name": "json",
+              "durationMs": 1.69
+            },
+            {
+              "name": "route",
+              "durationMs": 495.99
+            }
+          ],
+          "clientStartedAtMs": 747,
+          "clientCompletedAtMs": 1261
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 747,
+        "startedAtMs": 747,
+        "completedAtMs": 1261
+      },
+      "targetReadyAtMs": 1676,
+      "targetInteractivePaintAtMs": 1696,
+      "routeEvents": [
+        {
+          "atMs": 515,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 529,
+          "atPerformanceMs": 286.7,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 735,
+          "atPerformanceMs": 492.7,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 747,
+          "atPerformanceMs": 504.7,
+          "policy": "bootstrap_gate"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 747,
+          "atPerformanceMs": 504.8
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 1261,
+          "atPerformanceMs": 1018.4
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -210,
+            "responseHeaderAtMs": -193,
+            "bodyFinishedAtMs": -180,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 41,
+            "responseHeaderAtMs": 243,
+            "bodyFinishedAtMs": 440,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 245,
+            "responseHeaderAtMs": 430,
+            "bodyFinishedAtMs": 467,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 535,
+            "responseHeaderAtMs": 735,
+            "bodyFinishedAtMs": 780,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 139.82
+              },
+              {
+                "name": "store",
+                "durationMs": 55
+              },
+              {
+                "name": "json",
+                "durationMs": 0.57
+              },
+              {
+                "name": "route",
+                "durationMs": 195.39
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 759,
+            "responseHeaderAtMs": 1258,
+            "bodyFinishedAtMs": 1277,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 204.06
+              },
+              {
+                "name": "store",
+                "durationMs": 290.24
+              },
+              {
+                "name": "json",
+                "durationMs": 1.69
+              },
+              {
+                "name": "route",
+                "durationMs": 495.99
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 536,
+            "overlapEndAtMs": 700
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 536,
+            "overlapEndAtMs": 705
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 759,
+            "overlapEndAtMs": 780
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 789,
+            "overlapEndAtMs": 1277
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 789,
+            "overlapEndAtMs": 1277
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 212,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 1675,
+        "routeCommitToTargetReadyMs": 1157,
+        "routeCommitToHydrationStartMs": 228,
+        "hydrationStartToCompleteMs": 514
+      }
+    },
+    {
+      "traceId": "cycle-2-A_after",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 2,
+      "position": "A_after",
+      "policy": "independent",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 1,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 592,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 613,
+          "responseHeaderAtMs": 801,
+          "bodyFinishedAtMs": 836,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 134.77
+            },
+            {
+              "name": "store",
+              "durationMs": 49.07
+            },
+            {
+              "name": "json",
+              "durationMs": 0.15
+            },
+            {
+              "name": "route",
+              "durationMs": 183.99
+            }
+          ],
+          "clientStartedAtMs": 608,
+          "clientCompletedAtMs": 801
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 820,
+          "responseHeaderAtMs": 1270,
+          "bodyFinishedAtMs": 1297,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 206.31
+            },
+            {
+              "name": "store",
+              "durationMs": 238.05
+            },
+            {
+              "name": "json",
+              "durationMs": 1.84
+            },
+            {
+              "name": "route",
+              "durationMs": 446.21
+            }
+          ],
+          "clientStartedAtMs": 813,
+          "clientCompletedAtMs": 1277
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 813,
+        "startedAtMs": 813,
+        "completedAtMs": 1277
+      },
+      "targetReadyAtMs": 1716,
+      "targetInteractivePaintAtMs": 1728,
+      "routeEvents": [
+        {
+          "atMs": 588,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 608,
+          "atPerformanceMs": 294.9,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 801,
+          "atPerformanceMs": 487.5,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 813,
+          "atPerformanceMs": 499.1,
+          "policy": "independent"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 813,
+          "atPerformanceMs": 499.1
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 1277,
+          "atPerformanceMs": 963.1
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -226,
+            "responseHeaderAtMs": -214,
+            "bodyFinishedAtMs": -202,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 42,
+            "responseHeaderAtMs": 314,
+            "bodyFinishedAtMs": 520,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 316,
+            "responseHeaderAtMs": 514,
+            "bodyFinishedAtMs": 551,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 613,
+            "responseHeaderAtMs": 801,
+            "bodyFinishedAtMs": 836,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 134.77
+              },
+              {
+                "name": "store",
+                "durationMs": 49.07
+              },
+              {
+                "name": "json",
+                "durationMs": 0.15
+              },
+              {
+                "name": "route",
+                "durationMs": 183.99
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 820,
+            "responseHeaderAtMs": 1270,
+            "bodyFinishedAtMs": 1297,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 206.31
+              },
+              {
+                "name": "store",
+                "durationMs": 238.05
+              },
+              {
+                "name": "json",
+                "durationMs": 1.84
+              },
+              {
+                "name": "route",
+                "durationMs": 446.21
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 614,
+            "overlapEndAtMs": 779
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 614,
+            "overlapEndAtMs": 766
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 820,
+            "overlapEndAtMs": 836
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 848,
+            "overlapEndAtMs": 1297
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 848,
+            "overlapEndAtMs": 1297
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 220,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 1715,
+        "routeCommitToTargetReadyMs": 1124,
+        "routeCommitToHydrationStartMs": 221,
+        "hydrationStartToCompleteMs": 464
+      }
+    },
+    {
+      "traceId": "cycle-3-A_before",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 3,
+      "position": "A_before",
+      "policy": "independent",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 1,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 478,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 499,
+          "responseHeaderAtMs": 671,
+          "bodyFinishedAtMs": 709,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 133.72
+            },
+            {
+              "name": "store",
+              "durationMs": 34.17
+            },
+            {
+              "name": "json",
+              "durationMs": 0.19
+            },
+            {
+              "name": "route",
+              "durationMs": 168.08
+            }
+          ],
+          "clientStartedAtMs": 494,
+          "clientCompletedAtMs": 671
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 691,
+          "responseHeaderAtMs": 1105,
+          "bodyFinishedAtMs": 1128,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 184.99
+            },
+            {
+              "name": "store",
+              "durationMs": 213.47
+            },
+            {
+              "name": "json",
+              "durationMs": 2.62
+            },
+            {
+              "name": "route",
+              "durationMs": 401.08
+            }
+          ],
+          "clientStartedAtMs": 682,
+          "clientCompletedAtMs": 1100
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 682,
+        "startedAtMs": 682,
+        "completedAtMs": 1100
+      },
+      "targetReadyAtMs": 1587,
+      "targetInteractivePaintAtMs": 1594,
+      "routeEvents": [
+        {
+          "atMs": 476,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 494,
+          "atPerformanceMs": 252.2,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 671,
+          "atPerformanceMs": 428.9,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 682,
+          "atPerformanceMs": 440,
+          "policy": "independent"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 682,
+          "atPerformanceMs": 440
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 1100,
+          "atPerformanceMs": 857.8
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -211,
+            "responseHeaderAtMs": -196,
+            "bodyFinishedAtMs": -184,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 42,
+            "responseHeaderAtMs": 242,
+            "bodyFinishedAtMs": 419,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 244,
+            "responseHeaderAtMs": 409,
+            "bodyFinishedAtMs": 443,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 499,
+            "responseHeaderAtMs": 671,
+            "bodyFinishedAtMs": 709,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 133.72
+              },
+              {
+                "name": "store",
+                "durationMs": 34.17
+              },
+              {
+                "name": "json",
+                "durationMs": 0.19
+              },
+              {
+                "name": "route",
+                "durationMs": 168.08
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 691,
+            "responseHeaderAtMs": 1105,
+            "bodyFinishedAtMs": 1128,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 184.99
+              },
+              {
+                "name": "store",
+                "durationMs": 213.47
+              },
+              {
+                "name": "json",
+                "durationMs": 2.62
+              },
+              {
+                "name": "route",
+                "durationMs": 401.08
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 500,
+            "overlapEndAtMs": 656
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 501,
+            "overlapEndAtMs": 643
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 691,
+            "overlapEndAtMs": 709
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 726,
+            "overlapEndAtMs": 1128
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 727,
+            "overlapEndAtMs": 1128
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 200,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 1586,
+        "routeCommitToTargetReadyMs": 1109,
+        "routeCommitToHydrationStartMs": 204,
+        "hydrationStartToCompleteMs": 418
+      }
+    },
+    {
+      "traceId": "cycle-3-B",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 3,
+      "position": "B",
+      "policy": "bootstrap_gate",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 0,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 539,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 560,
+          "responseHeaderAtMs": 792,
+          "bodyFinishedAtMs": 838,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 168.81
+            },
+            {
+              "name": "store",
+              "durationMs": 59.34
+            },
+            {
+              "name": "json",
+              "durationMs": 0.15
+            },
+            {
+              "name": "route",
+              "durationMs": 228.3
+            }
+          ],
+          "clientStartedAtMs": 554,
+          "clientCompletedAtMs": 792
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 816,
+          "responseHeaderAtMs": 1323,
+          "bodyFinishedAtMs": 1338,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 219.82
+            },
+            {
+              "name": "store",
+              "durationMs": 279.32
+            },
+            {
+              "name": "json",
+              "durationMs": 4.53
+            },
+            {
+              "name": "route",
+              "durationMs": 503.66
+            }
+          ],
+          "clientStartedAtMs": 808,
+          "clientCompletedAtMs": 1325
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 807,
+        "startedAtMs": 808,
+        "completedAtMs": 1325
+      },
+      "targetReadyAtMs": 1805,
+      "targetInteractivePaintAtMs": 1823,
+      "routeEvents": [
+        {
+          "atMs": 538,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 554,
+          "atPerformanceMs": 320.5,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 792,
+          "atPerformanceMs": 558.4,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 807,
+          "atPerformanceMs": 573.6,
+          "policy": "bootstrap_gate"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 808,
+          "atPerformanceMs": 573.7
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 1325,
+          "atPerformanceMs": 1091.4
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -196,
+            "responseHeaderAtMs": -183,
+            "bodyFinishedAtMs": -173,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 38,
+            "responseHeaderAtMs": 234,
+            "bodyFinishedAtMs": 457,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 235,
+            "responseHeaderAtMs": 445,
+            "bodyFinishedAtMs": 492,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 560,
+            "responseHeaderAtMs": 792,
+            "bodyFinishedAtMs": 838,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 168.81
+              },
+              {
+                "name": "store",
+                "durationMs": 59.34
+              },
+              {
+                "name": "json",
+                "durationMs": 0.15
+              },
+              {
+                "name": "route",
+                "durationMs": 228.3
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 816,
+            "responseHeaderAtMs": 1323,
+            "bodyFinishedAtMs": 1338,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 219.82
+              },
+              {
+                "name": "store",
+                "durationMs": 279.32
+              },
+              {
+                "name": "json",
+                "durationMs": 4.53
+              },
+              {
+                "name": "route",
+                "durationMs": 503.66
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 560,
+            "overlapEndAtMs": 770
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 560,
+            "overlapEndAtMs": 762
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 816,
+            "overlapEndAtMs": 838
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 842,
+            "overlapEndAtMs": 1338
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 842,
+            "overlapEndAtMs": 1338
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 228,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 1805,
+        "routeCommitToTargetReadyMs": 1266,
+        "routeCommitToHydrationStartMs": 269,
+        "hydrationStartToCompleteMs": 517
+      }
+    },
+    {
+      "traceId": "cycle-3-A_after",
+      "journeyId": "P5.2-H-5.1-001-dashboard-initial-load",
+      "cycle": 3,
+      "position": "A_after",
+      "policy": "independent",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "traceStartBoundary": "trusted_password_login_submit",
+      "trustedActionAtMs": 1,
+      "trustedActionSource": "playwright_locator_click",
+      "routeCommitAtMs": 650,
+      "routeCommitSource": "page_url_observed",
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 676,
+          "responseHeaderAtMs": 946,
+          "bodyFinishedAtMs": 1013,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 201.61
+            },
+            {
+              "name": "store",
+              "durationMs": 62.62
+            },
+            {
+              "name": "json",
+              "durationMs": 0.25
+            },
+            {
+              "name": "route",
+              "durationMs": 264.48
+            }
+          ],
+          "clientStartedAtMs": 668,
+          "clientCompletedAtMs": 945
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 979,
+          "responseHeaderAtMs": 1446,
+          "bodyFinishedAtMs": 1482,
+          "status": 200,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 202.12
+            },
+            {
+              "name": "store",
+              "durationMs": 254.22
+            },
+            {
+              "name": "json",
+              "durationMs": 1.11
+            },
+            {
+              "name": "route",
+              "durationMs": 457.45
+            }
+          ],
+          "clientStartedAtMs": 965,
+          "clientCompletedAtMs": 1477
+        }
+      },
+      "hydration": {
+        "triggerAtMs": 964,
+        "startedAtMs": 965,
+        "completedAtMs": 1477
+      },
+      "targetReadyAtMs": 1895,
+      "targetInteractivePaintAtMs": 1905,
+      "routeEvents": [
+        {
+          "atMs": 647,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "clientEvents": [
+        {
+          "name": "shell_bootstrap_started",
+          "atMs": 668,
+          "atPerformanceMs": 359.6,
+          "reason": "route"
+        },
+        {
+          "name": "shell_bootstrap_completed",
+          "atMs": 945,
+          "atPerformanceMs": 637.2,
+          "status": "success"
+        },
+        {
+          "name": "dashboard_hydration_triggered",
+          "atMs": 964,
+          "atPerformanceMs": 656.1,
+          "policy": "independent"
+        },
+        {
+          "name": "app_state_hydration_started",
+          "atMs": 965,
+          "atPerformanceMs": 656.3
+        },
+        {
+          "name": "app_state_hydration_completed",
+          "atMs": 1477,
+          "atPerformanceMs": 1168.6
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 10,
+        "apiRequestCount": 8,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": -192,
+            "responseHeaderAtMs": -177,
+            "bodyFinishedAtMs": -167,
+            "status": 200,
+            "bodySizeBytes": 15494,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 52,
+            "responseHeaderAtMs": 308,
+            "bodyFinishedAtMs": 570,
+            "status": 200,
+            "bodySizeBytes": null,
+            "bodySizeSource": "content-length-header",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/dashboard",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 311,
+            "responseHeaderAtMs": 558,
+            "bodyFinishedAtMs": 600,
+            "status": 200,
+            "bodySizeBytes": 8458,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [],
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 676,
+            "responseHeaderAtMs": 946,
+            "bodyFinishedAtMs": 1013,
+            "status": 200,
+            "bodySizeBytes": 1813,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 201.61
+              },
+              {
+                "name": "store",
+                "durationMs": 62.62
+              },
+              {
+                "name": "json",
+                "durationMs": 0.25
+              },
+              {
+                "name": "route",
+                "durationMs": 264.48
+              }
+            ],
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 979,
+            "responseHeaderAtMs": 1446,
+            "bodyFinishedAtMs": 1482,
+            "status": 200,
+            "bodySizeBytes": 224839,
+            "bodySizeSource": "playwright-body-length",
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 202.12
+              },
+              {
+                "name": "store",
+                "durationMs": 254.22
+              },
+              {
+                "name": "json",
+                "durationMs": 1.11
+              },
+              {
+                "name": "route",
+                "durationMs": 457.45
+              }
+            ],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/session/activity",
+            "overlapStartAtMs": 676,
+            "overlapEndAtMs": 905
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/shell/version",
+            "overlapStartAtMs": 677,
+            "overlapEndAtMs": 914
+          },
+          {
+            "leftRoute": "/api/shell/bootstrap",
+            "rightRoute": "/api/app-state",
+            "overlapStartAtMs": 979,
+            "overlapEndAtMs": 1013
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/alerts",
+            "overlapStartAtMs": 1018,
+            "overlapEndAtMs": 1482
+          },
+          {
+            "leftRoute": "/api/app-state",
+            "rightRoute": "/api/notifications",
+            "overlapStartAtMs": 1019,
+            "overlapEndAtMs": 1482
+          }
+        ]
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 0,
+        "lcpAtMs": 272,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [],
+      "boundary": {
+        "trustedActionToTargetReadyMs": 1894,
+        "routeCommitToTargetReadyMs": 1245,
+        "routeCommitToHydrationStartMs": 315,
+        "hydrationStartToCompleteMs": 512
+      }
+    }
+  ],
+  "blockers": [],
+  "findingDispositionChanges": [],
+  "deferredToLaterStages": [
+    "5.3 layer attribution is required before any exact cause claim.",
+    "5.4 safety and behavior checks are required before any fix proposal.",
+    "AI Chat F12 findings remain deferred without a dedicated journey."
+  ],
+  "constraints": [
+    "The B policy is a reversible trace-only probe and is not an accepted runtime fix.",
+    "No official nine-scenario sample was started.",
+    "No data, API, auth, RLS, migration, dependency, secret, provider, channel, or production change was made.",
+    "A result is INCONCLUSIVE unless the measured direction repeats in all three matched cycles.",
+    "Credentials, cookies, tokens, raw bodies, prompts, clinical content, and device serials are excluded.",
+    "Production remains NO-GO."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "sourceIdentityPass": true,
+    "parentEvidenceParsed": true,
+    "parentEvidenceIntegrityPass": true,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "historicalEvidenceRewritten": false,
+    "runtimeFixAccepted": false,
+    "checkpointHashChain": true,
+    "checkpointComplete": "COMPLETE",
+    "incompleteTracesRemainInvalid": true,
+    "findingManifestChanged": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+    "phase4Closed": true,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeFixAccepted": false,
+    "nextAction": "Proceed to 5.3 layer attribution and 5.4 safety checks; do not accept a runtime fix from 5.2 alone."
+  },
+  "checkpointReconciliation": {
+    "status": "COMPLETE",
+    "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+    "eventCount": 27,
+    "hashChainRead": true,
+    "lastEventType": "run.status"
+  }
+}

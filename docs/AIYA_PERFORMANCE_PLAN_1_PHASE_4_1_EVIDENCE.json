@@ -1,0 +1,655 @@
+{
+  "schemaVersion": "1.0.0",
+  "planRevision": "plan1-final-v2",
+  "phase": "AIya Performance Plan 1 - Phase 4.1 Plan, Worktree, and Identity Lock",
+  "generatedAt": "2026-09-16T15:38:51.408Z",
+  "status": "COMPLETE",
+  "outcome": "IDENTITY_LOCKED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "completedOnly": "Phase 4.1",
+    "measurementStarted": false,
+    "officialBaselineStarted": false,
+    "causalExperimentStarted": false,
+    "runtimePerformanceChangeApplied": false,
+    "localSupabaseMutationPerformed": false,
+    "hostedMutationPerformed": false,
+    "androidOrPwaMeasurementPerformed": false,
+    "productionMutationPerformed": false,
+    "deployCommitPushOrMergePerformed": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v2",
+    "sha256": "323088bec389becb5ef727270ff92c276f7f1d7e64833c587c5797327ae794bd",
+    "historicalContentMarker": "Historical Content (Superseded by plan1-final-v2)",
+    "nextEligibleAction": "Phase 4.2 - Historical evidence review and reference separation"
+  },
+  "sourceIdentity": {
+    "worktreePath": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI",
+    "branchMode": "DETACHED_HEAD",
+    "gitBranchShowCurrent": null,
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "sameHeadAttachedBranch": "codex/production-readiness-stage-1",
+    "sameHeadAttachedBranchTracking": "origin/codex/production-readiness-stage-1",
+    "sameHeadAttachedBranchAheadCount": 2,
+    "sameHeadAttachedBranchBehindCount": 0,
+    "detachedHeadUpstreamResolution": "NOT_AVAILABLE_BECAUSE_HEAD_IS_DETACHED",
+    "remote": {
+      "name": "origin",
+      "fetchUrl": "https://github.com/Enver0908/MANU-AI.git",
+      "pushUrl": "https://github.com/Enver0908/MANU-AI.git"
+    },
+    "remoteSymbolicHead": {
+      "ref": "refs/heads/codex/phase-29-baseline-checkpoint",
+      "sha": "00729e53cf6c8617e9655c03eb519e16214e8727"
+    },
+    "remoteProductionReadinessRef": {
+      "ref": "refs/heads/codex/production-readiness-stage-1",
+      "sha": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5"
+    },
+    "recentLog": [
+      {
+        "sha": "a2b1e090",
+        "subject": "perf: close AIya plan 1 phases 2 and 3"
+      },
+      {
+        "sha": "3e0da450",
+        "subject": "perf: close AIya performance plan 1 phase 1"
+      },
+      {
+        "sha": "568a1ffb",
+        "subject": "perf: record AIya phase 3 blocked acceptance"
+      },
+      {
+        "sha": "887865c8",
+        "subject": "perf: record AIya phase 2 blocked evidence"
+      },
+      {
+        "sha": "0c023921",
+        "subject": "docs: lock AIya performance plan revision 2"
+      },
+      {
+        "sha": "b1747af9",
+        "subject": "perf: add phase 1.2 performance diagnosis"
+      },
+      {
+        "sha": "38efb97b",
+        "subject": "perf: add AIya phase 1 audit evidence"
+      },
+      {
+        "sha": "42771d05",
+        "subject": "test: cover dashboard work area access flows"
+      }
+    ]
+  },
+  "worktreeInventory": {
+    "capturedBeforeThisEvidenceFileWasCreated": true,
+    "statusShortBranch": [
+      "## HEAD (no branch)",
+      " M HANDOFF_FOR_NEXT_CODEX.md",
+      " M app/package.json",
+      " M app/src/app/api/app-state/route.ts",
+      " M app/src/app/api/shell/bootstrap/route.ts",
+      " M app/src/components/dashboard-app.tsx",
+      " M app/src/components/dashboard/authenticated-shell-boundary.tsx",
+      " M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+      " M app/src/lib/use-aiya-state.ts",
+      " M codex.md",
+      " M docs/AIYA_PERFORMANCE_ACTION_PLAN.md",
+      " M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+      " M docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+      " M docs/NEXT_PHASE_EXECUTION_PLAN.md",
+      " M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json",
+      " M docs/RISK_REGISTER.md"
+    ],
+    "trackedModified": [
+      "HANDOFF_FOR_NEXT_CODEX.md",
+      "app/package.json",
+      "app/src/app/api/app-state/route.ts",
+      "app/src/app/api/shell/bootstrap/route.ts",
+      "app/src/components/dashboard-app.tsx",
+      "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+      "app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+      "app/src/lib/use-aiya-state.ts",
+      "codex.md",
+      "docs/AIYA_PERFORMANCE_ACTION_PLAN.md",
+      "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+      "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+      "docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json",
+      "docs/RISK_REGISTER.md"
+    ],
+    "untrackedBeforeEvidenceFile": [
+      "app/scripts/lib/performance-plan-1-phase-4-contract.mjs",
+      "app/scripts/performance-plan-1-phase-4-android-diagnose.mjs",
+      "app/scripts/performance-plan-1-phase-4-readiness.mjs",
+      "app/scripts/performance-plan-1-phase-4-readiness.test.mjs",
+      "app/scripts/performance-plan-1-phase-4.mjs",
+      "app/scripts/performance-plan-1-phase-4.test.mjs",
+      "app/src/lib/performance-diagnostic.test.ts",
+      "app/src/lib/performance-diagnostic.ts",
+      "app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_ANDROID_DIAGNOSTIC_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_ANDROID_DIAGNOSTIC_EVIDENCE_HISTORY_cycle-20260915T231653941Z-923cc126-b85f-4b81-adec-b7d3f8de6f0a.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_CYCLIC_EXECUTION_SPEC.md",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_20260914T110411293Z.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_20260915T065807211Z.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T111650824Z-51ccd021-0f1d-42ff-b170-66bc776f6aa6.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T130141721Z-6aa263db-c0ff-4192-9333-c20d769f4692.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T152837443Z-cca235f7-4e4b-42bc-af94-9d8a114c4be5.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T182349286Z-0928a3cc-541a-45e2-8600-1c15474e3edf.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T184019327Z-ee0a835a-32f7-4d28-bb37-070f1fab357c.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T190010135Z-8a3e9d92-83df-4c0d-8604-41c17109a31e.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_ACTION_PLAN.md",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260914T184904329Z.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260915T065820441Z.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260915T070452682Z.json",
+      "docs/PHASE_EXECUTION_RESUME_ACTION_PLAN.md",
+      "docs/PHASE_EXECUTION_RESUME_EVIDENCE.json",
+      "tmp/pdfs/cv_render/cv-1.png",
+      "tmp/pdfs/cv_render/cv-2.png",
+      "tools/phase-execution/checkpoint-store.mjs",
+      "tools/phase-execution/phase-cycle-cli.mjs",
+      "tools/phase-execution/phase-cycle-store.mjs",
+      "tools/phase-execution/phase-definition.template.mjs",
+      "tools/phase-execution/phase-execution.test.mjs",
+      "tools/phase-execution/phase-runner.mjs"
+    ],
+    "comparisonWithUserProvidedInitialInventory": {
+      "additionalTrackedPathsNotInInitialList": [
+        "app/src/app/api/app-state/route.ts",
+        "app/src/app/api/shell/bootstrap/route.ts",
+        "app/src/components/dashboard-app.tsx",
+        "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "app/src/lib/use-aiya-state.ts",
+        "codex.md"
+      ],
+      "additionalUntrackedPathGroupsNotInInitialList": {
+        "phase4HarnessAndDiagnostics": [
+          "app/scripts/lib/performance-plan-1-phase-4-contract.mjs",
+          "app/scripts/performance-plan-1-phase-4-android-diagnose.mjs",
+          "app/scripts/performance-plan-1-phase-4-readiness.mjs",
+          "app/scripts/performance-plan-1-phase-4-readiness.test.mjs",
+          "app/src/lib/performance-diagnostic.test.ts",
+          "app/src/lib/performance-diagnostic.ts"
+        ],
+        "phase4ReadinessAndHistory": [
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_ANDROID_DIAGNOSTIC_EVIDENCE.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_ANDROID_DIAGNOSTIC_EVIDENCE_HISTORY_cycle-20260915T231653941Z-923cc126-b85f-4b81-adec-b7d3f8de6f0a.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_CYCLIC_EXECUTION_SPEC.md",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_20260914T110411293Z.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_20260915T065807211Z.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T111650824Z-51ccd021-0f1d-42ff-b170-66bc776f6aa6.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T130141721Z-6aa263db-c0ff-4192-9333-c20d769f4692.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T152837443Z-cca235f7-4e4b-42bc-af94-9d8a114c4be5.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T182349286Z-0928a3cc-541a-45e2-8600-1c15474e3edf.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T184019327Z-ee0a835a-32f7-4d28-bb37-070f1fab357c.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T190010135Z-8a3e9d92-83df-4c0d-8604-41c17109a31e.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_ACTION_PLAN.md",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260914T184904329Z.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260915T065820441Z.json",
+          "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260915T070452682Z.json"
+        ],
+        "resumeInfrastructure": [
+          "docs/PHASE_EXECUTION_RESUME_ACTION_PLAN.md",
+          "docs/PHASE_EXECUTION_RESUME_EVIDENCE.json",
+          "tools/phase-execution/checkpoint-store.mjs",
+          "tools/phase-execution/phase-cycle-cli.mjs",
+          "tools/phase-execution/phase-cycle-store.mjs",
+          "tools/phase-execution/phase-definition.template.mjs",
+          "tools/phase-execution/phase-execution.test.mjs",
+          "tools/phase-execution/phase-runner.mjs"
+        ],
+        "temporaryRenderOutput": [
+          "tmp/pdfs/cv_render/cv-1.png",
+          "tmp/pdfs/cv_render/cv-2.png"
+        ]
+      },
+      "handling": "All paths were preserved. The additional paths are recorded as pre-existing dirty input; no path was independently attributed to the active reference or causal experiment in Phase 4.1. Phase 4.2 must perform the explicit reference separation review."
+    }
+  },
+  "identityFiles": [
+    {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+      "role": "active Plan 1 contract",
+      "sha256": "323088bec389becb5ef727270ff92c276f7f1d7e64833c587c5797327ae794bd"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_ACTION_PLAN.md",
+      "role": "upper plan status reconciliation",
+      "sha256": "b25a7e2e24ffc40bdd5d1714ff025d8371ce75ee8ac28d0b07901815a38baff8"
+    },
+    {
+      "path": "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+      "role": "next action status reconciliation",
+      "sha256": "9b9c2e4415459d28f0a2f5750bfce793ecc65735097747ca4ccd51bbd7520374"
+    },
+    {
+      "path": "docs/RISK_REGISTER.md",
+      "role": "active risk reconciliation",
+      "sha256": "2d590066951351f0f7fe9de2395935ef501e3dadb147bc447dfec2c6fde51cfc"
+    },
+    {
+      "path": "HANDOFF_FOR_NEXT_CODEX.md",
+      "role": "continuation handoff reconciliation",
+      "sha256": "0264f48b1519fb6f2f589ee3675d8a1be8aabd257a61f3fb2e563ef96d7bdd0c"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+      "role": "inherited Phase 1 evidence",
+      "sha256": "c2c4504e357c58604ae6d27a4417774acd8f3b5ff2a39c804f47a939ad3d4bc4"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+      "role": "five-finding disposition authority",
+      "sha256": "0e7bb596a7b1877d946c20c594b372b49d078dcf85305e1845ac4be18a7d707b"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+      "role": "inherited Phase 2 evidence",
+      "sha256": "3f154e95573411f9a8b889818a8366654521d6b822767a32f8d824acebb9c471"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+      "role": "inherited Phase 3 fixture and auth/store evidence",
+      "sha256": "392e33159c4542b080674de4244aa7e8ac01f52effbefce5de3323c2dfe76c59"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+      "role": "historical old Phase 4 evidence; not active closure authority",
+      "sha256": "5a69355d1411c215393e605b02bcbee22e458c0a2d8e39f7d1c8e6b0189d4600"
+    },
+    {
+      "path": "app/scripts/measure-aiya-performance-phase-2.mjs",
+      "role": "Phase 2 measurement harness",
+      "sha256": "17fd2a0f6ea907f36c2256fadb988cba361bc98e1b11b9e6af9229ebb2251bca"
+    },
+    {
+      "path": "app/scripts/performance-plan-1-phase-2.mjs",
+      "role": "Phase 2 Plan 1 harness",
+      "sha256": "bbd703128423e0989db3100c549cb08ee97a753fcbaab33c1dbbcbdcac93ecd6"
+    },
+    {
+      "path": "app/scripts/performance-plan-1-phase-2.test.mjs",
+      "role": "Phase 2 harness tests",
+      "sha256": "fcb856e993d7660606604458deaa3a4ac2a9df06ba0975f67ca8da4687fa601a"
+    },
+    {
+      "path": "app/scripts/performance-plan-1-phase-4.mjs",
+      "role": "historical/current Phase 4 harness input",
+      "sha256": "79172e2eb29da584cf76c6bef5c28aa64b50ab8e299c17b32e52621dec5f18a3"
+    },
+    {
+      "path": "app/scripts/performance-plan-1-phase-4.test.mjs",
+      "role": "Phase 4 harness tests",
+      "sha256": "584b2746b08eb67b57e021882030de8bbfb92d59771c53fb017f6c343da9b16e"
+    },
+    {
+      "path": "app/scripts/lib/performance-plan-1-phase-4-contract.mjs",
+      "role": "Phase 4 contract",
+      "sha256": "dc404f8580e2f911208834e13a6d2614628a2034dd2f6ffcbfd71089e65e0a66"
+    },
+    {
+      "path": "app/scripts/performance-plan-1-phase-4-readiness.mjs",
+      "role": "Phase 4 readiness gate",
+      "sha256": "326fbfd0ed65192b514eff3f0e7480c91523ed5ebc057b5281c0c9df4982b21d"
+    },
+    {
+      "path": "app/scripts/performance-plan-1-phase-4-readiness.test.mjs",
+      "role": "Phase 4 readiness tests",
+      "sha256": "9cf1252af1ce927241c3f9264ee63f3fcb6cc823387e0622583635ed929aa4c1"
+    },
+    {
+      "path": "app/scripts/performance-plan-1-phase-4-android-diagnose.mjs",
+      "role": "Android diagnostic tool; not executed in Phase 4.1",
+      "sha256": "d9b87317ea8cfc17d4e8593f8ace612793eead5c0d1cfe8580097385e7ca89e1"
+    },
+    {
+      "path": "app/package.json",
+      "role": "package manifest",
+      "sha256": "b66b4c8fb0a53399128fe8926120410acebffaf87937a54579c737aafc6ceee6"
+    },
+    {
+      "path": "app/package-lock.json",
+      "role": "package lock",
+      "sha256": "1b5ff44aeba55d6f307a2ddfba31f420dca92997e96939d8f77ac57a70205bd7"
+    },
+    {
+      "path": "app/next.config.ts",
+      "role": "Next configuration",
+      "sha256": "69f54f9b8ac2a08a80c47190e57fbc0cb488784288db39876487962bcf7686fc"
+    },
+    {
+      "path": "app/public/sw.js",
+      "role": "service worker",
+      "sha256": "c0850d9ec5f6fa20264c1f7e284df2829513a7abc0f4c88c85755e2a1c1237ea"
+    },
+    {
+      "path": "app/public/manifest.webmanifest",
+      "role": "web manifest",
+      "sha256": "d7a55bac6334a3bb51448256e80c9962465819ec00bf8c00bc8c2222f5906230"
+    },
+    {
+      "path": "app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql",
+      "role": "append-only migration input; not applied by Phase 4.1",
+      "sha256": "39ba6522d8dd2b54388c628cb6e67a57380bcb9bfb5a66474332398907f17cab"
+    },
+    {
+      "path": "app/src/app/api/app-state/route.ts",
+      "role": "app-state API entrypoint",
+      "sha256": "3e315589d733cdaa90b2755398ba16e8648e6907e19d4d19fe6e008ad55eef72"
+    },
+    {
+      "path": "app/src/app/api/shell/bootstrap/route.ts",
+      "role": "shell bootstrap API entrypoint",
+      "sha256": "1ebe04667e4d6285657a7b7d959f4a69da49e1124bf8260a0da77579d4bb9049"
+    },
+    {
+      "path": "app/src/components/dashboard-app.tsx",
+      "role": "dashboard UI entrypoint",
+      "sha256": "bfbe3e367af82ac91214b1a4bf2de6e85feb02f0280a08094db8466c1303bf11"
+    },
+    {
+      "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+      "role": "authenticated shell boundary",
+      "sha256": "afbbc5f1e48819d7e8853028fdebc798bef2da10a3fb1e7a9d59636109e6c90c"
+    },
+    {
+      "path": "app/src/lib/use-aiya-state.ts",
+      "role": "shared app-state hook",
+      "sha256": "d7c299c41b855a28d8be18dd50a6476a5852e7576572ec516013b892c4555346"
+    },
+    {
+      "path": "app/src/lib/supabase-store.ts",
+      "role": "Supabase store boundary",
+      "sha256": "0561e62560ac7fc44934e98d6c985358c17a83b6e11ca23d177dcf1e0745a767"
+    },
+    {
+      "path": "app/src/lib/auth-context.ts",
+      "role": "browser auth context",
+      "sha256": "236d590124ef185e28321389f8024fa215227d587918c33145fc0e3ed39bd5e0"
+    },
+    {
+      "path": "app/src/lib/use-stage-4b-inbox.ts",
+      "role": "inbox polling hook",
+      "sha256": "93d3d49fb61408ac631f80c6b60b44bf4a88d1e5017000e300e205294fa5c756"
+    },
+    {
+      "path": "app/src/lib/use-stage-4b2-messaging.ts",
+      "role": "messaging polling hook",
+      "sha256": "cef3ef4a9c2bf2d77f4c361d730b8a5b15b2039c149ca8e9545c3b1561c50f49"
+    },
+    {
+      "path": "app/src/lib/use-ai-chat.ts",
+      "role": "AI Chat hook and gateway entrypoint",
+      "sha256": "1c87cb0be215697a6d7559839d1839d8dc1eb50189938700660cec42102c172d"
+    },
+    {
+      "path": "tools/phase-execution/checkpoint-store.mjs",
+      "role": "shared checkpoint store",
+      "sha256": "79e1ca78d5cd33d9317246946d2f12de79a60fb1cb030ff3f7d249d17aca9a1a"
+    },
+    {
+      "path": "tools/phase-execution/phase-runner.mjs",
+      "role": "shared phase runner",
+      "sha256": "b852f6830798a5f8ccee4c4973edb1fc8041f536743a78c82c00f5847abd068a"
+    },
+    {
+      "path": "tools/phase-execution/phase-cycle-cli.mjs",
+      "role": "phase cycle CLI",
+      "sha256": "2854274448a1384ba34a056a64e12be143a0b4eb40d20a85abb639b0b47201f8"
+    },
+    {
+      "path": "tools/phase-execution/phase-cycle-store.mjs",
+      "role": "phase cycle persistence",
+      "sha256": "cdd101836a04d4803178771fc457a18eeec31d3db996a14fe9eef454d019af02"
+    },
+    {
+      "path": "tools/phase-execution/phase-definition.template.mjs",
+      "role": "phase definition template",
+      "sha256": "c6f845e5dd430c51b37a99575745778d49d16b34ae20e0530b4c2d319809ba74"
+    },
+    {
+      "path": "tools/phase-execution/phase-execution.test.mjs",
+      "role": "phase execution tests",
+      "sha256": "baa94a4528cf9e588abb9654321debd8bc05a02f7e79850dd606b4c0f2b7433f"
+    }
+  ],
+  "inheritedEvidence": {
+    "phase1": {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+      "status": "COMPLETE",
+      "outcome": "NO_RUNTIME_CAUSE_CONFIRMED",
+      "sha256": "c2c4504e357c58604ae6d27a4417774acd8f3b5ff2a39c804f47a939ad3d4bc4"
+    },
+    "findingManifest": {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+      "sha256": "0e7bb596a7b1877d946c20c594b372b49d078dcf85305e1845ac4be18a7d707b",
+      "fiveFindingsMustBeReviewedInPhase4_2": true
+    },
+    "phase2": {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+      "runId": "aiya-phase2-20260910T132719291Z-56b32d34-6949-4bf3-9294-f0fb1a03ce59",
+      "status": "COMPLETE",
+      "outcome": "HARNESS_READY_WITH_NEGATIVE_CONTROLS",
+      "sha256": "3f154e95573411f9a8b889818a8366654521d6b822767a32f8d824acebb9c471"
+    },
+    "phase3": {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+      "status": "COMPLETE",
+      "outcome": "SYNTHETIC_AUTH_STORE_READY",
+      "fixtureHash": "6bedeba5628b8ea3677dae464143f01d59a2dc0f51e1353dd52767827c642819",
+      "sha256": "392e33159c4542b080674de4244aa7e8ac01f52effbefce5de3323c2dfe76c59"
+    },
+    "historicalOldPhase4": {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase4-20260915T195604720Z-497a3200-ada3-445d-a2d0-059cb0886940",
+      "status": "BLOCKED",
+      "outcome": "PERFORMANCE_BLOCKED",
+      "stageStatus": {
+        "4.1": "COMPLETE",
+        "4.2": "COMPLETE",
+        "4.3": "COMPLETE",
+        "4.4": "BLOCKED",
+        "4.5": "BLOCKED"
+      },
+      "validEnvironmentCount": 2,
+      "requiredEnvironmentCount": 4,
+      "reproduced": true,
+      "sha256": "5a69355d1411c215393e605b02bcbee22e458c0a2d8e39f7d1c8e6b0189d4600",
+      "interpretation": "Historical incomplete baseline only; not a cause proof and not rewritten by Phase 4.1."
+    }
+  },
+  "liveReleaseReferences": [
+    {
+      "target": "customer",
+      "url": "https://aiyaworkspace.com/api/health/release",
+      "httpStatus": 200,
+      "status": "ok",
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560"
+    },
+    {
+      "target": "admin",
+      "url": "https://admin.aiyaworkspace.com/api/health/release",
+      "httpStatus": 200,
+      "status": "ok",
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560"
+    },
+    {
+      "target": "approved synthetic test VPS",
+      "url": "https://65-21-52-249.sslip.io/api/health/release",
+      "httpStatus": 200,
+      "status": "ok",
+      "releaseId": "hs-a2b1e0908b29-ea9021bd6c91",
+      "commitSha": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+      "migrationFingerprint": "ea9021bd6c91bf9127930803eb0462234f156a284c1df3861351369dfb0b5c18",
+      "compatibilityVersion": "0.0.0+a2b1e09"
+    }
+  ],
+  "historicalIdentityDivergence": {
+    "oldPhase4EvidenceIsNotReinterpreted": true,
+    "currentHarnessSha256": "79172e2eb29da584cf76c6bef5c28aa64b50ab8e299c17b32e52621dec5f18a3",
+    "oldPhase4RecordedHarnessSha256": "4a95842838cacaf58fff2fcf8643e40cdeac366448b1cb7656e58c6f83349d81",
+    "currentPackageManifestSha256": "b66b4c8fb0a53399128fe8926120410acebffaf87937a54579c737aafc6ceee6",
+    "oldPhase4RecordedPackageManifestSha256": "c7c122533d3f76b4eeb5b6099206865289bba27bfeb43da7736024892c474168",
+    "meaning": "Current source and the historical measurement identity are different; no old result is treated as a measurement of the current variant."
+  },
+  "stageLedger": [
+    {
+      "stageId": "4.1.1",
+      "name": "Read-only Git and worktree capture",
+      "status": "COMPLETE",
+      "verified": [
+        "detached branch state",
+        "HEAD",
+        "same-head branch and upstream divergence",
+        "recent log",
+        "origin URLs",
+        "remote symbolic HEAD",
+        "tracked and untracked inventory",
+        "git diff --check exit code 0"
+      ]
+    },
+    {
+      "stageId": "4.1.2",
+      "name": "Dirty tree preservation and classification",
+      "status": "COMPLETE",
+      "verified": [
+        "no reset, revert, stash, delete, or overwrite operation performed",
+        "all existing tracked changes preserved",
+        "all existing untracked paths preserved",
+        "additional paths outside the user-provided initial list recorded separately",
+        "all existing Phase 4 and resume implementation paths remain pre-existing input"
+      ]
+    },
+    {
+      "stageId": "4.1.3",
+      "name": "Plan and source identity hash lock",
+      "status": "COMPLETE",
+      "verified": [
+        "active plan revision hash recorded",
+        "inherited evidence hashes recorded",
+        "Phase 2 and Phase 4 harness and test hashes recorded",
+        "package, Next, service-worker, manifest, migration, UI, auth, store, polling, AI Chat, and checkpoint hashes recorded"
+      ]
+    },
+    {
+      "stageId": "4.1.4",
+      "name": "Environment release reference lock",
+      "status": "COMPLETE",
+      "verified": [
+        "customer release health returned HTTP 200/status ok",
+        "admin release health returned HTTP 200/status ok",
+        "approved synthetic test VPS release health returned HTTP 200/status ok",
+        "commit, release, migration fingerprint, and compatibility identities recorded separately"
+      ]
+    },
+    {
+      "stageId": "4.1.5",
+      "name": "Document reconciliation",
+      "status": "COMPLETE",
+      "verified": [
+        "active final Plan 1 contract inserted at the top of the Plan 1 document",
+        "upper plan, next-phase plan, risk register, and handoff identify plan1-final-v2",
+        "old plan prose remains under an explicit historical superseded marker",
+        "next action is recorded as Phase 4.2"
+      ]
+    },
+    {
+      "stageId": "4.1.6",
+      "name": "Prohibited-action and measurement gate",
+      "status": "COMPLETE",
+      "verified": [
+        "no official baseline was started",
+        "no diagnostic journey was started",
+        "no causal experiment was started",
+        "no runtime optimization was applied",
+        "no hosted, device, production, migration, dependency, secret, billing, provider, or channel operation was performed"
+      ]
+    }
+  ],
+  "excludedFromIdentity": [
+    ".manu-runtime/**",
+    "app/node_modules/**",
+    "app/.next/**",
+    "temporary render files outside the explicitly recorded inventory",
+    "credentials",
+    "cookies",
+    "tokens",
+    "private keys",
+    "raw request or response bodies",
+    "raw prompts",
+    "clinical data",
+    "device serials"
+  ],
+  "evidenceIntegrity": {
+    "inheritedEvidenceReferencesPresent": true,
+    "findingManifestReferencePresent": true,
+    "allListedIdentityFilesHashed": true,
+    "historicalEvidencePreserved": true,
+    "oldPhase4EvidenceRewritten": false,
+    "secretsOrSensitivePayloadsIncluded": false,
+    "lineEndingWarningsOnly": true,
+    "phase41EvidenceFileCreatedAfterInventoryCapture": true
+  },
+  "postWriteVerification": {
+    "status": "PASS",
+    "jsonParse": {
+      "status": "PASS",
+      "parsedEvidenceFileCount": 6,
+      "files": [
+        "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_1_EVIDENCE.json",
+        "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+        "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+        "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+        "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json"
+      ]
+    },
+    "identityHashComparison": {
+      "status": "PASS",
+      "verifiedFileCount": 41,
+      "mismatchCount": 0
+    },
+    "stageLedgerCheck": {
+      "status": "PASS",
+      "stageCount": 6,
+      "nonCompleteStageCount": 0
+    },
+    "liveReleaseReferenceCheck": {
+      "status": "PASS",
+      "referenceCount": 3,
+      "non200OrNonOkCount": 0
+    },
+    "documentMarkerCheck": {
+      "status": "PASS",
+      "activeRevision": "plan1-final-v2",
+      "nextEligibleStage": "4.2"
+    },
+    "gitDiffCheck": {
+      "status": "PASS",
+      "exitCode": 0,
+      "whitespaceErrorCount": 0,
+      "lineEndingWarnings": true
+    }
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "IDENTITY_LOCKED",
+    "phase4LaterStagesStarted": false,
+    "nextEligibleStage": "4.2",
+    "nextAction": "Review the five findings and create the explicit ignored reference snapshot; stop before measurement if current/reference separation cannot be made without unrelated file changes.",
+    "phase4NotClosed": true,
+    "plan1NotClosed": true
+  }
+}

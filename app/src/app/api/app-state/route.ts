@@ -3,6 +3,7 @@ import { API_NO_STORE_HEADERS } from "@/lib/app-errors";
 import { getFallbackState, resetFallbackState } from "@/lib/app-state-store";
 import { authErrorResponse, requireCapability, resolveAppTenantContext } from "@/lib/auth-context";
 import { buildPhase79WindowedDashboardPayload } from "@/lib/phase-79b-windowed-read-contracts";
+import { addPerformanceServerTiming } from "@/lib/performance-diagnostic";
 import {
   isSupabaseStoreConfigured,
   loadSupabaseState,
@@ -36,15 +37,34 @@ export async function GET(request: NextRequest) {
   const view = request.nextUrl.searchParams.get("view");
   if (isSupabaseStoreConfigured()) {
     try {
+      const routeStartedAt = performance.now();
       const tenantContext = await resolveAppTenantContext();
+      const authCompletedAt = performance.now();
       requireCapability(tenantContext, "read_app_state");
+      const storeStartedAt = performance.now();
+      let payload;
       if (view === "windowed") {
-        return NextResponse.json(await loadSupabaseWindowedDashboardPayload(tenantContext, windowedOptions(request)), {
-          headers: API_NO_STORE_HEADERS,
-        });
+        payload = await loadSupabaseWindowedDashboardPayload(tenantContext, windowedOptions(request));
+      } else {
+        payload = await loadSupabaseState(tenantContext);
       }
-      return NextResponse.json(await loadSupabaseState(tenantContext), {
+      const storeCompletedAt = performance.now();
+      const response = NextResponse.json(payload, {
         headers: API_NO_STORE_HEADERS,
+      });
+      const jsonCompletedAt = performance.now();
+      return addPerformanceServerTiming(response, {
+        auth: authCompletedAt - routeStartedAt,
+        auth_get_user: tenantContext.authTiming?.getUserMs,
+        auth_membership: tenantContext.authTiming?.membershipMs,
+        auth_dietitian: tenantContext.authTiming?.dietitianMs,
+        auth_get_session: tenantContext.authTiming?.getSessionMs,
+        auth_session_activity: tenantContext.authTiming?.sessionActivityMs,
+        auth_total: tenantContext.authTiming?.totalMs,
+        entitlement: tenantContext.authTiming?.entitlementMs,
+        store: storeCompletedAt - storeStartedAt,
+        json: jsonCompletedAt - storeCompletedAt,
+        route: jsonCompletedAt - routeStartedAt,
       });
     } catch (error) {
       return authErrorResponse(error);

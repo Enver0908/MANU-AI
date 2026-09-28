@@ -1,0 +1,707 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase5-6-finding-disposition-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "5",
+  "stage": "5.6",
+  "stageId": "5.6",
+  "runId": "aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7",
+  "generatedAt": "2026-09-18T12:36:00.892Z",
+  "status": "COMPLETE",
+  "outcome": "FINDING_DISPOSITIONS_REVIEWED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Review the five locked findings against completed Plan 1 evidence and assign a bounded disposition.",
+    "environment": "offline_evidence_review",
+    "documentationOnly": true,
+    "diagnosticJourneyStarted": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true,
+    "historicalEvidenceRewritten": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.7 COMPLETE / DIAGNOSIS_BLOCKED",
+      "5.1 COMPLETE / HYPOTHESES_PRE_REGISTERED",
+      "5.2 COMPLETE / REPEATABLE_PROVISIONAL_EFFECT",
+      "5.3 COMPLETE / LAYER_ATTRIBUTION_INCONCLUSIVE",
+      "5.4 COMPLETE / SAFETY_BEHAVIOR_CHECKS_COMPLETE",
+      "5.5 H-5.1-002 COMPLETE / INCONCLUSIVE",
+      "5.5 H-5.1-003 COMPLETE / REPEATABLE_PROVISIONAL_EFFECT"
+    ],
+    "currentStage": "5.6",
+    "nextEligibleStage": "5.7 Plan 1 closure"
+  },
+  "sourceIdentity": {
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branchMode": "DETACHED_HEAD",
+    "branch": "",
+    "statusLineCount": 115,
+    "statusHash": "e968b225a6b2248c24942b693a4565ae3dab3362fc6013cab41350705a6a68a5",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-6-finding-disposition.mjs",
+        "exists": true,
+        "sha256": "874ad3281bf86a00f4899f1f683996733efe9393e77e8086b624098c94f78da8"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-6-finding-disposition.test.mjs",
+        "exists": true,
+        "sha256": "07a073a5822acccdaf9bc7407efdb7001305be13ce13c9b1921089d5f671d0da"
+      },
+      {
+        "path": "app/package.json",
+        "exists": true,
+        "sha256": "bdbc4bd0974166f8d9dd4e3c8d39dbcc277d390bbbb709bcc48c9b66a5e8c6a4"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "exists": true,
+        "sha256": "e74497ee6b4dcccc645c53e704ee1c8f5fd0488d45b87401d05b5149da982798"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+        "exists": true,
+        "sha256": "8b79bcac4a62e420e63c113ccfd6ea265a8ab3ae714eff0eda6f3e5e2f46fdfc"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+        "exists": true,
+        "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+        "exists": true,
+        "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057_PHASE_5_2_SINGLE_VARIABLE_EVIDENCE.json",
+        "exists": true,
+        "sha256": "a6be5b17d3cc37ca43640b8f0c33e5945e056dc448f099cb4069fc8b70be927f"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b_PHASE_5_3_LAYER_ATTRIBUTION_EVIDENCE.json",
+        "exists": true,
+        "sha256": "b09671115ebfa1385b3bc34d313b2b907a7ccea6cdfcac362fd26e47e3d1f04a"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-4-safety-behavior-v3-20260917T192500000Z-7e539b27-1e6f-4c7c-91ac-1e5d6cf83ca4_PHASE_5_4_SAFETY_BEHAVIOR_EVIDENCE.json",
+        "exists": true,
+        "sha256": "a26318fe6c88f7d3ca89248458b640f76e458540e738a99046c5a16d33970611"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T075150094Z-57b04620-bf53-4c9b-a368-aadc829272b2_EVIDENCE.json",
+        "exists": true,
+        "sha256": "b83a4e2a07f812a56ae9244fd4a58063962a696cdc864a675c99481c92949462"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d_EVIDENCE.json",
+        "exists": true,
+        "sha256": "cb42c7844aeb3d4b91980be325373a7217b023f9cc2d7101c7a75700ac1902a1"
+      }
+    ],
+    "sourceFingerprint": "125c438a7c7bdc04bbb50147126919cd841e9c3682dad573df69dfa342e4c411"
+  },
+  "prerequisite": {
+    "status": "PASS",
+    "failures": [],
+    "requiredInputCount": 7
+  },
+  "reviewedInputs": {
+    "manifest": {
+      "key": "manifest",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+      "runId": null,
+      "status": null,
+      "outcome": null,
+      "sha256": "8b79bcac4a62e420e63c113ccfd6ea265a8ab3ae714eff0eda6f3e5e2f46fdfc"
+    },
+    "phase47": {
+      "key": "phase47",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+      "status": "COMPLETE",
+      "outcome": "DIAGNOSIS_BLOCKED",
+      "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+    },
+    "phase51": {
+      "key": "phase51",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+      "status": "COMPLETE",
+      "outcome": "HYPOTHESES_PRE_REGISTERED",
+      "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+    },
+    "phase52": {
+      "key": "phase52",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057_PHASE_5_2_SINGLE_VARIABLE_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+      "status": "COMPLETE",
+      "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+      "sha256": "a6be5b17d3cc37ca43640b8f0c33e5945e056dc448f099cb4069fc8b70be927f"
+    },
+    "phase53": {
+      "key": "phase53",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b_PHASE_5_3_LAYER_ATTRIBUTION_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b",
+      "status": "COMPLETE",
+      "outcome": "LAYER_ATTRIBUTION_INCONCLUSIVE",
+      "sha256": "b09671115ebfa1385b3bc34d313b2b907a7ccea6cdfcac362fd26e47e3d1f04a"
+    },
+    "phase54": {
+      "key": "phase54",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-4-safety-behavior-v3-20260917T192500000Z-7e539b27-1e6f-4c7c-91ac-1e5d6cf83ca4_PHASE_5_4_SAFETY_BEHAVIOR_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase5-4-safety-behavior-v3-20260917T192500000Z-7e539b27-1e6f-4c7c-91ac-1e5d6cf83ca4",
+      "status": "COMPLETE",
+      "outcome": "SAFETY_BEHAVIOR_CHECKS_COMPLETE",
+      "sha256": "a26318fe6c88f7d3ca89248458b640f76e458540e738a99046c5a16d33970611"
+    },
+    "h002": {
+      "key": "h002",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T075150094Z-57b04620-bf53-4c9b-a368-aadc829272b2_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T075150094Z-57b04620-bf53-4c9b-a368-aadc829272b2",
+      "status": "COMPLETE",
+      "outcome": "INCONCLUSIVE",
+      "sha256": "b83a4e2a07f812a56ae9244fd4a58063962a696cdc864a675c99481c92949462"
+    },
+    "h003": {
+      "key": "h003",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d",
+      "status": "COMPLETE",
+      "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+      "sha256": "cb42c7844aeb3d4b91980be325373a7217b023f9cc2d7101c7a75700ac1902a1"
+    }
+  },
+  "manifestTransition": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+    "beforeSha256": "0e7bb596a7b1877d946c20c594b372b49d078dcf85305e1845ac4be18a7d707b",
+    "afterSha256": "8b79bcac4a62e420e63c113ccfd6ea265a8ab3ae714eff0eda6f3e5e2f46fdfc",
+    "historicalPhase1StatusPreserved": true
+  },
+  "postRunDocumentationReconciliation": {
+    "status": "COMPLETE",
+    "changedAfterReview": [
+      "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+      "docs/AIYA_PERFORMANCE_ACTION_PLAN.md",
+      "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+      "HANDOFF_FOR_NEXT_CODEX.md",
+      "docs/RISK_REGISTER.md"
+    ],
+    "activePlanSha256AfterReconciliation": "c4bcdcaf0054fe3e201d4943d70535fde7b377992f85a1e8a64ef586c4b6038d",
+    "measurementTimeSourceIdentityPreserved": true,
+    "runtimeInputsChanged": false,
+    "evidenceRemainsAuthoritative": true,
+    "note": "These changes reconcile current pointers and risks only; they do not rewrite or invalidate the reviewed evidence."
+  },
+  "findingDispositions": [
+    {
+      "findingId": "PERF-F2-001",
+      "previousDisposition": null,
+      "disposition": "INCONCLUSIVE",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "phase52",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057_PHASE_5_2_SINGLE_VARIABLE_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+          "status": "COMPLETE",
+          "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+          "sha256": "a6be5b17d3cc37ca43640b8f0c33e5945e056dc448f099cb4069fc8b70be927f"
+        },
+        {
+          "key": "phase53",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b_PHASE_5_3_LAYER_ATTRIBUTION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b",
+          "status": "COMPLETE",
+          "outcome": "LAYER_ATTRIBUTION_INCONCLUSIVE",
+          "sha256": "b09671115ebfa1385b3bc34d313b2b907a7ccea6cdfcac362fd26e47e3d1f04a"
+        }
+      ],
+      "affectedJourneys": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "affectedEnvironments": [
+        "local_desktop"
+      ],
+      "measuredEffect": {
+        "status": "REPEATABLE_PROVISIONAL_EFFECT",
+        "boundary": "route_commit_to_target_ready",
+        "deltasMs": [
+          28.5,
+          292.5,
+          89
+        ],
+        "direction": "bootstrap_gate_B_SLOWER_IN_ALL_THREE_CYCLES"
+      },
+      "exactCauseEvidence": "NOT_ESTABLISHED",
+      "rationale": "The shared-read gate changed the measured boundary in three valid cycles, but Phase 5.3 did not isolate an exact layer or prove that the current independent policy causes the reported delay.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "A new authorized experiment must isolate the current shared loader/consumer path with an accepted timing boundary before a cause or contributor can be claimed."
+    },
+    {
+      "findingId": "PERF-F2-002",
+      "previousDisposition": null,
+      "disposition": "INCONCLUSIVE",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "h002",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T075150094Z-57b04620-bf53-4c9b-a368-aadc829272b2_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T075150094Z-57b04620-bf53-4c9b-a368-aadc829272b2",
+          "status": "COMPLETE",
+          "outcome": "INCONCLUSIVE",
+          "sha256": "b83a4e2a07f812a56ae9244fd4a58063962a696cdc864a675c99481c92949462"
+        }
+      ],
+      "affectedJourneys": [
+        "J2"
+      ],
+      "affectedEnvironments": [
+        "local_desktop"
+      ],
+      "measuredEffect": {
+        "status": "INCONCLUSIVE",
+        "boundary": "route_commit_to_target_ready",
+        "cycleDirections": [
+          "B_SLOWER",
+          "B_FASTER",
+          "B_SLOWER"
+        ],
+        "validTraceCount": 9
+      },
+      "exactCauseEvidence": "NOT_ESTABLISHED",
+      "rationale": "All nine polling-loop traces were observation-valid, but the three matched cycles did not repeat one direction; cancellation was observed without proving a product delay or contributor.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "A supported repeatable polling/request overlap effect with a known timing boundary and freshness checks is required."
+    },
+    {
+      "findingId": "PERF-F2-003",
+      "previousDisposition": null,
+      "disposition": "INCONCLUSIVE",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "h003",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d",
+          "status": "COMPLETE",
+          "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+          "sha256": "cb42c7844aeb3d4b91980be325373a7217b023f9cc2d7101c7a75700ac1902a1"
+        }
+      ],
+      "affectedJourneys": [
+        "J2"
+      ],
+      "affectedEnvironments": [
+        "local_desktop"
+      ],
+      "measuredEffect": {
+        "status": "REPEATABLE_PROVISIONAL_EFFECT",
+        "boundary": "route_commit_to_target_ready",
+        "deltasMs": [
+          842,
+          297,
+          356
+        ],
+        "direction": "dynamic_B_SLOWER_IN_ALL_THREE_CYCLES",
+        "dynamicImportObservedInAllB": true
+      },
+      "exactCauseEvidence": "NOT_ESTABLISHED",
+      "rationale": "The diagnostic dynamic split was consistently slower than the current eager path, so the probe demonstrates a candidate-specific effect but does not prove that the existing eager graph is a cause or contributor to the user complaint.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "A trace must identify a current eager chunk, parse/compile interval, long task, or render boundary that contributes to the reported delay across the required scope."
+    },
+    {
+      "findingId": "PERF-F12-001",
+      "previousDisposition": null,
+      "disposition": "OPEN_BLOCKED",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "phase51",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+          "status": "COMPLETE",
+          "outcome": "HYPOTHESES_PRE_REGISTERED",
+          "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+        }
+      ],
+      "affectedJourneys": [
+        "ai_chat"
+      ],
+      "affectedEnvironments": [],
+      "measuredEffect": {
+        "status": "NOT_MEASURED",
+        "requiredBoundary": "2xx_conversation_list_and_ai_chat_workspace"
+      },
+      "exactCauseEvidence": "UNAVAILABLE",
+      "rationale": "The current J1-J3 journeys did not exercise AI Chat, so the required authenticated conversation-list response and workspace readiness boundary remain unavailable.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "Run a dedicated authenticated AI Chat journey and keep auth, store, network, parse, render, and readiness failures separate."
+    },
+    {
+      "findingId": "PERF-F12-002",
+      "previousDisposition": null,
+      "disposition": "OPEN_BLOCKED",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "phase51",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+          "status": "COMPLETE",
+          "outcome": "HYPOTHESES_PRE_REGISTERED",
+          "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+        }
+      ],
+      "affectedJourneys": [
+        "ai_chat"
+      ],
+      "affectedEnvironments": [],
+      "measuredEffect": {
+        "status": "NOT_MEASURED",
+        "requiredBoundary": "ai_chat_ready"
+      },
+      "exactCauseEvidence": "UNAVAILABLE",
+      "rationale": "The warm AI Chat path was explicitly deferred and no dedicated authenticated journey produced the three valid traces needed to distinguish auth, store, network, parse, render, or polling behavior.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "Capture a dedicated warm AI Chat journey with accepted auth, body-finish, render, and ready boundaries before disposition can be narrowed."
+    }
+  ],
+  "findingDispositionChanges": [
+    {
+      "findingId": "PERF-F2-001",
+      "previousDisposition": null,
+      "disposition": "INCONCLUSIVE",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "phase52",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057_PHASE_5_2_SINGLE_VARIABLE_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+          "status": "COMPLETE",
+          "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+          "sha256": "a6be5b17d3cc37ca43640b8f0c33e5945e056dc448f099cb4069fc8b70be927f"
+        },
+        {
+          "key": "phase53",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b_PHASE_5_3_LAYER_ATTRIBUTION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b",
+          "status": "COMPLETE",
+          "outcome": "LAYER_ATTRIBUTION_INCONCLUSIVE",
+          "sha256": "b09671115ebfa1385b3bc34d313b2b907a7ccea6cdfcac362fd26e47e3d1f04a"
+        }
+      ],
+      "affectedJourneys": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "affectedEnvironments": [
+        "local_desktop"
+      ],
+      "measuredEffect": {
+        "status": "REPEATABLE_PROVISIONAL_EFFECT",
+        "boundary": "route_commit_to_target_ready",
+        "deltasMs": [
+          28.5,
+          292.5,
+          89
+        ],
+        "direction": "bootstrap_gate_B_SLOWER_IN_ALL_THREE_CYCLES"
+      },
+      "exactCauseEvidence": "NOT_ESTABLISHED",
+      "rationale": "The shared-read gate changed the measured boundary in three valid cycles, but Phase 5.3 did not isolate an exact layer or prove that the current independent policy causes the reported delay.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "A new authorized experiment must isolate the current shared loader/consumer path with an accepted timing boundary before a cause or contributor can be claimed."
+    },
+    {
+      "findingId": "PERF-F2-002",
+      "previousDisposition": null,
+      "disposition": "INCONCLUSIVE",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "h002",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T075150094Z-57b04620-bf53-4c9b-a368-aadc829272b2_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T075150094Z-57b04620-bf53-4c9b-a368-aadc829272b2",
+          "status": "COMPLETE",
+          "outcome": "INCONCLUSIVE",
+          "sha256": "b83a4e2a07f812a56ae9244fd4a58063962a696cdc864a675c99481c92949462"
+        }
+      ],
+      "affectedJourneys": [
+        "J2"
+      ],
+      "affectedEnvironments": [
+        "local_desktop"
+      ],
+      "measuredEffect": {
+        "status": "INCONCLUSIVE",
+        "boundary": "route_commit_to_target_ready",
+        "cycleDirections": [
+          "B_SLOWER",
+          "B_FASTER",
+          "B_SLOWER"
+        ],
+        "validTraceCount": 9
+      },
+      "exactCauseEvidence": "NOT_ESTABLISHED",
+      "rationale": "All nine polling-loop traces were observation-valid, but the three matched cycles did not repeat one direction; cancellation was observed without proving a product delay or contributor.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "A supported repeatable polling/request overlap effect with a known timing boundary and freshness checks is required."
+    },
+    {
+      "findingId": "PERF-F2-003",
+      "previousDisposition": null,
+      "disposition": "INCONCLUSIVE",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "h003",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d",
+          "status": "COMPLETE",
+          "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+          "sha256": "cb42c7844aeb3d4b91980be325373a7217b023f9cc2d7101c7a75700ac1902a1"
+        }
+      ],
+      "affectedJourneys": [
+        "J2"
+      ],
+      "affectedEnvironments": [
+        "local_desktop"
+      ],
+      "measuredEffect": {
+        "status": "REPEATABLE_PROVISIONAL_EFFECT",
+        "boundary": "route_commit_to_target_ready",
+        "deltasMs": [
+          842,
+          297,
+          356
+        ],
+        "direction": "dynamic_B_SLOWER_IN_ALL_THREE_CYCLES",
+        "dynamicImportObservedInAllB": true
+      },
+      "exactCauseEvidence": "NOT_ESTABLISHED",
+      "rationale": "The diagnostic dynamic split was consistently slower than the current eager path, so the probe demonstrates a candidate-specific effect but does not prove that the existing eager graph is a cause or contributor to the user complaint.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "A trace must identify a current eager chunk, parse/compile interval, long task, or render boundary that contributes to the reported delay across the required scope."
+    },
+    {
+      "findingId": "PERF-F12-001",
+      "previousDisposition": null,
+      "disposition": "OPEN_BLOCKED",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "phase51",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+          "status": "COMPLETE",
+          "outcome": "HYPOTHESES_PRE_REGISTERED",
+          "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+        }
+      ],
+      "affectedJourneys": [
+        "ai_chat"
+      ],
+      "affectedEnvironments": [],
+      "measuredEffect": {
+        "status": "NOT_MEASURED",
+        "requiredBoundary": "2xx_conversation_list_and_ai_chat_workspace"
+      },
+      "exactCauseEvidence": "UNAVAILABLE",
+      "rationale": "The current J1-J3 journeys did not exercise AI Chat, so the required authenticated conversation-list response and workspace readiness boundary remain unavailable.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "Run a dedicated authenticated AI Chat journey and keep auth, store, network, parse, render, and readiness failures separate."
+    },
+    {
+      "findingId": "PERF-F12-002",
+      "previousDisposition": null,
+      "disposition": "OPEN_BLOCKED",
+      "dispositionChanged": true,
+      "linkedEvidence": [
+        {
+          "key": "phase47",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+          "status": "COMPLETE",
+          "outcome": "DIAGNOSIS_BLOCKED",
+          "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c"
+        },
+        {
+          "key": "phase51",
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+          "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+          "status": "COMPLETE",
+          "outcome": "HYPOTHESES_PRE_REGISTERED",
+          "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+        }
+      ],
+      "affectedJourneys": [
+        "ai_chat"
+      ],
+      "affectedEnvironments": [],
+      "measuredEffect": {
+        "status": "NOT_MEASURED",
+        "requiredBoundary": "ai_chat_ready"
+      },
+      "exactCauseEvidence": "UNAVAILABLE",
+      "rationale": "The warm AI Chat path was explicitly deferred and no dedicated authenticated journey produced the three valid traces needed to distinguish auth, store, network, parse, render, or polling behavior.",
+      "plan2Eligibility": "NOT_ELIGIBLE",
+      "nextEvidence": "Capture a dedicated warm AI Chat journey with accepted auth, body-finish, render, and ready boundaries before disposition can be narrowed."
+    }
+  ],
+  "excludedRuns": [
+    {
+      "runId": "aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T084748566Z-a53e3436-8d2f-4543-85d4-ba19d95ace99",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T084748566Z-a53e3436-8d2f-4543-85d4-ba19d95ace99_EVIDENCE.json",
+      "status": "COMPLETE",
+      "outcome": "INCONCLUSIVE",
+      "exclusionReason": "The B build still mounted the eager wrapper; dynamic import was not observed."
+    },
+    {
+      "runId": "aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T091252282Z-ac75bc96-48e8-45fe-8fbe-52b722d31575",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-h003-candidate-loop-v3-20260918T091252282Z-ac75bc96-48e8-45fe-8fbe-52b722d31575_EVIDENCE.json",
+      "status": "BLOCKED",
+      "outcome": "CANDIDATE_LOOP_BLOCKED",
+      "exclusionReason": "The corrected dynamic build exposed a runner boundary issue; only 6/9 traces were valid."
+    }
+  ],
+  "openFindingBlockers": [
+    "PERF-F12-001",
+    "PERF-F12-002"
+  ],
+  "deferredToLaterStages": [
+    "5.7 must determine the scoped Plan 1 closure result and prepare any Plan 2 input.",
+    "No finding is eligible for Plan 2 because no exact current code/function cause or contributor was established.",
+    "AI Chat findings remain open-blocked until a dedicated authenticated journey is captured."
+  ],
+  "constraints": [
+    "This review does not promote provisional effects to causes.",
+    "This review does not treat a speed-budget failure as a root cause.",
+    "No runtime, database, migration, dependency, provider, channel, deploy, or secret change was performed.",
+    "The official nine-scenario x 20-valid-sample contract remains unchanged and was not started.",
+    "Historical v2 and earlier v3 evidence files remain preserved and excluded runs are not merged.",
+    "Production remains NO-GO."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "sourceIdentityPass": true,
+    "prerequisiteEvidenceParsed": true,
+    "findingManifestUpdated": true,
+    "findingIdsLocked": true,
+    "historicalEvidenceRewritten": false,
+    "runtimeFixAccepted": false,
+    "officialMeasurementStarted": false,
+    "newCheckpointCreated": false
+  },
+  "checkpointReconciliation": {
+    "status": "NOT_APPLICABLE",
+    "source": "offline review; no diagnostic observation or experiment boundary was created",
+    "newCheckpointCreated": false,
+    "reusedInputCheckpointEvidence": true
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "FINDING_DISPOSITIONS_REVIEWED",
+    "phase4Closed": true,
+    "plan1Closed": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "officialMeasurementStarted": false,
+    "nextAction": "Proceed to 5.7 Plan 1 closure; keep Plan 2 and production work locked."
+  },
+  "output": {
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json",
+    "manifestPath": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+  },
+  "redactionCheck": {
+    "status": true,
+    "forbiddenValuesFound": []
+  }
+}

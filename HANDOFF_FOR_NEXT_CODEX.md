@@ -1,5 +1,1373 @@
 # Handoff For Next Codex
 
+## Latest Supplemental Observation - 12-Click Hosted Navigation - 2026-09-28
+
+After the user signed in, 12 clicks were sent through the visible Dashboard
+navigation rail in the sequence `Ayarlar -> Diğer -> Ana Sayfa`, repeated four
+times. The final URL was `/dashboard`; a screenshot showed loading skeletons
+and the accessibility state said `Loading AIya workspace`. The Dashboard
+content was not confirmed loaded. This is a user-visible loading-stall
+observation after sequential navigation.
+
+The click calls were awaited serially. Durations were 137 ms for the first and
+935-1,071 ms for subsequent calls. These are high-level automation call times,
+not browser input-event timestamps; the actual click gaps were not independently
+measured, so do not describe this as a verified sub-500-ms burst. No keyboard
+entry or form submission occurred. No raw trace, Network/RSC timing, host
+sample, or database metrics were collected. This observation establishes the
+loading state at the final check, not its persistence duration or its cause.
+
+Evidence:
+`docs/AIYA_GLOBAL_FREEZE_HOSTED_EDGE_12_CLICK_NAVIGATION_20260928T135230Z-c669a43a-d4c5-4951-8c36-0ceabbe32ad2_EVIDENCE.json`.
+SHA-256 `BB4AC6038FC5E244B94631BE6D8ACAAC1D08579140219743E034A4207B43A6FF`.
+It is separate from, and does not count toward, hosted Phase 1. Phase 1 remains
+`BLOCKED`, 0/3 valid paired records, 5/5 attempts; Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 eligible findings remain zero, and
+production remains `NO-GO`.
+
+Do not repeat this same navigation-only sequence or change code based on it.
+The next useful measurement, only if separately approved, must timestamp actual
+input events and correlate them with request/RSC completion and the visible
+loading transition. Do not reopen the exhausted Phase 1 identity; a formal
+capture still needs a supported trace-and-host pairing path and a separately
+approved identity.
+
+## Latest Supplemental Observation - Authenticated Edge Rapid Navigation - 2026-09-28
+
+After the user signed in, a five-click hosted Dashboard sequence was sent
+through visible sidebar links: `Ayarlar -> Diğer -> Ana Sayfa -> Ayarlar ->
+Ana Sayfa`. Mouse-release-to-next-press gaps were 348, 429, 331, and 372 ms.
+All five click events were present in the browser trace. Each destination path
+was visible at its 250 ms check, while the selected-navigation marker still
+showed the preceding link; the final URL and marker eventually settled on
+Dashboard. This navigation-only sequence did not test typing, forms, or reload
+and did not reproduce the reported full freeze.
+
+There was no renderer `RunTask` of 50 ms or longer (maximum 49 ms), and no
+click dispatch of 50 ms or longer (maximum 5.9 ms). The untruncated Network
+event capture ended with two incomplete requests: 36 starts, 34 responses, 33
+finishes, one canceled `/api/conversations` request, and 33 fully paired
+requests. Five RSC requests had observed status-200 responses. Repeated reads
+were `/api/shell/bootstrap` 5 times (maximum 1,032.7 ms), `/api/app-state`
+twice (maximum 1,024 ms), `/api/alerts` twice (maximum 1,023.3 ms), and
+`/api/notifications` twice (maximum 865.5 ms). The canceled request had
+`net::ERR_ABORTED` and no HTTP status. These overlapping reads and the
+250 ms navigation-marker lag are observations, not attribution to server,
+database, or client code.
+
+The 77,143-event trace was captured from Edge but its script-source URLs were
+unavailable, so extension presence is unknown. The raw trace was not persisted
+to a file and no host sample/checkpoint was paired. Evidence summary:
+`docs/AIYA_GLOBAL_FREEZE_HOSTED_EDGE_RAPID_NAVIGATION_20260928T122937Z-0da3e09e-fcc2-41d9-bd3c-fd7e7b88d922_EVIDENCE.json`
+(SHA-256 `39B832779D828D8E156C54F8D9AEF3C9926F7CBE1A89742383453B2F2DD49B55`).
+This is not a formal Phase 1 record. Hosted Phase 1 remains `BLOCKED`, 0/3
+valid paired records, 5/5 attempts; Plan 1 remains `COMPLETE /
+DIAGNOSIS_BLOCKED`, Plan 2 eligible findings remain zero, and production
+remains `NO-GO`.
+
+Do not repeat this navigation-only run, change source on its basis, or reopen
+the exhausted Phase 1 identity. The next informative bounded interaction,
+only if separately approved, should include the user's still-unmeasured
+synthetic keyboard-entry step followed by rapid navigation, with visible
+response correlated to request/RSC timings. A new formal capture also requires
+a supported trace-to-file path, paired host measurements, a new approved
+identity, and explicit approval.
+
+## Latest Supplemental Observation - Hosted Chrome Reload - 2026-09-28
+
+One bounded reload of the authenticated production Dashboard was captured in
+Chrome after the user approved a short check. Navigation timing was 1,988.5 ms
+to first byte, 4,011.6 ms to DOMContentLoaded, and 8,053.5 ms to loadEventEnd;
+the browser-control reload call returned in 4,077 ms. The renderer trace showed
+a 1,790 ms RunTask containing a 1,789.8 ms ParseHTML slice and substantial
+Chrome-extension script evaluation (45 events, 4,873.1 ms total, 1,010.9 ms
+maximum). Same-origin app-script evaluation totaled 645.8 ms. Captured app
+Fetch requests returned 200, with `/api/app-state` at 2,180.3 ms maximum.
+Network-event retention was truncated; typing and sidebar input were not
+tested. This is one slow-reload observation, not a root-cause finding.
+
+Evidence:
+`docs/AIYA_GLOBAL_FREEZE_HOSTED_CHROME_RELOAD_OBSERVATION_20260928T120031Z-066fe1dc-43e9-44c3-9e96-1242df8e1a24_EVIDENCE.json`
+(SHA-256 `B842212AB39FFE5784BFF61BFD63D0D47B80AF96F9DE97914443AEB62B1642D6`).
+It is unpaired and is not counted in hosted Phase 1; that phase remains blocked
+at 0/3 valid paired records and 5/5 attempts. Edge showed the login page, so
+there was no authenticated extension-free comparison. No credentials were
+entered, no browser settings or production data were changed, and no source
+code was changed.
+
+At the time of this Chrome reload capture, Edge was at its login page; the user
+later signed in and a separate rapid-navigation observation is recorded above.
+That later trace did not identify script sources, so it does not establish an
+extension-free browser comparison. The previous extension-free follow-up
+proposal is superseded by the narrower next step in the latest observation
+above. Do not retry the exhausted Phase 1 identity or repeat the old test
+matrix. Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 eligibility
+remains zero, and production remains `NO-GO`.
+
+## Current Follow-Up - Local Synthetic Smoke - 2026-09-26
+
+The user approved starting local Docker/Supabase and running the authenticated
+synthetic UI smoke, including configured local migrations on first startup.
+The bounded preflight is recorded separately in
+`docs/AIYA_GLOBAL_FREEZE_LOCAL_SMOKE_PREFLIGHT_20260926T160854Z_EVIDENCE.json`
+(SHA-256 `4DEE2B83A8633CA6710B0149AD3C91B9CD0A015DA2EDD3FA16B4AAED2444D8D5`).
+Docker Desktop is installed but its daemon did not start; the Linux-engine
+named pipe remained unavailable and starting the Windows service failed
+because this session could not open it. Supabase was not started and no local
+migrations ran.
+
+The exact isolated candidate worktree recorded on 2026-09-25 is absent. Its six
+recorded source hashes match none of the six currently existing worktrees; all
+six corresponding files in the main checkout have different hashes. The main
+checkout is intentionally dirty and was not used as a candidate. No browser
+smoke ran, no form was submitted, and no app source or environment file was
+changed by this attempt. The new preflight checkpoint is `BLOCKED` at
+`.manu-runtime/phase-execution/aiya-global-freeze-local-smoke-preflight-v1/aiya-global-freeze-local-smoke-preflight-v1-20260926T160829534Z-e88a0f99-3a55-4689-9e8e-499dcf929a46`.
+
+Next: make the Docker daemon available in the interactive session and restore
+the exact candidate files from the recorded hashes, or establish a fresh
+isolated candidate identity and rerun focused validation. Then verify the
+loopback Supabase target before starting it. The 2026-09-26 approval covers
+local startup and configured local migrations; commit, deployment, and
+production changes remain unapproved. Do not claim the candidate fixes the
+general freeze or repeat previous performance matrices.
+
+## Prior Candidate Handoff - Global UI Freeze - 2026-09-25
+
+Two scoped corrections have been implemented in the isolated worktree
+`C:\Users\Dell\.codex\worktrees\aiya-freeze-candidate\MANU-AI`, based on
+the verified hosted release commit
+`1c9756046b01cb1bd224fb601ec9094a7f471606`:
+
+- Shared shell dirty registration no longer re-registers solely because
+  callback function identities change; refs continue to invoke the latest
+  save/discard/focus callbacks.
+- Same-`/dashboard` query transitions use the existing client URL synchronizer
+  once; navigation to other routes still calls the App Router.
+
+The changed source files and per-file SHA-256 values are in
+`docs/AIYA_GLOBAL_FREEZE_CANDIDATE_FIX_20260925T171107533Z_EVIDENCE.json`
+(SHA-256 `6B010AF500FEB079A783B6C98387D3B5FCCCF9CBB994687BC49FC4B3731FB1D9`).
+Focused tests pass 25/25, production typecheck passes, lint has 0 errors and
+74 warnings, and the production build produced 79 static pages. The authenticated
+local browser smoke was not run: Docker is unavailable and
+`127.0.0.1:54321` is unreachable. The main checkout and its dirty changes were
+not used as the candidate source. No commit, deployment, migration, or form
+submission occurred.
+
+This is a local candidate only, not proof that the global freeze is fixed or
+that either change is its root cause. The live release remains unchanged;
+Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 eligibility remains zero,
+and production remains `NO-GO`. The hash-chained checkpoint is
+`.manu-runtime/phase-execution/aiya-global-freeze-candidate-fix-v1/aiya-global-freeze-candidate-fix-v1-20260925T171107533Z-ef17ec2f-0416-4f23-af09-1669bf16d0d9`.
+
+Historical next step recorded on 2026-09-25: ask whether to start the local
+Docker/Supabase stack for the authenticated synthetic smoke; that request was
+approved on 2026-09-26 as documented in the current follow-up above. Keep the
+candidate uncommitted until separately approved. Deployment needs another approval after
+the exact commit, release artifact, health checks, and rollback target are
+known. After any authorized rollout, verify the original typing/navigation/
+reload symptoms on the exact release before deciding whether the freeze
+persists; do not rerun old performance matrices by default.
+
+## Active Plan 1 handoff - plan1-final-v3 - 2026-09-17
+
+Authority: `docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md`, canonical v3 section.
+The user-authorized overengineering review and documentation revision are
+complete. The 4.4 observation reconciliation, the explicitly reopened
+4.5/4.6 environment observations, and the 4.7 coverage/finding reconciliation
+are complete. Phase 4 closed as `DIAGNOSIS_BLOCKED`; Phase 5.1 hypothesis
+ordering is now complete as `HYPOTHESES_PRE_REGISTERED`; Phase 5.2 is
+complete as `REPEATABLE_PROVISIONAL_EFFECT`; Phase 5.3 is complete as
+`LAYER_ATTRIBUTION_INCONCLUSIVE`; Phase 5.4 is now
+`COMPLETE / SAFETY_BEHAVIOR_CHECKS_COMPLETE`. The H-5.1-002 candidate loop in
+Phase 5.5 is complete as `COMPLETE / INCONCLUSIVE`; H-5.1-003 is now complete
+as `COMPLETE / REPEATABLE_PROVISIONAL_EFFECT`; Phase 5.6 is complete as
+`COMPLETE / FINDING_DISPOSITIONS_REVIEWED`. The F2 findings are
+`INCONCLUSIVE`, the F12 findings are `OPEN_BLOCKED`, and Phase 5.7 is complete
+as `COMPLETE / DIAGNOSIS_BLOCKED`. Plan 1 is closed for this scoped diagnosis;
+zero findings are eligible for Plan 2. The runtime cross-user/RLS boundary passed locally. The earlier scope
+deferral record is preserved as historical decision evidence and is not the
+current execution status.
+Work in `C:\Users\Dell\OneDrive\Masaüstü\MANU-AI` on branch
+`codex/production-readiness-stage-1`. The former `38c0` directory is empty;
+`43d7` and `605d` are historical detached copies. The recovered diagnostic
+implementation and evidence came from snapshot commit
+`e52d7b48a234dbf5e83f6ff836cc7c7640b97e3d`; provenance and preserved dirty
+state are recorded in
+`docs/WORKTREE_RECONCILIATION_20260918T163307Z_EVIDENCE.json`.
+Supplemental reconciliation audit is recorded in
+`docs/WORKTREE_RECONCILIATION_20260918T163307Z_SUPPLEMENTAL_AUDIT.json` as
+`COMPLETE / SUPPLEMENTAL_AUDIT_RECORDED_WITH_EVIDENCE_GAPS`: 123/123
+recovered paths are present, 117 match the snapshot hash, and the six
+remaining differences are the expected active authority documents. The
+pre-reconciliation dirty state is preserved in the external recovery backup
+and manifest, but the active tree is not byte-identical to that backup
+(2/44 backed-up paths still match and 42/44 now differ). The supplemental
+reference and sensitive-pattern scans are metadata-only/audit-limited and do
+not prove a comprehensive historical clean scan. The performance issue remains
+unfixed and production remains `NO-GO`.
+
+The v3 harness adaptation, focused capture checks, one local J1 probe, and the
+scoped normal observation run are complete. The current-identity normal-run
+evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T122335537Z-874d0bea-3ff7-4a24-a5d4-6778c44eef1a_EVIDENCE.json`.
+It is `IN_PROGRESS / LOCAL_OBSERVATIONS_RECONCILED`: 9/9 observations are
+valid and 6/9 are successful functional samples. J1/J2 are 6/6 successful;
+J3 is 3/3 validly observed as first-target abandonment after Dashboard
+navigation followed by second-target readiness. Stage 4.4.3 and 4.4.4 are
+complete. Reconciliation passed run identity, targeted-capture dependency,
+normal coverage, trace integrity, repeated J3 boundary consistency, and
+request-lifecycle retention. Performance is not evaluated and no runtime
+cause/fix is claimed.
+
+The earlier probe evidence remains
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T073613059Z-e2c3495a-ed74-4eb5-9982-f842efe3c1b8_EVIDENCE.json`.
+It records the 4.4.2 probe dependency: 1/1 observation-valid and 1/1
+functionally successful, with stages 4.4.1/4.4.2 PASS. The fixed interval was
+anchored to the trusted Forms click and both J1 required reads completed with
+2xx/body-finished evidence.
+
+The earlier 4.5/4.6 scope evidence remains preserved at
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_PHASE_4_5_4_6_SCOPE_EVIDENCE.json` as the
+prior documentation-only decision. The user explicitly reopened both stages
+on 2026-09-17. Current environment evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-5-4-6-v3-20260917T121116968Z-2ec41db5-f1df-4ace-8a20-b71a41f259c2_ENVIRONMENT_EVIDENCE.json`:
+hosted, Android Chrome, and installed Android PWA each have 9/9
+observation-valid units, for 27/27 overall and 17/27 valid functional
+samples. Functional failures and incomplete traces remain visible and are not
+performance samples. Stages 4.5 and 4.6 are complete for diagnostic
+observation capture, not official acceptance. The 4.7 reconciliation below is
+the current closure authority. Do not start causal experiments without an
+explicit hypothesis and required inputs, and do not infer a root cause from
+these observations.
+A later retry
+`aiya-performance-plan1-phase4-5-4-6-v3-20260917T123931810Z-9b3ff41f-266d-4878-b6ea-9f686f8a90dd`
+was used only to check a behavior-neutral runner cleanup and ended
+`BLOCKED`; its altered runner identity is kept separate. That cleanup was
+restored, so the completed 27/27 run above remains the compatible environment
+evidence. Do not merge the blocked retry into the valid counts.
+Prior 4.4 evidence remains BLOCKED, with its original 13/18 validity counts;
+it is not a current v3 performance result. Production remains NO-GO.
+
+The current 4.7 authority is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json`:
+`COMPLETE / DIAGNOSIS_BLOCKED`. It reconciles 36/36 observation-valid units
+and 23 valid functional samples, with 23 successful, 5 incomplete, and 8
+failed functional outcomes. J1/J2/J3 map respectively to
+`PERF-F2-001`/`PERF-F2-002`/`PERF-F2-003`; `PERF-F12-001` and
+`PERF-F12-002` were not exercised and all dispositions are unchanged. The
+four required environment outcomes, all observation mappings, redaction, and
+source identity checks passed. No common-layer delay with an accepted timing
+boundary was established, so performance is `NOT_EVALUABLE`; 4.7 alone did
+not establish a cause, fix, causal result, or Plan 2 entry. The first 4.7 attempt
+`aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T125836248Z-5d5ef2a2-34c3-43ad-b3cb-e7c37ce0f9b9`
+is preserved but excluded because its environment test source was omitted
+from the declared identity list.
+
+The current 5.1 authority is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json`:
+`COMPLETE / HYPOTHESES_PRE_REGISTERED`. Candidates are ordered as
+`H-5.1-001` shared shell/app-state hydration fan-out,
+`H-5.1-002` background polling overlap, `H-5.1-003` dashboard bundle/import/
+render work, and `H-5.1-004` warm AI Chat auth/store/readiness. H-5.1-001 has
+provisional effect evidence, H-5.1-002 is now measured as inconclusive, and
+H-5.1-003 now has a repeatable provisional effect; H-5.1-004 remains deferred
+because J1-J3 did not exercise AI Chat. No candidate is a confirmed cause or
+optimization.
+
+The current 5.2 authority is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057_PHASE_5_2_SINGLE_VARIABLE_EVIDENCE.json`:
+`COMPLETE / REPEATABLE_PROVISIONAL_EFFECT`. It tested only H-5.1-001 with the
+trace-only `shared_read_start_policy` variable in three matched local desktop
+A-before -> B -> A-after cycles. All 9/9 traces were observation-valid, and B
+was slower at route-commit to target-ready by 28.5 ms, 292.5 ms, and 89 ms in
+the three cycles. This is provisional effect evidence only: no root cause,
+finding-disposition change, official baseline, or accepted runtime fix exists.
+Required shell/app-state/client boundaries were present; unrelated request
+tracking reached its bounded body-finish deadline and remains a diagnostic
+limitation. The first trusted-click-invalid run is preserved separately and
+excluded. Its checkpoint reconciliation reads 27 events, with a valid hash
+chain ending at `run.status`.
+
+The current 5.3 authority is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b_PHASE_5_3_LAYER_ATTRIBUTION_EVIDENCE.json`:
+`COMPLETE / LAYER_ATTRIBUTION_INCONCLUSIVE`. It reuses the 9/9 valid 5.2
+traces and three matched cycles in an analysis-only pass. Server/store/route
+and downstream hydration/readiness co-vary provisionally, but no exact layer
+cause is confirmed. DNS/TLS and service-worker paths were not exercised;
+auth was not separated; capability/RLS and release identity were held; the
+read-start boundary was not attributed; and the ancillary request-tracker
+timeout remains a limitation. No finding disposition or runtime fix changed.
+
+The current 5.4 authority is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-4-safety-behavior-v3-20260917T192500000Z-7e539b27-1e6f-4c7c-91ac-1e5d6cf83ca4_PHASE_5_4_SAFETY_BEHAVIOR_EVIDENCE.json`:
+`COMPLETE / SAFETY_BEHAVIOR_CHECKS_COMPLETE`. The safe local matrix passed
+21/21 focused files and 164/164 tests, covering auth/session,
+tenant/capability, freshness/late-response, mutation revision/conflict/
+idempotency, and offline/privacy/reconnect contracts. The real local
+cross-user/RLS integration boundary at `127.0.0.1:54321` passed 1/1 file and
+56/56 tests with no failed or skipped tests. No new measurement, runtime fix,
+checkpoint, database reset, migration, provider traffic, or finding-disposition
+change occurred before Phase 5.5.
+
+The current 5.5 H-5.1-002 authority is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T075150094Z-57b04620-bf53-4c9b-a368-aadc829272b2_EVIDENCE.json`:
+`COMPLETE / INCONCLUSIVE`. Three matched local desktop A-before -> B ->
+A-after cycles were all observation-valid (9/9), but the directions were
+`B_SLOWER`, `B_FASTER`, and `B_SLOWER`. B navigation-window pause/cancel was
+observed in all cycles, but no repeatable effect, cause, or accepted runtime
+change follows. Four earlier invalid or interrupted attempts remain separate
+and excluded. The checkpoint closed with 26 events and a valid hash chain; no
+finding disposition changed and no official baseline started.
+
+The current 5.5 H-5.1-003 authority is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d_EVIDENCE.json`:
+`COMPLETE / REPEATABLE_PROVISIONAL_EFFECT`. Three matched local desktop
+A-before -> B -> A-after cycles were observation-valid (9/9); all B traces
+observed the dynamic import and panel mount, and B was slower at route-commit to
+target-ready by `+842 ms`, `+297 ms`, and `+356 ms`. This is provisional
+diagnostic evidence only, not a confirmed cause or accepted runtime fix. The
+first same-candidate run is preserved as inconclusive because its B build was
+still eager; the second is preserved as blocked with 6/9 valid traces after the
+corrected build exposed a runner boundary issue. Neither is merged into the
+latest result. The checkpoint has 26 events and a valid hash chain.
+
+The completed 5.6 review is recorded at
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json`.
+The completed 5.7 closure is recorded at
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-7-plan1-closure-v3-20260918T125452Z-f5305ee2-b35b-43c5-91df-42f313d0da29_EVIDENCE.json`.
+Plan 1 is closed as `DIAGNOSIS_BLOCKED`; do not start Plan 2, production work,
+or any new runtime variable. A separately authorized diagnostic continuation
+for the reported general desktop interaction delay requires the current main
+checkout. Shared shell, authentication, state, polling, navigation, and render
+boundaries remain in scope before any AI Chat-specific branch.
+
+The v3 harness-only changes and the local synthetic probe were performed under
+the newly authorized execution step. The 5.2 trace-only causal experiment was
+completed without a product runtime fix, deploy, migration, or production
+action.
+
+## Shared-runtime diagnostic continuation - 2026-09-18
+
+The separately authorized continuation for the reported general desktop
+interaction delay is implemented as a trace-only runner at
+`app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs`. It measures
+the shared auth/session spans, API and RSC request fan-out, browser long tasks
+and event timing, React shell commits, hook refresh lifecycle, and the
+additional session-activity row-lock candidate. The diagnostic mode is gated
+by `AIYA_PERF_DIAGNOSTIC=1`; normal mode keeps those server/browser observers
+off. No runtime optimization, migration application, deployment, provider
+traffic, or production action was performed.
+
+The latest current-identity run is recorded at
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260918T185554350Z-3d620a1a-d1a5-4da8-b706-6a94cd9c1b07_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json`
+as `BLOCKED / SHARED_RUNTIME_DIAGNOSTIC_RUNNER_BLOCKED`. Its preflight
+passed, and the normal sweep completed 9/9 attempts: J1 was 3/3
+`validSample`, J2 was 3/3 `validSample`, and J3 was 0/3 because the first
+target was observed as abandoned after navigation. The highest valid tail was
+J1 at 3239 ms. The diagnostic repeat completed 0/3 before the runner stopped
+at the diagnostic continuation boundary. The DB lock sampler is
+`NO_SAMPLES`, so session-row contention remains unmeasured, not absent. The
+earlier local-input-blocked run remains preserved as historical evidence.
+
+The Windows build-process boundary was corrected to invoke the existing Next
+CLI through `process.execPath`; targeted syntax/shared-runtime tests passed.
+The normal app typecheck, lint (0 errors, 79 warnings), production build, and
+`git diff --check` passed. These checks do not turn the blocked diagnostic into
+causal performance evidence. The exact continuation is to complete the
+selected J1 diagnostic repetitions under a bounded runner process, preserving
+the 9 normal traces and excluding duplicated or incomplete attempts from any
+claim. Do not claim a root cause, absence of lock contention, performance
+recovery, Plan 2 eligibility, or production readiness from this run.
+
+## Shared-runtime single-variable A-B-A result - 2026-09-19
+
+The Docker-backed local continuation completed a matched A1 -> B -> A2
+diagnostic for the shared desktop interaction boundary. Evidence is recorded
+in
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-ab-a-20260919T111921Z-cd652e70-18de-4d16-89e4-2aadfcd336ce_EVIDENCE.json`.
+The three source runs are `...104831696Z-9e818...` (A1),
+`...105721115Z-9a1ddd...` (B), and `...110612468Z-3c780...` (A2); each
+completed 12/12 observation-valid units and the selected J1 diagnostic traces
+were functionally successful.
+
+The tested boundary is exact: `DashboardApp` passed the render-unstable full
+`DashboardUrlState` object to `useStage4BInbox`, whose `refresh` dependency
+chain then scheduled an extra `mount_or_filter_change` refresh when unrelated
+URL/state fields changed. B passed a memoized object containing only the six
+inbox filter fields. All three B repetitions reduced the second-action
+overlap from five requests to three by removing the `/api/alerts` and
+`/api/notifications` refreshes; A1 and A2 retained both. This is a confirmed
+repeatable contributing request-fan-out boundary, not proof that the global
+freeze is solved. Auth/session and RSC/bootstrap work remain, React commit
+causality is not isolated, and the DB lock sampler remained unavailable with
+only one sample per run.
+
+The memoized filter projection is retained in
+`app/src/components/dashboard-app.tsx` as a behavior-preserving candidate.
+It is not accepted as a production fix, does not alter Plan 1 closure or Plan
+2 eligibility, and production remains `NO-GO`. The focused inbox
+filtering/polling/mutation/late-response regression passed 39/39 tests. The
+next step is a separate single-variable auth/RSC experiment; do not combine it
+with the retained projection.
+
+## Shared-runtime auth/RSC cache result - 2026-09-19
+
+The separately bounded auth/RSC A1 -> B -> A2 experiment is complete. Evidence
+is recorded in
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-cache-ab-a-20260919T123718Z-479575bb-ed48-487c-b099-f935ad403948_EVIDENCE.json`.
+The only runtime variable was a request-local React cache wrapper around
+`app/src/lib/dashboard-server-auth.ts:resolveDashboardAuth`; the retained
+inbox filter projection was held constant in all variants.
+
+The selected J1 normal and diagnostic observations were 6/6 valid and
+successful in A1, B, and A2. A1 and B each reported 12/12 observation-valid
+units; A2 reported 11/12 because `normal:J2:r1` failed timing-order
+validation and `normal:J3:r1-r3` were incomplete first-target-abandonment
+units. Those records were not used for the selected J1 comparison and remain
+visible in the evidence.
+
+B did not show a repeatable one-direction improvement against both baselines:
+second-action response values were A1 `514/1088/520` ms, B `358/426/590` ms,
+and A2 `462/556/445` ms; RSC, auth_total, request-window, and React-commit
+signals were likewise mixed. The cache candidate is therefore
+`INCONCLUSIVE`, is removed from the checkout, and is not accepted as a runtime
+fix. The uncached auth baseline is restored; the inbox projection remains the
+only retained contributing candidate. Global freeze, auth-chain root cause,
+DB-lock absence, Plan 1 closure, Plan 2 eligibility, and production `NO-GO`
+are unchanged. The next continuation must target explicit request coalescing
+or auth-chain ownership only after the DB sampler and journey validity are
+stable.
+
+## Shared-runtime sampler and journey-validity repair - 2026-09-19
+
+The previously authorized measurement repair is complete. The repair evidence
+is recorded in
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_shared-runtime-sampler-validity-repair-20260919T132757Z-d3c7bee6-b396-4d64-9f6c-3576caeed017_EVIDENCE.json`.
+The companion shared-runtime checkpoint evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T131930315Z-d3c7bee6-b396-4d64-9f6c-3576caeed017_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json`.
+
+The DB lock sampler now uses the configured local Docker path when host
+`psql` is absent, retries after transient failures, waits for an in-flight
+sample before closing, and records explicit sample-error metadata. The runner
+also pauses sampling around its synchronous diagnostic artifact build so build
+time cannot be reported as query time. The completed run recorded 756
+successful aggregate observations, zero sampler errors, zero lock-wait
+observations, and zero blocked-activity observations. This is scoped evidence
+for the observed interaction windows, not proof that session-row contention is
+absent everywhere.
+
+The second-action scheduler now waits until the fixed target rather than
+trusting one rounded timeout calculation, and candidate selection requires
+`observationValidity=VALID`, `validSample=true`, and
+`functionalOutcome=SUCCESS`. The run completed 12/12 observation-valid units
+and 9/12 valid functional samples: J1 and J2 were successful, while all three
+J3 navigation-abandonment records remained visible and excluded. J1 was
+selected with a 501 ms observed tail; no J1 or J2 record dispatched before its
+planned time. Targeted tests passed 19/19, typecheck and build passed, and lint
+remains 0 errors / 79 warnings.
+
+This is measurement-infrastructure work only. It changes no product runtime
+behavior, finding disposition, Plan 1 closure, Plan 2 eligibility, or
+production decision. The global freeze remains unresolved and production is
+`NO-GO`. The next approved continuation may run one explicit single-variable
+request-coalescing or auth-chain ownership A-B-A experiment using this stable
+J1/sampler boundary; do not combine variables or call this run root-cause
+proof.
+
+## Shared-runtime request-coalescing A-B-A result - 2026-09-19
+
+The authorized next continuation completed a separate A1 -> B -> A2 experiment.
+Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-request-coalescing-ab-a-20260919T141815Z-2bf54fb2-080c-4470-a920-05ebc5f5b7ab_EVIDENCE.json`.
+The single variable was same-key in-flight coalescing inside
+`app/src/components/dashboard/shell-provider.tsx:fetchShellBootstrap`; app-state,
+inbox, messaging, auth-chain, RSC, and React tree code were held constant. Each
+variant had 9 normal plus 3 diagnostic observations, and the selected J1
+diagnostic observations were 3/3 valid and successful.
+
+The targeted effect is real but bounded: `/api/shell/bootstrap` counts were
+A1 `7/7/7`, B `5/5/6`, and A2 `7/7/7`. Total request counts, second-action
+tails, and React commit signals did not move in one repeatable direction; the
+candidate therefore reduces duplicate bootstrap fan-out but does not explain or
+solve the general freeze. The B patch was removed and A2 baseline restored.
+The DB sampler passed in all three runs with zero sampler errors and zero
+observed lock waits, which is bounded observation rather than global lock proof.
+
+Status: `COMPLETE / BOOTSTRAP_DUPLICATION_REDUCED_SPEED_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED`.
+No finding disposition, Plan 1 closure, Plan 2 eligibility, runtime-fix
+acceptance, or production `NO-GO` decision changed. The next exact continuation,
+if separately authorized, is one auth-chain ownership experiment only; do not
+combine it with request coalescing.
+
+## Shared-runtime auth-chain ownership A-B-A result - 2026-09-20
+
+The separately authorized auth-chain ownership experiment is complete. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-ownership-ab-a-20260920T150730Z-c86defe0-6be6-46e9-bd56-a5560d140fa1_EVIDENCE.json`.
+The single variable was the repeated `assertShellSessionActivity` RPC inside
+`app/src/lib/auth-context.ts:resolveAccountTenantContext`. B skipped that
+assertion for normal requests while the explicit `/api/session/activity`
+endpoint remained the session-activity touch owner. Auth lookups, entitlement,
+store/RLS reads, request fan-out, RSC, and React behavior were held constant.
+
+The targeted RPC span fell to approximately zero in all three B repetitions,
+but A1/B/A2 each recorded `53` total requests, `24` API requests, and `26` RSC
+requests. Selected J1 diagnostic observations were `3/3` valid and successful
+in every variant. Second-action tails were A1 `1147/524/660` ms, B
+`1196/1395/1234` ms, and A2 `622/1534/552` ms; no repeatable speed improvement
+was observed. B was removed and A2 baseline restored. The A2 sampler had one
+sample error and is marked `PARTIAL`; no global lock-absence claim is made.
+
+Status: `COMPLETE / AUTH_SESSION_ACTIVITY_ASSERT_REMOVAL_NO_REPEATABLE_SPEED_IMPROVEMENT_GLOBAL_FREEZE_UNRESOLVED`.
+No finding disposition, Plan 1 closure, Plan 2 eligibility, runtime-fix
+acceptance, or production `NO-GO` decision changed. The global freeze remains
+unresolved; the next continuation must use a different separately authorized
+boundary and must not accept the B behavior as a fix.
+
+## Shared-runtime first-three-stage localization - 2026-09-20
+
+The first three stages requested for the general desktop interaction delay are
+complete. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-localization-v1-20260920T160215Z-7f672bcb-8f49-4b20-bc11-c26c578f7021_EVIDENCE.json`.
+The underlying measurement run is
+`aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T155027577Z-280f2120-5abd-41d8-b093-74615eba9cc1`.
+
+The runner's local preflight and environment source check are explicit: the
+test server was pointed to local Docker Supabase at `127.0.0.1:54321`.
+Therefore hosted Supabase latency is unknown from this run. No Z.ai,
+WhatsApp, Telegram, or Stripe-like route appeared in the browser trace.
+
+The run contains 9 normal and 3 selected diagnostic observations; all 12 are
+observation-valid and the selected J1 diagnostic traces are 3/3 successful.
+The repeated second-action boundary is the required
+`/api/clients/:clientId/food-rule-profile` read and the following readiness/
+React commit interval: response-header latency `312/320/395` ms, route timing
+`295.65/302.13/375.75` ms, and body-finish-to-ready `129/163/144` ms. The
+three traces each recorded `53` total and `24` API requests.
+
+The DB sampler passed 720/720 samples with no sample errors, but two
+lock-wait/blocked-activity samples occurred before the second trusted event of
+J1 repetition 2 and zero occurred during the second-action window. This does
+not establish a database cause or global absence of contention. The added
+route timing is diagnostic-only and the production code path is not accepted
+as fixed. Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 remains locked,
+and production remains `NO-GO`.
+
+Next exact continuation: select one variable at this boundary, either
+required-read scheduling or post-response state/commit scheduling, and run a
+separate reversible A-B-A experiment. Do not combine variables or convert this
+localization into a root-cause claim.
+
+## Current shared-runtime food-rule-profile A-B-A result - 2026-09-20
+
+The authorized A1 -> B -> A2 experiment is complete. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-food-rule-profile-ab-a-20260920T165844Z-96a93331-d252-4eb5-8474-4a91424bf13f_EVIDENCE.json`.
+Only `AIYA_PERF_FOOD_RULE_PROFILE_READ_POLICY` changed. B selected the narrow
+client/form/profile loader for the food-rule-profile route; A1 and A2 used the
+broad operation-state loader. All variants retained 12/12 observation-valid
+units and 3/3 valid successful selected J1 diagnostic traces.
+
+B reduced the contained food-route server `store` timing in all three
+repetitions: A1 `113.02/155.97/106.19` ms, B `40.57/23.94/29.56` ms, and A2
+`147.95/104.09/83.68` ms. Request fan-out remained `53` total, `24` API, and
+`3` document requests in every variant. Second-action dispatch-to-ready was
+A1 `653/1168/1146` ms, B `637/495/625` ms, and A2 `676/609/509` ms; this does
+not show a repeatable global speed improvement. B's DB sampler is `PARTIAL`
+with one sample error, so no lock-absence conclusion is allowed.
+
+The narrow policy is a measured contained server-cost contributor only. It was
+process-scoped for B and is not enabled by default; no production fix,
+finding-disposition change, Plan 2 entry, or closure change follows. Keep
+cross-route fan-out and React commit ownership as the next diagnostic boundary.
+
+## Current shared-runtime dirty-registration commit-ownership A-B-A result - 2026-09-20
+
+The next separately authorized local Docker experiment is complete. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-dirty-registration-ab-a-20260920T193800Z-57dc30c0-54ee-45a7-b69b-7cedb280df42_EVIDENCE.json`.
+The only process-scoped variable was
+`NEXT_PUBLIC_AIYA_PERF_SHELL_DIRTY_REGISTRATION_POLICY`. Legacy A retains the
+caller `input.onSave` function identity in the first
+`useShellDirtyRegistration` effect dependency; stable B uses `saveRef`. A2
+restored legacy. The source hashes, fixture, auth, route, request tracking,
+profiler instrumentation, local Supabase target, and 2,000 ms second-action
+boundary were held constant. No stable environment variable persisted after
+the run.
+
+The measured React commit ownership reversed in every observed repetition:
+`shell-provider` A1 `2270/2187/2216`, B `37/34/37`, A2 `2082/2081/1892`;
+`dashboard-shell` A1 `2269/2186/2215`, B `36/33/36`, A2 `2081/2080/1891`.
+Diagnostic event volume reversed with it. This is strong evidence for a
+high-confidence contributing dirty-registration loop in the shared shell.
+
+Do not call it the exact global root cause yet. In the source A-B-A run, B J1
+repetition 1 failed the required forms read and is `validSample=false`; only
+2/3 selected B J1 diagnostic records are valid and successful. The source
+run's aggregate `12/12 observationValid` field is intentional: structural
+trace validity is recorded separately from the stricter full-success
+`validSample` gate. The failed required request is not promoted by a later
+successful retry. B valid second-action tails were `404` and `922` ms, with
+no repeatable speed improvement. A1/A2 valid traces kept the `53` total /
+`24` API / `3` document fan-out. The stable policy is a diagnostic candidate
+in the dirty checkout only, not an accepted fix or a default runtime change.
+
+Status: `COMPLETE / DIRTY_REGISTRATION_COMMIT_STORM_REDUCTION_OBSERVED_GLOBAL_FREEZE_UNRESOLVED`.
+Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`; all finding dispositions and
+zero Plan 2 eligibility remain unchanged, and production remains `NO-GO`.
+Do not ship or enable the stable policy from this evidence.
+
+## Current shared-runtime dirty-registration validity recheck - 2026-09-20
+
+The separately recorded validity-boundary recheck is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-dirty-registration-validity-recheck-20260920T213200Z-47b48402-c132-4a97-a121-8339aeec8666_EVIDENCE.json`.
+Its source measurement is
+`aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T200138105Z-49fb2c79-a39a-49bc-a567-d66663c6a0b0`, with the stable dirty-registration policy
+enabled only for that process. The run recorded `12/12 observationValidity`
+records but only `6/12 validSample` records and `6/12` functional successes.
+All three normal J1 repetitions were ineligible: each had an earlier failed
+matching `/api/clients/:clientId/forms` attempt followed by a later `200`
+complete response, so the required-read rule correctly did not promote the
+retry. The diagnostic selector therefore used J2, which was `3/3` valid and
+successful; this recheck added no new J1 profiler evidence.
+
+This closes the validity clarification, not the performance diagnosis. The
+prior wording that called the aggregate fields a harness contradiction is
+superseded by this record. The next exact action is to understand or isolate
+the aborted first `/forms` request, or obtain a separately authorized
+controlled J1 confirmation, and then continue request fan-out/auth/RSC
+localization. No runtime fix, finding-disposition change, Plan 2 entry, or
+production approval follows.
+
+## Current shared-runtime Forms abort lifecycle correlation - 2026-09-21
+
+The separately recorded lifecycle correlation is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2_EVIDENCE.json`.
+Its SHA-256 is
+`FCFA4C955375A92442FE16E23887C974CB26E5E25C6CFC0C7A9823BC546324D5`.
+The current source run is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T001812103Z-92ab01f4-7c6e-476c-8de3-00f5c3562e38_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json`
+with SHA-256
+`DC5EF27612AB83B8B6E875584EC429F1056EBC513711959B265F18437C98B6FD`.
+
+The trace-only lifecycle instrumentation in
+`app/src/lib/use-stage-6-client-workspace.ts` correlated the first Forms
+request failure with the hook's own cleanup path in two of three current
+diagnostic J1 repetitions: `stage6_workspace_effect_cleanup` was followed by
+`AbortController.abort()` and `stage6_workspace_load_aborted`, while the
+request tracker recorded bounded `net::ERR_ABORTED`. The same current run's
+normal J1 was `3/3` successful with no first-Forms abort, while the diagnostic
+J1 was `2/3` abort/incomplete and `1/3` successful. The earlier normal run had
+the first Forms request abort in `3/3` J1 repetitions. The current diagnostic
+J1 also recorded an aborted Forms RSC request in `3/3` repetitions.
+
+This is strong evidence for a client-workspace lifecycle cancellation
+mechanism and an adjacent navigation/state churn boundary. It is not a stable
+frequency result, does not identify the upstream route/history or state write
+that causes the cleanup, and does not prove the global freeze root cause. No
+retry was promoted, no runtime behavior was accepted, the dirty-registration
+candidate remains process-scoped, Plan 1 remains `COMPLETE /
+DIAGNOSIS_BLOCKED`, Plan 2 eligibility remains zero, and production remains
+`NO-GO`.
+
+The next exact action is trace-only sanitized route/history transition capture
+around the Forms click, correlated by monotonic time with the Stage 6 lifecycle
+events, to identify what changes the workspace domain/owner before cleanup.
+Then run one reversible single-variable J1 confirmation with that transition
+isolated. Preserve failed attempts and do not combine this with an auth-chain,
+request-coalescing, or runtime-fix change.
+
+## Current J1 active-client preference route correlation - 2026-09-21
+
+The supplemental analysis evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-active-client-preference-route-correlation-20260921T085203Z-862ac27d-4543-486f-b1eb-f7d6f6fbce9a_EVIDENCE.json`.
+Its SHA-256 is
+`1FCF1B8F549D1F8190E35B7DE864F57A284EE07A04F8849FFEADF66C1F30EBE7`.
+It analyzes the corrected trace-only confirmation run
+`aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T084521559Z-7190e356-128a-4c48-b31e-dd8dc2f081ee`,
+whose evidence SHA-256 is
+`4F44B41C6C27F951F39703D554E020643C37BE367FFAEDABF7BEB9AC4DD4CA7F`.
+
+All 9/9 repetitions were observation-valid and 6/9 were valid functional
+samples. A1 was 1/3 valid and successful, B was 2/3, and A2 was 3/3. The B
+control completed the exact `activeClientId` preference response gate in 3/3,
+but B still had a post-Forms summary route and a required Forms-request abort
+in 1/3. A1 had 2/3 such aborts and A2 had 0/3. Waiting for that one preference
+response is therefore insufficient; the controlled A-B-A direction is
+`INCONCLUSIVE`.
+
+The candidate is narrowed to the shared Stage 6 active-client
+activation/navigation boundary in
+`app/src/components/dashboard-app.tsx`,
+`app/src/lib/phase-85-stage-6-client-selection.ts`,
+`app/src/components/dashboard/shell-provider.tsx`, and
+`app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts`. This does not
+prove the global freeze root cause, change any finding disposition, authorize
+Plan 2, or accept a runtime fix. The first two protocol attempts are preserved
+as invalid/excluded records; they are not silently merged with the corrected
+run. Production remains `NO-GO`.
+
+The trace-only `preference_intent_timing_and_completion` capture described
+above is complete. Its corrected correlation result is recorded in the next
+section. It did not identify a stable abort-producing transition, so no
+conditional reversible J1 confirmation is authorized by this record.
+
+## Current J1 preference intent timing correlation - 2026-09-21
+
+The corrected trace-only analysis evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-correlation-20260921T122539Z-9f2c7d11-2c35-4a54-9f0a-6d4f7f8d9c21_EVIDENCE.json`.
+Its SHA-256 is
+`C79D40F49BEECEED3D63B64D5DE2FA076070BB11A87E40DE97FBEF4675E84180`.
+It analyzes measurement run
+`aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121916766Z-f12d3401-7014-4de4-a5ec-4845ae3599f2`,
+whose evidence SHA-256 is
+`10771A9CE351910B9AC6C3A3A9D6C5C438E445FD99265A7629BD51FFEA540F76`.
+
+The corrected run retained 3/3 observation-valid and 3/3 valid functional J1
+samples. Each sample contained one allowlisted `activeClientId` PATCH, and all
+three preference responses completed with HTTP 200, body completion, and
+settlement. Stage 6 cleanup followed preference settlement in all three
+samples by 32 ms, 28 ms, and 41 ms. Route ordering was not stable: one
+transition was strictly before settlement, one coincided with settlement, and
+one followed it. No required Forms-request abort occurred; all three required
+Forms requests completed with HTTP 200.
+
+The first two timing attempts remain preserved and excluded: the first did not
+arm Stage 6 lifecycle collection, and the second's initial compact analysis
+read the wrong lifecycle channel. They are not merged with the corrected run.
+This result records a normal-path timing relation, not causal proof of the
+global freeze and not evidence that the preference PATCH or Stage 6 cleanup
+alone is the root cause. No candidate was narrowed further, no finding
+disposition changed, Plan 2 remains unauthorized, and production remains
+`NO-GO`.
+
+The read-only comparison with the already-valid abort-producing lifecycle
+traces is recorded in the next section. It does not establish a stable
+preference-to-abort transition, so no new conditional J1 confirmation is
+authorized by the current evidence.
+
+## Current J1 preference-intent to Forms-abort comparison - 2026-09-21
+
+The cross-run comparison evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-vs-forms-abort-comparison-20260921T123323Z-4b8e1a23-7d41-4c6f-9a52-1e3f7b8c6d90_EVIDENCE.json`.
+Its SHA-256 is
+`E6A6363B64CEBFFED0BD21E059249521690A62C576728957BC14C6AAC6560838`.
+It compares the clean preference-timing evidence with the previously-valid
+Forms-abort lifecycle evidence.
+
+The clean normal run measured activeClientId preference settlement before
+Stage 6 cleanup in 3/3 samples, with cleanup 28-41 ms later and no Forms
+abort. The earlier abort-producing diagnostic measured Forms effect cleanup
+followed by `load_aborted` in 2/2 aborting repetitions, 7-10 ms after cleanup,
+but those traces did not capture the preference-intent request timeline. The
+previous failure-reason run likewise had 3/3 first-Forms aborts but no
+preference-intent timeline; later retries remain non-promoting.
+
+This is a cross-run comparison with a material measurement gap, not causal
+proof. It does not show whether activeClientId preference settlement preceded,
+followed, or caused cleanup in an aborting sample. No candidate was narrowed
+further, no finding disposition changed, Plan 2 remains unauthorized, and
+production remains `NO-GO`.
+
+The matched diagnostic run is now complete; its analysis is recorded in the
+next section. It captured both timelines in the same trace, but reproduced no
+Forms abort in 3/3 valid diagnostic samples. Do not repeat the same run
+automatically or promote it to the official baseline.
+
+## Current matched J1 preference-intent and Forms-abort capture - 2026-09-21
+
+The matched-run analysis evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-abort-matched-analysis-20260921T124727Z-9c4e2b71-6a8d-4f53-b102-7e9c3d5a8f24_EVIDENCE.json`.
+Its SHA-256 is
+`5A10F87B4B0A80B2C424370D489FF795DE8097A498B202DD5D33848C21A28373`.
+The measurement checkpoint evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-abort-matched-v1-20260921T124313022Z-ccf40f62-de85-4c5f-8b1b-2fec306e04b3_EVIDENCE.json`.
+Its SHA-256 is
+`7A8221FA03912A76EA7D16D0DAB0DBBFCE05BADF0432149AA5B0F2A224381C1D`.
+
+The diagnostic matched contract completed 3/3 observation-valid and 3/3
+valid functional J1 samples. Each sample captured one allowlisted
+`activeClientId` PATCH with HTTP 200/body completion/settlement. Stage 6
+cleanup followed settlement by 39 ms, 24 ms, and 53 ms. The required Forms
+request completed with HTTP 200 in all three samples; Forms abort was `0/3`.
+This confirms same-trace coverage but does not reproduce the historical abort
+boundary.
+
+The matched run therefore does not prove or disprove the preference-to-abort
+link, does not narrow the global freeze candidate further, and does not change
+finding disposition, Plan 2 eligibility, runtime-fix acceptance, or the
+production `NO-GO` decision. The next eligible work is trigger isolation: find
+a reproducible route/state transition that produces the historical Forms abort
+before using this matched contract again. That work requires separate
+authorization; no duplicate preference-only run is authorized by this result.
+
+## Current J1 Stage 6 route-state trigger isolation - 2026-09-21
+
+Measurement evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-stage6-trigger-isolation-v1-20260921T131319461Z-fe4a8d23-adf5-40cc-b731-0c512f76cb81_EVIDENCE.json`
+SHA-256:
+`204E7892DC010E3EC0E0ED4C7432B90303D287E961850AE71296A9FF7A041925`.
+Analysis evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-stage6-trigger-isolation-analysis-20260921T131935Z-e026a6cf-2f81-4bdd-82c2-c0dfefb19c31_EVIDENCE.json`
+SHA-256:
+`8FA31BE6AC891A97D2FE41FDDA8FA5560C9A6CA089319BAD907107C0359BB070`.
+
+The route-state-complete capture retained 3/3 observation-valid and 3/3
+successful functional samples; Forms abort was `0/3`, and every current setup
+sequence was `summary -> forms -> nutrition`. Both historical aborting
+repetitions contained an extra `summary -> forms -> summary -> forms ->
+nutrition` sequence, while the historical non-aborting repetition did not.
+This is a candidate association only. Historical records lack the new
+route-state fields, the current run reproduced no abort, and no single-variable
+speed or causal confirmation was run. Performance remains `NOT_EVALUABLE`.
+
+No finding disposition, Plan 2 eligibility, runtime-fix acceptance, or
+production `NO-GO` decision changed. The next eligible work is one separately
+authorized, reversible, single-variable confirmation of only the extra summary
+re-entry boundary, with functional outcome and second-action speed reported
+separately. Do not repeat the same matched run automatically.
+
+## Current J1 summary-reentry settlement confirmation - 2026-09-21
+
+Measurement evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1-20260921T134112924Z-a9f02392-5f1a-4359-861c-f94bebba8d58_EVIDENCE.json`
+SHA-256:
+`EA0DA0728A8BDFAF39F3C21FD76FB9679051266BD1F81E0C200F55641DEB3C33`.
+Analysis evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-analysis-20260921T134721Z-e9c0f0c1-7b7d-4c6a-9d54-2f0a1e8b6c3d_EVIDENCE.json`
+SHA-256:
+`E832AE24BEF0FB4823672E886C98E6D51A64C3301E09DD595A74ACFD4A0FFEAC`.
+
+The authorized A1 -> B -> A2 run changed only the harness timing: B waited
+for the initial client-selection summary request to settle before Forms
+dispatch. The gate passed 3/3, all 9/9 samples were observation-valid and
+functionally successful, and post-Forms summary re-entry plus Forms abort were
+`0/3` in A1, B, and A2. The historical boundary was not reproduced. The
+second-action tails are recorded separately but remain `NOT_EVALUABLE` for
+performance acceptance.
+
+This confirmation is `INCONCLUSIVE`; it does not change finding disposition,
+Plan 2 eligibility, runtime-fix acceptance, or production `NO-GO`. Do not
+repeat the same settlement-gated run automatically. The global diagnosis
+remains blocked; any distinct trigger requires separate authorization.
+
+## Current shared-runtime auth/fan-out/React commit overlap analysis - 2026-09-21
+
+Analysis evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-fanout-commit-overlap-v1-20260921T141433347Z-5146b711-7709-41be-a5a7-c606ead3922c_EVIDENCE.json`
+with SHA-256
+`27E93792B03C46BF873D34D803A552016CE0D8AADC363D85BAA00DE0340FD40F`.
+Runner:
+`app/scripts/performance-plan-1-shared-runtime-auth-fanout-commit-overlap.mjs`
+with SHA-256
+`DD9AB4ABADD3E84DFFED670259E3BE3EBBE45BE13D84D7EB1087C99843E4D715`.
+Focused tests passed 2/2.
+
+This is analysis-only over the completed local-normal shared-runtime evidence;
+there was no browser rerun, runtime behavior change, official sample, or causal
+experiment. Current runtime source matched the source evidence 15/15. The 3/3
+valid functional J1 traces showed 7/10/10 API and 9/13/13 RSC requests from
+first trusted interaction through second trusted interaction, then 2/2/2 API
+and 1/1/1 RSC in the second-action window. Distinct React commit waves were
+44/40/29.
+
+Outcome:
+`COMPLETE / AUTH_FANOUT_COMMIT_OVERLAP_OBSERVED_AUTH_COVERAGE_INCOMPLETE_GLOBAL_FREEZE_UNRESOLVED`.
+Only 2/3/4 API requests had available auth timing (28.6%/30%/40%); most API
+routes and RSC/document auth lacked timing. The evidence supports fan-out and
+commit-wave overlap, but does not prove a complete per-API auth chain or cause
+the global freeze. Plan 1 closure, finding disposition, Plan 2 eligibility,
+runtime-fix acceptance, and production `NO-GO` are unchanged.
+
+Next exact action: separately authorize diagnostic-only timing for uninstrumented
+shared API routes and one bounded server-side marker for dashboard RSC auth,
+then run one current-source J1 capture. Do not alter auth behavior or count it
+as an official acceptance run.
+
+## Current shared-runtime auth coverage capture - 2026-09-21
+
+The separately authorized trace-only evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5_EVIDENCE.json`
+with SHA-256
+`A343FF1BD61B423705DCB478DA46E35F5605B6093FFEE3056468F05D323A4968`.
+Runner:
+`app/scripts/performance-plan-1-j1-shared-runtime-auth-coverage.mjs`,
+SHA-256
+`49511444070D76970661E82D78AF4CA4E07409A3C3569FC44B812643E20A45A9`.
+
+The single current-source J1 trace was observation-valid and functionally
+successful (`1/1`), diagnostic-only, and not official. Its browser capture was
+completed once and the evidence was later rebuilt from the completed
+checkpoint after metadata and identifier-redaction corrections; no browser
+rerun occurred during the rebuild. Local Docker Supabase preflight passed.
+
+The trace contained 24 API requests and 15 timed responses. Route coverage was
+conversations `1/2`, alerts `2/2`, notifications `2/2`, shell preferences
+`1/1`, client Forms `1/1`, and client detail `0/1` because the request aborted
+before a response. Two bounded RSC auth markers were observed (layout/page).
+Outcome:
+`COMPLETE / SHARED_API_AUTH_COVERAGE_PARTIAL_RSC_MARKER_OBSERVED`.
+
+This narrows the diagnostic gap but does not prove complete per-request auth
+cost, repeatability, causality, or the global-freeze root cause. No runtime
+fix, finding-disposition change, Plan 2 entry, or production decision follows;
+Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED` and production remains `NO-GO`.
+Next exact action: review this trace and the aborted client-detail boundary;
+require separate authorization before any repeat.
+
+## Current J1 client-detail abort boundary correlation - 2026-09-21
+
+The read-only correlation evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-client-detail-abort-boundary-analysis-v1-20260921T160221659Z_EVIDENCE.json`
+with SHA-256
+`6310254DBEFF751530AFABD8C210C4C6136A37B0DDC8AA1BBAF0CDB84D65CB19`.
+Runner:
+`app/scripts/performance-plan-1-j1-client-detail-abort-boundary-analysis.mjs`,
+SHA-256
+`C81A7B656A6F7D6479C609922996D097BB988A0A85AE95D19ECF66FA222F9397`.
+
+The analysis reused the completed J1 auth-coverage checkpoint and did not
+rerun the browser or change runtime behavior. The client-detail GET had no
+response timing. In the same trace, route history moved from selected client
+to summary, Forms, and Nutrition; Stage 6 events showed summary cleanup and
+summary load abort with Forms setup. The source hook's effect cleanup calls
+`AbortController.abort()` when the domain changes.
+
+Outcome:
+`COMPLETE / CLIENT_DETAIL_ABORT_CORRELATED_WITH_STAGE6_DOMAIN_SWITCH_CLEANUP`.
+This narrows the client-side cancellation boundary but does not prove a
+premature transition, server continuation, causality, or the global-freeze
+root cause. No runtime fix or disposition changed. Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 remains locked, and production remains
+`NO-GO`. Do not repeat automatically; a server-completion marker requires
+separate authorization.
+
+## Current J1 second-action timeline alignment - 2026-09-21
+
+The read-only timeline evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-second-action-timeline-analysis-v1-20260921T170813873Z_EVIDENCE.json`
+with SHA-256
+`B04435F498184EC20A0DEF0A68985CB6CF96894BB7FD25264B7918C829C9F447`.
+Runner:
+`app/scripts/performance-plan-1-j1-second-action-timeline-analysis.mjs`,
+SHA-256
+`A5D899A94D9FD41C04439EB43D0D2545CD1FDE5089EB493E5A65C261FBBF2BE3`.
+Focused pure tests passed `2/2`.
+
+This analysis reused the completed auth-coverage checkpoint only. It did not
+rerun the browser, start a server, change runtime behavior, start an official
+sample, or run a causal experiment. The one source trace was valid and
+functionally successful. The second trusted click reached ready in `1,045 ms`:
+`585 ms` to the required response header, `593 ms` to its body boundary, and
+`452 ms` from body completion to ready. Three requests overlapped in that
+window: two API requests and one RSC request. The required read measured
+`auth_total=341.36 ms`, `store=167.49 ms`, `route=542.99 ms`; concurrent shell
+bootstrap measured `auth_total=338.36 ms`, `rate_limit=101.7 ms`,
+`route=560.94 ms`.
+
+Two shell context commits and Stage 6 lifecycle events were observed in the
+body-to-ready tail. No React profiler commit was present in the window or full
+trace. The prior statements that no long task was inside the window and that
+the first `60 ms` task began `38.1 ms` after ready are withdrawn: browser
+`performance.now()` and trace-relative action timestamps were compared without
+aligning clock origins. Long-task overlap and post-ready timing are unknown
+pending reanalysis with paired wall/performance clocks. Request-summary and
+action-boundary clocks have `22 ms` request-start and `7 ms` completion
+differences, retained as explicit measurement gaps.
+
+Outcome:
+`COMPLETE / NETWORK_SERVER_FIRST_WITH_CONTEXT_TAIL_MAIN_THREAD_CAUSE_UNRESOLVED`.
+The largest directly bounded segment is before response-body completion, but
+the post-body readiness tail remains unresolved. The next separately
+authorized comparison is either required-read/server scheduling or
+post-response state/commit scheduling, with request fan-out and the other
+boundary held constant. No root cause, runtime fix, disposition change, Plan 2
+entry, or production decision changed; production remains `NO-GO`.
+
+## Current J1 post-response commit ownership A-B-A candidate - 2026-09-21
+
+Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b_EVIDENCE.json`;
+SHA-256
+`153C70F8254DCB474B94F1F82211880009F70840219E9D342AE91A87973B3CCA`.
+Runner:
+`app/scripts/performance-plan-1-j1-post-response-commit-ownership-ab-a.mjs`,
+SHA-256
+`AE1F95FAB8AF66570018D37EA5FCA37A1E0266FBA36B99E609A9A4612B76B52A`;
+focused tests `2/2 PASS`.
+
+Only the process-scoped dirty-registration policy changed in the local Docker
+J1 diagnostic: A1 legacy, B stable `saveRef`, A2 legacy. The journey, synthetic
+fixture, real auth/RLS/store path, request contract, required-read validity
+gate, and 2,000 ms boundary were held constant. The checkpoint closed
+`COMPLETE` with 37 events and a valid hash chain. A1/A2 were `3/3` valid
+functional; B was observation-valid `3/3` but functional `2/3` after its third
+repetition failed the first-action Forms required read. No retry was promoted.
+
+The two fully valid pairs show B shell/dashboard commits `35/34` versus A1
+`1986/1851` and A2 `2020/2908`. This is a strong diagnostic ownership signal,
+but the three-valid-record gate was not met, fan-out was not invariant
+(`53/53/53` then `53/56/56`), and B was slower at trusted-click-to-ready
+(`966/931 ms` versus A1 `527/607 ms` and A2 `1048/522 ms`). Outcome:
+`COMPLETE / POST_RESPONSE_COMMIT_OWNERSHIP_SIGNAL_OBSERVED_VALIDITY_OR_FANOUT_BOUNDARY_OPEN`.
+Do not treat this as the global-freeze root cause or an accepted fix. The
+earlier unsupported-trace-variant attempt is a separate harness-invalid record
+and is excluded. Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 remains
+locked, and production remains `NO-GO`. Do not repeat this same A-B-A
+automatically; first isolate the B required-read/fan-out validity boundary.
+
+## Current J1 post-response commit fan-out/validity analysis - 2026-09-22
+
+Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-fanout-validity-analysis-v1-20260921T224944702Z_EVIDENCE.json`;
+SHA-256
+`8D2F46DFBD478C350EE254135DF6A2A0AD8D416CDB5FB6B21F17CA5C9F891D8D`.
+Runner:
+`app/scripts/performance-plan-1-j1-post-response-commit-fanout-validity-analysis.mjs`;
+SHA-256
+`F5BC8EE21C6D5E6DA56C25059F68906A8218190501FFC87C2AC8AABA91100473`;
+focused tests `3/3 PASS`.
+
+This was a read-only re-analysis of the prior 37-event checkpoint, with no
+browser/server rerun and no runtime change. B `r3` recorded two matching Forms
+requests: the first reached HTTP 200 headers but was aborted before body
+completion, and a later request completed with HTTP 200. The validator correctly
+kept the unit invalid because every matching required-read record must pass.
+The same trace produced `60` total / `31` API requests versus `53` / `24` in
+both matched legacy rows, with extra bootstrap, client-summary, Forms, alerts,
+notifications, and conversations requests. Stage 6 recorded a Forms
+setup/start restart, one Forms abort, and one Forms success.
+
+Outcome:
+`COMPLETE / B_REQUIRED_READ_ABORT_AND_FANOUT_CONFOUND_OBSERVED_COMMIT_COMPARISON_OPEN`.
+B is `2/3` eligible functional and the matched fan-out invariant is only `1/2`
+among fully eligible rows, so the three-valid-record gate remains open. This
+does not confirm the global-freeze cause or accept a fix; Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 remains locked, and production remains
+`NO-GO`. Do not repeat the same A-B-A. Next continuation must be a distinct
+controlled capture with one completed Forms read and a predeclared route-count
+fan-out envelope.
+
+## Current J1 legacy fan-out envelope baseline - 2026-09-22
+
+The distinct control capture is complete. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260922T000153108Z-df90576e-8f10-4162-bf26-2916efbe1289_EVIDENCE.json`;
+SHA-256
+`FC2FD67BC365691E30B7037E2B1985398DA3FEDDB827A24A78665751D178C94C`.
+The runner SHA-256 is
+`413E3A30F37CB45880A3CD1D9BEED076C40A6551BBC1BDD2AB10F5566FA06004` and
+the focused test SHA-256 is
+`0C184CFED128E0EEC77AED8B6175EC3FFA96E3053B603D2FF5D17101746684DA`.
+
+Under legacy dirty-registration policy, local-normal synthetic auth, and
+local Supabase `127.0.0.1:54321`, J1 produced 3/3 observation-valid and 3/3
+functionally valid repetitions. Every repetition passed exactly one completed
+Forms read and exactly one completed Nutrition read. The Forms lifecycle was
+exactly setup/start/success `1/1/1` with zero aborts or restarts.
+
+The fixed fan-out envelope passed 3/3. The observed shapes were r1
+`56` total / `27` API / `3` document / `26` RSC and r2/r3 `53` / `24` / `3`
+/ `26`; all declared route limits passed. This establishes a current control
+boundary only. It is outside the official baseline, all samples remain
+`countedAsOfficialSample=false`, and no application runtime behavior changed.
+
+An earlier attempt is preserved as a separate `BLOCKED` run; its evidence
+records `outputRecorded=false` before browser capture. A follow-up
+same-command local diagnostic identified `EPERM` in the OneDrive-backed
+default `.next` cleanup. The runner now uses a run-scoped diagnostic
+`distDir`, and the successful run used it. The blocked attempt is excluded;
+it is not silently retried or merged.
+
+The performance problem is not resolved. Auth-chain cost, React commit
+causality, global freeze causality, finding disposition, Plan 2 eligibility,
+and production `NO-GO` are unchanged. Next exact action: one separately
+identified single-variable candidate capture using this envelope and Forms
+lifecycle gate as immutable controls. Do not repeat this baseline or combine
+auth, fan-out, and commit variables.
+
+## Current J1 post-response commit envelope A-B-A candidate - 2026-09-22
+
+The corrected candidate capture is complete and recorded at
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T082334317Z-c732dc73-de03-43b6-8881-a4880cbf977a_EVIDENCE.json`;
+SHA-256
+`DDD880A087A9F42407967C969A97B00F5C69152C0D5D77C878AAFB2C474C5CED`.
+The runner/test hashes and full validity record are in
+`docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json` under
+`currentJ1PostResponseCommitEnvelopeABACandidate`.
+
+The only changed variable was the process-scoped shell dirty-registration
+policy: A1 legacy, B stable `saveRef`, A2 legacy. All 9/9 traces were
+observation-valid. Eligibility was A1 `3/3`, B `2/3`, A2 `3/3`. B r2 had
+`57/28/3/26` total/API/document/RSC requests, two Forms records with one
+incomplete, Forms setup/start `2/2`, one success and one abort; therefore both
+the fan-out and lifecycle gates failed. No repetition had an exact full
+fan-out shape across all three variants.
+
+The eligible B rows showed shell-provider commits `36` and `31` versus large
+legacy counts, but the strict three-valid-record and exact fan-out gates were
+not met. This is a validity-bound contributor signal, not root-cause proof,
+not an accepted runtime fix, and not a Plan 2 input. The first attempt is
+preserved and excluded as `COMPLETE_BUT_INVALID` because it passed unsupported
+arbitrary labels into the phase-4.3 control enum.
+
+Phase 5.7 remains `COMPLETE / DIAGNOSIS_BLOCKED`; production remains `NO-GO`.
+Do not repeat this candidate automatically. The next authorized work must
+control the stable-policy Forms/fan-out divergence and then achieve 3/3
+eligible A1/B/A2 repetitions with exact per-repetition fan-out equality.
+
+## Historical handoffs (superseded execution directions)
+
+Earlier Plan 1 execution instructions below are historical. The canonical
+v3 contract and the next action above take precedence for Plan 1, including
+over sections called current. Unrelated product/security handoffs retain
+their existing authority.
+
+## Current Phase 4.4 continuation result - 2026-09-17
+
+The active contract is still `plan1-final-v2`, with Phase 4.1
+`IDENTITY_LOCKED`, Phase 4.2 `REFERENCE_SEPARATED`, and Phase 4.3
+`GENERAL_DIAGNOSTIC_HARNESS_READY`. Local app/Supabase inputs were restored
+without recording credential values, and the authenticated local preflight
+passed. A harness-only responsive-navigation selector defect was corrected
+after a controlled DOM check; request body-finish waiting is bounded so an
+unfinished unit cannot become valid. No runtime fix was made.
+
+The latest run is
+`aiya-performance-plan1-phase4-4-local-20260916T232938491Z-c7e89cae-3ff5-4595-ac8f-ed5c3ff9923d`.
+It attempted 18/18 units: 13 valid and 5 invalid. All five invalid units
+are J1 Forms-to-Nutrition repetitions; J1 is 1/6 valid. J2 and J3 are 12/12
+valid. J2 records the inbox list as an authenticated dashboard-hydration
+preload and does not invent a conversation-detail click. The
+`/api/shell/preferences` PATCH caused by client activation is an expected
+successful navigation mutation; all other mutations remain forbidden.
+
+The disposition is `BLOCKED / LOCAL_INVALID_SAMPLES`. The traces do not meet
+the three matching valid records plus repeatable single-variable experiment
+requirement, so no product root cause or accepted runtime fix exists. Keep
+the invalid units invalid and review the J1 Forms/Nutrition failure boundary
+in a separately identified Phase 4.4 continuation. Do not start Phase 4.5,
+Android/PWA, the official nine-scenario baseline, Plan 2, runtime changes, or
+production work. Prior local runs remain separate: the input-blocked run, the
+stale bootstrap run, the selector-fault run, the interrupted run, and the
+earlier partial-validity run were not rewritten. Production remains `NO-GO`.
+
+## Current Plan 1 final revision and Phase 4.4 local reproduction - 2026-09-16
+
+The active execution contract is revision `plan1-final-v2` in
+`docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md`. Phase 4.1 completed with
+`COMPLETE / IDENTITY_LOCKED`; evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_1_EVIDENCE.json`. Phase 4.2 completed
+with `COMPLETE / REFERENCE_SEPARATED`; evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_2_EVIDENCE.json`.
+
+The exact detached worktree path, HEAD, dirty tracked/untracked inventory,
+source/harness/fixture/migration/tool identities, inherited Phase 1-4
+evidence, and non-production live release references are recorded. Existing
+changes were preserved. The ignored reference snapshot differs from the
+current variant only in the three locked state-provider/hydration experiment
+files. No official measurement, diagnostic journey, causal experiment,
+runtime fix, hosted/device run, migration, deploy, or production action
+happened in Phase 4.1-4.3.
+
+Phase 4.3 is complete as `COMPLETE / GENERAL_DIAGNOSTIC_HARNESS_READY` in
+`docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_3_EVIDENCE.json`. Phase 4.4 was started
+with the separate local runner and is recorded as `BLOCKED /
+LOCAL_INPUT_BLOCKED` in `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_4_EVIDENCE.json`.
+The local app and local Supabase targets were unreachable, and the process
+environment did not contain the synthetic credential inputs, so zero of the 18
+planned J1-J3 units ran and zero official samples were added. Resume the same
+4.4 checkpoint after restoring those local inputs and making the existing
+credential configuration available without exposing its values. Older Phase 4/5 instructions
+below are historical context and are not active execution instructions.
+Production remains `NO-GO`.
+
+## Current Phase 4.4 continuation point - 2026-09-16
+
+Runner: `app/scripts/performance-plan-1-phase-4-4-local.mjs`.
+Checkpoint phase: `aiya-performance-plan1-phase4-4-local`.
+Checkpoint run:
+`aiya-performance-plan1-phase4-4-local-20260916T204215189Z-371389ea-10c1-4ec4-9858-cc933c1961c9`.
+Evidence: `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_4_EVIDENCE.json`.
+The next action is to restore and verify `http://127.0.0.1:3136` and
+`http://127.0.0.1:54321`, make the existing synthetic credential environment
+available without logging it, then resume 4.4 without using the fallback store,
+changing the 18-unit contract, or counting diagnostic traces as official
+baseline samples.
+
+## Current Phase 4 Baseline Authority - 2026-09-16
+
+The latest Plan 1 Phase 4 run is
+`aiya-performance-plan1-phase4-20260915T195604720Z-497a3200-ada3-445d-a2d0-059cb0886940`.
+Its canonical evidence
+`docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json` records
+`BLOCKED / PERFORMANCE_BLOCKED` with `validEnvironmentCount=2/4`.
+Stages 4.1, 4.2, and 4.3 are `COMPLETE`; Stage 4.4 is `BLOCKED` because
+Android Chrome reached only 17 valid nine-scenario rounds after the locked
+28-attempt limit, and Stage 4.5 is `BLOCKED` by the ordered dependency.
+
+The Android target was not disconnected: device readiness, Chrome launch,
+CDP forwarding, target-origin verification, and the connection monitor
+passed, including 66 monitored checks. The Android baseline nevertheless
+recorded 11 discarded attempts and 0 failed attempts. Discard reasons were
+AI Chat destination/workspace readiness timeouts, one messages required-read
+failure, one missing password-login response, one unstable menu-tab click,
+and one page navigation timeout. These are valid measurement/harness
+interaction blockers, not proof of an application root cause. The installed
+PWA baseline was not run because Android Chrome did not satisfy its ordered
+20-valid-sample prerequisite.
+
+Local desktop small and normal profiles, and owner-PC hosted, each completed
+all nine scenarios at 20 valid rounds per scenario. Validity and functional
+checks passed. Speed-budget `FAIL` results remain reproduction candidates;
+they are separate from validity and do not prove causality. The Android
+17-round measurements are also retained as incomplete evidence and must not
+be promoted to a 20-sample environment PASS.
+
+## Current Phase 4 cyclic diagnosis authority - 2026-09-16
+
+The durable Phase 4 cycle controller is implemented in
+`tools/phase-execution/phase-cycle-store.mjs` and uses the ordered states
+`DIAGNOSE -> FIX -> VALIDATE -> REMEASURE`. A cycle may enter `BLOCKED` from
+any active state; a blocked cycle closes only that attempt, while the parent
+Phase 4 run remains open for a later cycle. Cycle events use the existing
+checkpoint SHA-256 chain, atomic event files, and single-writer lock. An
+interrupted active cycle resumes with the same `cycleId` after identity and
+lock checks; incomplete work cannot become an official sample.
+
+Three Android Chrome diagnostic cycles were executed against the canonical
+run, each with three repetitions and `officialSamplesAdded=0`:
+
+- `cycle-20260915T224814005Z-b1c1ddef-e359-481a-a345-b9124611e72e`
+- `cycle-20260915T230600833Z-39295e50-f9bb-4293-b888-4827b13abcb2`
+- `cycle-20260915T231653941Z-923cc126-b85f-4b81-adec-b7d3f8de6f0a`
+
+All three cycles are `BLOCKED`; the Phase 4 canonical result is unchanged.
+The latest diagnostic evidence is
+`docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_ANDROID_DIAGNOSTIC_EVIDENCE.json`.
+It records two valid but budget-failing AI Chat repetitions (`taskReadyMs`
+approximately 57.0 seconds and 30.4 seconds) and one AI Chat workspace-ready
+timeout. The trace shows the approved route changing to `/dashboard/more`,
+the More page becoming ready after approximately 7-14 seconds, the real AI
+Chat item click taking approximately 7-14 seconds, and workspace readiness
+taking approximately 8-30 seconds. The conversations request returned HTTP
+200 with body-finish evidence in the valid samples and failed-request count
+zero. Therefore no common click failure or Android disconnect has been
+proven; the current disposition is a repeated Android AI Chat performance
+candidate with an unclosed application-side causal chain, not a harness fix
+or a Plan 2 remediation.
+
+The diagnostic launcher is
+`app/scripts/performance-plan-1-phase-4-android-diagnose.mjs`; it resumes an
+active cycle and writes a per-cycle history file without changing the locked
+20-valid-sample/28-attempt contract. Inspect cycles with
+`npm run audit:performance:plan1:phase4:cycle-status` from `app`.
+Do not start an official `--cycle` remeasurement until a cycle has passed
+through a documented `REMEASURE` state. A runtime performance change remains
+outside Plan 1 unless a causal trace, focused regression test, and explicit
+Plan 2/scope authorization are recorded.
+
+This run was created by the explicit compatible migration from source run
+`aiya-performance-plan1-phase4-20260915T190010135Z-8a3e9d92-83df-4c0d-8604-41c17109a31e`.
+The source remains unchanged; its hash chain, fixture, build, migration,
+and locked contract were checked before copying. The migration copied 141
+verified events and preserved 60 committed rounds. The current run records
+`checkpoint.resumed=true` and reached its terminal blocked result without
+loosening the 20-valid-sample or 28-attempt contract.
+
+After that terminal result, an attempted `npm run ... -- --status` call did
+not forward the status argument on this host and briefly reopened the same
+checkpoint. It was stopped before any measurement attempt started. Checkpoint
+events 214-215 are only the resumed execution/admission records; events
+216-217 record the interruption and restore the run to `BLOCKED`. The hash
+chain validates, no `phase4.*` measurement event was added after the original
+terminal result, and the canonical evidence remains the original measured
+result. Future status inspection must use the direct command
+`node scripts/performance-plan-1-phase-4.mjs --status` from `app`.
+
+The next eligible action is a controlled causal diagnosis of the Android
+More-to-AI-Chat navigation/render path, using the same authenticated fixture,
+device, route order, and trace boundaries. It must distinguish route
+navigation, shell/bootstrap, render/long-task, ready-selector, and AI Chat
+request body-finish timing before any fix state is opened. A harness-only
+correction is allowed only if a reproducible measurement defect is isolated;
+an application runtime correction requires a causal trace, focused test, and
+explicit Plan 2/scope authorization. Any changed identity requires the
+explicit compatible checkpoint-continuation path. Do not use `--new-run` to
+bypass the sample limit, start Plan 2 implicitly, deploy, migrate production,
+or change production `NO-GO`. No new account, VPS, PWA installation, or
+production operation is justified.
+
+## Historical pre-migration Phase 4 Baseline Authority - 2026-09-15
+
+The official Plan 1 Phase 4 run
+`aiya-performance-plan1-phase4-20260915T111650824Z-51ccd021-0f1d-42ff-b170-66bc776f6aa6`
+is recorded in `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json` as
+`BLOCKED / PERFORMANCE_BLOCKED`. Stage 4.1 is `COMPLETE`. Stage 4.2 is
+`BLOCKED`: `small_synthetic` committed 10 complete nine-scenario rounds, then
+hit an unclassified browser-baseline error on attempt 11; the locked 20-valid-
+sample requirement was not met. `normal_synthetic` completed 9/9 scenarios at
+20/20 valid samples with functional and validity PASS, but speed-budget FAILs
+on the workspace/communication/AI Chat paths. These are measurement and
+reproduction results, not causal proof. Stages 4.3-4.5 did not run because the
+ordered Stage 4.2 prerequisite failed. No hosted, physical Android Chrome, or
+installed-PWA baseline was collected by this run.
+
+The next eligible action is targeted diagnosis of the unclassified browser
+error, followed by a compatible checkpoint continuation that preserves the
+committed rounds. Do not start a new run or change the 20-sample/28-attempt
+contract unless the recorded identity changes under an explicitly authorized
+scope decision. Plan 2, runtime optimization, production deploy/migration, and
+production GO remain locked.
+
+## Resume Infrastructure Authority - 2026-09-15
+
+The one-phase persistent checkpoint implementation is complete and locally
+verified in `docs/PHASE_EXECUTION_RESUME_EVIDENCE.json`. The shared storage is
+under ignored `.manu-runtime/phase-execution/<phaseId>/<runId>/`; committed
+events are atomic JSON files with a SHA-256 chain and a single-writer lock.
+AIya Plan 1 Phase 4 commits each complete nine-scenario fixture/profile
+round before continuing, preserves discarded/interrupted attempt counts, runs
+one uncounted preparation round per browser/CDP session, and resumes only when
+the source/fixture/build/harness identity matches. `--status`, `--pause`,
+`--resume <runId>`, and `--new-run` are available through the existing Phase 4
+command. This feature was verified before the official baseline attempt;
+production remains `NO-GO`.
+
+Checkpoint tests are `6/6 PASS`; targeted Phase 4 tests are `32/32 PASS`;
+the compatible source-chain migration and official continuation completed
+without application runtime, database, dependency, secret, deploy, or
+production-system changes. The current baseline result is governed by the
+Phase 4 evidence and authority above.
+
+The current implementation authority is Plan 1 Phase 4 Step 3, verified on
+2026-09-14 by readiness run `aiya-phase4-readiness-20260914T184904329Z`.
+`app/scripts/performance-plan-1-phase-4.mjs` now runs the readiness command as
+a mandatory measurement-start gate before stage 4.1. The gate requires a
+successful fresh readiness command, ordered H1-H4 completion, PASS for local,
+hosted, physical Android Chrome, and installed PWA environments,
+`baselineStarted=false`, real hosted password-login plus shell-bootstrap
+body-finish, approved `.manu-runtime/performance-phase4/hosted.env` sourcing,
+stable local/hosted inputs, and matching source/fixture/migration/build
+identity at the moment before server start. The readiness-created local build
+is reused only after those checks. Any failure blocks the local server and all
+20-sample scenarios. The direct gate evaluation passed; the baseline remains
+unstarted. Targeted Phase 4 tests are `31/31 PASS`, readiness tests are `10/10
+PASS`, typecheck/build pass, and lint has `0` errors with `74` existing
+warnings. Production remains `NO-GO`.
+
+**Supporting AIya Plan 1 Phase 4 Step 2 implementation (2026-09-14):** `app/scripts/performance-plan-1-phase-4.mjs` now parses ADB authorization states, requires exactly one authorized physical device, verifies Android Chrome, discovers the installed `org.chromium.webapk.*` package from the device, resolves its launch activity, starts Chrome and creates the local CDP forward without recording the serial. Readiness opens a normal Chrome target through an explicit Android intent; when Android leaves a `chrome-native://newtab` target, it navigates that existing normal Chrome tab to the approved origin in the same CDP session and verifies the target again. It then launches the existing WebAPK package independently and accepts the PWA target only when its origin is the approved hosted origin, standalone display mode is true, its service worker controls the page, and `navigator.onLine` is true. A connection monitor checks the phone before/after every gate and around baseline samples; a failed check blocks the environment. No PWA installation, account creation, VPS change, application runtime change, migration, deploy, or production traffic was performed.
+
+**Current AIya Plan 1 Phase 4 startup-flow correction (2026-09-14):** `app/scripts/lib/performance-plan-1-phase-4-contract.mjs` loads only the ignored repo-root `.manu-runtime/performance-phase4/hosted.env` regular file, parses the exact three `AIYA_PHASE4_HOSTED_*` keys, rejects missing/invalid/symlink files and process/file conflicts, and never returns raw credentials in evidence. `app/scripts/performance-plan-1-phase-4.mjs` enforces the approved test-VPS origin, requires `/api/health/release` HTTP 200 plus `apiStatus=ok` with a bounded timeout, then performs a real Playwright password login and requires the authenticated `/dashboard` shell plus `GET /api/shell/bootstrap` 2xx and body-finished evidence before local build or a long baseline can start. The readiness evidence records only masked input metadata and the safe preflight result. This correction did not alter runtime performance, schema, production, deployment, or external traffic.
+
+The current readiness evidence is `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE.json`. Its hosted authentication result is `PASS` with login HTTP 200, authenticated workspace open, visible authenticated shell, hidden login form, and bootstrap HTTP 200/body-finished. Its local, Android Chrome, and installed PWA readiness checks are PASS; H1-H4 and the ordered readiness closure are `COMPLETE / READY_FOR_PHASE4_BASELINE` with `baselineStarted=false`. The baseline launcher consumed this evidence through the start gate without starting the Phase 4 baseline. The last Phase 4 baseline attempt remains a separate historical run; it must not be presented as a post-correction baseline.
+
+Historical readiness snapshot (2026-09-13; superseded by the 2026-09-14 startup-flow record): readiness run `aiya-phase4-readiness-20260913T175128732Z` recorded H1 and H2 as `COMPLETE`, hosted input/release-health as ready, and one authorized physical Android target with CDP available. H3 remained `BLOCKED` because an installed standalone AIya PWA target with an active service worker was not available; H4 and the Phase 4 baseline were not started.
+
+Approved non-production hosted synthetic account preparation completed on 2026-09-13 on test VPS `65.21.52.249` with strict SSH host-key verification. Exactly one `aiya-phase4-hosted-*` Auth user has one owner membership and one dietitian profile on the existing active synthetic tenant; password-login returned HTTP 200 and authenticated RLS/store checks passed. The credential values are stored only in ignored `.manu-runtime/performance-phase4/hosted.env`; raw values are absent from evidence, logs, chat, and Git. No production account, migration, deploy, provider/channel traffic, billing, or worker change was performed.
+
+**Historical readiness implementation snapshot (2026-09-13):** Readiness run `aiya-phase4-readiness-20260913T175128732Z` recorded H1/H2 and the then-observed local, hosted, Android, and Chrome checks. Its H3/PWA result and all other fields are superseded by the 2026-09-14 evidence above.
+
+**Historical last Phase 4 baseline attempt (pre-startup correction):** `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json` remains `BLOCKED / PERFORMANCE_BLOCKED`; its local desktop samples completed, while hosted login failed before valid hosted samples and later stages were blocked by ordering. This record is not a post-correction baseline and contains no causal root-cause proof. The next Phase 4 run must start from Stage 4.1 only after the current ordered environment gate closes. Production remains `NO-GO`.
+
 **Current AIya Performance Plan 1 Phase 3 status (2026-09-10):** `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json` records stages 3.1-3.6 as `COMPLETE` with outcome `SYNTHETIC_AUTH_STORE_READY`. Local migration/schema checks passed; a deterministic local fixture was seeded without a full database reset. Two tenants contain eight password-authenticated synthetic accounts, small=3 clients/20 messages, and normal=50 clients with 20-message and 200-message conversations. Owner, assistant, viewer assignment, auditor, anonymous denial, cross-tenant isolation, AI Chat boundary, viewer write boundary, and owner store-read checks passed through normal authenticated clients. The fixture remains local for Plan 1 Phase 4. No valid performance baseline, freeze reproduction, root-cause attribution, runtime remediation, hosted account, physical Android/PWA capture, deploy, migration, external mutation, provider/channel egress, push, PR, or merge was performed. Production remains `NO-GO`; the next single eligible action is Plan 1 Phase 4 matched authenticated baseline measurement.
 
 **Historical AIya Performance Plan 1 Phase 1 status (2026-09-10):** `docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md` alt planinin kaynak/bulgu/kapanis sozlesmesi asamalari 1.1-1.5 sirayla tamamlandi ve Faz 1 kapanis kontrolu `PASS` oldu. Evidence: `docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json`; finding manifest: `docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json`. Bes bulgu ayri disposition kayitlarinda korunmustur; `runtimeCausesConfirmed=0` ve `runtimeChangesAuthorized=false`. Kullanici Docker'i baslattiktan sonra local Supabase baslatildi ve yalniz local DB resetlendi. Tum full-rehearsal bayraklari acikken temiz full-repo kosusu 288/288 test dosyasi ve 1726/1726 test ile PASS verdi; failed/skipped yoktur. Local/upstream HEAD `568a1ffba833db0dd182a3d9fad5b034f7cf98e5`, live customer/admin release commit `1c9756046b01cb1bd224fb601ec9094a7f471606`; live/HEAD drift beklenen durumdur. Plan 1 Phase 2 acik kullanici onayina kadar baslatilmayacak. Production `NO-GO`; runtime, schema, migration, dependency, deploy, external system, provider/channel, billing, worker, secret/env, push, PR ve merge degisikligi yapilmadi.
@@ -916,7 +2284,7 @@ Local app state:
 - API routes fall back to `app/src/lib/app-state-store.ts` when Supabase env vars are missing.
 - Supabase store auto-seeds demo tenant, dietitian, clients, conversations, messages, AI decision, and processed seed event.
 - Supabase-backed operations currently include app state load/reset, client create/update, manual replies, simulator persistence, and handoff resolve/dismiss.
-- Supabase Auth-backed demo sign-in creates or reuses `demo@manu.local`, links it to the demo tenant membership, and issues Supabase Auth cookies.
+- Supabase Auth-backed demo sign-in creates or reuses `[email-redacted]`, links it to the demo tenant membership, and issues Supabase Auth cookies.
 - Supabase-backed API routes resolve tenant/dietitian context from the verified auth user and return `401` without a session or `403` without membership.
 - `/dashboard` requires a verified Supabase Auth user when Supabase is configured; fallback mode still uses the local demo cookie.
 
@@ -3043,3 +4411,316 @@ R6 was implemented and independently executed. Its original environment block wa
 - Maintenance gate: MANU_MAINTENANCE_MODE=true in app/src/proxy.ts.
 - Executor: node --test tools/hosted-sandbox/activation/hosted-activation.test.mjs PASS.
 - Historical Hosted Sandbox Faz 6 checkpoint: remote migration/deploy/cleanup apply was not executed at this dated checkpoint. This is superseded by the 2026-08-28 Hosted Sandbox technical-debt closure evidence. Production remains NO-GO; iPhone remains WAIVED_NOT_EXECUTED under the permanent owner waiver.
+
+## Current AIya performance continuation - 2026-09-22
+
+Evidence: `docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-client-only-dashboard-navigation-fix-v1-20260922T101352Z_EVIDENCE.json` (SHA-256 `55B6DF4617967D2FD73964E884CCE4A63D335ECBD319C154B5AA642A185D3652`).
+
+The bounded diagnostic found a concrete same-document dashboard navigation race: client-side `commitDashboardHref(..., "push")` and the following `router.push(...)` were both writing the same `/dashboard` query. A delayed older write could replay `forms -> summary -> forms`, causing the Stage 6 Forms effect to restart and abort its first request. The working-tree guard keeps same-document `/dashboard` query navigation client-only and preserves App Router navigation for cross-route changes.
+
+One local production J1 after the change was `VALID / SUCCESS`: no intermediary summary re-entry, zero `replaceState` events, one Forms request, and no Forms abort. This is a local contributing-boundary validation only. Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, the general freeze remains unresolved, no finding disposition or Plan 2 entry changed, and production remains `NO-GO`. At this dated checkpoint a repeated J1 was the proposed next diagnostic; it has since been executed and superseded by the bounded three-record outcome below. Do not treat either run as official acceptance.
+
+## Current AIya performance continuation result - 2026-09-22
+
+The authorized three-record current-source J1 capture is recorded in `docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260922T155536674Z-bcf71d30-b2df-41f5-98c5-f6d863fb3ef6_EVIDENCE.json` (SHA-256 `3794F0D977EA9A3E3A252AC0A80142494F5C475B518E0C9EC37F28B39F881623`). The run used the local-normal synthetic owner fixture, real local Supabase/RLS path at `127.0.0.1:54321`, the current working tree, and the existing J1 runner with a 2,000 ms second-action delay. The checkpoint is complete with 14 events and a valid hash chain; preflight passed and no raw credentials, identifiers, bodies, health data, or prompts were recorded.
+
+All three observations were observation-valid and functionally successful. Each had one completed Forms request (`200`), Forms lifecycle `1/1/1` with zero Forms aborts, one completed Nutrition request (`200`), and the second click accepted `3/3`. The route sequence was clients -> client -> Forms -> Nutrition with no summary re-entry. The second-click-to-ready durations were `1,040 ms`, `1,087 ms`, and `576 ms`; the captured trace had `2`, `4`, and `3` long tasks respectively, with a maximum of `102 ms`. The prior claim that none overlapped the second-click-to-ready interval is withdrawn because the browser `performance.now()` and trace-relative clocks were compared without alignment; overlap is unknown until aligned reanalysis. The click-to-request-start gap was `35-38 ms`; endpoint server timing remained bounded but variable across auth/store/route work, so no single file or function is established as a root cause.
+
+The three records were not envelope-eligible: each measured `49` total requests, `24` API requests, `3` document requests, and `22` RSC requests, while the historical control envelope requires `53-56` total and exactly `26` RSC. There were no unexpected API routes, and the Forms/lifecycle gates passed; the stable envelope mismatch makes the performance outcome `NOT_EVALUABLE`, not a product failure or causal finding. This result answers only that the second-click stall was not reproduced in those three current-source observations. Do not retry automatically or repeat A-B-A. The later default-stable verification and its disposition are recorded below; any further comparison still requires separate authorization. Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, findings and Plan 2 eligibility remain unchanged, and production remains `NO-GO`.
+
+## Current bounded dirty-registration continuation - 2026-09-22
+
+Phase 1 is complete in `docs/AIYA_PERFORMANCE_DIRTY_REGISTRATION_FIX_PHASE_1_EVIDENCE.json`; the three-phase decision contract is `docs/AIYA_PERFORMANCE_DIRTY_REGISTRATION_FIX_ACTION_PLAN.md`. The default dirty-registration policy now uses current callback refs and avoids callback-identity-only re-registration; the explicit `legacy` policy remains available. The existing same-document dashboard navigation guard is preserved and is not attributed to this phase.
+
+Focused verification passed: hook/registry and shared request timeline 13/13 Vitest tests, runner/timeline 8/8 Node tests, typecheck, syntax checks, and diff check. Focused lint had zero errors and one existing unused-helper warning. No build, runtime measurement, smoke, or database mutation has run in Phase 1. The earlier “no long task overlapped” claim is withdrawn as clock-unverified.
+
+The planned command was run once after the startup path correction. Its final result is recorded in the 2026-09-23 bounded J1 outcome below; do not repeat the J1 run or smoke from this checkpoint. Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 remains unauthorized, and production remains `NO-GO`.
+
+Startup attempt note: the first invocation failed before opening a checkpoint because the new runner resolved `appRoot` from its file path, causing the source file list to run under `app/scripts`. Separate evidence is `docs/AIYA_PERFORMANCE_DIRTY_REGISTRATION_FIX_PHASE_2_STARTUP_BLOCKER_EVIDENCE.json`. It records zero checkpoint/build/server/browser/J1/smoke/database effects. Path resolution was fixed and regression-tested; that startup failure is not a J1 attempt and was not merged into the measurement run.
+
+## Current Bounded Dirty-Registration J1 Result - 2026-09-23
+
+Phase 2 runner evidence: `docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-dirty-registration-verification-v1-20260922T204750028Z-be78a2d5-cc2f-4fdb-9543-8f74559bb628_EVIDENCE.json`, SHA-256 `82A14522B96FE6757D1B041D89D568C2F1A462C9541ED04D7FEEDE7969C83CA2`. The run used one successful run-scoped build, the `local-normal` synthetic owner, real local Supabase/RLS, and a 2,000 ms planned second click. All three J1 records were observation-valid and functionally successful; Forms had one GET and lifecycle `1 setup / 1 start / 1 success / 0 abort`; Nutrition had one completed GET; the second click was accepted `3/3`. Route history was clients -> client -> Forms -> Nutrition, with no summary re-entry. The click was dispatched `12-14 ms` after its planned time and became trusted `35-50 ms` after that target. Visible-ready latency was `914/872/936 ms` from the trusted second click.
+
+The stall was not reproduced in these three runs. Nutrition response-body-to-visible-ready was `700/690/498 ms`, the largest directly bounded interval. The aligned long-task observer recorded `0` tasks in each full trace; event-clock alignment had `33-35` paired samples and `1.0-1.1 ms` spread. The second-click Event Timing entries had short processing (`8.6-12.0 ms` to processing end); their starts preceded the trusted-click boundary by `1.6-3.0 ms`, so the existing start-inside-window summary omitted them. Two shell context commits were observed per window; React profiling was disabled. Two API requests overlapped the second action; none was RSC. The full request shape was `49 total / 24 API / 3 document / 22 RSC` and did not match the historical legacy envelope, so performance is `NOT_EVALUABLE` and eligibility is not a speed claim.
+
+At the end of the original J1 runner execution, its status was `BLOCKED` because the dirty smoke's assumed `client-form-panel textarea` selector timed out before Save & Continue. That smoke did not reach the mutation path. The separate smoke-only selector correction and result are recorded below; the original J1 checkpoint and its failed attempt remain preserved. Do not rerun J1 or repeat the successful smoke.
+
+## Current Dirty-Navigation Smoke-Only Result - 2026-09-23
+
+The separately authorized smoke-only checkpoint completed in `docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-dirty-navigation-smoke-only-v1-20260922T213853024Z-950a560c-dc4c-49bb-b332-a4bb8750ea12_EVIDENCE.json` (SHA-256 `654801D5EBE4DFA2C9DAA5687D5DB340CAD436CD5BD376114C878862A17A3287`). It reused the prior validated local build; no J1 measurements or build were repeated. The selector chose a visible, enabled `textarea` or `input[type="text"]` inside the client form field container.
+
+Stay preserved the edited synthetic draft, Discard navigated to Nutrition, and Save & Continue sent exactly one `POST /api/clients/forms`, received `200`, and navigated to Nutrition. One synthetic form mutation completed; request/response bodies and form values were not captured. The hash-chained checkpoint has 10 events with one smoke start and one completion. The server closed and port `3167` is free.
+
+One earlier smoke-only invocation stopped at preflight because a hardcoded prior-evidence SHA had a transcription error. Its preserved evidence is `docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-dirty-navigation-smoke-only-v1-20260922T213552307Z-475af6bd-8365-4168-8055-a7d4061aa20a_EVIDENCE.json` (SHA-256 `D8437B18402E175AAACFC87D88717070ED4107871D522F0F1A96FB3FA878DBD7`); it recorded zero server starts and zero smoke starts. The hash is now checked by a focused regression test.
+
+As of 2026-09-23, the three local J1 records remained `3/3` valid and
+functional and did not reproduce the stall; no hosted reproduction had yet
+been supplied. This next-action note is superseded by the 2026-09-24 hosted
+global-freeze continuation below. Do not repeat J1 or the successful smoke.
+
+## Current Global Freeze Diagnostic - 2026-09-24
+
+The user supplied a hosted-site screen recording and confirmed the same broad
+typing, left-navigation, and reload freeze on desktop and Android, using
+synthetic test data. Treat this as a valid direct symptom report, not as a
+browser/server/database root-cause finding. The previous 2026-09-22/23 local J1
+records remain valid for their local scope but do not clear the hosted release.
+
+Current local checkout is `C:\Users\Dell\OneDrive\Masaüstü\MANU-AI`, branch
+`codex/production-readiness-stage-1`, HEAD
+`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a`, with an intentionally dirty tree.
+The live release endpoint reports `hs-1c9756046b01-b55ed4ff550f`, commit
+`1c9756046b01cb1bd224fb601ec9094a7f471606`. Do not compare local J1 timing to
+that release as if they were the same build. A one-time quiet host snapshot at
+`2026-09-24T15:40:33Z` showed 2 vCPU, about 2.89 GiB available memory and zero
+CPU/memory/I/O PSI; it did not overlap a freeze and is not an exonerating load
+sample.
+
+The new authority is `docs/AIYA_GLOBAL_FREEZE_ACTION_PLAN.md`. Its three phases
+are: (1) three bounded paired browser/host captures on the authenticated
+synthetic hosted session, (2) layer attribution followed by one controlled
+single-variable A1/B/A2 experiment only if freezes align, and (3) the smallest
+local fix plus matched regression proof. The ordered descriptor is
+`app/scripts/lib/aiya-global-freeze-phase.mjs`; capture/sanitization is
+`app/scripts/performance-global-freeze-diagnostic.mjs`; focused tests are
+`app/scripts/performance-global-freeze-diagnostic.test.mjs`.
+
+Phase 1 result, 2026-09-24: the user authenticated in the hosted synthetic
+clinic. The same-session clock probe fix passed locally and remotely; the live
+set was 64/45/47 ms RTT with 40 ms uncertainty. One 150-sample SSH host window
+completed with the application process present, CPU average/peak 5.37%/13.57%,
+1-minute load peak 0.12, 3,016,776 KB minimum available memory, and zero swap,
+cgroup throttle/OOM, memory-pressure, or IO-pressure deltas. The sample interval
+was `2026-09-24T19:51:48Z` through `2026-09-24T19:54:32Z`; it is not paired to a
+verified UI freeze.
+
+Chrome control timed out on click dispatch, accessibility read, and screenshot.
+The click did not finish, so phone typing was not reached; navigation/reload
+were not tested and no form was submitted. Phase 1 is `BLOCKED /
+browser_trace_harness_blocked`, with 0/3 valid paired records. Primary evidence:
+`docs/aiya-global-freeze-phase-1-20260924T195845623Z-6029109a-b6cb-46b3-8bc0-b355420234a5_EVIDENCE.json`.
+Its SHA-256 is `4685B390CA70ABBD1306A37D579D137135D5D8B1A83D17DF92ED053A9C9C527B`.
+The hash-chained checkpoint is
+`aiya-global-freeze-diagnostic-v1-20260924T195119517Z-61e8f694-e2e2-465f-9512-5737058fc0f6`.
+Supplemental evidence verifies the 150-row host artifact and its SHA-256:
+`docs/aiya-global-freeze-phase-1-host-capture-addendum-20260924T200803Z-86d11645-08e5-490a-8b86-8563dd32e6c9_EVIDENCE.json`.
+The addendum SHA-256 is `ACF96218588AF8A392B5FEA68C1FA6D0717C6D60A960D775A4CE97AEE18BDAE5`; the host sample artifact SHA-256 is `d185d611b4d07da2e0bb539fb282234b1892b8c6394aeaab03238a8b39356cf9`.
+
+The original evidence's attempt-level host sample count/hash were empty due to
+a reporting path that stopped on the absent browser trace. The runner now reads
+host and trace artifacts independently; node syntax checks, 19/19 focused tests,
+targeted ESLint, and the strict-SSH remote `bash -n` check pass. Current
+runner/test/phase-descriptor SHA-256 values are
+`A823350A0E6F1D71A2C5C16E2D4BD5B560E0C952BB24ECEBD90622BA86E83351`,
+`C97DF71DB4511617D0DD0A37F108E08520376C3AE9DAADB89E2AAA47DE6F5FEA`, and
+`B9F76E69F777E82D51EFDFCB812FD382D34A26C45C8C302204999F6CFE6C991C`.
+These hashes include the post-capture reporting correction; the checkpoint
+retains the exact pre-capture source fingerprint. The separately
+measured host window showed no overload signal, but because no aligned browser
+trace or confirmed interaction was captured, no layer or root cause is
+established. The CUA timeouts are not proof the hosted page froze.
+
+Follow-up live CUA probe - 2026-09-24: separate invalid-for-Phase-1 evidence is
+`docs/aiya-global-freeze-phase-1-cua-followup-20260924T203252Z-b84b86c1-ab57-46b8-a1de-9ea7d9a4e8fd_EVIDENCE.json`
+(SHA-256 `6F223F9D421B21D0BD31C75B79D8A997D7FF20DFAE7229A79D79F3025E62768B`).
+A synthetic phone-field fill call returned in 1,651 ms. After a 2,000 ms pause,
+the Formlar click timed out in CUA/CDP Input.dispatchMouseEvent; subsequent
+DOM read, reload completion, and console-log inspection timed out in
+Emulation.setFocusEmulationEnabled. The tab inventory still listed the same
+route, but visible page state and whether reload cleared the synthetic draft
+could not be verified. No form was submitted, no paired record was created,
+and this is not evidence that the production page froze.
+
+Local code inspection shows a phone-only new-client draft marks the shell dirty
+and should open a Stay/Discard dialog; Save is unavailable until a name is
+entered. This could explain a pause before route change if the dialog appears,
+but not typing delay or reload latency. The live dialog was not verified, and
+the local dirty-tree hashes do not identify the hosted bundle.
+
+Do not retry the same browser-control surface or start Phase 2. Resume only
+after a supported Chrome Performance trace/control channel is available; then
+create a new evidence identity and obtain three valid paired records before
+causal analysis.
+Do not repeat J1, run the official nine-scenario acceptance matrix, or make a
+runtime change, migration, deployment, or production write. Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 eligible findings remain zero, and
+production remains `NO-GO`.
+
+The hosted Phase 1 collector changed no runtime/app production code, hosted
+database, environment file, secret, hosted configuration, or remote service.
+Its remote action is read-only SSH sampling. Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`, F2
+findings remain `INCONCLUSIVE`, F12 findings remain `OPEN_BLOCKED`, Plan 2
+eligibility remains zero, and production remains `NO-GO`. Risks R-P5-036/037
+record the direct symptom and the capture-harness blocker without claiming cause.
+
+## Local Candidate Smoke - 2026-09-27
+
+The approved local authenticated synthetic smoke completed in the isolated
+candidate worktree
+`C:\Users\Dell\.codex\worktrees\aiya-freeze-candidate-restore\MANU-AI`, based
+on hosted commit `1c9756046b01cb1bd224fb601ec9094a7f471606`. The original
+candidate worktree had disappeared; recorded source patches were restored into
+a fresh detached worktree. Four of six file hashes differ from the earlier
+candidate solely due to line endings; two hashes match, and
+`git diff --ignore-space-at-eol` showed no additional logical differences.
+The fresh hashes are preserved in the evidence below.
+
+Focused tests passed 25/25; the production build/typecheck passed and generated
+79 static pages; targeted lint passed on the six source/test files with 0
+errors and 0 warnings. The build used loopback Supabase at `127.0.0.1:54321`;
+the stack was already running, no migration ran, and the package lock and
+environment files were unchanged. The local DB had all 125 candidate migration
+versions plus one local-only `20260911070000` version.
+
+One headless desktop Chromium run signed in through `/login` as a synthetic
+local account, typed the reserved fictional phone value, waited 2,000 ms, and
+clicked Forms. Typing completed in 524 ms; the expected dirty-draft guard
+appeared 122 ms after the second click; discard cleared the draft. No client
+mutation, HTTP error, console error, or page error occurred. Four RSC requests
+were counted but not classified as prefetch versus transition. Reload, Android,
+and hosted production were not tested, and raw Playwright timeline/React/long
+task artifacts were not persisted. Treat this as a single local functional
+pass only, not resolution or root-cause proof for the global freeze.
+
+Synthetic Auth and tenant/membership records were removed, aggregate counts
+returned to baseline (8 users, 3 tenants, 9 memberships), and two append-only
+synthetic account-security audit rows remain. The candidate app server stopped
+and port 3000 is free; pre-existing local Supabase remains running. No source
+was copied into the dirty main checkout. Candidate remains uncommitted and
+undeployed; do not commit without separate explicit user approval.
+
+Evidence: `docs/AIYA_GLOBAL_FREEZE_LOCAL_AUTH_SMOKE_20260927T114124Z_EVIDENCE.json`
+(SHA-256 `6310A4B079589505F4D6EBB92CA764C1D55B2226BAADD1B38C02DD55A928D4EA`).
+Checkpoint: `.manu-runtime/phase-execution/aiya-global-freeze-local-auth-smoke-v1/aiya-global-freeze-local-auth-smoke-v1-20260927T114124Z-ed0b740b-9518-4f76-bb91-ffafd02fbe19`
+(COMPLETE, 9 events, verified hash chain).
+
+Next action: keep the candidate isolated pending separate commit approval.
+The broad hosted desktop/Android symptom remains unresolved; hosted Phase 1
+still has 0/3 valid paired captures because the browser trace/control harness
+is blocked. Do not repeat J1, A/B/A, or the official acceptance matrix. Plan 1
+remains `COMPLETE / DIAGNOSIS_BLOCKED`; findings and Plan 2 eligibility are
+unchanged; production remains `NO-GO`.
+
+## Hosted Global-Freeze Attempt-Budget Closure - 2026-09-27
+
+This newest continuation supersedes the hosted Phase 1 next-action wording
+above; it does not alter the isolated local candidate smoke. After the user
+authenticated and authorized continuation, all five attempts for source
+fingerprint `313412677093b58cfbd61401ed7ece7b048d537d8a9d570a2a67bccf6e583310`
+and hosted release `hs-1c9756046b01-b55ed4ff550f` were used. Evidence is
+`docs/aiya-global-freeze-phase-1-20260927T203028151Z-ba4f64ee-de8c-4661-8142-d4f4d9df4637_EVIDENCE.json`
+(SHA-256 `97DE789E4A62A2F0CCE7899412CE6B6B4E6712144E8DC799DC2CF8ABD4375919`).
+It records five interrupted attempts, five 150-sample host captures, per-host
+artifact hashes, and zero valid paired records. All five checkpoint hash
+chains were accepted during finalization. No raw trace or host rows are
+embedded.
+
+Across the five unpaired host windows, the application process remained
+present, average CPU was `5.85-6.38%`, peak CPU was `28.77-58.33%`, and swap,
+cgroup throttling/OOM, memory pressure, and IO pressure deltas were zero. This
+does not rule out transient pressure or non-host causes. Browser-control
+observations included multiple timed-out focus/type/navigation calls, a
+`478 ms` reload call on attempt 3 with no retrievable trace-completion event,
+and attempt 5's quick page-side JS probe but timed-out CDP mouse/key dispatch.
+Attempt 5's reload command had no captured load event. These are control-path
+outcomes, not proof the hosted page froze; no request/RSC timeline, main-thread
+trace, or causal layer was captured. No form was submitted and no application,
+database, production configuration, secret, or deployment was changed.
+
+Current global-freeze status: `HOSTED_PHASE_1_BLOCKED /
+attempt_budget_exhausted`, 0/3 valid paired records, 5/5 attempts consumed.
+Do not start Phase 2, retry this identity, repeat J1/A-B/A, or run the official
+acceptance matrix. A future Phase 1 requires separate approval for a new
+bounded evidence identity and a trace-export/control path that is proven to
+complete with at least 80 seconds of host overlap before a run is opened. Plan
+1 remains `COMPLETE / DIAGNOSIS_BLOCKED`; Plan 2 eligible findings remain zero;
+production remains `NO-GO`.
+
+## Trace-Transfer Preflight - 2026-09-28
+
+After the five-attempt Phase 1 closure, a read-only preflight tested the
+existing Chrome CDP stream path without opening a new Phase 1 run. CDP
+`Tracing.tracingComplete` arrived, the stream reached EOF in seven reads, and
+Chrome reported no trace data loss. The trace body was not persisted locally:
+a temporary page Blob/download transfer hit a 10-second `Runtime.evaluate`
+timeout and the expected file was absent, so the existing sanitizer was not
+run. The trace body was cleared from transient tool memory and is not included
+in evidence.
+
+A separate read-only host sample had 100 rows, but those rows were not
+persisted or checkpointed. A clock probe performed after capture estimates
+89.127 seconds of overlap; this is not formal trace/host alignment. The host
+snapshot showed average CPU 6.28%, peak 23.5%, 3,022,444 KB minimum available
+memory, process present throughout, and zero swap, cgroup throttle/OOM, memory
+high, or memory/IO PSI. These are unpaired preflight summaries, not evidence
+for or against the user-visible freeze or any server/database cause.
+
+The browser API reload was attempted only as recovery after injecting the
+large transfer buffer; route identity returned as `/dashboard?section=clients`,
+but post-reload JavaScript/page state could not be verified. Do not classify it
+as an application performance observation. No form input/submission,
+application mutation, runtime edit, database write, environment/secret change,
+deployment, or migration occurred. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_TRACE_TRANSFER_PREFLIGHT_20260927T214247Z-8f5ac140-9912-405a-a88e-9aad6d980506_EVIDENCE.json`
+(SHA-256 `9607D072DC76989F81892C7AA549E5B0B08E71C6EE26CA61A3103804695393F3`).
+
+Status remains `HOSTED_PHASE_1_BLOCKED / attempt_budget_exhausted`, 5/5 v1
+attempts and 0/3 valid paired records. Do not retry v1, open Phase 2, or open a
+new Phase 1 identity yet. The next bounded task is to prove trace export into a
+local file without injecting the trace into the live page, then import that
+file through the existing sanitizer and verify its metadata/hash. Only after
+that gate passes and the user separately approves a newly versioned capture
+phase should hosted measurement resume. Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`; Plan 2 eligible findings remain zero; production
+remains `NO-GO`.
+
+## Local Synthetic Trace Sanitizer Preflight - 2026-09-28
+
+The focused existing test passed 1/1 on Node.js 22.16.0:
+`node --test --test-name-pattern="compressed Chrome trace imports to a new redacted file" scripts/performance-global-freeze-diagnostic.test.mjs`.
+It creates a gzip-compressed synthetic Chrome trace in a temporary local
+file, calls the existing `readChromeTrace` importer, verifies one sanitized
+event and unchanged source bytes, and removes the temporary directory. Runner
+SHA-256: `A823350A0E6F1D71A2C5C16E2D4BD5B560E0C952BB24ECEBD90622BA86E83351`;
+test SHA-256: `C97DF71DB4511617D0DD0A37F108E08520376C3AE9DAADB89E2AAA47DE6F5FEA`.
+No source was edited.
+
+This proves only the synthetic local-file-to-sanitizer path. It does not prove
+Chrome/CDP can export an actual trace to a local file. No browser interaction,
+host sampling, checkpoint, official Phase 1 run, app/database change, or cause
+attribution occurred. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_LOCAL_TRACE_SANITIZER_PREFLIGHT_20260928T092828Z-0af9f788-0845-435e-92ad-1d3c8380c723_EVIDENCE.json`
+(SHA-256 `B6DBEE968F3997358ED41B0502C6C362B1B1039B2E19C6CBE051001BC89994CB`).
+
+Status remains `HOSTED_PHASE_1_BLOCKED / attempt_budget_exhausted`, v1 5/5,
+0/3 valid pairs. Next: test one supported Chrome/CDP-to-local-file export
+path without page-side bulk injection, then pass that exact exported artifact
+to the existing sanitizer without invoking checkpoint-bound `--inspect-trace`.
+Do not retry v1 or open a new hosted capture identity; separate approval is
+required after the export/import preflight passes. Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`; Plan 2 eligible findings remain zero; production
+remains `NO-GO`.
+
+## Browser Export Bridge Policy Block - 2026-09-28
+
+Follow-up tried to use an agent-created `about:blank` Chrome tab for a tiny
+synthetic download-link transfer. Browser URL policy rejected the `data:`
+navigation before it occurred and explicitly prohibited trying the same result
+through raw CDP, another browser surface, or a workaround. No download or trace
+file was created, and the hosted AIya page was not opened or modified. No retry
+or bypass was attempted. The blank tab was not marked to persist beyond this
+turn.
+
+Evidence:
+`docs/AIYA_GLOBAL_FREEZE_TRACE_EXPORT_POLICY_BLOCK_20260928T095640Z-b69eaddf-a297-4bfb-a5ea-7291a6c44c22_EVIDENCE.json`
+(SHA-256 `804AE205B5C9A2F82CFBC3D1BAAD8923976A56298F0ABDAC512498DFA0AAF39F`).
+The local synthetic-file sanitizer test remains `PASS` as separately recorded
+above, but actual Chrome/CDP-to-local-file export is
+`BLOCKED_BY_BROWSER_URL_POLICY`. Phase 1 remains 5/5 attempts and 0/3 valid
+pairs; no new run/checkpoint exists. Stop browser export attempts here. Resume
+only if a platform-supported trace-to-file path becomes available; then import
+that exact artifact with the existing sanitizer. Any new hosted capture still
+requires separate approval. Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`;
+Plan 2 eligible findings remain zero; production remains `NO-GO`.

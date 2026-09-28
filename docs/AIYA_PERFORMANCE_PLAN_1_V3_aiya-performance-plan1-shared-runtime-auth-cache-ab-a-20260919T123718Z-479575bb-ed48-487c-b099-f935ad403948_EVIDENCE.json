@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-auth-cache-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-single-variable-ab-a",
+  "stageId": "aiya-performance-plan1-shared-runtime-auth-cache-ab-a-20260919T123718Z-479575bb-ed48-487c-b099-f935ad403948",
+  "generatedAt": "2026-09-19T12:37:18.570Z",
+  "status": "COMPLETE",
+  "outcome": "AUTH_RSC_CACHE_EFFECT_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Local desktop A-B-A diagnosis of duplicate dashboard RSC authentication resolution.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsProductionFix": false,
+    "runtimeCandidateKeptInCheckout": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "healthDataUsed": false,
+    "liveProviderTraffic": false
+  },
+  "sourceIdentity": {
+    "cwd": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "candidateFile": "app/src/lib/dashboard-server-auth.ts",
+    "candidateFunction": "resolveDashboardAuth",
+    "relatedCallers": [
+      "app/src/app/dashboard/layout.tsx",
+      "app/src/app/dashboard/page.tsx",
+      "app/src/app/dashboard/more/page.tsx",
+      "app/src/app/dashboard/ai-chat/page.tsx"
+    ],
+    "runtimeChange": "wrap resolveDashboardAuth in request-local React cache",
+    "nonRuntimeHarnessChange": "dashboard-server-auth.ts added to shared-runtime source identity list"
+  },
+  "experimentContract": {
+    "fixture": "local-normal synthetic_normal_owner",
+    "target": "desktop localhost authenticated real-password RLS path",
+    "journey": "J1",
+    "repetitionsPerVariant": 3,
+    "actionBoundary": "second trusted event to second readyState",
+    "singleVariable": "React cache wrapper around resolveDashboardAuth; inbox filter projection held constant in all variants",
+    "variants": {
+      "A1": "uncached resolveDashboardAuth baseline",
+      "B": "cache(async function resolveDashboardAuth(...))",
+      "A2": "uncached resolveDashboardAuth restored semantically"
+    },
+    "semanticRestoreNote": "A1 and A2 use the same uncached function semantics; patch round-trip may normalize file bytes, so source identity is hash-based per run."
+  },
+  "runReferences": [
+    {
+      "variant": "A1",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T112737186Z-b332e649-82cc-4a6a-adc3-0a81d3eebe8b",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T112737186Z-b332e649-82cc-4a6a-adc3-0a81d3eebe8b_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "status": "COMPLETE",
+      "sampleSummary": {
+        "attempted": 12,
+        "observationValid": 12,
+        "validSample": 9,
+        "selectedJ1ValidSample": 6
+      },
+      "sourceDashboardAppSha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17",
+      "sourceDashboardServerAuthSha256": "142c3aab1d836eeedb38d807c23b42d00a339c40823d8aaa7927666d67a5773f",
+      "notUsedForSelectedDecision": [
+        "normal:J3:r1",
+        "normal:J3:r2",
+        "normal:J3:r3"
+      ]
+    },
+    {
+      "variant": "B",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T113742380Z-25410cf7-e9d9-44c4-9be6-6d836ce7859a",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T113742380Z-25410cf7-e9d9-44c4-9be6-6d836ce7859a_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "status": "COMPLETE",
+      "sampleSummary": {
+        "attempted": 12,
+        "observationValid": 12,
+        "validSample": 9,
+        "selectedJ1ValidSample": 6
+      },
+      "sourceDashboardAppSha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17",
+      "sourceDashboardServerAuthSha256": "36f1bb9fed7948235824dc630f1032f9dfbb39693021d14a4cd6fe7157755989",
+      "notUsedForSelectedDecision": [
+        "normal:J3:r1",
+        "normal:J3:r2",
+        "normal:J3:r3"
+      ]
+    },
+    {
+      "variant": "A2",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T122602361Z-ad701e4b-7b46-4490-ab41-aee193eae9ad",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T122602361Z-ad701e4b-7b46-4490-ab41-aee193eae9ad_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "status": "COMPLETE",
+      "sampleSummary": {
+        "attempted": 12,
+        "observationValid": 11,
+        "validSample": 8,
+        "selectedJ1ValidSample": 6
+      },
+      "sourceDashboardAppSha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17",
+      "sourceDashboardServerAuthSha256": "142c3aab1d836eeedb38d807c23b42d00a339c40823d8aaa7927666d67a5773f",
+      "notUsedForSelectedDecision": [
+        "normal:J2:r1: timing_order_invalid:plannedActionAtMs:dispatchAtMs",
+        "normal:J3:r1: first_target_abandoned_after_navigation",
+        "normal:J3:r2: first_target_abandoned_after_navigation",
+        "normal:J3:r3: first_target_abandoned_after_navigation"
+      ],
+      "validityNote": "The selected J1 normal and diagnostic observations are 6/6 valid and successful; the run is not represented as a clean all-journey run."
+    }
+  ],
+  "measurements": {
+    "metricDefinition": {
+      "responseMs": "second trusted event to second readyState; fixed 2000 ms inter-action delay is excluded",
+      "rscDurationMedianMs": "median duration of captured RSC requests intersecting the same second-action window",
+      "authTotalMedianMs": "median of all captured auth_total server spans in each diagnostic observation",
+      "reactCommitWindow": "react_commit count and actualDuration sum whose performance timestamp falls within the second-action window",
+      "requestWindowCount": "all captured requests whose lifetime intersects the second-action window"
+    },
+    "normalJ1": {
+      "A1": {
+        "responseMs": [409, 502, 537],
+        "rscDurationMedianMs": [394, 309, 561],
+        "requestWindowCount": [12, 10, 13]
+      },
+      "B": {
+        "responseMs": [579, 535, 402],
+        "rscDurationMedianMs": [601, 199, 358],
+        "requestWindowCount": [13, 8, 8]
+      },
+      "A2": {
+        "responseMs": [547, 462, 544],
+        "rscDurationMedianMs": [336, 858, 412],
+        "requestWindowCount": [13, 10, 7]
+      }
+    },
+    "diagnosticJ1": {
+      "A1": {
+        "responseMs": [514, 1088, 520],
+        "rscDurationMedianMs": [359, 784, 568],
+        "authTotalMedianMs": [221.54, 395.56, 277.75],
+        "reactCommitCount": [128, 115, 77],
+        "reactCommitActualDurationMs": [227.8, 501.4, 237],
+        "requestWindowCount": [19, 14, 7]
+      },
+      "B": {
+        "responseMs": [358, 426, 590],
+        "rscDurationMedianMs": [274, 355, 203],
+        "authTotalMedianMs": [219.27, 211.85, 182.29],
+        "reactCommitCount": [102, 64, 120],
+        "reactCommitActualDurationMs": [154.7, 211.1, 241.2],
+        "requestWindowCount": [14, 13, 3]
+      },
+      "A2": {
+        "responseMs": [462, 556, 445],
+        "rscDurationMedianMs": [251, 685, 311],
+        "authTotalMedianMs": [169.87, 258.64, 202.76],
+        "reactCommitCount": [84, 74, 68],
+        "reactCommitActualDurationMs": [202.6, 257.3, 217.1],
+        "requestWindowCount": [14, 14, 12]
+      }
+    }
+  },
+  "finding": {
+    "confirmed": "The request-local React cache wrapper was executed in the exact RSC auth boundary, but the A-B-A trace does not establish a repeatable performance effect.",
+    "three_record_match": "Not confirmed: B is not directionally better than both A runs across response time, RSC duration, auth_total, request-window count, and React commit signals.",
+    "specificBoundary": "app/src/lib/dashboard-server-auth.ts resolveDashboardAuth, called by dashboard layout/page and sibling dashboard pages",
+    "contribution": "inconclusive_auth_rsc_cache_candidate_not_accepted",
+    "global_freeze": "not_confirmed",
+    "auth_chain": "auth_total spans remain present and variable; this experiment did not remove or coalesce the resolveAccountTenantContext chain across independent requests",
+    "react_commit_cause": "not confirmed; B commit counts and durations are mixed against A1 and A2",
+    "request_fanout": "not reduced with a stable repeated direction; the retained inbox projection remains the only confirmed contributing boundary",
+    "db_lock": "inconclusive; sampler is unavailable in all three runs and zero observed waits cannot establish lock absence"
+  },
+  "verification": {
+    "selectedJ1Observations": "PASS 6/6 valid and successful in A1, B, and A2",
+    "sharedRuntimeHarnessTests": "PASS 18/18 from the retained harness/checkpoint suite",
+    "inboxBehaviorRegression": "PASS 4 files, 39/39 tests",
+    "typecheck": "PASS after serial rerun with baseline auth source restored",
+    "lint": "PASS 0 errors, 79 warnings",
+    "productionBuild": "PASS with both auth variants during the reversible toggle; final checkout is baseline auth",
+    "gitDiffCheck": "PASS",
+    "officialBaselineChanged": false,
+    "findingManifestDispositionChanged": false,
+    "plan2EligibilityChanged": false,
+    "productionFixAccepted": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "AUTH_RSC_CACHE_CANDIDATE_RECORDED_INCONCLUSIVE",
+    "acceptedProductionFix": false,
+    "performanceProblemSolved": false,
+    "runtimeState": "React cache wrapper removed; uncached resolveDashboardAuth baseline restored. DashboardApp inbox filter projection remains retained for separate validation.",
+    "remainingWork": [
+      "Keep the auth/session and RSC/bootstrap fan-out in scope; do not treat this cache candidate as a fix.",
+      "Repair or replace the Docker lock sampler before making a lock absence claim.",
+      "Validate the retained inbox projection at broader product level before any production-fix acceptance.",
+      "Do not change Plan 1 closure, Plan 2 eligibility, or production NO-GO from this evidence."
+    ],
+    "nextAction": "Define the next single-variable experiment around explicit request coalescing or auth-chain boundary ownership only after the sampler and selected journey validity are stable."
+  }
+}

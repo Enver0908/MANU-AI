@@ -18,6 +18,8 @@
 
 # next.js
 /.next/
+/.next-fanout-baseline-*/
+/.next-post-response-envelope-*/
 /out/
 
 # production

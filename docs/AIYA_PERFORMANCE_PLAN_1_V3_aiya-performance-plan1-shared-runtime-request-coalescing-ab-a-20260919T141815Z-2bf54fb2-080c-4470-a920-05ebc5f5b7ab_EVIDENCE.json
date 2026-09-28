@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-request-coalescing-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-request-coalescing-ab-a",
+  "stageId": "aiya-performance-plan1-shared-runtime-request-coalescing-ab-a-20260919T141815Z-2bf54fb2-080c-4470-a920-05ebc5f5b7ab",
+  "generatedAt": "2026-09-19T14:18:15.5525388Z",
+  "status": "COMPLETE",
+  "outcome": "BOOTSTRAP_DUPLICATION_REDUCED_SPEED_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Single-variable local desktop A-B-A diagnosis of duplicate shell bootstrap GETs at the shared navigation boundary.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsProductionFix": false,
+    "countedAsOfficialSample": false,
+    "fixture": "local-normal synthetic_normal_owner",
+    "target": "desktop localhost authenticated real-password RLS path",
+    "externalOperations": [],
+    "healthDataUsed": false,
+    "liveProviderTraffic": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "productionFixAccepted": false,
+    "plan2EligibilityChanged": false
+  },
+  "sourceIdentity": {
+    "cwd": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "candidateFile": "app/src/components/dashboard/shell-provider.tsx",
+    "candidateFunction": "fetchShellBootstrap",
+    "candidateVariable": "same-request-url in-flight bootstrap GET coalescing keyed by activeClientId query",
+    "baselineSourceSha256": "7d5dbdd07b6ae71d9af338353412549621f212235b01f68360e951795430752a",
+    "bVariantSourceSha256": "417683ee1d38fac3125f5dd51637e812e6ef9b623a4fd3bd883484f88a8cf49a",
+    "a2SourceSha256": "7d5dbdd07b6ae71d9af338353412549621f212235b01f68360e951795430752a",
+    "runnerSourceSha256": "6cf66677c5d8103f6baf9d382aa0a9301aa9740dde419840bfd26d100a3f852c",
+    "runnerSourceChange": "shared-runtime source identity now includes shell-provider.tsx",
+    "gitDiffCheckAtRun": "PASS"
+  },
+  "experimentContract": {
+    "journey": "J1",
+    "repetitionsPerVariant": 3,
+    "secondActionDelayMs": 2000,
+    "actionBoundary": "second trusted event to second readyState",
+    "singleVariable": "Only same-key concurrent /api/shell/bootstrap GETs are coalesced in B.",
+    "invariants": [
+      "app-state hydration unchanged",
+      "inbox projection unchanged",
+      "messaging dedupe unchanged",
+      "auth-context and resolveDashboardAuth unchanged",
+      "RSC navigation unchanged",
+      "tenant/account/client scope unchanged",
+      "A1 and A2 use the same baseline shell-provider source hash"
+    ],
+    "variants": {
+      "A1": "Existing fetchShellBootstrap request with caller AbortSignal",
+      "B": "Same URL keyed module-level in-flight bootstrap promise with per-caller abort waiting",
+      "A2": "Existing fetchShellBootstrap request restored"
+    }
+  },
+  "runReferences": [
+    {
+      "variant": "A1",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T134452736Z-27f06e0f-2a31-463d-b095-6b5693857132",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T134452736Z-27f06e0f-2a31-463d-b095-6b5693857132_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "2fa3570605f2b39b4a9b6d22e6000b6b8fba33d31aae1f366daf2417207471f6",
+      "status": "COMPLETE",
+      "normalObservations": 9,
+      "diagnosticObservations": 3,
+      "observationValid": 12,
+      "selectedJourney": "J1",
+      "selectedDiagnosticValidAndSuccessful": "3/3"
+    },
+    {
+      "variant": "B",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T135556414Z-550201a8-fabf-4d01-b529-c3c5e30e580f",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T135556414Z-550201a8-fabf-4d01-b529-c3c5e30e580f_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "0daa3331c43990c6ead2b713d97aa4cc63b8a5ae8925dc36d2a3d0505b4d81f6",
+      "status": "COMPLETE",
+      "normalObservations": 9,
+      "diagnosticObservations": 3,
+      "observationValid": 12,
+      "selectedJourney": "J1",
+      "selectedDiagnosticValidAndSuccessful": "3/3"
+    },
+    {
+      "variant": "A2",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T140651239Z-2388fce3-c1d5-4638-a4ec-3414dd777323",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T140651239Z-2388fce3-c1d5-4638-a4ec-3414dd777323_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "1f8964873dbf66b29d4c389d86a451064c9a1b90e14486ac9c982b4d701c8f7d",
+      "status": "COMPLETE",
+      "normalObservations": 9,
+      "diagnosticObservations": 3,
+      "observationValid": 12,
+      "selectedJourney": "J1",
+      "selectedDiagnosticValidAndSuccessful": "3/3"
+    }
+  ],
+  "measurements": {
+    "metricDefinition": "bootstrapCount is the number of /api/shell/bootstrap GETs in the captured measurement; tailMs is second trusted event to second readyState; commit metrics are phase52 react_commit events in that same window.",
+    "diagnosticJ1": {
+      "A1": {
+        "tailMs": [519, 482, 402],
+        "bootstrapCount": [7, 7, 7],
+        "requestCount": [53, 53, 53],
+        "apiRequestCount": [24, 24, 24],
+        "reactCommitCount": [71, 114, 55],
+        "reactCommitActualDurationMs": [245.5, 227.8, 194.0],
+        "longTaskCountInBoundary": [0, 0, 0]
+      },
+      "B": {
+        "tailMs": [511, 559, 436],
+        "bootstrapCount": [5, 5, 6],
+        "requestCount": [51, 54, 52],
+        "apiRequestCount": [22, 25, 23],
+        "reactCommitCount": [49, 57, 107],
+        "reactCommitActualDurationMs": [229.4, 255.4, 192.4],
+        "longTaskCountInBoundary": [0, 0, 0]
+      },
+      "A2": {
+        "tailMs": [501, 398, 409],
+        "bootstrapCount": [7, 7, 7],
+        "requestCount": [53, 53, 56],
+        "apiRequestCount": [24, 24, 27],
+        "reactCommitCount": [102, 46, 43],
+        "reactCommitActualDurationMs": [235.6, 189.7, 194.6],
+        "longTaskCountInBoundary": [0, 0, 0]
+      }
+    },
+    "direction": {
+      "bootstrapDuplication": "B_REDUCED_IN_ALL_3_REPETITIONS",
+      "bootstrapCounts": "A1 7,7,7; B 5,5,6; A2 7,7,7",
+      "totalRequestFanout": "NO_STABLE_DIRECTION",
+      "secondActionTail": "NO_STABLE_IMPROVEMENT",
+      "reactCommitCount": "NO_STABLE_DIRECTION",
+      "reactCommitDuration": "NO_STABLE_DIRECTION",
+      "authChain": "PRESENT_ON_INDEPENDENT_SERVER_REQUESTS; NOT_COALESCED_BY_THIS_CANDIDATE"
+    },
+    "sampler": {
+      "A1": { "status": "PASS", "sampleCount": 779, "sampleErrorCount": 0, "lockWaitSampleCount": 0 },
+      "B": { "status": "PASS", "sampleCount": 797, "sampleErrorCount": 0, "lockWaitSampleCount": 0 },
+      "A2": { "status": "PASS", "sampleCount": 788, "sampleErrorCount": 0, "lockWaitSampleCount": 0 },
+      "interpretation": "Sampler validity passed and no lock wait was observed in these bounded runs; this is not a proof that database locking is absent globally."
+    }
+  },
+  "finding": {
+    "confirmed": "The candidate can remove repeated same-key shell bootstrap GETs during the measured navigation window; B reduced the bootstrap request count in all three valid J1 diagnostic repetitions.",
+    "specificBoundary": "app/src/components/dashboard/shell-provider.tsx fetchShellBootstrap",
+    "threeRecordMatch": "A1 and A2 each recorded 7,7,7 bootstrap GETs while B recorded 5,5,6, with 3/3 valid and successful diagnostic observations in every variant.",
+    "functionalOutcome": "All 9 A-B-A selected diagnostic observations completed successfully; no tenant or payload-scope regression was observed in this bounded fixture.",
+    "speedOutcome": "The second-action tail and React commit metrics did not improve consistently; B tails were 511,559,436 ms versus A1 519,482,402 ms and A2 501,398,409 ms.",
+    "requestFanoutOutcome": "The targeted bootstrap duplication decreased, but total request counts remained variable, so the entire 8-9 request fan-out is not explained by this candidate.",
+    "globalFreeze": "not_confirmed",
+    "authChain": "not_confirmed_as_root_cause; this client candidate leaves resolveAccountTenantContext and per-request auth spans unchanged",
+    "reactCommitCause": "not_confirmed",
+    "contribution": "bounded_bootstrap_duplicate_request_contributor_confirmed_speed_effect_inconclusive"
+  },
+  "verification": {
+    "selectedJ1Observations": "PASS 9/9 valid and successful across A1, B, and A2",
+    "sharedRuntimeRunner": "PASS 3 runs, each 12 observations with 9 normal and 3 diagnostic",
+    "typecheck": "PASS on A1, B, and A2 source states",
+    "productionBuild": "PASS on A1, B, and A2 source states",
+    "gitDiffCheck": "PASS",
+    "officialBaselineChanged": false,
+    "findingManifestDispositionChanged": false,
+    "plan2EligibilityChanged": false,
+    "productionFixAccepted": false,
+    "redactionCheck": "PASS; no credentials, cookies, tokens, raw bodies, prompts, clinical data, or device serials recorded"
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "BOOTSTRAP_DUPLICATION_REDUCED_SPEED_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED",
+    "acceptedProductionFix": false,
+    "performanceProblemSolved": false,
+    "runtimeState": "A2 baseline restored in app/src/components/dashboard/shell-provider.tsx; only the runner source identity addition and this separate evidence record remain from this experiment.",
+    "remainingWork": [
+      "Do not accept bootstrap coalescing as a production fix from this trace-only result.",
+      "Keep the auth/session chain and broader navigation fan-out in scope.",
+      "If continuing diagnosis, use one separately bounded auth-chain ownership experiment; do not combine it with request coalescing.",
+      "Do not change Plan 1 closure, Plan 2 eligibility, or production NO-GO from this evidence."
+    ],
+    "nextAction": "Record this candidate as a bounded request-fanout contributor with speed INCONCLUSIVE, then decide whether the next permitted single-variable experiment is auth-chain ownership."
+  }
+}

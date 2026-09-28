@@ -24,6 +24,8 @@ const resolveBuildReleaseIdentity = buildReleaseIdentity as (input: {
 const identity = resolveBuildReleaseIdentity({ repoRoot });
 assertProductionReleaseIdentity(identity);
 const swCacheVersion = sanitizeReleaseIdForCache(identity.releaseId);
+const phase55BundlePolicy = process.env.AIYA_PHASE55_BUNDLE_POLICY === "dynamic" ? "dynamic" : "eager";
+const phase55DistDir = process.env.AIYA_PHASE55_DIST_DIR || ".next";
 const releaseEnv = {
   MANU_RELEASE_ID: identity.releaseId,
   MANU_RELEASE_COMMIT_SHA: identity.commitSha,
@@ -35,12 +37,14 @@ const releaseEnv = {
   NEXT_PUBLIC_SIRIUSAI_APP_VERSION: identity.compatibilityVersion,
   SIRIUSAI_APP_DEPLOYMENT_VERSION: identity.compatibilityVersion,
   SIRIUSAI_SHELL_MIN_CLIENT_VERSION: identity.compatibilityVersion,
+  AIYA_PHASE55_BUNDLE_POLICY: phase55BundlePolicy,
 };
 
 Object.assign(process.env, releaseEnv);
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  distDir: phase55DistDir,
   poweredByHeader: false,
   generateBuildId: async () => swCacheVersion,
   async headers() {

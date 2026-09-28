@@ -1,0 +1,451 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-fanout-envelope-baseline-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-fanout-envelope-baseline",
+  "stageId": "aiya-performance-plan1-j1-fanout-envelope-baseline-v1",
+  "runId": "aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260922T155536674Z-<uuid>",
+  "generatedAt": "2026-09-22T16:04:20.668Z",
+  "status": "COMPLETE",
+  "outcome": "J1_LEGACY_FORMS_OR_FANOUT_ENVELOPE_NOT_MET",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Establish a current-source legacy J1 request fan-out and Forms lifecycle control envelope before any new candidate comparison.",
+    "analysisOnly": false,
+    "browserRerunStarted": true,
+    "applicationRuntimeChanged": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "diagnosticBuildDistDir": ".next-fanout-baseline-1d30-b2df-41f5-98c5-f6d863fb3ef6",
+    "diagnosticBuildDistDirPolicy": "run_scoped_separate_dist_dir",
+    "shellDirtyRegistrationPolicy": "legacy",
+    "controlVariant": null,
+    "countedAsOfficialSample": false,
+    "externalOperations": []
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "currentStage": "aiya-performance-plan1-j1-fanout-envelope-baseline-v1",
+    "plan2EntryAuthorized": false
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 248,
+    "statusHash": "810dc811e3141fdb654874c81652ac559d9555b61ec206ff4d8acdbedacdb5e1",
+    "diffCheck": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "shellDirtyRegistrationPolicy": "legacy",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-fanout-envelope-baseline.mjs",
+        "sha256": "413e3a30f37cb45880a3cd1d9beed076c40a6551bbc1bdd2ab10f5566fa06004"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "3acf13226cb9c6201dba51357f5f719eef077aa1cd0a3e6a20b98719c4f24735"
+      },
+      {
+        "path": "app/src/components/dashboard/client-workspace.tsx",
+        "sha256": "9142a08ea6e9959c4dbc8931f8721b59c95593a48211dea121f32aa56d33d5f4"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "17c4b7cb55ec267dd2c708a462924cd294e9f0d8e4309e370cc71ed68915417c"
+      }
+    ],
+    "configurationIdentity": {
+      "sourceKinds": [
+        "active_worktree_app_env_local"
+      ],
+      "availableKeys": [
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "MANU_DEV_FALLBACK_STORE"
+      ],
+      "credentialSource": "<redacted>",
+      "phase3FixtureReady": true
+    }
+  },
+  "measurementIdentity": {
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "storePath": "normal_rls_api_path_required",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "journeyId": "J1",
+    "mode": "diagnostic",
+    "repetitions": 3,
+    "secondActionDelayMs": 2000,
+    "shellDirtyRegistrationPolicy": "legacy",
+    "controlVariant": null,
+    "officialMeasurement": false,
+    "diagnosticBuildDistDir": ".next-fanout-baseline-1d30-b2df-41f5-98c5-f6d863fb3ef6",
+    "fanoutEnvelope": {
+      "totalRequests": {
+        "min": 53,
+        "max": 56
+      },
+      "apiRequests": {
+        "min": 24,
+        "max": 27
+      },
+      "documentRequests": {
+        "exact": 3
+      },
+      "rscRequests": {
+        "exact": 26
+      },
+      "apiRouteCounts": {
+        "/api/auth/password-login": "<redacted>",
+        "/api/shell/bootstrap": {
+          "min": 7,
+          "max": 9
+        },
+        "/api/session/activity": {
+          "exact": 2
+        },
+        "/api/shell/version": {
+          "exact": 2
+        },
+        "/api/app-state": {
+          "exact": 2
+        },
+        "/api/alerts": {
+          "min": 2,
+          "max": 3
+        },
+        "/api/notifications": {
+          "min": 2,
+          "max": 3
+        },
+        "/api/conversations": {
+          "min": 2,
+          "max": 3
+        },
+        "/api/shell/preferences": {
+          "exact": 1
+        },
+        "/api/clients/:clientId": {
+          "min": 1,
+          "max": 2
+        },
+        "/api/clients/:clientId/forms": {
+          "exact": 1
+        },
+        "/api/clients/:clientId/food-rule-profile": {
+          "exact": 1
+        }
+      }
+    },
+    "lifecycleGate": "one_forms_setup_start_success_and_zero_forms_abort"
+  },
+  "checkpoint": {
+    "status": "COMPLETE",
+    "eventCount": 14,
+    "lastSequence": 14,
+    "lastEventType": "run.status",
+    "hashChainRead": true
+  },
+  "preflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "authentication": "real_password_session_required",
+    "storePath": "normal_rls_api_path_required",
+    "fallbackStoreAllowed": false,
+    "targetOrigin": "http://127.0.0.1:3166",
+    "shellDirtyRegistrationPolicy": "legacy",
+    "controlVariant": null,
+    "localSupabase": {
+      "status": "PASS",
+      "targetHost": "127.0.0.1:54321",
+      "urlIsLocal": true,
+      "credentialsPresent": "<redacted>"
+    },
+    "credentialsAvailable": "<redacted>",
+    "blockers": []
+  },
+  "sampleSummary": {
+    "attempted": 3,
+    "planned": 3,
+    "observationValid": 3,
+    "sourceValidFunctional": 3,
+    "fanoutEnvelopePass": 0,
+    "formsRequiredReadPass": 3,
+    "formsLifecyclePass": 3,
+    "eligible": 0,
+    "officialBaselineSamples": 0
+  },
+  "samples": [
+    {
+      "unitKey": "legacy:diagnostic:J1:r1",
+      "repetition": 1,
+      "sourceValidSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "eligible": false,
+      "fanout": {
+        "totalRequests": 49,
+        "apiRequests": 24,
+        "documentRequests": 3,
+        "rscRequests": 22,
+        "apiRouteCounts": {
+          "/api/alerts": 2,
+          "/api/app-state": 2,
+          "/api/auth/password-login": "<redacted>",
+          "/api/clients/:clientId": 1,
+          "/api/clients/:clientId/food-rule-profile": 1,
+          "/api/clients/:clientId/forms": 1,
+          "/api/conversations": 2,
+          "/api/notifications": 2,
+          "/api/session/activity": 2,
+          "/api/shell/bootstrap": 7,
+          "/api/shell/preferences": 1,
+          "/api/shell/version": 2
+        },
+        "status": "FAIL",
+        "failures": [
+          "total_request_count_outside_envelope",
+          "rsc_request_count_outside_envelope"
+        ],
+        "unexpectedRoutes": []
+      },
+      "requiredReads": {
+        "forms": {
+          "actionId": "first",
+          "pattern": "/api/clients/:clientId/forms",
+          "count": 1,
+          "recordCount": 1,
+          "valid": true,
+          "completedRecordCount": 1,
+          "exactOneCompleted": true
+        },
+        "nutrition": {
+          "actionId": "second",
+          "pattern": "/api/clients/:clientId/food-rule-profile",
+          "count": 1,
+          "recordCount": 1,
+          "valid": true,
+          "completedRecordCount": 1,
+          "exactOneCompleted": true
+        }
+      },
+      "formsLifecycle": {
+        "status": "PASS",
+        "failures": [],
+        "summary": {
+          "effectSetup": 1,
+          "effectCleanup": 1,
+          "loadStarted": 1,
+          "loadSucceeded": 1,
+          "loadAborted": 0
+        }
+      },
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      }
+    },
+    {
+      "unitKey": "legacy:diagnostic:J1:r2",
+      "repetition": 2,
+      "sourceValidSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "eligible": false,
+      "fanout": {
+        "totalRequests": 49,
+        "apiRequests": 24,
+        "documentRequests": 3,
+        "rscRequests": 22,
+        "apiRouteCounts": {
+          "/api/alerts": 2,
+          "/api/app-state": 2,
+          "/api/auth/password-login": "<redacted>",
+          "/api/clients/:clientId": 1,
+          "/api/clients/:clientId/food-rule-profile": 1,
+          "/api/clients/:clientId/forms": 1,
+          "/api/conversations": 2,
+          "/api/notifications": 2,
+          "/api/session/activity": 2,
+          "/api/shell/bootstrap": 7,
+          "/api/shell/preferences": 1,
+          "/api/shell/version": 2
+        },
+        "status": "FAIL",
+        "failures": [
+          "total_request_count_outside_envelope",
+          "rsc_request_count_outside_envelope"
+        ],
+        "unexpectedRoutes": []
+      },
+      "requiredReads": {
+        "forms": {
+          "actionId": "first",
+          "pattern": "/api/clients/:clientId/forms",
+          "count": 1,
+          "recordCount": 1,
+          "valid": true,
+          "completedRecordCount": 1,
+          "exactOneCompleted": true
+        },
+        "nutrition": {
+          "actionId": "second",
+          "pattern": "/api/clients/:clientId/food-rule-profile",
+          "count": 1,
+          "recordCount": 1,
+          "valid": true,
+          "completedRecordCount": 1,
+          "exactOneCompleted": true
+        }
+      },
+      "formsLifecycle": {
+        "status": "PASS",
+        "failures": [],
+        "summary": {
+          "effectSetup": 1,
+          "effectCleanup": 1,
+          "loadStarted": 1,
+          "loadSucceeded": 1,
+          "loadAborted": 0
+        }
+      },
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      }
+    },
+    {
+      "unitKey": "legacy:diagnostic:J1:r3",
+      "repetition": 3,
+      "sourceValidSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "eligible": false,
+      "fanout": {
+        "totalRequests": 49,
+        "apiRequests": 24,
+        "documentRequests": 3,
+        "rscRequests": 22,
+        "apiRouteCounts": {
+          "/api/alerts": 2,
+          "/api/app-state": 2,
+          "/api/auth/password-login": "<redacted>",
+          "/api/clients/:clientId": 1,
+          "/api/clients/:clientId/food-rule-profile": 1,
+          "/api/clients/:clientId/forms": 1,
+          "/api/conversations": 2,
+          "/api/notifications": 2,
+          "/api/session/activity": 2,
+          "/api/shell/bootstrap": 7,
+          "/api/shell/preferences": 1,
+          "/api/shell/version": 2
+        },
+        "status": "FAIL",
+        "failures": [
+          "total_request_count_outside_envelope",
+          "rsc_request_count_outside_envelope"
+        ],
+        "unexpectedRoutes": []
+      },
+      "requiredReads": {
+        "forms": {
+          "actionId": "first",
+          "pattern": "/api/clients/:clientId/forms",
+          "count": 1,
+          "recordCount": 1,
+          "valid": true,
+          "completedRecordCount": 1,
+          "exactOneCompleted": true
+        },
+        "nutrition": {
+          "actionId": "second",
+          "pattern": "/api/clients/:clientId/food-rule-profile",
+          "count": 1,
+          "recordCount": 1,
+          "valid": true,
+          "completedRecordCount": 1,
+          "exactOneCompleted": true
+        }
+      },
+      "formsLifecycle": {
+        "status": "PASS",
+        "failures": [],
+        "summary": {
+          "effectSetup": 1,
+          "effectCleanup": 1,
+          "loadStarted": 1,
+          "loadSucceeded": 1,
+          "loadAborted": 0
+        }
+      },
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      }
+    }
+  ],
+  "blockers": [],
+  "interpretation": {
+    "baselineControl": "legacy policy held constant; no settlement gate or runtime patch applied",
+    "requiredReadGate": "exactly one completed Forms record and exactly one completed Nutrition record",
+    "lifecycleGate": "exactly one Forms setup/start/success sequence and zero Forms load aborts",
+    "requestFanoutGate": "all request and API route counts must remain inside the predeclared envelope",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "conclusion": "The current legacy baseline did not repeat inside the declared Forms and fan-out envelope; the control boundary is not established and no candidate comparison should proceed."
+  },
+  "explicitNonClaims": [
+    "This is outside the official nine-scenario acceptance baseline.",
+    "A valid legacy envelope does not prove that the global freeze comes from auth, fan-out, React commits, or any single component.",
+    "An envelope miss is a validity boundary, not a product defect or root-cause finding.",
+    "No runtime fix, finding disposition, Plan 2 entry, migration, deployment, or production decision changed.",
+    "No external provider, WhatsApp, billing, production worker, or real health-data path was used."
+  ],
+  "redaction": {
+    "status": "PASS",
+    "rawIdentifiersIncluded": false,
+    "rawBodiesIncluded": false,
+    "credentialsIncluded": "<redacted>",
+    "healthDataIncluded": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "J1_LEGACY_FORMS_OR_FANOUT_ENVELOPE_NOT_MET",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO",
+    "nextAction": "Do not start a candidate comparison; first repair or separately diagnose the legacy Forms/fan-out validity boundary."
+  }
+}

@@ -1,0 +1,363 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase5-1-hypothesis-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "5",
+  "stage": "5.1",
+  "stageId": "5.1",
+  "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+  "generatedAt": "2026-09-17T13:11:51.944Z",
+  "status": "COMPLETE",
+  "outcome": "HYPOTHESES_PRE_REGISTERED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Pre-register and order causal candidates after the completed 4.7 reconciliation.",
+    "executionMode": "phase5_1_offline_hypothesis_ordering",
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "countedAsOfficialSample": false,
+    "preservedExistingChanges": true
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.1 IDENTITY_LOCKED",
+      "4.2 REFERENCE_SEPARATED",
+      "4.3 GENERAL_DIAGNOSTIC_HARNESS_READY",
+      "4.4 LOCAL_CAPTURE_AND_OBSERVATION_CONTRACT",
+      "4.5 HOSTED_OBSERVATIONS_CAPTURED",
+      "4.6 ANDROID_PWA_OBSERVATIONS_CAPTURED",
+      "4.7 DIAGNOSIS_BLOCKED"
+    ],
+    "currentStage": "5.1",
+    "nextEligibleStage": "5.2 only after explicit follow-up authorization"
+  },
+  "parentEvidence": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf_PHASE_4_7_RECONCILIATION_EVIDENCE.json",
+    "runId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+    "status": "COMPLETE",
+    "outcome": "DIAGNOSIS_BLOCKED",
+    "sha256": "65c4edba2bbf76bcb78a3a7d49c36ebc703407300ba46655a539569cf54f461c",
+    "prerequisite": {
+      "status": "PASS",
+      "failures": [],
+      "sourceRunId": "aiya-performance-plan1-phase4-7-reconciliation-v3-20260917T130007581Z-b5e2fa96-bdfd-4535-833d-71169d3982cf",
+      "coverage": {
+        "attemptedCount": 36,
+        "observationValidCount": 36,
+        "validFunctionalSampleCount": 23,
+        "performanceOutcome": "NOT_EVALUABLE"
+      }
+    }
+  },
+  "ordering": {
+    "method": "measured_contribution_then_journeys_affected_then_technical_dependency",
+    "measuredContributionAvailable": false,
+    "measuredContributionStatus": "NOT_AVAILABLE_PERFORMANCE_NOT_EVALUABLE",
+    "orderingStatus": "PROVISIONAL_PENDING_ACCEPTED_TIMING_MEASUREMENT",
+    "userImpactScope": "General desktop interaction slowness and freezing complaint.",
+    "rule": "No candidate is optimized or accepted as causal while measured contribution is unavailable.",
+    "orderedCandidateIds": [
+      "H-5.1-001",
+      "H-5.1-002",
+      "H-5.1-003",
+      "H-5.1-004"
+    ]
+  },
+  "hypothesisRegister": [
+    {
+      "candidateId": "H-5.1-001",
+      "rank": 1,
+      "title": "Shared shell and app-state hydration fan-out",
+      "shortName": "shared_shell_app_state_hydration_fanout",
+      "status": "PROVISIONAL_UNMEASURED",
+      "optimizationStatus": "NOT_AUTHORIZED_UNMEASURED",
+      "affectedJourneys": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "affectedEnvironments": [
+        "local_desktop",
+        "hosted",
+        "android_chrome",
+        "android_pwa"
+      ],
+      "linkedFindingIds": [
+        "PERF-F2-001",
+        "PERF-F2-002",
+        "PERF-F2-003"
+      ],
+      "evidenceBasis": [
+        "4.7 recorded valid observations for all three journeys but performance was NOT_EVALUABLE.",
+        "DashboardApp starts app-state hydration after mount while ShellProvider starts route bootstrap independently.",
+        "The source shows separate authenticated app-state and shell-bootstrap boundaries; overlap is a hypothesis, not an observed delay."
+      ],
+      "exactFilesAndFunctions": [
+        "app/src/components/dashboard-app.tsx:138-140 DashboardApp hydration effect",
+        "app/src/components/dashboard/shell-provider.tsx:253-362 runBootstrap and route effect",
+        "app/src/lib/use-aiya-state.ts:157-183 hydrate and hydrationInFlightRef",
+        "app/src/app/api/shell/bootstrap/route.ts:11-29 GET timing boundary",
+        "app/src/app/api/app-state/route.ts:36-60 GET timing boundary",
+        "app/src/lib/phase-85-stage-5-shell-store.ts:213 loadShellBootstrap",
+        "app/src/lib/supabase-store.ts:854 loadSupabaseState"
+      ],
+      "mechanism": "Independent authenticated shell-bootstrap and full app-state reads may compete with route readiness and client hydration on a shared dashboard critical path.",
+      "expectedTimingBoundary": {
+        "start": "trusted_user_action_or_route_commit",
+        "end": "target_ready",
+        "requiredSubboundaries": [
+          "route_commit",
+          "shell_bootstrap_auth_store_json_body_finish",
+          "app_state_auth_store_json_body_finish",
+          "client_hydration_complete",
+          "target_ready"
+        ]
+      },
+      "singleVariableFor52": "shared_read_start_policy: current independent shell-bootstrap/app-state starts (A) versus one approved coordination gate for the shared reads (B)",
+      "controlsFor52": [
+        "same authenticated synthetic account and tenant",
+        "same fixture, release identity, browser/device, cache mode, network, and route order",
+        "same required reads, payload contracts, authorization, and target readiness selector",
+        "record request overlap and body-finish for every started request"
+      ],
+      "safetyChecks": [
+        "tenant/session/role/capability and RLS identity remain unchanged",
+        "full app-state completeness and freshness remain unchanged",
+        "late response sequence and hydration single-flight behavior remain correct",
+        "mutation conflict, dirty-state, and navigation guards remain correct",
+        "PWA privacy-lock and reconnect behavior remain unchanged"
+      ],
+      "rollback": "Revert only the shared-read scheduling gate and restore the A path; no migration, dependency, secret, or payload change.",
+      "nextEvidenceNeeded": "A trace with route, shell-bootstrap, app-state, hydration, and target-ready timestamps before any B change."
+    },
+    {
+      "candidateId": "H-5.1-002",
+      "rank": 2,
+      "title": "Background inbox and messaging polling overlap",
+      "shortName": "background_polling_overlap",
+      "status": "PROVISIONAL_UNMEASURED",
+      "optimizationStatus": "NOT_AUTHORIZED_UNMEASURED",
+      "affectedJourneys": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "affectedEnvironments": [
+        "local_desktop",
+        "hosted",
+        "android_chrome",
+        "android_pwa"
+      ],
+      "linkedFindingIds": [
+        "PERF-F2-001",
+        "PERF-F2-002",
+        "PERF-F2-003"
+      ],
+      "evidenceBasis": [
+        "DashboardApp mounts the inbox hook globally and enables messaging refresh after hydration.",
+        "The hooks schedule foreground polling and refresh multiple operational reads with independent lifecycle gates.",
+        "4.7 observed functional boundaries but did not measure polling overlap or a main-thread delay."
+      ],
+      "exactFilesAndFunctions": [
+        "app/src/components/dashboard-app.tsx:137-138 useStage4BInbox",
+        "app/src/components/dashboard-app.tsx:213-220 useStage4B2Messaging",
+        "app/src/lib/use-stage-4b-inbox.ts:158-207 refresh",
+        "app/src/lib/use-stage-4b-inbox.ts:297-335 polling schedule",
+        "app/src/lib/use-stage-4b2-messaging.ts:292-307 refreshAll",
+        "app/src/lib/use-stage-4b2-messaging.ts:378-416 polling schedule",
+        "app/src/lib/phase-85-stage-4b-inbox-scheduler.ts",
+        "app/src/lib/phase-85-stage-4b2-messaging-scheduler.ts"
+      ],
+      "mechanism": "Operational inbox and conversation refreshes may overlap with foreground navigation or readiness work and contribute network, store, or render contention.",
+      "expectedTimingBoundary": {
+        "start": "trusted_user_action_or_route_commit",
+        "end": "target_ready",
+        "requiredSubboundaries": [
+          "poll_start_and_end",
+          "foreground_request_start_and_body_finish",
+          "long_task_or_render_window",
+          "target_ready"
+        ]
+      },
+      "singleVariableFor52": "foreground_polling_policy: current visible-page polling (A) versus one approved navigation-window pause/cancel policy (B)",
+      "controlsFor52": [
+        "same operational data, filters, route order, account, and target readiness condition",
+        "same polling intervals outside the measured navigation window",
+        "retain request owner keys, inflight dedupe, abort, and sequence guards",
+        "record notification/inbox freshness and unread counts at the end of each trace"
+      ],
+      "safetyChecks": [
+        "clinical alert and notification freshness remains within the existing contract",
+        "abort and late-response guards do not apply stale data",
+        "visibility/focus recovery schedules exactly one refresh per owner key",
+        "tenant scope, capability checks, and mutation refreshes remain unchanged"
+      ],
+      "rollback": "Revert only the navigation-window polling policy and restore existing scheduler behavior; no API or persistence change.",
+      "nextEvidenceNeeded": "A trace correlating polling request intervals with route commit, target readiness, and browser long tasks."
+    },
+    {
+      "candidateId": "H-5.1-003",
+      "rank": 3,
+      "title": "Dashboard bundle, import, and render work",
+      "shortName": "dashboard_bundle_import_render",
+      "status": "PROVISIONAL_UNMEASURED",
+      "optimizationStatus": "NOT_AUTHORIZED_UNMEASURED",
+      "affectedJourneys": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "affectedEnvironments": [
+        "local_desktop",
+        "hosted",
+        "android_chrome",
+        "android_pwa"
+      ],
+      "linkedFindingIds": [
+        "PERF-F2-001",
+        "PERF-F2-002",
+        "PERF-F2-003"
+      ],
+      "evidenceBasis": [
+        "DashboardApp imports multiple feature panels at module scope and switches the active surface in one client application.",
+        "This is a plausible browser parse/compile/render candidate, but 4.7 has no bundle-size, long-task, or paint timing evidence."
+      ],
+      "exactFilesAndFunctions": [
+        "app/src/components/dashboard-app.tsx:3-81 module imports and DashboardApp",
+        "app/src/components/dashboard-app.tsx:83-140 active shell and hydration composition",
+        "app/src/components/dashboard/shell-provider.tsx:999-1028 provider value and destination state",
+        "app/src/components/dashboard/forms-panel.tsx",
+        "app/src/components/dashboard/messaging-panel.tsx",
+        "app/src/components/dashboard/overview-panel.tsx",
+        "app/src/components/dashboard/client-workspace.tsx"
+      ],
+      "mechanism": "Eager client imports or route render work may delay target interactivity after navigation, especially when the main thread is parsing, compiling, or laying out large panels.",
+      "expectedTimingBoundary": {
+        "start": "route_commit",
+        "end": "target_ready_and_first_interactive_paint",
+        "requiredSubboundaries": [
+          "chunk_transfer",
+          "script_parse_compile",
+          "long_task_window",
+          "react_render_commit",
+          "target_ready_and_paint"
+        ]
+      },
+      "singleVariableFor52": "target_panel_loading: current eager panel import (A) versus one approved dynamic split for the measured target panel (B)",
+      "controlsFor52": [
+        "same build inputs except the single selected import boundary",
+        "same route, account, fixture, device, cache/service-worker mode, and network",
+        "same server payloads and target readiness selector",
+        "capture chunk identity and browser long-task/paint evidence"
+      ],
+      "safetyChecks": [
+        "loading and error fallback preserves target accessibility and navigation",
+        "server/client boundary and authenticated route guard remain unchanged",
+        "PWA cache, privacy-lock, and reconnect behavior remain unchanged",
+        "no required data or safety state is skipped to improve timing"
+      ],
+      "rollback": "Restore the single selected eager import and remove only its dynamic boundary; no data or API change.",
+      "nextEvidenceNeeded": "A build and browser trace identifying a specific chunk, parse/compile cost, or long-task interval on the critical path."
+    },
+    {
+      "candidateId": "H-5.1-004",
+      "rank": 4,
+      "title": "Warm AI Chat auth, store, and readiness",
+      "shortName": "warm_ai_chat_auth_store_readiness",
+      "status": "DEFERRED_NOT_EXERCISED",
+      "optimizationStatus": "NOT_ELIGIBLE_WITHOUT_DEDICATED_JOURNEY",
+      "affectedJourneys": [],
+      "affectedEnvironments": [],
+      "linkedFindingIds": [
+        "PERF-F12-001",
+        "PERF-F12-002"
+      ],
+      "evidenceBasis": [
+        "4.7 explicitly records both AI Chat findings as not exercised by J1-J3.",
+        "The AI Chat hooks own independent history/detail request cycles and must be measured on an AI Chat journey before ordering by contribution."
+      ],
+      "exactFilesAndFunctions": [
+        "app/src/lib/use-ai-chat.ts:116-219 useAiChatHistory and useAiChatConversation",
+        "app/src/components/ai-chat/ai-chat-page-client.tsx",
+        "app/src/components/ai-chat/ai-chat-workspace.tsx",
+        "app/src/app/api/ai-chat/conversations/route.ts",
+        "app/src/app/api/ai-chat/conversations/[chatId]/route.ts"
+      ],
+      "mechanism": "Warm AI Chat navigation may be delayed by independent authenticated history/detail loads or readiness state, but the current Plan 1 journeys provide no evidence for this path.",
+      "expectedTimingBoundary": {
+        "start": "ai_chat_route_commit",
+        "end": "history_or_conversation_ready_and_interactive",
+        "requiredSubboundaries": [
+          "ai_chat_auth_session",
+          "history_or_detail_store_body_finish",
+          "client_parse_render",
+          "ai_chat_ready"
+        ]
+      },
+      "singleVariableFor52": "ai_chat_readiness_policy: current independent history/detail readiness (A) versus one approved readiness coordination change (B)",
+      "controlsFor52": [
+        "dedicated authenticated AI Chat journey and the same scoped or general chat mode",
+        "same account, tenant, chat fixture, route order, build, cache, network, and device",
+        "same permissions, client scope, and required data contract"
+      ],
+      "safetyChecks": [
+        "AI Chat capability and tenant/client scope remain enforced",
+        "no raw prompt, clinical data, attachment, or provider egress enters evidence",
+        "stream cancellation, reconnect, and draft/mutation lifecycle remain unchanged"
+      ],
+      "rollback": "Restore the current AI Chat readiness policy; no provider, prompt, data, or persistence change.",
+      "nextEvidenceNeeded": "A dedicated AI Chat observation with accepted auth, body-finish, render, and ready boundaries."
+    }
+  ],
+  "gates": {
+    "firstCandidateFor52": "H-5.1-001",
+    "firstRequiredTrace": "Capture shared route, shell-bootstrap, app-state, hydration, and target-ready timing before changing code.",
+    "noRuntimeChangeIn51": true,
+    "noPlan2EntryIn51": true,
+    "aiChatRequiresDedicatedJourney": true
+  },
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "redactionFailures": [],
+    "parentEvidenceParsed": true,
+    "parentEvidenceIntegrityPass": true,
+    "sourceIdentityPass": true,
+    "historicalPhase4EvidenceRewritten": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false
+  },
+  "blockers": [
+    "measured_contribution_unavailable",
+    "accepted_timing_boundary_required_before_5_2"
+  ],
+  "constraints": [
+    "No candidate is a confirmed cause or accepted contributor.",
+    "No runtime change, causal experiment, Plan 2 entry, deploy, migration, or production action is performed.",
+    "A 5.2 run requires explicit authorization and one accepted timing boundary.",
+    "Credentials, cookies, tokens, raw bodies, prompts, clinical data, and device serials are excluded.",
+    "Production remains NO-GO."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "HYPOTHESES_PRE_REGISTERED",
+    "phase4Closed": true,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "nextAction": "Require an explicitly authorized 5.2 trace for H-5.1-001; measure the accepted timing boundary before any runtime variable is changed."
+  },
+  "checkpointReconciliation": {
+    "status": "COMPLETE",
+    "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+    "eventCount": 4,
+    "hashChainRead": true,
+    "lastEventType": "run.status"
+  }
+}

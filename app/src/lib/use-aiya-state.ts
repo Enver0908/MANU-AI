@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AppRequestError } from "./app-errors";
 import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
 import { getSupabaseStatus } from "./supabase";
@@ -17,6 +17,7 @@ import {
   shouldRefreshAppStateAfterConversationMutation,
 } from "./phase-85-stage-4b2-state-merge";
 import { createInitialState } from "./seed-data";
+import { recordPhase52ClientEvent } from "./phase-52-diagnostic";
 import type {
   Channel,
   ClientRecord,
@@ -61,13 +62,28 @@ function hydrateFromError(error: unknown, setHydrateError: (value: string | null
   setHydrateRequestId(null);
 }
 
-export function useAiyaState() {
+export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
+  const autoHydrate = options.autoHydrate ?? true;
   const [state, setState] = useState<ManuAppState>(() => createInitialState());
   const [hydrated, setHydrated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [hydrateError, setHydrateError] = useState<string | null>(null);
   const [hydrateRequestId, setHydrateRequestId] = useState<string | null>(null);
+  const hydrationInFlightRef = useRef<Promise<void> | null>(null);
+  const previousDiagnosticStateRef = useRef<ManuAppState | null>(null);
   const usesHostedStore = getSupabaseStatus() === "configured";
+
+  useEffect(() => {
+    const previousState = previousDiagnosticStateRef.current;
+    previousDiagnosticStateRef.current = state;
+    recordPhase52ClientEvent("aiya_state_context_committed", {
+      transition: previousState ? "update" : "mount",
+      hydrated,
+      clientCount: state.clients.length,
+      conversationCount: state.conversations.length,
+      messageCount: state.messages.length,
+    });
+  }, [hydrated, state]);
 
   const requestJson = useCallback(async (url: string, init?: RequestInit & { mutationKind?: "save" | "other" }) => {
     const method = (init?.method ?? "GET").toUpperCase();
@@ -152,19 +168,39 @@ export function useAiyaState() {
     return nextState;
   }, [requestJson]);
 
-  const retryHydrate = useCallback(async () => {
-    setHydrateError(null);
-    setHydrateRequestId(null);
-    try {
-      await replaceFromApi("/api/app-state");
-    } catch (error) {
-      if (usesHostedStore) {
-        hydrateFromError(error, setHydrateError, setHydrateRequestId);
-      } else {
-        setState(createInitialState());
-      }
+  const hydrate = useCallback(() => {
+    if (hydrationInFlightRef.current) {
+      return hydrationInFlightRef.current;
     }
+
+    const operation = (async () => {
+      recordPhase52ClientEvent("app_state_hydration_started");
+      setHydrateError(null);
+      setHydrateRequestId(null);
+      try {
+        await replaceFromApi("/api/app-state");
+      } catch (error) {
+        if (usesHostedStore) {
+          hydrateFromError(error, setHydrateError, setHydrateRequestId);
+        } else {
+          setState(createInitialState());
+        }
+      } finally {
+        setHydrated(true);
+        recordPhase52ClientEvent("app_state_hydration_completed");
+      }
+    })().finally(() => {
+      if (hydrationInFlightRef.current === operation) {
+        hydrationInFlightRef.current = null;
+      }
+    });
+    hydrationInFlightRef.current = operation;
+    return operation;
   }, [replaceFromApi, usesHostedStore]);
+
+  const retryHydrate = useCallback(async () => {
+    await hydrate();
+  }, [hydrate]);
 
   const mergeStage6MutationFromApi = useCallback(
     async (url: string, expectedClientId: string, init?: RequestInit) => {
@@ -214,22 +250,14 @@ export function useAiyaState() {
   );
 
   useEffect(() => {
+    if (!autoHydrate) return;
+
     const timeout = window.setTimeout(() => {
-      replaceFromApi("/api/app-state")
-        .catch((error) => {
-          if (usesHostedStore) {
-            hydrateFromError(error, setHydrateError, setHydrateRequestId);
-            return;
-          }
-          setState(createInitialState());
-        })
-        .finally(() => {
-          setHydrated(true);
-        });
+      void hydrate();
     }, 0);
 
     return () => window.clearTimeout(timeout);
-  }, [replaceFromApi, usesHostedStore]);
+  }, [autoHydrate, hydrate]);
 
   return useMemo(
     () => ({
@@ -238,6 +266,7 @@ export function useAiyaState() {
       authError,
       hydrateError,
       hydrateRequestId,
+      hydrate,
       retryHydrate,
       usesHostedStore,
       mergeConversationDetailIntoState,
@@ -663,6 +692,7 @@ export function useAiyaState() {
       authError,
       hydrateError,
       hydrateRequestId,
+      hydrate,
       retryHydrate,
       usesHostedStore,
       conversationMutationFromApi,
@@ -675,4 +705,22 @@ export function useAiyaState() {
       state,
     ],
   );
+}
+
+type AiyaStateContextValue = ReturnType<typeof useAiyaState>;
+
+const AiyaStateContext = createContext<AiyaStateContextValue | null>(null);
+
+export function AiyaStateProvider({ children }: { children: ReactNode }) {
+  const value = useAiyaState({ autoHydrate: false });
+
+  return createElement(AiyaStateContext.Provider, { value }, children);
+}
+
+export function useAiyaStateContext() {
+  const value = useContext(AiyaStateContext);
+  if (!value) {
+    throw new Error("useAiyaStateContext must be used inside AiyaStateProvider");
+  }
+  return value;
 }

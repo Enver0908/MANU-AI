@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppRequestError } from "./app-errors";
 import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
+import { recordPhase55ClientEvent } from "./phase-55-polling-diagnostic";
 import type { ClientFoodRuleProfileV2State } from "./phase-77e-client-food-rule-profile";
 import type {
   ClientScopedMutationResponse,
@@ -43,6 +44,24 @@ function domainPath(clientId: string, domain: Stage6WorkspaceDomain) {
   }
 }
 
+function stage6DiagnosticRouteState() {
+  if (typeof window === "undefined") {
+    return {
+      routePathname: null,
+      routeSection: null,
+      routeClientTask: null,
+      routeHasClientId: false,
+    };
+  }
+  const params = new URLSearchParams(window.location.search);
+  return {
+    routePathname: window.location.pathname,
+    routeSection: params.get("section"),
+    routeClientTask: params.get("clientTask") ?? params.get("tab"),
+    routeHasClientId: params.has("clientId"),
+  };
+}
+
 export function useStage6ClientWorkspace(options: {
   tenantId: string | null;
   clientId: string | null;
@@ -78,11 +97,22 @@ export function useStage6ClientWorkspace(options: {
       resetDomainState();
       return;
     }
+    recordPhase55ClientEvent("stage6_workspace_load_abort_previous", {
+      ...stage6DiagnosticRouteState(),
+      domain: options.domain,
+      hasPreviousController: abortRef.current != null,
+      previousSequence: sequenceRef.current,
+    });
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
     const sequence = ++sequenceRef.current;
     const key = ownerKey;
+    recordPhase55ClientEvent("stage6_workspace_load_started", {
+      ...stage6DiagnosticRouteState(),
+      domain: options.domain,
+      sequence,
+    });
     setStateOwnerKey(key);
     resetDomainState();
     setStatus("loading");
@@ -96,6 +126,12 @@ export function useStage6ClientWorkspace(options: {
       }
       const payload = await response.json();
       if (sequence !== sequenceRef.current) return;
+      recordPhase55ClientEvent("stage6_workspace_load_succeeded", {
+        ...stage6DiagnosticRouteState(),
+        domain: options.domain,
+        sequence,
+        payloadPresent: payload != null,
+      });
       if (options.domain === "forms") {
         setForms(payload as Stage6FormRead);
         setStatus((payload as Stage6FormRead).schema ? "success" : "empty");
@@ -119,7 +155,14 @@ export function useStage6ClientWorkspace(options: {
       setSummary(payload as Stage6WorkspaceSummary);
       setStatus(payload ? "success" : "empty");
     } catch (caught) {
-      if (controller.signal.aborted) return;
+      if (controller.signal.aborted) {
+        recordPhase55ClientEvent("stage6_workspace_load_aborted", {
+          ...stage6DiagnosticRouteState(),
+          domain: options.domain,
+          sequence,
+        });
+        return;
+      }
       if (sequence !== sequenceRef.current) return;
       const code =
         caught instanceof AppRequestError
@@ -129,15 +172,33 @@ export function useStage6ClientWorkspace(options: {
             : "request_failed";
       setError(code);
       setStatus(isStage6RevisionConflict(caught) ? "conflict" : "error");
+      recordPhase55ClientEvent("stage6_workspace_load_failed", {
+        ...stage6DiagnosticRouteState(),
+        domain: options.domain,
+        sequence,
+        code,
+      });
     }
   }, [enabled, options.clientId, options.domain, ownerKey]);
 
   useEffect(() => {
+    recordPhase55ClientEvent("stage6_workspace_effect_setup", {
+      ...stage6DiagnosticRouteState(),
+      domain: options.domain,
+      enabled,
+      hasClientId: options.clientId != null,
+    });
     void load();
+    const cleanupSequence = sequenceRef.current;
     return () => {
+      recordPhase55ClientEvent("stage6_workspace_effect_cleanup", {
+        ...stage6DiagnosticRouteState(),
+        domain: options.domain,
+        sequence: cleanupSequence,
+      });
       abortRef.current?.abort();
     };
-  }, [load, ownerKey]);
+  }, [enabled, load, options.clientId, options.domain, ownerKey]);
 
   const mutate = useCallback(
     async (url: string, init: RequestInit) => {

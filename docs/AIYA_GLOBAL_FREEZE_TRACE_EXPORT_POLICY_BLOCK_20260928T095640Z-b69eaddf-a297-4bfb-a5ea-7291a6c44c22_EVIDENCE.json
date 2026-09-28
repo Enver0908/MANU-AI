@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "aiya-global-freeze-trace-export-policy-block-v1",
+  "evidenceId": "aiya-global-freeze-trace-export-policy-block-20260928T095640Z-b69eaddf-a297-4bfb-a5ea-7291a6c44c22",
+  "createdAtUtc": "2026-09-28T09:56:40Z",
+  "status": "BLOCKED",
+  "outcome": "BROWSER_URL_POLICY_BLOCKED_SYNTHETIC_DOWNLOAD_PREFLIGHT",
+  "relatedSanitizerPreflight": {
+    "evidenceId": "aiya-global-freeze-local-trace-sanitizer-preflight-20260928T092828Z-0af9f788-0845-435e-92ad-1d3c8380c723",
+    "sha256": "B6DBEE968F3997358ED41B0502C6C362B1B1039B2E19C6CBE051001BC89994CB",
+    "result": "PASS_SCOPED_PREFLIGHT"
+  },
+  "phase1Budget": {
+    "attemptsUsed": 5,
+    "attemptsMaximum": 5,
+    "validPairedRecords": 0,
+    "newOfficialRunOpened": false
+  },
+  "browserAttempt": {
+    "target": "Agent-created about:blank tab in Chrome",
+    "purpose": "Use a tiny synthetic trace download link to test the local browser-download bridge without visiting the hosted application.",
+    "requestedNavigationScheme": "data",
+    "navigationAccepted": false,
+    "toolResult": "Browser URL policy rejected navigation before it occurred and explicitly prohibited using another surface or a workaround to achieve the same result.",
+    "downloadStarted": false,
+    "traceTransferred": false,
+    "rawTraceOrSyntheticPayloadPersisted": false,
+    "alternateBrowserSurfaceOrRawCdpRetried": false
+  },
+  "sideEffects": {
+    "hostedApplicationVisitedOrChanged": false,
+    "applicationInteractionPerformed": false,
+    "hostSampleOrCheckpointCreated": false,
+    "runtimeSourceChanged": false,
+    "databaseOrProductionWrite": false,
+    "secretOrEnvironmentChanged": false,
+    "deploymentOrMigration": false,
+    "rootCauseAttribution": "NONE"
+  },
+  "conclusion": {
+    "syntheticFileToSanitizer": "PASS",
+    "browserDownloadToLocalFile": "BLOCKED_BY_BROWSER_URL_POLICY",
+    "actualChromeTraceToLocalFile": "NOT_TESTED",
+    "officialPhase1Status": "BLOCKED_ATTEMPT_BUDGET_EXHAUSTED",
+    "nextGate": "A platform-supported trace-to-local-file export path is required. Do not retry the rejected URL through raw CDP, another browser surface, or a workaround. The v1 attempt cap remains closed."
+  }
+}

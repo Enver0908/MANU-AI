@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-j1-stage6-trigger-isolation-analysis-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-stage6-trigger-isolation-analysis",
+  "stageId": "aiya-performance-plan1-j1-stage6-trigger-isolation-analysis-v1",
+  "runId": "aiya-performance-plan1-j1-stage6-trigger-isolation-analysis-20260921T131935Z-e026a6cf-2f81-4bdd-82c2-c0dfefb19c31",
+  "generatedAt": "2026-09-21T13:19:35Z",
+  "status": "COMPLETE",
+  "outcome": "CANDIDATE_EXTRA_SUMMARY_REENTRY_ASSOCIATED_ABORT_NOT_REPRODUCED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Compare the historical Forms-abort lifecycle with a new route-state-complete J1 trace and isolate a reproducible Stage 6 transition.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": []
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "currentStage": "aiya-performance-plan1-j1-stage6-trigger-isolation-v1"
+  },
+  "sourceRuns": {
+    "historicalAbortLifecycle": {
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T001812103Z-92ab01f4-7c6e-476c-8de3-00f5c3562e38",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2_EVIDENCE.json",
+      "evidenceSha256": "FCFA4C955375A92442FE16E23887C974CB26E5E25C6CFC0C7A9823BC546324D5",
+      "rawMeasurementEvidenceSha256": "DC5EF27612AB83B8B6E875584EC429F1056EBC513711959B265F18437C98B6FD",
+      "routeStateFieldsPresent": false
+    },
+    "currentRouteStateCapture": {
+      "runId": "aiya-performance-plan1-j1-stage6-trigger-isolation-v1-20260921T131319461Z-fe4a8d23-adf5-40cc-b731-0c512f76cb81",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-stage6-trigger-isolation-v1-20260921T131319461Z-fe4a8d23-adf5-40cc-b731-0c512f76cb81_EVIDENCE.json",
+      "evidenceSha256": "204E7892DC010E3EC0E0ED4C7432B90303D287E961850AE71296A9FF7A041925",
+      "routeStateFields": ["pathname", "section", "clientTask", "hasClientId"],
+      "observationValid": "3/3",
+      "functionalSuccess": "3/3",
+      "routeStateCaptureComplete": "3/3",
+      "formsAbort": "0/3"
+    }
+  },
+  "comparison": {
+    "historicalDiagnosticJ1": [
+      {
+        "repetition": 1,
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "formsAbort": true,
+        "stage6SetupDomainSequence": ["summary", "forms", "summary", "forms", "nutrition"]
+      },
+      {
+        "repetition": 2,
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "formsAbort": true,
+        "stage6SetupDomainSequence": ["summary", "forms", "summary", "forms", "nutrition"]
+      },
+      {
+        "repetition": 3,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "formsAbort": false,
+        "stage6SetupDomainSequence": ["summary", "forms", "nutrition"]
+      }
+    ],
+    "currentDiagnosticJ1": [
+      {
+        "repetition": 1,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "formsAbort": false,
+        "stage6SetupDomainSequence": ["summary", "forms", "nutrition"]
+      },
+      {
+        "repetition": 2,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "formsAbort": false,
+        "stage6SetupDomainSequence": ["summary", "forms", "nutrition"]
+      },
+      {
+        "repetition": 3,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "formsAbort": false,
+        "stage6SetupDomainSequence": ["summary", "forms", "nutrition"]
+      }
+    ],
+    "candidateSignal": {
+      "extraSummaryReentryAfterForms": "2/2 historical aborting repetitions; 0/3 current non-aborting repetitions",
+      "routeStateInterpretation": "The current trace confirms that the normal path changes from summary with no clientTask to forms and then nutrition while retaining section=clients and clientId presence. The historical abort evidence records the extra summary/forms remount sequence but did not capture the route-state fields.",
+      "strength": "candidate_association_only"
+    }
+  },
+  "instrumentation": {
+    "runnerPath": "app/scripts/performance-plan-1-j1-stage6-trigger-isolation.mjs",
+    "runnerSha256": "610D0D8E588280671EC7909C6504A5BDD0E4335D0596A8DD92B2BC9B29CD4ABE",
+    "runtimeTracePath": "app/src/lib/use-stage-6-client-workspace.ts",
+    "runtimeTraceSha256": "17C4B7CB55EC267DD2C708A462924CD294E9F0D8E4309E370CC71ED68915417C",
+    "behaviorChange": false,
+    "redactionBoundary": "route pathname, allowlisted section/task values, and clientId presence only"
+  },
+  "interpretation": {
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "threeMatchingValidAbortRecords": false,
+    "singleVariableReproducibility": false,
+    "observationResult": "An extra summary re-entry is associated with the two historical aborts and absent from the three current successful traces.",
+    "functionalResult": "Current J1 completed successfully in 3/3; historical abort repetitions remained incomplete and were not promoted by later retries.",
+    "speedResult": "No causal speed comparison was run; performance remains NOT_EVALUABLE for acceptance."
+  },
+  "blockers": [
+    "The historical aborting samples lack the newly captured route-state fields.",
+    "The route-state-complete continuation reproduced no Forms abort.",
+    "The candidate has only two historical abort matches and no single-variable A-B-A confirmation."
+  ],
+  "explicitNonClaims": [
+    "The extra summary re-entry is not declared the root cause.",
+    "No runtime fix, retry policy, route change, auth change, or request coalescing change was applied.",
+    "This diagnostic is outside the official nine-scenario baseline and does not change Plan 1 closure or Plan 2 eligibility.",
+    "No external provider, WhatsApp, billing, production worker, migration, deploy, or real health-data path was used."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "CANDIDATE_EXTRA_SUMMARY_REENTRY_ASSOCIATED_ABORT_NOT_REPRODUCED",
+    "nextAction": "Do not repeat the same matched run automatically. If further diagnosis is authorized, run one separate reversible single-variable confirmation that targets only the extra summary re-entry boundary and records functional outcome and second-action speed independently.",
+    "productionDecision": "NO-GO"
+  },
+  "redaction": {
+    "status": "PASS",
+    "rawIdentifiersIncluded": false,
+    "rawBodiesIncluded": false,
+    "credentialsIncluded": false,
+    "healthDataIncluded": false
+  }
+}

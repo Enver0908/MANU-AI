@@ -1,0 +1,134 @@
+{
+  "phase": "phase-execution-resume-support",
+  "schemaVersion": "phase-execution-resume-evidence-v1",
+  "status": "IMPLEMENTED_FEATURE_VERIFIED",
+  "performanceBaselineStarted": false,
+  "productionDecision": "NO-GO",
+  "implementedAt": "2026-09-15",
+  "scope": {
+    "phase4Adapter": true,
+    "futurePhaseTemplate": true,
+    "runtimeApplicationChange": false,
+    "databaseMigration": false,
+    "dependencyAddition": false,
+    "deploy": false,
+    "newAccountOrResource": false
+  },
+  "durabilityContract": {
+    "root": ".manu-runtime/phase-execution/<phaseId>/<runId>",
+    "eventFormat": "atomic-json-files-with-sha256-chain",
+    "atomicMeasurementUnit": "one-complete-nine-scenario-round",
+    "interruptedAttemptCountsAgainstMaxAttempts": true,
+    "preparationRoundCountedAsOfficialSample": false,
+    "credentialsPersisted": false,
+    "rawPayloadsPersisted": false,
+    "singleWriterLock": true
+  },
+  "files": [
+    "tools/phase-execution/checkpoint-store.mjs",
+    "tools/phase-execution/phase-runner.mjs",
+    "tools/phase-execution/phase-definition.template.mjs",
+    "tools/phase-execution/phase-execution.test.mjs",
+    "app/scripts/performance-plan-1-phase-4.mjs",
+    "app/package.json",
+    "docs/PHASE_EXECUTION_RESUME_ACTION_PLAN.md"
+  ],
+  "checks": [
+    {
+      "command": "npm run test:phase-execution",
+      "status": "PASS",
+      "tests": 5,
+      "failures": 0,
+      "covers": [
+        "durable event recovery",
+        "interrupted execution reconstruction",
+        "safe-boundary pause",
+        "identity mismatch block",
+        "single-writer lock",
+        "ordered phase definition"
+      ]
+    },
+    {
+      "command": "npm run test:performance-plan1-phase4",
+      "status": "PASS",
+      "tests": 31,
+      "failures": 0,
+      "covers": [
+        "locked nine-scenario twenty-sample contract",
+        "real-auth measurement gates",
+        "negative controls",
+        "Android/PWA target validation",
+        "redaction and closure rules"
+      ]
+    },
+    {
+      "command": "node --check app/scripts/performance-plan-1-phase-4.mjs",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 74,
+      "warningPolicy": "existing_warnings_preserved"
+    },
+    {
+      "command": "npm run build",
+      "status": "PASS",
+      "buildSystem": "next16-webpack",
+      "staticPages": 79
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS_WITH_EXISTING_LF_CRLF_WARNINGS"
+    }
+  ],
+  "notRun": [
+    "official Phase 4 baseline",
+    "hosted deploy",
+    "production migration",
+    "production provider/channel traffic",
+    "runtime performance optimization"
+  ],
+  "followUpVerification": {
+    "recordedAt": "2026-09-15",
+    "historicalFeatureEvidencePreserved": true,
+    "checkpointTests": {
+      "command": "npm run test:phase-execution",
+      "status": "PASS",
+      "tests": 6,
+      "failures": 0,
+      "addedCoverage": "hash-chain read before compatible migration"
+    },
+    "phase4HarnessTests": {
+      "command": "npm run test:performance-plan1-phase4",
+      "status": "PASS",
+      "tests": 32,
+      "failures": 0,
+      "addedCoverage": "sanitized structured harness errors"
+    },
+    "compatibleMigration": {
+      "status": "APPLIED",
+      "sourceRunId": "aiya-performance-plan1-phase4-20260915T111650824Z-51ccd021-0f1d-42ff-b170-66bc776f6aa6",
+      "targetRunId": "aiya-performance-plan1-phase4-20260915T130141721Z-6aa263db-c0ff-4192-9333-c20d769f4692",
+      "sourceRunPreserved": true,
+      "sourceHashChainVerified": true,
+      "committedRoundsPreserved": 30,
+      "unfinishedAttemptRecoveredAsTerminalFailure": true,
+      "reason": "harness_observability_and_checkpoint_recovery_only"
+    },
+    "officialContinuation": {
+      "status": "BLOCKED",
+      "validEnvironmentCount": "2/4",
+      "completedStages": ["4.1", "4.2", "4.3"],
+      "blockedStage": "4.4",
+      "productionDecision": "NO-GO",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json"
+    }
+  },
+  "nextEligibleAction": "After targeted Android Chrome preparation diagnosis, continue the current compatible Phase 4 checkpoint; do not create a new run unless the measurement identity intentionally changes."
+}

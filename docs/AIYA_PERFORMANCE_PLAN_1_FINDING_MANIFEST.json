@@ -13,6 +13,16 @@
     "liveMigrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
   },
   "productionDecision": "NO-GO",
+  "currentWorktreeReconciliation": {
+    "status": "COMPLETE",
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "recoveredFromSnapshot": "e52d7b48a234dbf5e83f6ff836cc7c7640b97e3d",
+    "evidencePath": "docs/WORKTREE_RECONCILIATION_20260918T163307Z_EVIDENCE.json",
+    "historicalFindingsReclassified": false,
+    "plan2EligibleFindingCount": 0
+  },
   "findingStatusDefinitions": {
     "PENDING_VALID_AUTHENTICATED_REPRODUCTION": "Static or historical candidate; no runtime change is authorized.",
     "MEASUREMENT_GAP_CONFIRMED": "The measurement contract is incomplete or invalid; this is not a runtime performance root cause.",
@@ -43,7 +53,15 @@
       ],
       "causalExperiment": "Compare small, normal, and scale fixture volumes while keeping build, device, network, session, and route action fixed; compare app-state request fanout, body-finish, parse, render, and task-ready.",
       "closureEvidence": "Three or more matching valid samples/traces tie broad app-state hydration to the missed task budget and identify the exact loader/consumer path.",
-      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded.",
+      "disposition": "INCONCLUSIVE",
+      "dispositionReview": {
+        "planRevision": "plan1-final-v3",
+        "stage": "5.6",
+        "runId": "aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7",
+        "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json",
+        "reviewedAt": "2026-09-18T12:36:00.892Z"
+      }
     },
     {
       "id": "PERF-F2-002",
@@ -63,7 +81,15 @@
       ],
       "causalExperiment": "Compare natural background refresh with a diagnostic pause after initial readiness while keeping the same authenticated route, fixture, device, network, and user action; record overlapping requests, request count, long tasks, and task-ready.",
       "closureEvidence": "Three or more matching valid samples/traces show background refresh overlap and a repeatable task-ready or interaction delta without losing required freshness behavior.",
-      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded.",
+      "disposition": "INCONCLUSIVE",
+      "dispositionReview": {
+        "planRevision": "plan1-final-v3",
+        "stage": "5.6",
+        "runId": "aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7",
+        "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json",
+        "reviewedAt": "2026-09-18T12:36:00.892Z"
+      }
     },
     {
       "id": "PERF-F2-003",
@@ -85,7 +111,15 @@
       ],
       "causalExperiment": "Compare main-thread parse/evaluate, long-task, layout, paint, and task-ready data across the unchanged eager import graph and measured panel-specific trace points; no speculative split is applied.",
       "closureEvidence": "Three or more matching valid traces identify a heavy bundle/panel/render path and its contribution to the missed interaction or readiness budget.",
-      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+      "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded.",
+      "disposition": "INCONCLUSIVE",
+      "dispositionReview": {
+        "planRevision": "plan1-final-v3",
+        "stage": "5.6",
+        "runId": "aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7",
+        "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json",
+        "reviewedAt": "2026-09-18T12:36:00.892Z"
+      }
     },
     {
       "id": "PERF-F12-001",
@@ -103,7 +137,15 @@
       ],
       "causalExperiment": "Run AI Chat with a real authenticated tenant/account/actor and require a 2xx conversation-list response plus ai-chat-workspace; compare auth failure, response completion, parse, and render as separate outcomes.",
       "closureEvidence": "The measurement gap is resolved only when valid authenticated AI Chat samples have 2xx conversation-list reads and the required workspace selector; a 401 remains an auth/store failure.",
-      "plan2Eligibility": "Measurement-gap closure alone does not authorize a runtime speed fix."
+      "plan2Eligibility": "Measurement-gap closure alone does not authorize a runtime speed fix.",
+      "disposition": "OPEN_BLOCKED",
+      "dispositionReview": {
+        "planRevision": "plan1-final-v3",
+        "stage": "5.6",
+        "runId": "aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7",
+        "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json",
+        "reviewedAt": "2026-09-18T12:36:00.892Z"
+      }
     },
     {
       "id": "PERF-F12-002",
@@ -116,7 +158,979 @@
       ],
       "causalExperiment": "Repeat the corrected warm-session AI Chat measurement on real auth/store paths and separate failed reads from task-ready, event-to-paint, and render timing.",
       "closureEvidence": "At least three valid authenticated samples/traces identify whether the failure is auth, store, network, parse, render, or polling related and map it to exact files/functions.",
-      "plan2Eligibility": "Only after exact affected files/functions and causal evidence are recorded."
+      "plan2Eligibility": "Only after exact affected files/functions and causal evidence are recorded.",
+      "disposition": "OPEN_BLOCKED",
+      "dispositionReview": {
+        "planRevision": "plan1-final-v3",
+        "stage": "5.6",
+        "runId": "aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7",
+        "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json",
+        "reviewedAt": "2026-09-18T12:36:00.892Z"
+      }
     }
-  ]
+  ],
+  "currentDispositionReview": {
+    "planRevision": "plan1-final-v3",
+    "phase": "5",
+    "stage": "5.6",
+    "runId": "aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json",
+    "reviewedAt": "2026-09-18T12:36:00.892Z",
+    "status": "COMPLETE",
+    "outcome": "FINDING_DISPOSITIONS_REVIEWED",
+    "plan2EligibleFindingCount": 0
+  },
+  "currentPlan1Closure": {
+    "planRevision": "plan1-final-v3",
+    "phase": "5",
+    "stage": "5.7",
+    "runId": "aiya-performance-plan1-phase5-7-plan1-closure-v3-20260918T125452Z-f5305ee2-b35b-43c5-91df-42f313d0da29",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-7-plan1-closure-v3-20260918T125452Z-f5305ee2-b35b-43c5-91df-42f313d0da29_EVIDENCE.json",
+    "closedAt": "2026-09-18T12:54:52.477Z",
+    "status": "COMPLETE",
+    "outcome": "DIAGNOSIS_BLOCKED",
+    "plan2EntryAuthorized": false,
+    "plan2EligibleFindingCount": 0
+  },
+  "currentSharedRuntimeContinuation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-single-variable-ab-a",
+    "runId": "aiya-performance-plan1-shared-runtime-ab-a-20260919T111921Z-cd652e70-18de-4d16-89e4-2aadfcd336ce",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-ab-a-20260919T111921Z-cd652e70-18de-4d16-89e4-2aadfcd336ce_EVIDENCE.json",
+    "status": "COMPLETE",
+    "outcome": "REPEATABLE_CONTRIBUTING_BOUNDARY_CONFIRMED_GLOBAL_FREEZE_UNRESOLVED",
+    "candidateSurface": [
+      "app/src/components/dashboard-app.tsx:DashboardApp",
+      "app/src/lib/use-stage-4b-inbox.ts:useStage4BInbox"
+    ],
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeAuthCacheContinuation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-single-variable-auth-cache-ab-a",
+    "runId": "aiya-performance-plan1-shared-runtime-auth-cache-ab-a-20260919T123718Z-479575bb-ed48-487c-b099-f935ad403948",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-cache-ab-a-20260919T123718Z-479575bb-ed48-487c-b099-f935ad403948_EVIDENCE.json",
+    "status": "COMPLETE",
+    "outcome": "AUTH_RSC_CACHE_EFFECT_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED",
+    "candidateSurface": [
+      "app/src/lib/dashboard-server-auth.ts:resolveDashboardAuth",
+      "app/src/app/dashboard/layout.tsx",
+      "app/src/app/dashboard/page.tsx",
+      "app/src/app/dashboard/more/page.tsx",
+      "app/src/app/dashboard/ai-chat/page.tsx"
+    ],
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeCandidateKeptInCheckout": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeSamplerValidityRepair": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-sampler-and-validity-repair",
+    "runId": "shared-runtime-sampler-validity-repair-20260919T132757Z-d3c7bee6-b396-4d64-9f6c-3576caeed017",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_shared-runtime-sampler-validity-repair-20260919T132757Z-d3c7bee6-b396-4d64-9f6c-3576caeed017_EVIDENCE.json",
+    "evidenceSha256": "5286e9528eb9bdb70b2a333578128aca884d35edd023622aaebccac50f754000",
+    "diagnosticRunId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T131930315Z-d3c7bee6-b396-4d64-9f6c-3576caeed017",
+    "diagnosticEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T131930315Z-d3c7bee6-b396-4d64-9f6c-3576caeed017_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "diagnosticEvidenceSha256": "14370b4c8a51fa641aa925e551797624d1484611c5e8ae34a67f8820cdff2919",
+    "status": "COMPLETE",
+    "outcome": "SAMPLER_REPAIRED_AND_JOURNEY_VALIDITY_STABLE_GLOBAL_FREEZE_UNRESOLVED",
+    "sampler": {
+      "status": "PASS",
+      "sampleCount": 756,
+      "sampleErrorCount": 0,
+      "lockWaitSampleCount": 0,
+      "blockedActivitySampleCount": 0
+    },
+    "journeyValidity": {
+      "observationValidCount": 12,
+      "validSampleCount": 9,
+      "selectedJourneyId": "J1",
+      "selectedTailMs": 501,
+      "earlyDispatchCount": 0,
+      "j3ExcludedCount": 3
+    },
+    "diagnosticToolChangeOnly": true,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "globalFreezeResolved": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeRequestCoalescingContinuation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-request-coalescing-ab-a",
+    "runId": "aiya-performance-plan1-shared-runtime-request-coalescing-ab-a-20260919T141815Z-2bf54fb2-080c-4470-a920-05ebc5f5b7ab",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-request-coalescing-ab-a-20260919T141815Z-2bf54fb2-080c-4470-a920-05ebc5f5b7ab_EVIDENCE.json",
+    "evidenceSha256": "b2451220a4303903fc7db558f805e51803b244989a3e3cb0cb5dc15b971b6c58",
+    "status": "COMPLETE",
+    "outcome": "BOOTSTRAP_DUPLICATION_REDUCED_SPEED_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED",
+    "candidateSurface": [
+      "app/src/components/dashboard/shell-provider.tsx:fetchShellBootstrap",
+      "same-key /api/shell/bootstrap GET in-flight coalescing"
+    ],
+    "sourceRuns": {
+      "A1": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T134452736Z-27f06e0f-2a31-463d-b095-6b5693857132",
+      "B": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T135556414Z-550201a8-fabf-4d01-b529-c3c5e30e580f",
+      "A2": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T140651239Z-2388fce3-c1d5-4638-a4ec-3414dd777323"
+    },
+    "validity": {
+      "eachVariantObservationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3",
+      "sampler": "PASS; 779/797/788 samples; zero errors; zero observed lock waits"
+    },
+    "measuredEffect": {
+      "bootstrapCount": "A1 7/7/7; B 5/5/6; A2 7/7/7",
+      "speed": "INCONCLUSIVE",
+      "globalFreezeResolved": false
+    },
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeAuthOwnershipContinuation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-auth-chain-ownership-ab-a",
+    "runId": "aiya-performance-plan1-shared-runtime-auth-ownership-ab-a-20260920T150730Z-c86defe0-6be6-46e9-bd56-a5560d140fa1",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-ownership-ab-a-20260920T150730Z-c86defe0-6be6-46e9-bd56-a5560d140fa1_EVIDENCE.json",
+    "evidenceSha256": "75e90e1f68d8b9abeb0bd112c844e86c419dd53eaa9841c1dbb2cecdf6aaea93",
+    "status": "COMPLETE",
+    "outcome": "AUTH_SESSION_ACTIVITY_ASSERT_REMOVAL_NO_REPEATABLE_SPEED_IMPROVEMENT_GLOBAL_FREEZE_UNRESOLVED",
+    "candidateSurface": [
+      "app/src/lib/auth-context.ts:resolveAccountTenantContext",
+      "assertShellSessionActivity session-activity RPC path",
+      "explicit /api/session/activity touch owner"
+    ],
+    "sourceRuns": {
+      "A1": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T142853964Z-171b5cfb-9497-4421-acb5-36aeb0158edc",
+      "B": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T144441118Z-8f1b5a3e-b42c-436d-9bbc-ca94554134e9",
+      "A2": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T145545318Z-44f3e608-58b2-4330-92c8-4dd8620828fb"
+    },
+    "validity": {
+      "A1": "12/12 observation-valid; selected J1 3/3 valid and successful",
+      "B": "11/12 observation-valid; selected J1 3/3 valid and successful",
+      "A2": "12/12 observation-valid; selected J1 3/3 valid and successful"
+    },
+    "measuredEffect": {
+      "sessionActivityMs": "A1 14.24/26.65/7.25; B 0.01/0/0; A2 19.45/8.98/11.02",
+      "requestFanout": "53 total / 24 API / 26 RSC in every selected J1 diagnostic record",
+      "secondActionTailMs": "A1 1147/524/660; B 1196/1395/1234; A2 622/1534/552",
+      "speed": "NO_REPEATABLE_IMPROVEMENT",
+      "globalFreezeResolved": false,
+      "sampler": "A1 PASS 615; B PASS 651; A2 PARTIAL 675 with one sample error"
+    },
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeCandidateKeptInCheckout": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeLocalizationContinuation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-first-three-stage-localization",
+    "runId": "aiya-performance-plan1-shared-runtime-localization-v1-20260920T160215Z-7f672bcb-8f49-4b20-bc11-c26c578f7021",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-localization-v1-20260920T160215Z-7f672bcb-8f49-4b20-bc11-c26c578f7021_EVIDENCE.json",
+    "evidenceSha256": "03467641089ba1f65ca56ce50a262ecd2775637a3bf243c993b7d82c21a3a0d2",
+    "measurementRunId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T155027577Z-280f2120-5abd-41d8-b093-74615eba9cc1",
+    "measurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T155027577Z-280f2120-5abd-41d8-b093-74615eba9cc1_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "measurementEvidenceSha256": "007020ec192a6d724a0f6a9b8ea6b418905e24eb414cfd5e54f061a056400013",
+    "status": "COMPLETE",
+    "outcome": "SECOND_ACTION_BOUNDARY_LOCALIZED_TO_REQUIRED_READ_AND_POST_RESPONSE_COMMIT_EXTERNAL_SERVICES_NOT_OBSERVED",
+    "stageLedger": {
+      "L1": "COMPLETE",
+      "L2": "COMPLETE",
+      "L3": "COMPLETE"
+    },
+    "validity": {
+      "attempted": 12,
+      "observationValid": 12,
+      "normalObservations": 9,
+      "diagnosticObservations": 3,
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3"
+    },
+    "measuredBoundary": {
+      "requiredRead": "/api/clients/:clientId/food-rule-profile",
+      "responseHeaderLatencyMs": "312/320/395",
+      "routeTimingMs": "295.65/302.13/375.75",
+      "bodyToReadyMs": "129/163/144",
+      "requestFanout": "53 total / 24 API in each selected diagnostic record"
+    },
+    "connectionBoundary": {
+      "runnerSupabaseTarget": "http://127.0.0.1:54321",
+      "hostedNetworkLatencyMeasured": false,
+      "externalRoutesObserved": []
+    },
+    "dbSampler": {
+      "status": "PASS",
+      "sampleCount": 720,
+      "sampleErrorCount": 0,
+      "lockWaitSampleCount": 2,
+      "blockedActivitySampleCount": 2,
+      "lockWaitsDuringSecondActionWindow": 0
+    },
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "globalFreezeResolved": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeFoodRuleProfileContinuation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-food-rule-profile-ab-a",
+    "runId": "aiya-performance-plan1-shared-runtime-food-rule-profile-ab-a-20260920T165844Z-96a93331-d252-4eb5-8474-4a91424bf13f",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-food-rule-profile-ab-a-20260920T165844Z-96a93331-d252-4eb5-8474-4a91424bf13f_EVIDENCE.json",
+    "evidenceSha256": "fde55ba1464131c67c1ead92bcb730c6b74ba0d49dd70d525b89a7845fd99d44",
+    "status": "COMPLETE",
+    "outcome": "FOOD_RULE_PROFILE_NARROW_READ_REPEATABLE_LOCAL_STORE_IMPROVEMENT_GLOBAL_FREEZE_UNRESOLVED",
+    "candidateSurface": [
+      "app/src/lib/supabase-store.ts:loadSupabaseClientFoodRuleProfile",
+      "app/src/lib/supabase-store.ts:loadSupabaseClientFoodRuleProfileNarrowState",
+      "app/src/app/api/clients/[id]/food-rule-profile/route.ts"
+    ],
+    "sourceRuns": {
+      "A1": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T162759588Z-6c8a143d-dbde-4de6-beae-d07eeb70f778",
+      "B": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T163707411Z-b89e5df6-efca-4c99-87e0-53dbdd4bc015",
+      "A2": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T164656932Z-a425d3df-79bc-4380-b70a-7dcdc4f3d445"
+    },
+    "validity": {
+      "eachVariantObservationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3",
+      "sampler": "A1 PASS 751 samples; B PARTIAL 651 samples with 1 error; A2 PASS 710 samples; zero observed lock waits in all three"
+    },
+    "measuredEffect": {
+      "foodStoreMs": {
+        "A1": "113.02/155.97/106.19",
+        "B": "40.57/23.94/29.56",
+        "A2": "147.95/104.09/83.68"
+      },
+      "requestFanout": "53 total / 24 API / 3 document requests in A1, B, and A2",
+      "secondActionDispatchToReadyMs": {
+        "A1": "653/1168/1146",
+        "B": "637/495/625",
+        "A2": "676/609/509"
+      },
+      "interpretation": "Contained server store reduction confirmed; global user-visible speed improvement not repeatable and fan-out unchanged."
+    },
+    "serverStoreBoundaryEffectConfirmed": true,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeDirtyRegistrationContinuation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-dirty-registration-ab-a",
+    "runId": "aiya-performance-plan1-shared-runtime-dirty-registration-ab-a-20260920T193800Z-57dc30c0-54ee-45a7-b69b-7cedb280df42",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-dirty-registration-ab-a-20260920T193800Z-57dc30c0-54ee-45a7-b69b-7cedb280df42_EVIDENCE.json",
+    "evidenceSha256": "91F7B87CA1320CCB183BF6CDA7DC4AE4E8A20AC97B2DE19DF5392F12BD7A5029",
+    "status": "COMPLETE",
+    "outcome": "DIRTY_REGISTRATION_COMMIT_STORM_REDUCTION_OBSERVED_VALIDITY_GAP_GLOBAL_FREEZE_UNRESOLVED",
+    "candidateSurface": [
+      "app/src/lib/use-shell-dirty-registration.ts:first registration effect dependency list",
+      "app/src/lib/phase-85-stage-5-shell-dirty-registry.ts:register/update synchronous emit",
+      "app/src/components/dashboard/shell-provider.tsx:dirtySnapshot subscriber and context",
+      "app/src/components/dashboard/authenticated-shell-boundary.tsx:React profiler ownership"
+    ],
+    "sourceRuns": {
+      "A1": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T190937852Z-abce8af0-cc97-4959-9766-6e3d0fed32ed",
+      "B": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T191755892Z-a4f44a32-41a4-4644-9670-cb8720197b62",
+      "A2": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T192740772Z-0263538b-baee-4e08-8668-eed92fd2cd6d"
+    },
+    "validity": {
+      "A1": "12/12 aggregate observation-valid; selected J1 3/3 valid and successful",
+      "B": "12/12 aggregate observation-valid but explicit selected J1 2/3 valid and successful; repetition 1 failed the required forms read",
+      "A2": "12/12 aggregate observation-valid; selected J1 3/3 valid and successful",
+      "status": "VALIDITY_CONTRACT_GAP_BLOCKS_EXACT_CAUSAL_CLOSURE"
+    },
+    "measuredEffect": {
+      "shellProviderCommits": {
+        "A1": "2270/2187/2216",
+        "B": "37/34/37",
+        "A2": "2082/2081/1892"
+      },
+      "dashboardShellCommits": {
+        "A1": "2269/2186/2215",
+        "B": "36/33/36",
+        "A2": "2081/2080/1891"
+      },
+      "requestFanout": "A1 and A2 valid traces 53 total / 24 API / 3 document; B 57/28/3 invalid repetition, 53/24/3 valid repetition, 56/27/3 valid repetition",
+      "secondActionDispatchToReadyMs": {
+        "A1": "596/483/637",
+        "B": "383 invalid / 404 valid / 922 valid",
+        "A2": "507/582/488"
+      },
+      "speed": "NO_REPEATABLE_IMPROVEMENT",
+      "interpretation": "Stable policy repeatedly removes the observed shell commit storm, but exact root-cause closure is blocked by B validity and user-visible speed remains inconclusive."
+    },
+    "commitStormReductionObserved": true,
+    "contributingMechanismLikely": true,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeCandidateKeptInCheckout": true,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeDirtyRegistrationValidityRecheck": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-dirty-registration-validity-recheck",
+    "runId": "aiya-performance-plan1-shared-runtime-dirty-registration-validity-recheck-20260920T213200Z-47b48402-c132-4a97-a121-8339aeec8666",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-dirty-registration-validity-recheck-20260920T213200Z-47b48402-c132-4a97-a121-8339aeec8666_EVIDENCE.json",
+    "evidenceSha256": "3BA9B66C45277B14F80658FFF049F904AE4855CBF15AE32B98830C2FCCFC4EF3",
+    "sourceMeasurementRunId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T200138105Z-49fb2c79-a39a-49bc-a567-d66663c6a0b0",
+    "sourceMeasurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T200138105Z-49fb2c79-a39a-49bc-a567-d66663c6a0b0_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "sourceMeasurementEvidenceSha256": "ED973A907E42F4EAE0370BFF3FC6433543564A6694D0FA29C69E275012AB0798",
+    "status": "COMPLETE",
+    "outcome": "DIRTY_REGISTRATION_VALIDITY_RECHECK_J1_INELIGIBLE_GLOBAL_FREEZE_UNRESOLVED",
+    "validity": {
+      "observationValid": "12/12",
+      "validSample": "6/12",
+      "J1NormalValidSample": "0/3",
+      "J1FailureBoundary": "All three J1 normal repetitions retained a failed first /forms attempt followed by a successful second /forms attempt; no retry promotion applied.",
+      "diagnosticSelection": "J2 selected; 3/3 valid and successful; no new J1 profiler evidence"
+    },
+    "interpretationCorrection": "The prior derived record's 'validity-contract gap' wording is superseded. observationValidity intentionally includes observed functional failures; validSample is the functional-success gate.",
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeCandidateKeptInCheckout": true,
+    "productionDecision": "NO-GO"
+  },
+  "currentSharedRuntimeFormsAbortLifecycleCorrelation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-forms-abort-lifecycle-correlation",
+    "runId": "aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2_EVIDENCE.json",
+    "evidenceSha256": "FCFA4C955375A92442FE16E23887C974CB26E5E25C6CFC0C7A9823BC546324D5",
+    "sourceMeasurementRunId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T001812103Z-92ab01f4-7c6e-476c-8de3-00f5c3562e38",
+    "sourceMeasurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T001812103Z-92ab01f4-7c6e-476c-8de3-00f5c3562e38_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "sourceMeasurementEvidenceSha256": "DC5EF27612AB83B8B6E875584EC429F1056EBC513711959B265F18437C98B6FD",
+    "status": "COMPLETE",
+    "outcome": "STAGE6_FORMS_ABORT_CORRELATED_TO_EFFECT_CLEANUP_GLOBAL_FREEZE_UNRESOLVED",
+    "validity": {
+      "currentNormalJ1": "3/3 valid and successful; 0/3 first Forms abort",
+      "currentDiagnosticJ1": "2/3 first Forms abort; 1/3 valid and successful",
+      "priorFailureReasonRunNormalJ1": "3/3 first Forms abort with net::ERR_ABORTED followed by later 200 retries",
+      "observationValidity": "Lifecycle observations are structural evidence, not functional-success samples"
+    },
+    "lifecycleFinding": "In both current diagnostic abort repetitions, Forms effect cleanup was followed by the hook's load_aborted event; this localizes a client lifecycle cancellation boundary but not the upstream route/state trigger.",
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeInstrumentationDefaultEnabled": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentJ1ActiveClientPreferenceRouteCorrelation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-j1-active-client-preference-route-correlation",
+    "runId": "aiya-performance-plan1-j1-active-client-preference-route-correlation-20260921T085203Z-862ac27d-4543-486f-b1eb-f7d6f6fbce9a",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-active-client-preference-route-correlation-20260921T085203Z-862ac27d-4543-486f-b1eb-f7d6f6fbce9a_EVIDENCE.json",
+    "evidenceSha256": "1FCF1B8F549D1F8190E35B7DE864F57A284EE07A04F8849FFEADF66C1F30EBE7",
+    "confirmationRunId": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T084521559Z-7190e356-128a-4c48-b31e-dd8dc2f081ee",
+    "confirmationEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T084521559Z-7190e356-128a-4c48-b31e-dd8dc2f081ee_EVIDENCE.json",
+    "confirmationEvidenceSha256": "4F44B41C6C27F951F39703D554E020643C37BE367FFAEDABF7BEB9AC4DD4CA7F",
+    "excludedProtocolAttempts": [
+      "aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T082533422Z-3011374c-84ea-4d8d-a2e9-a8d418ee0979",
+      "aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T083551478Z-af0b1bbd-cd16-4ebb-b3f8-a31e351d892b"
+    ],
+    "status": "COMPLETE",
+    "outcome": "J1_CONTROLLED_RESULT_INCONCLUSIVE",
+    "validity": {
+      "observationValid": "9/9",
+      "validFunctionalSamples": "6/9",
+      "A1": "1/3 valid and successful; 2/3 required Forms-request abort",
+      "B": "2/3 valid and successful; exact activeClientId gate 3/3; 1/3 post-Forms summary route and required Forms-request abort",
+      "A2": "3/3 valid and successful; 0/3 required Forms-request abort"
+    },
+    "candidateSurface": [
+      "app/src/components/dashboard-app.tsx:selectClient/openClientTask",
+      "app/src/lib/phase-85-stage-6-client-selection.ts:persistActiveClient",
+      "app/src/components/dashboard/shell-provider.tsx:commitDashboardHref",
+      "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts:update"
+    ],
+    "interpretation": "The active-client preference completion gate is insufficient to prevent the Forms abort/route churn. The shared Stage 6 active-client activation/navigation boundary is a narrowed contributor candidate, but the controlled A-B-A direction is not repeatable and the global freeze root cause is unproven.",
+    "nextDiagnostic": "Trace-only preference_intent_timing_and_completion for every shell-preference PATCH: record sanitized intent-key set, request start, response headers, body completion/settle, and route/history transition times; correlate with Stage 6 cleanup and Forms abort without recording preference values or raw request bodies.",
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeInstrumentationDefaultEnabled": false,
+    "productionDecision": "NO-GO"
+  },
+  "currentJ1PreferenceIntentTimingCorrelation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-j1-preference-intent-timing-correlation",
+    "runId": "aiya-performance-plan1-j1-preference-intent-timing-correlation-20260921T122539Z-9f2c7d11-2c35-4a54-9f0a-6d4f7f8d9c21",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-correlation-20260921T122539Z-9f2c7d11-2c35-4a54-9f0a-6d4f7f8d9c21_EVIDENCE.json",
+    "evidenceSha256": "C79D40F49BEECEED3D63B64D5DE2FA076070BB11A87E40DE97FBEF4675E84180",
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121916766Z-f12d3401-7014-4de4-a5ec-4845ae3599f2",
+    "sourceMeasurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121916766Z-f12d3401-7014-4de4-a5ec-4845ae3599f2_EVIDENCE.json",
+    "sourceMeasurementEvidenceSha256": "10771A9CE351910B9AC6C3A3A9D6C5C438E445FD99265A7629BD51FFEA540F76",
+    "excludedProtocolAttempts": [
+      "aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121031030Z-9d48c272-6f7a-4c76-b291-120501a92ee5",
+      "aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121517979Z-599c9a17-459c-4332-9dec-0bff0a52b858"
+    ],
+    "status": "COMPLETE",
+    "outcome": "PREFERENCE_INTENT_TIMING_CORRELATION_INCONCLUSIVE",
+    "validity": {
+      "observationValid": "3/3",
+      "validFunctionalSamples": "3/3",
+      "preferencePatchIntent": "activeClientId 3/3",
+      "preferenceHttp200BodySettled": "3/3",
+      "stage6CleanupAfterPreferenceSettled": "3/3; +32 ms, +28 ms, +41 ms",
+      "routeAtOrBeforePreferenceSettled": "2/3",
+      "formsAbortAfterPreferenceRequest": "0/3"
+    },
+    "candidateSurface": [
+      "app/src/components/dashboard-app.tsx",
+      "app/src/lib/phase-85-stage-6-client-selection.ts",
+      "app/src/components/dashboard/shell-provider.tsx",
+      "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts",
+      "app/src/lib/use-stage-6-client-workspace.ts"
+    ],
+    "interpretation": "A normal-path timing relation was observed: activeClientId preference settlement preceded the first Stage 6 cleanup in all three samples, but route ordering varied and no Forms abort was reproduced. This does not establish causality or narrow the global freeze candidate further.",
+    "candidateNarrowedFurther": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeInstrumentationDefaultEnabled": false,
+    "conditionalJ1ConfirmationAuthorized": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "The read-only comparison is recorded in currentJ1PreferenceIntentAbortComparison. A conditional J1 confirmation requires a stable abort-producing transition and separate authorization."
+  },
+  "currentJ1PreferenceIntentAbortComparison": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-j1-preference-intent-vs-forms-abort-comparison",
+    "runId": "aiya-performance-plan1-j1-preference-intent-vs-forms-abort-comparison-20260921T123323Z-4b8e1a23-7d41-4c6f-9a52-1e3f7b8c6d90",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-vs-forms-abort-comparison-20260921T123323Z-4b8e1a23-7d41-4c6f-9a52-1e3f7b8c6d90_EVIDENCE.json",
+    "evidenceSha256": "E6A6363B64CEBFFED0BD21E059249521690A62C576728957BC14C6AAC6560838",
+    "cleanPreferenceTimingEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-correlation-20260921T122539Z-9f2c7d11-2c35-4a54-9f0a-6d4f7f8d9c21_EVIDENCE.json",
+    "cleanPreferenceTimingEvidenceSha256": "C79D40F49BEECEED3D63B64D5DE2FA076070BB11A87E40DE97FBEF4675E84180",
+    "formsAbortLifecycleEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2_EVIDENCE.json",
+    "formsAbortLifecycleEvidenceSha256": "FCFA4C955375A92442FE16E23887C974CB26E5E25C6CFC0C7A9823BC546324D5",
+    "status": "COMPLETE",
+    "outcome": "CROSS_RUN_COMPARISON_INCONCLUSIVE",
+    "validity": {
+      "cleanNormalPreferenceTiming": "3/3 valid functional samples",
+      "abortLifecycleObservation": "3/3 valid diagnostic observations; 2/3 Forms loads aborted after cleanup",
+      "sameSamplePreferenceToAbortLink": "UNAVAILABLE"
+    },
+    "interpretation": "The existing Forms cleanup-to-abort boundary remains a contributing candidate, but the abort-producing traces lack the preference-intent timeline needed to place activeClientId settlement relative to cleanup. The preference-to-abort link and global freeze cause remain unproven.",
+    "candidateNarrowedFurther": false,
+    "causalRootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "The matched capture is complete but reproduced no abort. Isolate a reproducible route/state trigger for the historical Forms abort before considering another matched run; separate authorization is required."
+  },
+  "currentJ1PreferenceIntentAbortMatched": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-j1-preference-intent-abort-matched-analysis",
+    "runId": "aiya-performance-plan1-j1-preference-intent-abort-matched-analysis-20260921T124727Z-9c4e2b71-6a8d-4f53-b102-7e9c3d5a8f24",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-abort-matched-analysis-20260921T124727Z-9c4e2b71-6a8d-4f53-b102-7e9c3d5a8f24_EVIDENCE.json",
+    "evidenceSha256": "5A10F87B4B0A80B2C424370D489FF795DE8097A498B202DD5D33848C21A28373",
+    "measurementRunId": "aiya-performance-plan1-j1-preference-intent-abort-matched-v1-20260921T124313022Z-ccf40f62-de85-4c5f-8b1b-2fec306e04b3",
+    "measurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-abort-matched-v1-20260921T124313022Z-ccf40f62-de85-4c5f-8b1b-2fec306e04b3_EVIDENCE.json",
+    "measurementEvidenceSha256": "7A8221FA03912A76EA7D16D0DAB0DBBFCE05BADF0432149AA5B0F2A224381C1D",
+    "measurementRunnerPath": "app/scripts/performance-plan-1-j1-preference-intent-abort-matched.mjs",
+    "measurementRunnerSha256": "B9C5570F8FA33484D00D8BBB2423F121C69316E03CA6A971CBD98CAE4D34D7F0",
+    "status": "COMPLETE",
+    "outcome": "MATCHED_CAPTURE_VALID_ABORT_NOT_REPRODUCED",
+    "validity": {
+      "observationValid": "3/3",
+      "validFunctionalSamples": "3/3",
+      "sameTracePreferenceAndLifecycleCapture": "3/3",
+      "preferencePatchIntent": "activeClientId 3/3",
+      "preferenceHttp200BodySettled": "3/3",
+      "stage6CleanupAfterPreferenceSettled": "3/3; +39 ms, +24 ms, +53 ms",
+      "formsAbortAfterPreferenceRequest": "0/3"
+    },
+    "interpretation": "The matched diagnostic capture boundary is valid, but the historical Forms abort was not reproduced. This does not establish or refute the preference-to-abort link and does not resolve the global freeze.",
+    "candidateNarrowedFurther": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Isolate a reproducible route/state trigger for the historical Forms abort before considering another matched run; separate authorization is required."
+  },
+  "currentJ1Stage6TriggerIsolation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "j1-stage6-trigger-isolation-analysis",
+    "runId": "aiya-performance-plan1-j1-stage6-trigger-isolation-analysis-20260921T131935Z-e026a6cf-2f81-4bdd-82c2-c0dfefb19c31",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-stage6-trigger-isolation-analysis-20260921T131935Z-e026a6cf-2f81-4bdd-82c2-c0dfefb19c31_EVIDENCE.json",
+    "evidenceSha256": "8FA31BE6AC891A97D2FE41FDDA8FA5560C9A6CA089319BAD907107C0359BB070",
+    "measurementRunId": "aiya-performance-plan1-j1-stage6-trigger-isolation-v1-20260921T131319461Z-fe4a8d23-adf5-40cc-b731-0c512f76cb81",
+    "measurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-stage6-trigger-isolation-v1-20260921T131319461Z-fe4a8d23-adf5-40cc-b731-0c512f76cb81_EVIDENCE.json",
+    "measurementEvidenceSha256": "204E7892DC010E3EC0E0ED4C7432B90303D287E961850AE71296A9FF7A041925",
+    "measurementRunnerPath": "app/scripts/performance-plan-1-j1-stage6-trigger-isolation.mjs",
+    "measurementRunnerSha256": "610D0D8E588280671EC7909C6504A5BDD0E4335D0596A8DD92B2BC9B29CD4ABE",
+    "runtimeTracePath": "app/src/lib/use-stage-6-client-workspace.ts",
+    "runtimeTraceSha256": "17C4B7CB55EC267DD2C708A462924CD294E9F0D8E4309E370CC71ED68915417C",
+    "status": "COMPLETE",
+    "outcome": "CANDIDATE_EXTRA_SUMMARY_REENTRY_ASSOCIATED_ABORT_NOT_REPRODUCED",
+    "validity": {
+      "observationValid": "3/3",
+      "validFunctionalSamples": "3/3",
+      "completeRouteStateCapture": "3/3",
+      "currentFormsAbort": "0/3",
+      "historicalAbortMatches": "2/2 aborting repetitions with extra summary re-entry"
+    },
+    "capturedRouteStateFields": [
+      "pathname",
+      "section",
+      "clientTask",
+      "hasClientId"
+    ],
+    "candidateSurface": [
+      "app/src/components/dashboard-app.tsx:selectClient/openClientTask",
+      "app/src/components/dashboard/shell-provider.tsx:requestHrefNavigation/runPendingNavigation",
+      "app/src/components/dashboard/client-workspace.tsx:useStage6ClientWorkspace domain selection",
+      "app/src/lib/use-stage-6-client-workspace.ts:effect setup/cleanup/load abort"
+    ],
+    "interpretation": "The extra summary re-entry is associated with both historical aborting repetitions, but this is not a causal finding. The historical records lack the new route-state fields, the current run reproduced no abort, and no single-variable speed or causal confirmation was performed.",
+    "candidateAssociationOnly": true,
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Do not repeat the same matched run. Separately authorize one reversible single-variable confirmation targeting only the extra summary re-entry boundary, and report functional outcome and second-action speed independently."
+  },
+  "currentJ1SummaryReentrySettlementConfirmation": {
+    "planRevision": "plan1-final-v3",
+    "stage": "j1-summary-reentry-settlement-confirmation-analysis",
+    "runId": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-analysis-20260921T134721Z-e9c0f0c1-7b7d-4c6a-9d54-2f0a1e8b6c3d",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-analysis-20260921T134721Z-e9c0f0c1-7b7d-4c6a-9d54-2f0a1e8b6c3d_EVIDENCE.json",
+    "evidenceSha256": "E832AE24BEF0FB4823672E886C98E6D51A64C3301E09DD595A74ACFD4A0FFEAC",
+    "measurementRunId": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1-20260921T134112924Z-a9f02392-5f1a-4359-861c-f94bebba8d58",
+    "measurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1-20260921T134112924Z-a9f02392-5f1a-4359-861c-f94bebba8d58_EVIDENCE.json",
+    "measurementEvidenceSha256": "EA0DA0728A8BDFAF39F3C21FD76FB9679051266BD1F81E0C200F55641DEB3C33",
+    "measurementRunnerPath": "app/scripts/performance-plan-1-j1-summary-reentry-settlement-confirmation.mjs",
+    "measurementRunnerSha256": "CC6CA966957612B67B5C8901870957228BB5E7E9AF1B9E8D9ED1A372716C688D",
+    "controlHarnessPath": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+    "controlHarnessSha256": "CFE9561561ED0A75F1E1AA4ECC07B573CEBAAA47E7F4E2DA42307A2522317B0F",
+    "status": "COMPLETE",
+    "outcome": "SUMMARY_REENTRY_BOUNDARY_CONFIRMATION_INCONCLUSIVE",
+    "singleVariable": "B waits for initial client-selection summary request settlement before Forms dispatch; A1/A2 retain existing timing",
+    "validity": {
+      "attempted": "9/9",
+      "observationValid": "9/9",
+      "validFunctionalSamples": "9/9",
+      "bGatePassed": "3/3",
+      "a1PostFormsSummaryReentry": "0/3",
+      "bPostFormsSummaryReentry": "0/3",
+      "a2PostFormsSummaryReentry": "0/3",
+      "a1FormsRequestAbort": "0/3",
+      "bFormsRequestAbort": "0/3",
+      "a2FormsRequestAbort": "0/3",
+      "bSettlementKind": "request_failed 3/3"
+    },
+    "speed": {
+      "a1SecondActionTailMs": [397, 538, 515],
+      "bSecondActionTailMs": [527, 582, 423],
+      "a2SecondActionTailMs": [521, 535, 478],
+      "acceptance": "NOT_EVALUABLE"
+    },
+    "interpretation": "The controlled run reproduced neither the historical post-Forms summary re-entry nor a Forms abort in any group. The candidate boundary remains unconfirmed; no three-matching valid abort records exist in this run.",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Do not repeat this same settlement-gated A-B-A automatically. Keep the global diagnosis blocked; any distinct trigger requires separate authorization."
+  },
+  "currentSharedRuntimeAuthFanoutCommitOverlapAnalysis": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-auth-fanout-commit-overlap-analysis",
+    "runId": "aiya-performance-plan1-shared-runtime-auth-fanout-commit-overlap-v1-20260921T141433347Z-5146b711-7709-41be-a5a7-c606ead3922c",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-fanout-commit-overlap-v1-20260921T141433347Z-5146b711-7709-41be-a5a7-c606ead3922c_EVIDENCE.json",
+    "evidenceSha256": "27E93792B03C46BF873D34D803A552016CE0D8AADC363D85BAA00DE0340FD40F",
+    "analysisRunnerPath": "app/scripts/performance-plan-1-shared-runtime-auth-fanout-commit-overlap.mjs",
+    "analysisRunnerSha256": "DD9AB4ABADD3E84DFFED670259E3BE3EBBE45BE13D84D7EB1087C99843E4D715",
+    "sourceMeasurementRunId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T192740772Z-0263538b-baee-4e08-8668-eed92fd2cd6d",
+    "sourceMeasurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T192740772Z-0263538b-baee-4e08-8668-eed92fd2cd6d_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "sourceMeasurementEvidenceSha256": "962252C6744BA03F4F75BE04532BC8F1DBBEB6DF3CC44D73D63C471391D52C4A",
+    "status": "COMPLETE",
+    "outcome": "AUTH_FANOUT_COMMIT_OVERLAP_OBSERVED_AUTH_COVERAGE_INCOMPLETE_GLOBAL_FREEZE_UNRESOLVED",
+    "validity": {
+      "selectedJ1": "3/3 valid functional",
+      "firstToSecondApiRequests": "7/10/10",
+      "firstToSecondRscRequests": "9/13/13",
+      "secondActionApiRequests": "2/2/2",
+      "secondActionRscRequests": "1/1/1",
+      "firstToSecondAuthTimingCoverage": "28.6%/30%/40%",
+      "secondActionReactCommitWaves": "44/40/29"
+    },
+    "interpretation": "Request fan-out and React commit-wave overlap are observed on same-source traces; complete per-API auth chain and server-side RSC auth timing are not measured.",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Add diagnostic-only timing coverage to uninstrumented shared API routes and a bounded server-side marker for dashboard RSC auth; do not change auth behavior."
+  },
+  "currentSharedRuntimeAuthCoverageCapture": {
+    "planRevision": "plan1-final-v3",
+    "stage": "shared-runtime-auth-coverage-capture",
+    "runId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5_EVIDENCE.json",
+    "evidenceSha256": "A343FF1BD61B423705DCB478DA46E35F5605B6093FFEE3056468F05D323A4968",
+    "measurementRunnerPath": "app/scripts/performance-plan-1-j1-shared-runtime-auth-coverage.mjs",
+    "measurementRunnerSha256": "49511444070D76970661E82D78AF4CA4E07409A3C3569FC44B812643E20A45A9",
+    "status": "COMPLETE",
+    "outcome": "SHARED_API_AUTH_COVERAGE_PARTIAL_RSC_MARKER_OBSERVED",
+    "reconstructedFromCheckpoint": true,
+    "validity": {
+      "attempted": "1/1",
+      "observationValid": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "validSample": "1/1",
+      "officialSample": false
+    },
+    "coverage": {
+      "apiRequests": 24,
+      "timedApiRequests": 15,
+      "allApiRequestsTimed": false,
+      "expectedRoutes": {
+        "conversations": "1/2 timed responses",
+        "alerts": "2/2 timed responses",
+        "notifications": "2/2 timed responses",
+        "shellPreferences": "1/1 timed response",
+        "clientDetail": "0/1 timed response; request aborted before response",
+        "clientForms": "1/1 timed response"
+      },
+      "rscServerMarkers": "2 (layout and page)"
+    },
+    "interpretation": "The diagnostic boundary now exposes shared auth timing on the added API routes and observes the bounded dashboard RSC auth marker in one current-source J1 trace. The client-detail route did not complete, so coverage remains partial; one trace cannot establish repeatability, causality, or the global-freeze root cause.",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Review the single trace and the aborted client-detail boundary. Do not repeat without separate authorization; any repeat must preserve the trace-only, non-causal contract."
+  },
+  "currentJ1ClientDetailAbortBoundaryAnalysis": {
+    "planRevision": "plan1-final-v3",
+    "stage": "j1-client-detail-abort-boundary-analysis",
+    "runId": "aiya-performance-plan1-j1-client-detail-abort-boundary-analysis-v1-20260921T160221659Z",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-client-detail-abort-boundary-analysis-v1-20260921T160221659Z_EVIDENCE.json",
+    "evidenceSha256": "6310254DBEFF751530AFABD8C210C4C6136A37B0DDC8AA1BBAF0CDB84D65CB19",
+    "analysisRunnerPath": "app/scripts/performance-plan-1-j1-client-detail-abort-boundary-analysis.mjs",
+    "analysisRunnerSha256": "C81A7B656A6F7D6479C609922996D097BB988A0A85AE95D19ECF66FA222F9397",
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5",
+    "sourceMeasurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5_EVIDENCE.json",
+    "sourceMeasurementEvidenceSha256": "A343FF1BD61B423705DCB478DA46E35F5605B6093FFEE3056468F05D323A4968",
+    "status": "COMPLETE",
+    "outcome": "CLIENT_DETAIL_ABORT_CORRELATED_WITH_STAGE6_DOMAIN_SWITCH_CLEANUP",
+    "validity": {
+      "sourceTrace": "1/1 valid functional J1 trace",
+      "targetAbortObserved": "1/1",
+      "routeTransitionObserved": true,
+      "stage6CleanupCorrelationObserved": true,
+      "officialSample": false
+    },
+    "boundary": {
+      "targetRoute": "/api/clients/%3Cuuid%3E",
+      "transition": "selected client -> summary -> forms -> nutrition",
+      "lifecycle": "summary effect cleanup -> forms effect setup -> summary load aborted",
+      "serverTiming": "absent because the target request produced no response"
+    },
+    "interpretation": "The target client-detail abort is correlated with the expected Stage 6 domain switch: the workspace hook aborts its active controller during effect cleanup when the task changes from summary to forms. This narrows the boundary to client-side cancellation, but does not establish premature navigation, server-side continuation, causality, or the global-freeze root cause.",
+    "candidateNarrowedFurther": true,
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Do not repeat automatically. Only if server-side continuation or premature transition remains material should a separately authorized controlled capture add a bounded server-completion marker."
+  },
+  "currentJ1SecondActionTimelineAnalysis": {
+    "planRevision": "plan1-final-v3",
+    "stage": "j1-second-action-timeline-analysis",
+    "runId": "aiya-performance-plan1-j1-second-action-timeline-analysis-v1-20260921T170813873Z",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-second-action-timeline-analysis-v1-20260921T170813873Z_EVIDENCE.json",
+    "evidenceSha256": "B04435F498184EC20A0DEF0A68985CB6CF96894BB7FD25264B7918C829C9F447",
+    "analysisRunnerPath": "app/scripts/performance-plan-1-j1-second-action-timeline-analysis.mjs",
+    "analysisRunnerSha256": "A5D899A94D9FD41C04439EB43D0D2545CD1FDE5089EB493E5A65C261FBBF2BE3",
+    "focusedTestPath": "app/scripts/performance-plan-1-j1-second-action-timeline-analysis.test.mjs",
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5",
+    "sourceMeasurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5_EVIDENCE.json",
+    "sourceMeasurementEvidenceSha256": "A343FF1BD61B423705DCB478DA46E35F5605B6093FFEE3056468F05D323A4968",
+    "status": "COMPLETE",
+    "outcome": "NETWORK_SERVER_FIRST_WITH_CONTEXT_TAIL_MAIN_THREAD_CAUSE_UNRESOLVED",
+    "validity": {
+      "sourceTrace": "1/1 valid functional J1 trace",
+      "secondActionBoundary": "COMPLETE",
+      "officialSample": false,
+      "focusedTests": "2/2 PASS"
+    },
+    "boundary": {
+      "trustedToReadyMs": 1045,
+      "trustedToRequiredResponseHeaderMs": 585,
+      "trustedToRequiredResponseBodyMs": 593,
+      "requiredBodyToReadyMs": 452,
+      "overlappingRequests": "3 total / 2 API / 1 RSC",
+      "requiredReadServerTiming": "auth_total 341.36 ms; store 167.49 ms; route 542.99 ms",
+      "concurrentBootstrapServerTiming": "auth_total 338.36 ms; rate_limit 101.7 ms; route 560.94 ms",
+      "contextCommits": "2 shell_context_state_committed events inside the window",
+      "reactProfilerCommits": "0 in window and 0 in full trace",
+      "longTasks": "0 inside window; first 60 ms task starts 38.1 ms after ready"
+    },
+    "interpretation": "The one trace places the largest directly bounded segment before required response-body completion, with the required read and a concurrent bootstrap both paying measured server timing. A 452 ms body-to-ready tail contains shell context commits and Stage 6 lifecycle events, but no React profiler commit or long task. This narrows the next controlled comparison to network/server scheduling versus post-response state/commit scheduling without proving either cause.",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Choose one separately authorized single-variable comparison: required-read/server scheduling or post-response state/commit scheduling. Hold request fan-out and the other boundary constant; do not combine variables or treat this single trace as causal proof."
+  },
+  "currentJ1PostResponseCommitOwnershipABACandidate": {
+    "planRevision": "plan1-final-v3",
+    "stage": "j1-post-response-commit-ownership-ab-a",
+    "runId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b_EVIDENCE.json",
+    "evidenceSha256": "153C70F8254DCB474B94F1F82211880009F70840219E9D342AE91A87973B3CCA",
+    "measurementRunnerPath": "app/scripts/performance-plan-1-j1-post-response-commit-ownership-ab-a.mjs",
+    "measurementRunnerSha256": "AE1F95FAB8AF66570018D37EA5FCA37A1E0266FBA36B99E609A9A4612B76B52A",
+    "focusedTestPath": "app/scripts/performance-plan-1-j1-post-response-commit-ownership-ab-a.test.mjs",
+    "focusedTestSha256": "6706FDC898CB2951150E9D263D34D4B1B0B3E73DB515CFAFB60D0532DCDD4D41",
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b",
+    "status": "COMPLETE",
+    "outcome": "POST_RESPONSE_COMMIT_OWNERSHIP_SIGNAL_OBSERVED_VALIDITY_OR_FANOUT_BOUNDARY_OPEN",
+    "singleVariable": "shell_dirty_registration_policy: A1 legacy registration dependency -> B stable saveRef dependency -> A2 legacy registration dependency",
+    "validity": {
+      "attempted": "9/9",
+      "observationValid": "9/9",
+      "A1ValidFunctional": "3/3",
+      "BValidFunctional": "2/3",
+      "A2ValidFunctional": "3/3",
+      "BObservationValid": "3/3",
+      "causalThreeValidRecordGate": "NOT_MET_FOR_SELECTED_J1_B",
+      "officialSample": false,
+      "noRetryPromotion": true
+    },
+    "checkpoint": {
+      "status": "COMPLETE",
+      "eventCount": 37,
+      "hashChain": "PASS",
+      "variantBuilds": "3/3 PASS",
+      "dbLockSamplers": "3/3 PASS; zero lock-wait and blocked-activity samples in sampled windows"
+    },
+    "boundary": {
+      "commitOwnership": "B shell/dashboard commit counts were 35/34 in repetitions 1 and 2 versus A1 1986/1851 and A2 2020/2908; repetition 3 is excluded from the strict comparison because B failed the required Forms read",
+      "speed": "B trusted-click-to-ready was 966/931 ms versus A1 527/607 ms and A2 1048/522 ms in the two fully valid repetitions; no repeatable speed improvement",
+      "requestFanout": "53/53/53 total requests in repetition 1; 53/56/56 in repetition 2; invariant fan-out gate not met",
+      "invalidFunctionalBoundary": "B repetition 3 failed at first-action /api/clients/:clientId/forms required-read completion; no retry was promoted"
+    },
+    "interpretation": "The two fully valid paired repetitions show a strong post-response shell/dashboard commit-ownership signal under the stable policy, but the stricter three-valid-record causal gate was not met, request fan-out was not invariant, and the stable policy was slower at the user-facing ready boundary. This is a diagnostic contributor signal only, not a confirmed global-freeze cause.",
+    "supersededHarnessAttempt": {
+      "runId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T184025946Z-f5462f29-1f63-4d44-879e-e14f847db8ff",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T184025946Z-f5462f29-1f63-4d44-879e-e14f847db8ff_EVIDENCE.json",
+      "evidenceSha256": "17EDE628D118D8CBA532CE9709D780432136557BA7380B2E52070AFD3E93A44B",
+      "status": "COMPLETE_BUT_INVALID",
+      "reason": "runner passed an unsupported phase43 traceVariant label; all 9 samples were harness-invalid and excluded"
+    },
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Do not repeat this same A-B-A automatically. Before any separately authorized continuation, isolate the B required-read/fan-out validity boundary and preserve request fan-out as a control; the observed commit reduction cannot be promoted to causal evidence until three fully valid matched records exist."
+  },
+  "currentJ1PostResponseCommitFanoutValidityAnalysis": {
+    "planRevision": "plan1-final-v3",
+    "stage": "j1-post-response-commit-fanout-validity-analysis",
+    "runId": "aiya-performance-plan1-j1-post-response-commit-fanout-validity-analysis-v1-20260921T224944702Z",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-fanout-validity-analysis-v1-20260921T224944702Z_EVIDENCE.json",
+    "evidenceSha256": "8D2F46DFBD478C350EE254135DF6A2A0AD8D416CDB5FB6B21F17CA5C9F891D8D",
+    "analysisRunnerPath": "app/scripts/performance-plan-1-j1-post-response-commit-fanout-validity-analysis.mjs",
+    "analysisRunnerSha256": "F5BC8EE21C6D5E6DA56C25059F68906A8218190501FFC87C2AC8AABA91100473",
+    "focusedTestPath": "app/scripts/performance-plan-1-j1-post-response-commit-fanout-validity-analysis.test.mjs",
+    "focusedTestSha256": "D3CC74E2735EF8DDABDEEF8F907A708E8DDED079421D03884BFEE6C08CA622D1",
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b",
+    "status": "COMPLETE",
+    "outcome": "B_REQUIRED_READ_ABORT_AND_FANOUT_CONFOUND_OBSERVED_COMMIT_COMPARISON_OPEN",
+    "analysisOnly": true,
+    "validity": {
+      "traceCount": 9,
+      "A1EligibleFunctional": "3/3",
+      "BEligibleFunctional": "2/3",
+      "A2EligibleFunctional": "3/3",
+      "BFormsRequiredReadValid": "2/3",
+      "BFormsAbortObserved": "1/3",
+      "BFormsDuplicateObserved": "1/3",
+      "causalThreeValidRecordGate": "NOT_MET_FOR_SELECTED_J1_B",
+      "officialSample": false,
+      "noRetryPromotion": true
+    },
+    "checkpoint": {
+      "sourceStatus": "COMPLETE",
+      "sourceEventCount": 37,
+      "sourceLastSequence": 37,
+      "sourceHashChain": "PASS",
+      "sourceManifestSha256": "E31135162014F2F45B8F26EB23B91F7AFA09BEE7EAC3C2CED607F6CFF60F380"
+    },
+    "boundary": {
+      "BInvalidRepetition": "B:diagnostic:J1:r3",
+      "formsRequiredRead": "Two matching Forms records: first HTTP 200 header with body incomplete and failed=true, second HTTP 200 body complete; every matching record is required, so valid=false",
+      "fanout": "B r3 had 60 total / 31 API requests versus A1 and A2 r3 at 53 total / 24 API; the seven-request delta was two bootstrap, one client-summary, one Forms, one alerts, one notifications, and one conversations request",
+      "stage6Lifecycle": "B r3 Forms effect/load setup started twice, one Forms load was aborted, and one Forms load succeeded; this is a lifecycle correlation only",
+      "matchedFanoutInvariant": "1/2 fully eligible matched repetitions; strict three-valid-record gate remains open"
+    },
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Do not repeat the same A-B-A. Run a distinct controlled capture that preserves the dirty-registration variable while explicitly controlling Forms lifecycle validity and a predeclared request-route fan-out envelope; require one completed Forms read and no duplicate required-read record per eligible repetition."
+  },
+  "currentJ1FanoutEnvelopeBaseline": {
+    "planRevision": "plan1-final-v3",
+    "stage": "j1-legacy-fanout-envelope-baseline",
+    "runId": "aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260922T000153108Z-df90576e-8f10-4162-bf26-2916efbe1289",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260922T000153108Z-df90576e-8f10-4162-bf26-2916efbe1289_EVIDENCE.json",
+    "evidenceSha256": "FC2FD67BC365691E30B7037E2B1985398DA3FEDDB827A24A78665751D178C94C",
+    "measurementRunnerPath": "app/scripts/performance-plan-1-j1-fanout-envelope-baseline.mjs",
+    "measurementRunnerSha256": "413E3A30F37CB45880A3CD1D9BEED076C40A6551BBC1BDD2AB10F5566FA06004",
+    "focusedTestPath": "app/scripts/performance-plan-1-j1-fanout-envelope-baseline.test.mjs",
+    "focusedTestSha256": "0C184CFED128E0EEC77AED8B6175EC3FFA96E3053B603D2FF5D17101746684DA",
+    "status": "COMPLETE",
+    "outcome": "J1_LEGACY_FORMS_AND_FANOUT_ENVELOPE_REPEATED_VALID",
+    "analysisOnly": false,
+    "executionScope": {
+      "fixtureId": "local-normal",
+      "fixtureClass": "synthetic_normal_owner",
+      "localSupabaseHost": "127.0.0.1:54321",
+      "journeyId": "J1",
+      "mode": "diagnostic",
+      "shellDirtyRegistrationPolicy": "legacy",
+      "controlVariant": null,
+      "repetitions": "3/3",
+      "applicationRuntimeChanged": false,
+      "officialSample": false,
+      "diagnosticBuildDistDirPolicy": "run_scoped_separate_dist_dir"
+    },
+    "validity": {
+      "attempted": "3/3",
+      "observationValid": "3/3",
+      "sourceValidFunctional": "3/3",
+      "formsRequiredRead": "3/3; exactly one completed record per repetition",
+      "nutritionRequiredRead": "3/3; exactly one completed record per repetition",
+      "formsLifecycle": "3/3; setup/start/success exactly once and abort 0/3",
+      "fanoutEnvelope": "3/3",
+      "routeCountShapes": "r1 56 total / 27 API / 3 document / 26 RSC; r2 and r3 53 / 24 / 3 / 26",
+      "checkpoint": "COMPLETE; 14 events; hash chain PASS"
+    },
+    "fanoutEnvelope": {
+      "totalRequests": "53-56",
+      "apiRequests": "24-27",
+      "documentRequests": 3,
+      "rscRequests": 26,
+      "requiredApiRoutes": [
+        "/api/auth/password-login",
+        "/api/shell/bootstrap",
+        "/api/session/activity",
+        "/api/shell/version",
+        "/api/app-state",
+        "/api/alerts",
+        "/api/notifications",
+        "/api/conversations",
+        "/api/shell/preferences",
+        "/api/clients/:clientId",
+        "/api/clients/:clientId/forms",
+        "/api/clients/:clientId/food-rule-profile"
+      ]
+    },
+    "supersededBuildBlockedAttempt": {
+      "runId": "aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260921T235410481Z-8e28b211-0368-4423-9216-dca681ec6eea",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260921T235410481Z-8e28b211-0368-4423-9216-dca681ec6eea_EVIDENCE.json",
+      "evidenceSha256": "02BE23B87D65CE4B2BA3D0F6547820096065CF458D433C711AAAFD75577DB0B4",
+      "status": "BLOCKED",
+      "reason": "Blocked evidence records outputRecorded=false before browser capture; a follow-up same-command local diagnostic identified EPERM while Next tried to unlink the existing OneDrive .next entry, so it is excluded from the baseline."
+    },
+    "interpretation": "The current legacy J1 path repeated inside the declared Forms lifecycle and request fan-out envelope. This establishes a valid control boundary for a separate candidate comparison only; it does not confirm auth-chain cost, React commit fan-out, a global freeze cause, or a performance improvement.",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Use this exact envelope and lifecycle gate as the control contract for one separately identified single-variable candidate capture; hold all other request, RSC, auth, and client lifecycle boundaries constant and do not repeat this baseline."
+  },
+  "currentJ1PostResponseCommitEnvelopeABACandidate": {
+    "planRevision": "plan1-final-v3",
+    "stage": "j1-post-response-commit-envelope-ab-a",
+    "runId": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T082334317Z-c732dc73-de03-43b6-8881-a4880cbf977a",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T082334317Z-c732dc73-de03-43b6-8881-a4880cbf977a_EVIDENCE.json",
+    "evidenceSha256": "DDD880A087A9F42407967C969A97B00F5C69152C0D5D77C878AAFB2C474C5CED",
+    "measurementRunnerPath": "app/scripts/performance-plan-1-j1-post-response-commit-envelope-ab-a.mjs",
+    "measurementRunnerSha256": "AEFD3CAC4ADCFAFEF98ED159E0377949C1262BD28338FBD446DEADA9C7AFDA3B",
+    "focusedTestPath": "app/scripts/performance-plan-1-j1-post-response-commit-envelope-ab-a.test.mjs",
+    "focusedTestSha256": "D135CB4637D67C2C22E4DC38A36D761AD9491FE48BB02DAAA1E1D559F1746460",
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T082334317Z-c732dc73-de03-43b6-8881-a4880cbf977a",
+    "status": "COMPLETE",
+    "outcome": "POST_RESPONSE_COMMIT_ENVELOPE_VALIDITY_OPEN_GLOBAL_FREEZE_UNRESOLVED",
+    "singleVariable": "shell_dirty_registration_policy: A1 legacy registration dependency -> B stable saveRef dependency -> A2 legacy registration dependency",
+    "validity": {
+      "attempted": "9/9",
+      "observationValid": "9/9",
+      "A1Eligible": "3/3",
+      "BEligible": "2/3",
+      "A2Eligible": "3/3",
+      "BFanoutEnvelope": "2/3",
+      "BFormsLifecycle": "2/3",
+      "BFormsRequiredRead": "2/3",
+      "matchedFanoutInvariantRows": 0,
+      "causalThreeValidRecordGate": "NOT_MET_FOR_ENVELOPE_CONTROLLED_J1",
+      "officialSample": false,
+      "noRetryPromotion": true
+    },
+    "checkpoint": {
+      "status": "COMPLETE",
+      "eventCount": 37,
+      "hashChain": "PASS",
+      "variantBuilds": "3/3 PASS",
+      "dbLockSamplers": "3/3 PASS"
+    },
+    "boundary": {
+      "A1": "All 3 repetitions eligible: 53/24/3/26 or total/API/document/RSC request shape; shell-provider commits 1891/1926/1893",
+      "B": "r1 eligible at 56/27/3/26 with 36 shell-provider commits; r2 invalid at 57/28/3/26 with an extra Forms request, Forms setup/start restart, abort, and failed Forms required read; r3 eligible at 53/24/3/26 with 31 shell-provider commits",
+      "A2": "All 3 repetitions eligible: r1 and r2 53/24/3/26, r3 56/27/3/26; shell-provider commits 1891/1957/2668",
+      "strictComparison": "No repetition had all three variants eligible with an identical full fan-out route shape; the strict candidate gate remains open",
+      "speed": "B trusted-click-to-ready was 972/914/397 ms across r1/r2/r3; the invalid r2 is excluded and no strict speed conclusion is promoted"
+    },
+    "supersededHarnessAttempt": {
+      "runId": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T080928983Z-0a38563c-b267-494b-9ef9-026481cb0636",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T080928983Z-0a38563c-b267-494b-9ef9-026481cb0636_EVIDENCE.json",
+      "evidenceSha256": "2187ACA74244E58453C1D579AFF7881C7B61717F4490AB379C9771362439B1A1",
+      "status": "COMPLETE_BUT_INVALID",
+      "reason": "The runner passed arbitrary A1/B/A2 values into the phase-4.3 controlVariant enum; all 9 attempts became HARNESS_ERROR and are excluded. The runner then recorded experiment labels outside that enum and the new capture was rerun with no unsupported control value."
+    },
+    "interpretation": "The stable policy again coincided with much lower shell-provider commit counts in eligible repetitions, but the established fan-out and Forms lifecycle gates failed in B repetition 2 and no repetition had an exact three-variant fan-out match. This is an unpromoted contributor signal and validity boundary, not causal proof of the global freeze.",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnostic": "Do not promote or repeat this candidate automatically. The next authorized diagnostic must first explain or control the B stable-policy Forms/fan-out divergence while retaining the exact route envelope and lifecycle gate; require 3/3 eligible A1/B/A2 repetitions with exact per-repetition fan-out shape before interpreting commit ownership."
+  }
 }

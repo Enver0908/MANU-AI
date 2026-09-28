@@ -1,0 +1,5764 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-post-response-commit-ownership-ab-a",
+  "stageId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+  "runId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b",
+  "generatedAt": "2026-09-21T19:05:27.416Z",
+  "status": "COMPLETE",
+  "outcome": "POST_RESPONSE_COMMIT_OWNERSHIP_SIGNAL_OBSERVED_VALIDITY_OR_FANOUT_BOUNDARY_OPEN",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Current-source local diagnostic A1 legacy -> B stable -> A2 legacy comparison of post-response shell commit ownership at the J1 second-action boundary.",
+    "analysisOnly": false,
+    "browserRerunStarted": true,
+    "applicationRuntimeChanged": false,
+    "processScopedDiagnosticVariable": "shell_dirty_registration_policy",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "fixture": "local-normal synthetic owner",
+    "targetJourney": "J1"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "hypothesis": {
+    "id": "post_response_state_commit_ownership",
+    "variableId": "shell_dirty_registration_policy",
+    "A1": "legacy registration dependency",
+    "B": "stable saveRef dependency",
+    "A2": "legacy registration dependency",
+    "heldConstant": [
+      "J1 journey and synthetic fixture",
+      "diagnostic browser instrumentation",
+      "auth/RLS/store path",
+      "request fan-out contract",
+      "required-read validity gate",
+      "local Supabase target"
+    ]
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 230,
+    "statusHash": "785c4fa9cec0f4330b495fb12e2b535bdbf2b7e0bf964fcf26a0b1ed0cc4c284",
+    "diffCheck": "PASS",
+    "variableId": "shell_dirty_registration_policy",
+    "variantPolicies": [
+      {
+        "id": "A1",
+        "policy": "legacy"
+      },
+      {
+        "id": "B",
+        "policy": "stable"
+      },
+      {
+        "id": "A2",
+        "policy": "legacy"
+      }
+    ],
+    "configurationIdentity": {
+      "sourceKinds": [
+        "active_worktree_app_env_local"
+      ],
+      "availableKeys": [
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "MANU_DEV_FALLBACK_STORE"
+      ],
+      "credentialSource": "<redacted>",
+      "phase3FixtureReady": true
+    },
+    "sourceFiles": [
+      {
+        "path": "app/src/lib/use-shell-dirty-registration.ts",
+        "sha256": "3b657c1e6cd2f1b235d49499edebd03c8f47a6c0154406e29acf708ce2ea7304"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-dirty-registry.ts",
+        "sha256": "b75f03b1c9ca82e43930439ee1854624f9978e0543faf15ff5f3afe320f23358"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "sha256": "1c32842cc7a83d6572b2fba93cc1f6031355a7bbe73f2e24a0d3832d1a9d9ebb"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "13293d7124f02c8aa57167a4ecb33861eee0340ee2a0584b9927d2f674a2b047"
+      },
+      {
+        "path": "app/src/lib/performance-diagnostic.ts",
+        "sha256": "e1dc3c40a9452765f9cf7207744468a2ae61b7acabad982a70d71a8a0da6e864"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/scripts/lib/diagnostic-db-lock-sampler.mjs",
+        "sha256": "70a6888a083291f90664e87bee5745295bdd2cf184058af7c8344d2b64e40387"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-post-response-commit-ownership-ab-a.mjs",
+        "sha256": "ae1f95fab8af66570018d37ea5fca37a1e0266fba36b99e609a9a4612b76b52a"
+      },
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "sha256": "8439d39efe8ec51f61a8d365bb1808d669bd730dafc5a6febbb336503f2b050f"
+      }
+    ]
+  },
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+    "checkpointSchemaVersion": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "journeyId": "J1",
+    "repetitionsPerVariant": 3,
+    "secondActionDelayMs": 2000,
+    "variants": [
+      {
+        "id": "A1",
+        "policy": "legacy"
+      },
+      {
+        "id": "B",
+        "policy": "stable"
+      },
+      {
+        "id": "A2",
+        "policy": "legacy"
+      }
+    ],
+    "countedAsOfficialSample": false
+  },
+  "runReferences": {
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b",
+    "variantBuilds": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "status": "PASS",
+        "reason": null,
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "status": "PASS",
+        "reason": null,
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "status": "PASS",
+        "reason": null,
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true
+      }
+    ],
+    "checkpoint": {
+      "status": "COMPLETE",
+      "eventCount": 37,
+      "hashChainRead": true
+    }
+  },
+  "selectedJ1DiagnosticMetrics": {
+    "A1": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 1,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        },
+        "trustedToReadyMs": 527,
+        "dispatchToReadyMs": 616,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 1986,
+        "dashboardShellCommits": 1985,
+        "authenticatedShellCommits": 1986,
+        "aiyaStateProviderCommits": 17,
+        "dashboardContentCommits": 17,
+        "totalReactCommitEvents": 5991,
+        "phase52EventCount": 6024,
+        "contextCommitEvents": 10,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 2,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        },
+        "trustedToReadyMs": 607,
+        "dispatchToReadyMs": 707,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 1851,
+        "dashboardShellCommits": 1850,
+        "authenticatedShellCommits": 1851,
+        "aiyaStateProviderCommits": 18,
+        "dashboardContentCommits": 18,
+        "totalReactCommitEvents": 5588,
+        "phase52EventCount": 5621,
+        "contextCommitEvents": 10,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 3,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        },
+        "trustedToReadyMs": 538,
+        "dispatchToReadyMs": 627,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 1960,
+        "dashboardShellCommits": 1959,
+        "authenticatedShellCommits": 1960,
+        "aiyaStateProviderCommits": 18,
+        "dashboardContentCommits": 18,
+        "totalReactCommitEvents": 5915,
+        "phase52EventCount": 5948,
+        "contextCommitEvents": 10,
+        "policyMarker": "legacy"
+      }
+    ],
+    "B": [
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 1,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        },
+        "trustedToReadyMs": 966,
+        "dispatchToReadyMs": 1006,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 35,
+        "dashboardShellCommits": 34,
+        "authenticatedShellCommits": 35,
+        "aiyaStateProviderCommits": 26,
+        "dashboardContentCommits": 26,
+        "totalReactCommitEvents": 156,
+        "phase52EventCount": 195,
+        "contextCommitEvents": 11,
+        "policyMarker": "stable"
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 2,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        },
+        "trustedToReadyMs": 931,
+        "dispatchToReadyMs": 960,
+        "requestCount": 56,
+        "apiRequestCount": 27,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 35,
+        "dashboardShellCommits": 34,
+        "authenticatedShellCommits": 35,
+        "aiyaStateProviderCommits": 28,
+        "dashboardContentCommits": 28,
+        "totalReactCommitEvents": 160,
+        "phase52EventCount": 201,
+        "contextCommitEvents": 12,
+        "policyMarker": "stable"
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 3,
+        "validSample": false,
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "failureBoundary": {
+          "phase": "required_read",
+          "actionId": "first",
+          "reason": "required_read_incomplete_or_non_2xx",
+          "pattern": "/api/clients/:clientId/forms"
+        },
+        "trustedToReadyMs": 915,
+        "dispatchToReadyMs": 955,
+        "requestCount": 60,
+        "apiRequestCount": 31,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 40,
+        "dashboardShellCommits": 39,
+        "authenticatedShellCommits": 40,
+        "aiyaStateProviderCommits": 32,
+        "dashboardContentCommits": 32,
+        "totalReactCommitEvents": 183,
+        "phase52EventCount": 228,
+        "contextCommitEvents": 12,
+        "policyMarker": "stable"
+      }
+    ],
+    "A2": [
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 1,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        },
+        "trustedToReadyMs": 1048,
+        "dispatchToReadyMs": 1149,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 2020,
+        "dashboardShellCommits": 2019,
+        "authenticatedShellCommits": 2020,
+        "aiyaStateProviderCommits": 17,
+        "dashboardContentCommits": 17,
+        "totalReactCommitEvents": 6093,
+        "phase52EventCount": 6126,
+        "contextCommitEvents": 10,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 2,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        },
+        "trustedToReadyMs": 522,
+        "dispatchToReadyMs": 617,
+        "requestCount": 56,
+        "apiRequestCount": 27,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 2908,
+        "dashboardShellCommits": 2907,
+        "authenticatedShellCommits": 2908,
+        "aiyaStateProviderCommits": 23,
+        "dashboardContentCommits": 23,
+        "totalReactCommitEvents": 8769,
+        "phase52EventCount": 8806,
+        "contextCommitEvents": 10,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 3,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null
+        },
+        "trustedToReadyMs": 1047,
+        "dispatchToReadyMs": 1145,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "rscRequestCount": 26,
+        "shellProviderCommits": 1922,
+        "dashboardShellCommits": 1921,
+        "authenticatedShellCommits": 1922,
+        "aiyaStateProviderCommits": 18,
+        "dashboardContentCommits": 18,
+        "totalReactCommitEvents": 5801,
+        "phase52EventCount": 5836,
+        "contextCommitEvents": 11,
+        "policyMarker": "legacy"
+      }
+    ]
+  },
+  "measuredEffect": {
+    "validity": {
+      "A1": {
+        "attempted": "3/3",
+        "validSuccessful": "3/3",
+        "observationValid": "3/3"
+      },
+      "B": {
+        "attempted": "3/3",
+        "validSuccessful": "2/3",
+        "observationValid": "3/3"
+      },
+      "A2": {
+        "attempted": "3/3",
+        "validSuccessful": "3/3",
+        "observationValid": "3/3"
+      }
+    },
+    "rows": {
+      "A1": [
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 1,
+          "validSample": true,
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "trustedToReadyMs": 527,
+          "dispatchToReadyMs": 616,
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 1986,
+          "dashboardShellCommits": 1985,
+          "authenticatedShellCommits": 1986,
+          "aiyaStateProviderCommits": 17,
+          "dashboardContentCommits": 17,
+          "totalReactCommitEvents": 5991,
+          "phase52EventCount": 6024,
+          "contextCommitEvents": 10,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 2,
+          "validSample": true,
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "trustedToReadyMs": 607,
+          "dispatchToReadyMs": 707,
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 1851,
+          "dashboardShellCommits": 1850,
+          "authenticatedShellCommits": 1851,
+          "aiyaStateProviderCommits": 18,
+          "dashboardContentCommits": 18,
+          "totalReactCommitEvents": 5588,
+          "phase52EventCount": 5621,
+          "contextCommitEvents": 10,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 3,
+          "validSample": true,
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "trustedToReadyMs": 538,
+          "dispatchToReadyMs": 627,
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 1960,
+          "dashboardShellCommits": 1959,
+          "authenticatedShellCommits": 1960,
+          "aiyaStateProviderCommits": 18,
+          "dashboardContentCommits": 18,
+          "totalReactCommitEvents": 5915,
+          "phase52EventCount": 5948,
+          "contextCommitEvents": 10,
+          "policyMarker": "legacy"
+        }
+      ],
+      "B": [
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 1,
+          "validSample": true,
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "trustedToReadyMs": 966,
+          "dispatchToReadyMs": 1006,
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 35,
+          "dashboardShellCommits": 34,
+          "authenticatedShellCommits": 35,
+          "aiyaStateProviderCommits": 26,
+          "dashboardContentCommits": 26,
+          "totalReactCommitEvents": 156,
+          "phase52EventCount": 195,
+          "contextCommitEvents": 11,
+          "policyMarker": "stable"
+        },
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 2,
+          "validSample": true,
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "trustedToReadyMs": 931,
+          "dispatchToReadyMs": 960,
+          "requestCount": 56,
+          "apiRequestCount": 27,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 35,
+          "dashboardShellCommits": 34,
+          "authenticatedShellCommits": 35,
+          "aiyaStateProviderCommits": 28,
+          "dashboardContentCommits": 28,
+          "totalReactCommitEvents": 160,
+          "phase52EventCount": 201,
+          "contextCommitEvents": 12,
+          "policyMarker": "stable"
+        },
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 3,
+          "validSample": false,
+          "observationValidity": "VALID",
+          "functionalOutcome": "FAILURE",
+          "failureBoundary": {
+            "phase": "required_read",
+            "actionId": "first",
+            "reason": "required_read_incomplete_or_non_2xx",
+            "pattern": "/api/clients/:clientId/forms"
+          },
+          "trustedToReadyMs": 915,
+          "dispatchToReadyMs": 955,
+          "requestCount": 60,
+          "apiRequestCount": 31,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 40,
+          "dashboardShellCommits": 39,
+          "authenticatedShellCommits": 40,
+          "aiyaStateProviderCommits": 32,
+          "dashboardContentCommits": 32,
+          "totalReactCommitEvents": 183,
+          "phase52EventCount": 228,
+          "contextCommitEvents": 12,
+          "policyMarker": "stable"
+        }
+      ],
+      "A2": [
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 1,
+          "validSample": true,
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "trustedToReadyMs": 1048,
+          "dispatchToReadyMs": 1149,
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 2020,
+          "dashboardShellCommits": 2019,
+          "authenticatedShellCommits": 2020,
+          "aiyaStateProviderCommits": 17,
+          "dashboardContentCommits": 17,
+          "totalReactCommitEvents": 6093,
+          "phase52EventCount": 6126,
+          "contextCommitEvents": 10,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 2,
+          "validSample": true,
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "trustedToReadyMs": 522,
+          "dispatchToReadyMs": 617,
+          "requestCount": 56,
+          "apiRequestCount": 27,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 2908,
+          "dashboardShellCommits": 2907,
+          "authenticatedShellCommits": 2908,
+          "aiyaStateProviderCommits": 23,
+          "dashboardContentCommits": 23,
+          "totalReactCommitEvents": 8769,
+          "phase52EventCount": 8806,
+          "contextCommitEvents": 10,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 3,
+          "validSample": true,
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "trustedToReadyMs": 1047,
+          "dispatchToReadyMs": 1145,
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "shellProviderCommits": 1922,
+          "dashboardShellCommits": 1921,
+          "authenticatedShellCommits": 1922,
+          "aiyaStateProviderCommits": 18,
+          "dashboardContentCommits": 18,
+          "totalReactCommitEvents": 5801,
+          "phase52EventCount": 5836,
+          "contextCommitEvents": 11,
+          "policyMarker": "legacy"
+        }
+      ]
+    },
+    "commitOwnership": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "a1": 1986,
+          "b": 35,
+          "a2": 2020,
+          "allValid": true,
+          "bLowerThanBoth": true
+        },
+        {
+          "repetition": 2,
+          "a1": 1851,
+          "b": 35,
+          "a2": 2908,
+          "allValid": true,
+          "bLowerThanBoth": true
+        },
+        {
+          "repetition": 3,
+          "a1": 1960,
+          "b": 40,
+          "a2": 1922,
+          "allValid": false,
+          "bLowerThanBoth": true
+        }
+      ],
+      "repeatableReductionAcrossFullyValidRows": false,
+      "reductionRowCount": 2
+    },
+    "speed": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "a1": 527,
+          "b": 966,
+          "a2": 1048,
+          "allValid": true,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 2,
+          "a1": 607,
+          "b": 931,
+          "a2": 522,
+          "allValid": true,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 3,
+          "a1": 538,
+          "b": 915,
+          "a2": 1047,
+          "allValid": false,
+          "bLowerThanBoth": false
+        }
+      ],
+      "repeatableImprovementAcrossFullyValidRows": false,
+      "improvementRowCount": 0
+    },
+    "requestFanout": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "a1": 53,
+          "b": 53,
+          "a2": 53,
+          "allValid": true,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 2,
+          "a1": 53,
+          "b": 56,
+          "a2": 56,
+          "allValid": true,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 3,
+          "a1": 53,
+          "b": 60,
+          "a2": 53,
+          "allValid": false,
+          "bLowerThanBoth": false
+        }
+      ],
+      "invariantAcrossFullyValidRows": false,
+      "invariantRowCount": 1
+    },
+    "selectedJ1DiagnosticValidAndSuccessful": {
+      "A1": "3/3",
+      "B": "2/3",
+      "A2": "3/3"
+    },
+    "dbSampler": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 161,
+        "commandAttempts": {
+          "psql": 161,
+          "docker": 161
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 161
+        },
+        "intervalMs": 50,
+        "sampleCount": 161,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxLockWaitCount": 0,
+        "maxBlockedActivityCount": 0,
+        "maxBlockerCount": 0,
+        "queryDurationMs": {
+          "min": 296,
+          "max": 1217
+        },
+        "samples": [
+          {
+            "atMs": 1790017049664,
+            "queryDurationMs": 300,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017050050,
+            "queryDurationMs": 324,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017050626,
+            "queryDurationMs": 534,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017051130,
+            "queryDurationMs": 444,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017051538,
+            "queryDurationMs": 372,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017051871,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017052251,
+            "queryDurationMs": 320,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017052703,
+            "queryDurationMs": 416,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017053102,
+            "queryDurationMs": 342,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017053548,
+            "queryDurationMs": 400,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017054185,
+            "queryDurationMs": 637,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017054742,
+            "queryDurationMs": 510,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017055297,
+            "queryDurationMs": 529,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017056052,
+            "queryDurationMs": 737,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017056811,
+            "queryDurationMs": 736,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017057341,
+            "queryDurationMs": 515,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017058027,
+            "queryDurationMs": 639,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017058396,
+            "queryDurationMs": 317,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017058745,
+            "queryDurationMs": 332,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017059101,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017059426,
+            "queryDurationMs": 312,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017060029,
+            "queryDurationMs": 576,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017060646,
+            "queryDurationMs": 597,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017061193,
+            "queryDurationMs": 495,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017061825,
+            "queryDurationMs": 575,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017062162,
+            "queryDurationMs": 312,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017062559,
+            "queryDurationMs": 360,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017062908,
+            "queryDurationMs": 327,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017063262,
+            "queryDurationMs": 331,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017063593,
+            "queryDurationMs": 325,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017063942,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017064313,
+            "queryDurationMs": 329,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017064682,
+            "queryDurationMs": 332,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017065068,
+            "queryDurationMs": 351,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017065461,
+            "queryDurationMs": 330,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017065878,
+            "queryDurationMs": 379,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017066247,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017066605,
+            "queryDurationMs": 306,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017066918,
+            "queryDurationMs": 302,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017067299,
+            "queryDurationMs": 333,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017067625,
+            "queryDurationMs": 309,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017067972,
+            "queryDurationMs": 306,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017068414,
+            "queryDurationMs": 415,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017068800,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017069152,
+            "queryDurationMs": 316,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017069495,
+            "queryDurationMs": 312,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017069822,
+            "queryDurationMs": 305,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017070436,
+            "queryDurationMs": 603,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017070869,
+            "queryDurationMs": 418,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017071215,
+            "queryDurationMs": 329,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017071571,
+            "queryDurationMs": 336,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017071969,
+            "queryDurationMs": 351,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017072315,
+            "queryDurationMs": 314,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017072719,
+            "queryDurationMs": 384,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017073052,
+            "queryDurationMs": 333,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017073370,
+            "queryDurationMs": 318,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017073742,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017074079,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017074446,
+            "queryDurationMs": 345,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017074851,
+            "queryDurationMs": 349,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017076119,
+            "queryDurationMs": 1217,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017076472,
+            "queryDurationMs": 353,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017076812,
+            "queryDurationMs": 329,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017077206,
+            "queryDurationMs": 345,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017077651,
+            "queryDurationMs": 425,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017078185,
+            "queryDurationMs": 513,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017078730,
+            "queryDurationMs": 534,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017079381,
+            "queryDurationMs": 628,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017080049,
+            "queryDurationMs": 626,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017080880,
+            "queryDurationMs": 831,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017081538,
+            "queryDurationMs": 612,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017082674,
+            "queryDurationMs": 1088,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017083113,
+            "queryDurationMs": 390,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017083692,
+            "queryDurationMs": 579,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017084221,
+            "queryDurationMs": 523,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017084769,
+            "queryDurationMs": 497,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017085283,
+            "queryDurationMs": 477,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017085727,
+            "queryDurationMs": 403,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017086409,
+            "queryDurationMs": 633,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017086852,
+            "queryDurationMs": 396,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017087430,
+            "queryDurationMs": 571,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017088579,
+            "queryDurationMs": 1086,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017089437,
+            "queryDurationMs": 812,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017090383,
+            "queryDurationMs": 893,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017091190,
+            "queryDurationMs": 769,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017091778,
+            "queryDurationMs": 548,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017092190,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017092684,
+            "queryDurationMs": 443,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017093108,
+            "queryDurationMs": 383,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017093459,
+            "queryDurationMs": 317,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017093787,
+            "queryDurationMs": 327,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017094112,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017094472,
+            "queryDurationMs": 328,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017094831,
+            "queryDurationMs": 322,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017095180,
+            "queryDurationMs": 336,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017095525,
+            "queryDurationMs": 331,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017095896,
+            "queryDurationMs": 350,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017096250,
+            "queryDurationMs": 353,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017096574,
+            "queryDurationMs": 296,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017096931,
+            "queryDurationMs": 304,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017097316,
+            "queryDurationMs": 356,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017097680,
+            "queryDurationMs": 336,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017098048,
+            "queryDurationMs": 319,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017098465,
+            "queryDurationMs": 386,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017098819,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017099181,
+            "queryDurationMs": 335,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017100053,
+            "queryDurationMs": 857,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017100675,
+            "queryDurationMs": 622,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017101066,
+            "queryDurationMs": 371,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017101521,
+            "queryDurationMs": 414,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017102036,
+            "queryDurationMs": 469,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017102827,
+            "queryDurationMs": 760,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017103469,
+            "queryDurationMs": 611,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017104080,
+            "queryDurationMs": 600,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017104654,
+            "queryDurationMs": 557,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017105588,
+            "queryDurationMs": 887,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017106492,
+            "queryDurationMs": 890,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017107001,
+            "queryDurationMs": 500,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017107440,
+            "queryDurationMs": 392,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017107958,
+            "queryDurationMs": 460,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017108592,
+            "queryDurationMs": 574,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017109016,
+            "queryDurationMs": 400,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017109405,
+            "queryDurationMs": 389,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017109770,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017110209,
+            "queryDurationMs": 409,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017110844,
+            "queryDurationMs": 594,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017111259,
+            "queryDurationMs": 360,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017111626,
+            "queryDurationMs": 342,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017111983,
+            "queryDurationMs": 302,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017112328,
+            "queryDurationMs": 326,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017112725,
+            "queryDurationMs": 375,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017113089,
+            "queryDurationMs": 355,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017113497,
+            "queryDurationMs": 362,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017113862,
+            "queryDurationMs": 343,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017114255,
+            "queryDurationMs": 337,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017114654,
+            "queryDurationMs": 350,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017115101,
+            "queryDurationMs": 397,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017115427,
+            "queryDurationMs": 326,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017115816,
+            "queryDurationMs": 347,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017116300,
+            "queryDurationMs": 448,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017116689,
+            "queryDurationMs": 337,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017117087,
+            "queryDurationMs": 336,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017117449,
+            "queryDurationMs": 317,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017117785,
+            "queryDurationMs": 316,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017118107,
+            "queryDurationMs": 304,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017118468,
+            "queryDurationMs": 349,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017118841,
+            "queryDurationMs": 321,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017119177,
+            "queryDurationMs": 323,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017119550,
+            "queryDurationMs": 346,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017119911,
+            "queryDurationMs": 323,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017120379,
+            "queryDurationMs": 410,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017120837,
+            "queryDurationMs": 400,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017121235,
+            "queryDurationMs": 348,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017121609,
+            "queryDurationMs": 374,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017122044,
+            "queryDurationMs": 435,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017122502,
+            "queryDurationMs": 430,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017122925,
+            "queryDurationMs": 387,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017123333,
+            "queryDurationMs": 408,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017123743,
+            "queryDurationMs": 404,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017124542,
+            "queryDurationMs": 799,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017124847,
+            "queryDurationMs": 305,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 233,
+        "commandAttempts": {
+          "psql": 233,
+          "docker": 233
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 233
+        },
+        "intervalMs": 50,
+        "sampleCount": 233,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxLockWaitCount": 0,
+        "maxBlockedActivityCount": 0,
+        "maxBlockerCount": 0,
+        "queryDurationMs": {
+          "min": 252,
+          "max": 1116
+        },
+        "samples": [
+          {
+            "atMs": 1790017236584,
+            "queryDurationMs": 456,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017237130,
+            "queryDurationMs": 487,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017237534,
+            "queryDurationMs": 404,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017238104,
+            "queryDurationMs": 520,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017238550,
+            "queryDurationMs": 410,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017238968,
+            "queryDurationMs": 361,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017239419,
+            "queryDurationMs": 396,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017239808,
+            "queryDurationMs": 365,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017240346,
+            "queryDurationMs": 511,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017240999,
+            "queryDurationMs": 602,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017241628,
+            "queryDurationMs": 597,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017242055,
+            "queryDurationMs": 418,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017242873,
+            "queryDurationMs": 793,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017243542,
+            "queryDurationMs": 626,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017244117,
+            "queryDurationMs": 546,
+            "activeCount": 4,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017244665,
+            "queryDurationMs": 524,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017245082,
+            "queryDurationMs": 384,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017245456,
+            "queryDurationMs": 356,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017245821,
+            "queryDurationMs": 321,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017246241,
+            "queryDurationMs": 404,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017246944,
+            "queryDurationMs": 671,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017247360,
+            "queryDurationMs": 393,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017247724,
+            "queryDurationMs": 339,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017248108,
+            "queryDurationMs": 321,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017248496,
+            "queryDurationMs": 365,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017248834,
+            "queryDurationMs": 316,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017249154,
+            "queryDurationMs": 317,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017249485,
+            "queryDurationMs": 317,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017249813,
+            "queryDurationMs": 295,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017250182,
+            "queryDurationMs": 345,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017250616,
+            "queryDurationMs": 399,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017250984,
+            "queryDurationMs": 315,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017251342,
+            "queryDurationMs": 323,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017251673,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017251989,
+            "queryDurationMs": 285,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017252314,
+            "queryDurationMs": 278,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017252635,
+            "queryDurationMs": 316,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017252971,
+            "queryDurationMs": 317,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017253284,
+            "queryDurationMs": 297,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017253608,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017253942,
+            "queryDurationMs": 288,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017254252,
+            "queryDurationMs": 264,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017254557,
+            "queryDurationMs": 287,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017254883,
+            "queryDurationMs": 295,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017255186,
+            "queryDurationMs": 266,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017255493,
+            "queryDurationMs": 288,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017255825,
+            "queryDurationMs": 285,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017256178,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017256491,
+            "queryDurationMs": 300,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017256805,
+            "queryDurationMs": 267,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017257098,
+            "queryDurationMs": 292,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017257462,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017257781,
+            "queryDurationMs": 309,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017258087,
+            "queryDurationMs": 282,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017258356,
+            "queryDurationMs": 269,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017258658,
+            "queryDurationMs": 252,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017258939,
+            "queryDurationMs": 266,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017259224,
+            "queryDurationMs": 268,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017259508,
+            "queryDurationMs": 268,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017259782,
+            "queryDurationMs": 258,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017260068,
+            "queryDurationMs": 279,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017260490,
+            "queryDurationMs": 367,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017260822,
+            "queryDurationMs": 313,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017261113,
+            "queryDurationMs": 272,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017261418,
+            "queryDurationMs": 294,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017261749,
+            "queryDurationMs": 276,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017262069,
+            "queryDurationMs": 263,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017262512,
+            "queryDurationMs": 389,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017262893,
+            "queryDurationMs": 365,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017263257,
+            "queryDurationMs": 347,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017263608,
+            "queryDurationMs": 338,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017264034,
+            "queryDurationMs": 394,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017264746,
+            "queryDurationMs": 675,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017265229,
+            "queryDurationMs": 435,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017265750,
+            "queryDurationMs": 500,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017266886,
+            "queryDurationMs": 1116,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017267508,
+            "queryDurationMs": 572,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017268133,
+            "queryDurationMs": 619,
+            "activeCount": 5,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017268772,
+            "queryDurationMs": 596,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017269156,
+            "queryDurationMs": 378,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017269449,
+            "queryDurationMs": 288,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017269808,
+            "queryDurationMs": 314,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017270381,
+            "queryDurationMs": 552,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017270920,
+            "queryDurationMs": 539,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017271231,
+            "queryDurationMs": 291,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017271572,
+            "queryDurationMs": 296,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017271907,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017272236,
+            "queryDurationMs": 292,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017272564,
+            "queryDurationMs": 286,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017272933,
+            "queryDurationMs": 306,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017273260,
+            "queryDurationMs": 298,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017273569,
+            "queryDurationMs": 274,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017273912,
+            "queryDurationMs": 318,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017274194,
+            "queryDurationMs": 266,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017274474,
+            "queryDurationMs": 278,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017274804,
+            "queryDurationMs": 291,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017275184,
+            "queryDurationMs": 322,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017275492,
+            "queryDurationMs": 297,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017275803,
+            "queryDurationMs": 274,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017276171,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017276448,
+            "queryDurationMs": 268,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017276709,
+            "queryDurationMs": 261,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017276993,
+            "queryDurationMs": 264,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017277289,
+            "queryDurationMs": 278,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017277634,
+            "queryDurationMs": 288,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017277966,
+            "queryDurationMs": 285,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017278319,
+            "queryDurationMs": 308,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017278652,
+            "queryDurationMs": 321,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017279133,
+            "queryDurationMs": 470,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017279431,
+            "queryDurationMs": 298,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017279746,
+            "queryDurationMs": 266,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017280037,
+            "queryDurationMs": 272,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017280431,
+            "queryDurationMs": 334,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017280773,
+            "queryDurationMs": 339,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017281062,
+            "queryDurationMs": 279,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017281418,
+            "queryDurationMs": 302,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017281722,
+            "queryDurationMs": 274,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017281999,
+            "queryDurationMs": 267,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017282359,
+            "queryDurationMs": 344,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017282698,
+            "queryDurationMs": 298,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017283006,
+            "queryDurationMs": 290,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017283320,
+            "queryDurationMs": 272,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017283643,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017283988,
+            "queryDurationMs": 306,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017284293,
+            "queryDurationMs": 278,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017284564,
+            "queryDurationMs": 264,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017284830,
+            "queryDurationMs": 262,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017285120,
+            "queryDurationMs": 270,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017285474,
+            "queryDurationMs": 292,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017285826,
+            "queryDurationMs": 294,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017286293,
+            "queryDurationMs": 423,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017286676,
+            "queryDurationMs": 338,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017287065,
+            "queryDurationMs": 363,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017287537,
+            "queryDurationMs": 417,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017288007,
+            "queryDurationMs": 448,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017288773,
+            "queryDurationMs": 733,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017289260,
+            "queryDurationMs": 475,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017289732,
+            "queryDurationMs": 464,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017290698,
+            "queryDurationMs": 918,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017291475,
+            "queryDurationMs": 770,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017292065,
+            "queryDurationMs": 567,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017292653,
+            "queryDurationMs": 545,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017293033,
+            "queryDurationMs": 362,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017293493,
+            "queryDurationMs": 407,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017293998,
+            "queryDurationMs": 452,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017294316,
+            "queryDurationMs": 296,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017294621,
+            "queryDurationMs": 268,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017294935,
+            "queryDurationMs": 281,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017295209,
+            "queryDurationMs": 272,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017295591,
+            "queryDurationMs": 335,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017295961,
+            "queryDurationMs": 342,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017296303,
+            "queryDurationMs": 301,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017296601,
+            "queryDurationMs": 280,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017296890,
+            "queryDurationMs": 286,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017297260,
+            "queryDurationMs": 322,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017297569,
+            "queryDurationMs": 282,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017297896,
+            "queryDurationMs": 291,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017298229,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017298543,
+            "queryDurationMs": 287,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017298882,
+            "queryDurationMs": 309,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017299261,
+            "queryDurationMs": 339,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017299666,
+            "queryDurationMs": 361,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017300034,
+            "queryDurationMs": 329,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017300560,
+            "queryDurationMs": 519,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017301015,
+            "queryDurationMs": 409,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017301434,
+            "queryDurationMs": 363,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017301804,
+            "queryDurationMs": 333,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017302143,
+            "queryDurationMs": 298,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017302457,
+            "queryDurationMs": 286,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017302878,
+            "queryDurationMs": 373,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017303271,
+            "queryDurationMs": 331,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017303610,
+            "queryDurationMs": 321,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017304027,
+            "queryDurationMs": 355,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017304439,
+            "queryDurationMs": 381,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017304800,
+            "queryDurationMs": 358,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017305197,
+            "queryDurationMs": 370,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017305682,
+            "queryDurationMs": 457,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017306388,
+            "queryDurationMs": 658,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017306835,
+            "queryDurationMs": 396,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017307205,
+            "queryDurationMs": 346,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017307618,
+            "queryDurationMs": 360,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017308041,
+            "queryDurationMs": 383,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017308351,
+            "queryDurationMs": 292,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017308753,
+            "queryDurationMs": 374,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017309150,
+            "queryDurationMs": 358,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017309475,
+            "queryDurationMs": 299,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017309774,
+            "queryDurationMs": 281,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017310147,
+            "queryDurationMs": 336,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017310614,
+            "queryDurationMs": 440,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017310933,
+            "queryDurationMs": 291,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017311254,
+            "queryDurationMs": 277,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017311595,
+            "queryDurationMs": 285,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017311906,
+            "queryDurationMs": 262,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017312187,
+            "queryDurationMs": 261,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017312464,
+            "queryDurationMs": 253,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017312796,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017313114,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017313399,
+            "queryDurationMs": 254,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017313697,
+            "queryDurationMs": 285,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017313972,
+            "queryDurationMs": 275,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017314284,
+            "queryDurationMs": 256,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017314596,
+            "queryDurationMs": 284,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017314931,
+            "queryDurationMs": 301,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017315264,
+            "queryDurationMs": 286,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017315580,
+            "queryDurationMs": 284,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017315903,
+            "queryDurationMs": 275,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017316262,
+            "queryDurationMs": 349,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017316579,
+            "queryDurationMs": 267,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017316852,
+            "queryDurationMs": 272,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017317138,
+            "queryDurationMs": 275,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017317442,
+            "queryDurationMs": 280,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017317710,
+            "queryDurationMs": 264,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017317989,
+            "queryDurationMs": 260,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017318285,
+            "queryDurationMs": 288,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017318585,
+            "queryDurationMs": 256,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017318852,
+            "queryDurationMs": 255,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017319172,
+            "queryDurationMs": 292,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017319526,
+            "queryDurationMs": 296,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017319893,
+            "queryDurationMs": 329,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017320273,
+            "queryDurationMs": 376,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017320668,
+            "queryDurationMs": 373,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017320993,
+            "queryDurationMs": 298,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017321319,
+            "queryDurationMs": 272,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017321634,
+            "queryDurationMs": 270,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017321952,
+            "queryDurationMs": 270,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017322250,
+            "queryDurationMs": 286,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017322600,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017322903,
+            "queryDurationMs": 286,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017323184,
+            "queryDurationMs": 281,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017323547,
+            "queryDurationMs": 313,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017323848,
+            "queryDurationMs": 266,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017324138,
+            "queryDurationMs": 272,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017324432,
+            "queryDurationMs": 283,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 207,
+        "commandAttempts": {
+          "psql": 207,
+          "docker": 207
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 207
+        },
+        "intervalMs": 50,
+        "sampleCount": 207,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxLockWaitCount": 0,
+        "maxBlockedActivityCount": 0,
+        "maxBlockerCount": 0,
+        "queryDurationMs": {
+          "min": 291,
+          "max": 1721
+        },
+        "samples": [
+          {
+            "atMs": 1790017434500,
+            "queryDurationMs": 380,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017435055,
+            "queryDurationMs": 503,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017435717,
+            "queryDurationMs": 662,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017436258,
+            "queryDurationMs": 491,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017436643,
+            "queryDurationMs": 339,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017436977,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017437357,
+            "queryDurationMs": 329,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017437716,
+            "queryDurationMs": 333,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017438139,
+            "queryDurationMs": 380,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017438674,
+            "queryDurationMs": 513,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017439179,
+            "queryDurationMs": 505,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017439640,
+            "queryDurationMs": 416,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017440554,
+            "queryDurationMs": 870,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017441307,
+            "queryDurationMs": 743,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017441841,
+            "queryDurationMs": 522,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017442332,
+            "queryDurationMs": 461,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017442707,
+            "queryDurationMs": 331,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017443077,
+            "queryDurationMs": 318,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017443495,
+            "queryDurationMs": 417,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017443916,
+            "queryDurationMs": 373,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017444541,
+            "queryDurationMs": 616,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017444913,
+            "queryDurationMs": 320,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017445298,
+            "queryDurationMs": 338,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017445645,
+            "queryDurationMs": 347,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017446044,
+            "queryDurationMs": 399,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017446471,
+            "queryDurationMs": 410,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017446840,
+            "queryDurationMs": 328,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017447161,
+            "queryDurationMs": 315,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017447550,
+            "queryDurationMs": 372,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017447949,
+            "queryDurationMs": 387,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017448583,
+            "queryDurationMs": 574,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017449173,
+            "queryDurationMs": 560,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017449554,
+            "queryDurationMs": 357,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017449961,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017450415,
+            "queryDurationMs": 417,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017450934,
+            "queryDurationMs": 473,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017451278,
+            "queryDurationMs": 299,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017451656,
+            "queryDurationMs": 360,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017452067,
+            "queryDurationMs": 371,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017452419,
+            "queryDurationMs": 324,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017452774,
+            "queryDurationMs": 344,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017453278,
+            "queryDurationMs": 447,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017453689,
+            "queryDurationMs": 359,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017454058,
+            "queryDurationMs": 343,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017454461,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017454824,
+            "queryDurationMs": 343,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017455194,
+            "queryDurationMs": 313,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017455524,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017455919,
+            "queryDurationMs": 371,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017456307,
+            "queryDurationMs": 388,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017456684,
+            "queryDurationMs": 370,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017457073,
+            "queryDurationMs": 342,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017457463,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017457905,
+            "queryDurationMs": 404,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017458290,
+            "queryDurationMs": 325,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017458683,
+            "queryDurationMs": 351,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017459031,
+            "queryDurationMs": 316,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017459361,
+            "queryDurationMs": 295,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017459720,
+            "queryDurationMs": 321,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017460697,
+            "queryDurationMs": 947,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017461493,
+            "queryDurationMs": 342,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017461862,
+            "queryDurationMs": 329,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017462283,
+            "queryDurationMs": 367,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017462820,
+            "queryDurationMs": 494,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017463674,
+            "queryDurationMs": 804,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017464255,
+            "queryDurationMs": 535,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017464812,
+            "queryDurationMs": 511,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017465542,
+            "queryDurationMs": 729,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017466257,
+            "queryDurationMs": 679,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017467168,
+            "queryDurationMs": 859,
+            "activeCount": 4,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017467532,
+            "queryDurationMs": 327,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017467856,
+            "queryDurationMs": 320,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017468174,
+            "queryDurationMs": 304,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017468496,
+            "queryDurationMs": 308,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017469065,
+            "queryDurationMs": 530,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017469434,
+            "queryDurationMs": 352,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017469795,
+            "queryDurationMs": 324,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017470149,
+            "queryDurationMs": 328,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017470630,
+            "queryDurationMs": 460,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017471126,
+            "queryDurationMs": 453,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017471483,
+            "queryDurationMs": 346,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017471835,
+            "queryDurationMs": 300,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017472191,
+            "queryDurationMs": 319,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017472630,
+            "queryDurationMs": 425,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017473022,
+            "queryDurationMs": 334,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017473373,
+            "queryDurationMs": 351,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017473735,
+            "queryDurationMs": 331,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017474111,
+            "queryDurationMs": 323,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017474521,
+            "queryDurationMs": 383,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017474998,
+            "queryDurationMs": 459,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017475405,
+            "queryDurationMs": 382,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017475786,
+            "queryDurationMs": 330,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017476198,
+            "queryDurationMs": 389,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017476532,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017476831,
+            "queryDurationMs": 291,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017477166,
+            "queryDurationMs": 308,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017477513,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017477887,
+            "queryDurationMs": 331,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017478210,
+            "queryDurationMs": 303,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017478570,
+            "queryDurationMs": 315,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017478916,
+            "queryDurationMs": 309,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017479251,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017479590,
+            "queryDurationMs": 316,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017480021,
+            "queryDurationMs": 398,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017480484,
+            "queryDurationMs": 410,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017481014,
+            "queryDurationMs": 507,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017481403,
+            "queryDurationMs": 345,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017481805,
+            "queryDurationMs": 347,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017482160,
+            "queryDurationMs": 319,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017482486,
+            "queryDurationMs": 311,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017482862,
+            "queryDurationMs": 354,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017483231,
+            "queryDurationMs": 339,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017483585,
+            "queryDurationMs": 310,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017483922,
+            "queryDurationMs": 327,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017484342,
+            "queryDurationMs": 382,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017484711,
+            "queryDurationMs": 336,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017485106,
+            "queryDurationMs": 345,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017485459,
+            "queryDurationMs": 315,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017485783,
+            "queryDurationMs": 307,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017486182,
+            "queryDurationMs": 390,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017486566,
+            "queryDurationMs": 341,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017486929,
+            "queryDurationMs": 302,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017487282,
+            "queryDurationMs": 321,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017487614,
+            "queryDurationMs": 319,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017488071,
+            "queryDurationMs": 411,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017488649,
+            "queryDurationMs": 538,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017489071,
+            "queryDurationMs": 378,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017489536,
+            "queryDurationMs": 408,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017490050,
+            "queryDurationMs": 455,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017490645,
+            "queryDurationMs": 584,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017491283,
+            "queryDurationMs": 588,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017491757,
+            "queryDurationMs": 426,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017492156,
+            "queryDurationMs": 361,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017492482,
+            "queryDurationMs": 302,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017492901,
+            "queryDurationMs": 372,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017493263,
+            "queryDurationMs": 361,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017493630,
+            "queryDurationMs": 318,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017493973,
+            "queryDurationMs": 327,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017494352,
+            "queryDurationMs": 359,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017494794,
+            "queryDurationMs": 415,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017495176,
+            "queryDurationMs": 359,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017495587,
+            "queryDurationMs": 373,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017495917,
+            "queryDurationMs": 320,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017496446,
+            "queryDurationMs": 529,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017496817,
+            "queryDurationMs": 337,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017497162,
+            "queryDurationMs": 313,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017497590,
+            "queryDurationMs": 410,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017497941,
+            "queryDurationMs": 323,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017498271,
+            "queryDurationMs": 323,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017498722,
+            "queryDurationMs": 441,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017499096,
+            "queryDurationMs": 365,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017499487,
+            "queryDurationMs": 356,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017501252,
+            "queryDurationMs": 1721,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017501729,
+            "queryDurationMs": 476,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017502141,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017502538,
+            "queryDurationMs": 357,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017503157,
+            "queryDurationMs": 575,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017503893,
+            "queryDurationMs": 704,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017504574,
+            "queryDurationMs": 636,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017505037,
+            "queryDurationMs": 461,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017506007,
+            "queryDurationMs": 933,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017506855,
+            "queryDurationMs": 813,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017507404,
+            "queryDurationMs": 503,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017507915,
+            "queryDurationMs": 466,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017508509,
+            "queryDurationMs": 572,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017509084,
+            "queryDurationMs": 530,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017509582,
+            "queryDurationMs": 495,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017510033,
+            "queryDurationMs": 451,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017510576,
+            "queryDurationMs": 540,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017511178,
+            "queryDurationMs": 543,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017511589,
+            "queryDurationMs": 368,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017512102,
+            "queryDurationMs": 499,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017512462,
+            "queryDurationMs": 358,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017512853,
+            "queryDurationMs": 351,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017513271,
+            "queryDurationMs": 367,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017513705,
+            "queryDurationMs": 384,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017514101,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017514467,
+            "queryDurationMs": 332,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017514810,
+            "queryDurationMs": 339,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017515310,
+            "queryDurationMs": 439,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017515738,
+            "queryDurationMs": 401,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017516218,
+            "queryDurationMs": 430,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017516604,
+            "queryDurationMs": 363,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017516936,
+            "queryDurationMs": 314,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017517270,
+            "queryDurationMs": 314,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017517658,
+            "queryDurationMs": 356,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017518039,
+            "queryDurationMs": 347,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017518502,
+            "queryDurationMs": 428,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017518947,
+            "queryDurationMs": 441,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017519365,
+            "queryDurationMs": 391,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017519785,
+            "queryDurationMs": 397,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017520237,
+            "queryDurationMs": 430,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017520781,
+            "queryDurationMs": 525,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017521206,
+            "queryDurationMs": 367,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017521552,
+            "queryDurationMs": 329,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017521893,
+            "queryDurationMs": 337,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017522265,
+            "queryDurationMs": 325,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017522621,
+            "queryDurationMs": 313,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017522976,
+            "queryDurationMs": 351,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017523363,
+            "queryDurationMs": 341,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017523746,
+            "queryDurationMs": 337,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017524128,
+            "queryDurationMs": 338,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017524506,
+            "queryDurationMs": 332,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017524855,
+            "queryDurationMs": 348,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017525248,
+            "queryDurationMs": 357,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017526565,
+            "queryDurationMs": 1290,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790017526862,
+            "queryDurationMs": 297,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      }
+    ]
+  },
+  "validity": {
+    "A1": "3/3",
+    "B": "2/3",
+    "A2": "3/3",
+    "officialSample": false,
+    "noRetryPromotion": true,
+    "causalThreeValidRecordGate": "NOT_MET_FOR_SELECTED_J1_B"
+  },
+  "conclusion": "POST_RESPONSE_COMMIT_OWNERSHIP_SIGNAL_OBSERVED_VALIDITY_OR_FANOUT_BOUNDARY_OPEN",
+  "explicitNonClaims": [
+    "A commit-count reversal is a contributing-boundary observation, not proof of the global freeze root cause.",
+    "The official nine-scenario acceptance contract is not exercised by this run.",
+    "Invalid or failed required-read repetitions are retained and excluded; no retry is promoted.",
+    "No production runtime fix, Plan 2 finding, migration, deployment, or production decision changed.",
+    "DB sampler results are bounded local observations and do not prove lock absence outside these windows."
+  ],
+  "redaction": {
+    "rawBodiesRecorded": false,
+    "credentialsRecorded": "<redacted>",
+    "rawClientIdentifiersRecorded": false,
+    "policy": "sanitizePhase44Evidence"
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "POST_RESPONSE_COMMIT_OWNERSHIP_SIGNAL_OBSERVED_VALIDITY_OR_FANOUT_BOUNDARY_OPEN",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  }
+}

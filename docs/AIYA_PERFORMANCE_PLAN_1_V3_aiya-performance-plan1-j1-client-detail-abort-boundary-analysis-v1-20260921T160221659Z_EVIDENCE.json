@@ -1,0 +1,324 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-client-detail-abort-boundary-analysis-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-client-detail-abort-boundary-analysis",
+  "stageId": "aiya-performance-plan1-j1-client-detail-abort-boundary-analysis-v1",
+  "runId": "aiya-performance-plan1-j1-client-detail-abort-boundary-analysis-v1-20260921T160221659Z",
+  "generatedAt": "2026-09-21T16:02:21.686Z",
+  "status": "COMPLETE",
+  "outcome": "CLIENT_DETAIL_ABORT_CORRELATED_WITH_STAGE6_DOMAIN_SWITCH_CLEANUP",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Correlate the observed client-detail request abort with route/domain transition and Stage 6 effect cleanup using the completed J1 checkpoint.",
+    "analysisOnly": true,
+    "browserRerunStarted": false,
+    "applicationRuntimeChanged": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 223,
+    "statusHash": "48f624598a93a567d6ea61e677b4fa5ec62bfac619e7789b5b4e1f284d0025e1",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "17c4b7cb55ec267dd2c708a462924cd294e9f0d8e4309e370cc71ed68915417c"
+      },
+      {
+        "path": "app/src/components/dashboard/client-workspace.tsx",
+        "sha256": "9142a08ea6e9959c4dbc8931f8721b59c95593a48211dea121f32aa56d33d5f4"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-6-client-selection.ts",
+        "sha256": "bddee297bd789a87f1f7a3228f04362b1acd019982a2d6bb8f15dcf0c9cb463b"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/src/app/api/clients/[id]/route.ts",
+        "sha256": "07e2b0dfe7728973b053d7fe92e2376f5d4a08019ee2f63a28723577d7ea40a3"
+      }
+    ]
+  },
+  "sourceMeasurement": {
+    "runId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5_EVIDENCE.json",
+    "evidenceSha256": "a343ff1bd61b423705dcb478da46e35f5605b6093ffee3056468f05d323a4968",
+    "status": "COMPLETE",
+    "outcome": "SHARED_API_AUTH_COVERAGE_PARTIAL_RSC_MARKER_OBSERVED",
+    "validity": {
+      "attempted": "1/1",
+      "observationValid": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "validSample": true,
+      "officialSample": false
+    }
+  },
+  "boundary": {
+    "targetRoute": "/api/clients/%3Cuuid%3E",
+    "targetMethod": "GET",
+    "targetRequestCount": 1,
+    "targetRequest": {
+      "failed": true,
+      "status": null,
+      "responseHeaderAtMs": null,
+      "bodyFinishedAtMs": null,
+      "serverTimingNames": []
+    },
+    "routeHistory": [
+      {
+        "atMs": 68,
+        "route": "/dashboard?section=clients",
+        "source": "pushState"
+      },
+      {
+        "atMs": 2159,
+        "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+        "source": "pushState"
+      },
+      {
+        "atMs": 2649,
+        "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+        "source": "pushState"
+      },
+      {
+        "atMs": 4750,
+        "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+        "source": "pushState"
+      }
+    ],
+    "stage6Lifecycle": [
+      {
+        "name": "stage6_workspace_effect_setup",
+        "atPerformanceMs": 3585.5,
+        "domain": "summary",
+        "sequence": null,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": null,
+        "routeHasClientId": false,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_effect_cleanup",
+        "atPerformanceMs": 4583.4,
+        "domain": "summary",
+        "sequence": 0,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": null,
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_effect_setup",
+        "atPerformanceMs": 4584.3,
+        "domain": "summary",
+        "sequence": null,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": null,
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_load_abort_previous",
+        "atPerformanceMs": 4584.3,
+        "domain": "summary",
+        "sequence": null,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": null,
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_load_started",
+        "atPerformanceMs": 4584.3,
+        "domain": "summary",
+        "sequence": 1,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": null,
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_effect_cleanup",
+        "atPerformanceMs": 5051.8,
+        "domain": "summary",
+        "sequence": 1,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "forms",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_effect_setup",
+        "atPerformanceMs": 5055.8,
+        "domain": "forms",
+        "sequence": null,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "forms",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_load_abort_previous",
+        "atPerformanceMs": 5055.9,
+        "domain": "forms",
+        "sequence": null,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "forms",
+        "routeHasClientId": true,
+        "hasPreviousController": true
+      },
+      {
+        "name": "stage6_workspace_load_started",
+        "atPerformanceMs": 5056.1,
+        "domain": "forms",
+        "sequence": 2,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "forms",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_load_aborted",
+        "atPerformanceMs": 5062.6,
+        "domain": "summary",
+        "sequence": 1,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "forms",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_load_succeeded",
+        "atPerformanceMs": 5781.7,
+        "domain": "forms",
+        "sequence": 2,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "forms",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_effect_cleanup",
+        "atPerformanceMs": 7145,
+        "domain": "forms",
+        "sequence": 2,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "nutrition",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_effect_setup",
+        "atPerformanceMs": 7153,
+        "domain": "nutrition",
+        "sequence": null,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "nutrition",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_load_abort_previous",
+        "atPerformanceMs": 7153,
+        "domain": "nutrition",
+        "sequence": null,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "nutrition",
+        "routeHasClientId": true,
+        "hasPreviousController": true
+      },
+      {
+        "name": "stage6_workspace_load_started",
+        "atPerformanceMs": 7153.2,
+        "domain": "nutrition",
+        "sequence": 3,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "nutrition",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      },
+      {
+        "name": "stage6_workspace_load_succeeded",
+        "atPerformanceMs": 7735.2,
+        "domain": "nutrition",
+        "sequence": 3,
+        "routePathname": "/dashboard",
+        "routeSection": "clients",
+        "routeClientTask": "nutrition",
+        "routeHasClientId": true,
+        "hasPreviousController": false
+      }
+    ],
+    "staticCodeAssertions": {
+      "hookAbortsPreviousControllerOnLoad": true,
+      "hookAbortsControllerDuringEffectCleanup": true,
+      "hookLoadDependsOnDomain": true,
+      "summaryMapsToClientDetailRoute": true,
+      "workspaceMapsClientTaskToDomain": true,
+      "journeyChangesFormsThenNutrition": true
+    }
+  },
+  "validity": {
+    "sourceTrace": "1/1 valid functional J1 trace",
+    "targetAbortObserved": "1/1",
+    "routeTransitionObserved": true,
+    "stage6CleanupCorrelationObserved": true,
+    "officialSample": false
+  },
+  "interpretation": "The completed trace records one client-detail GET with no response timing while the same journey transitions from a selected client to Forms and then Nutrition. The Stage 6 trace records summary effect cleanup, Forms effect setup, and summary load abort during the Forms transition. The hook source explicitly aborts the active controller during effect cleanup and reloads by domain. This is a client-side cancellation correlation, not proof that the route transition was premature or that it caused the global freeze.",
+  "evidenceGaps": [
+    "The aborted request cannot provide Server-Timing, so server-side work after browser cancellation is not measured.",
+    "The trace contains one occurrence and no single-variable control of the route/domain transition.",
+    "No browser, server, database, or production runtime change was made in this analysis."
+  ],
+  "explicitNonClaims": [
+    "The normal summary-to-Forms transition is not declared a bug by this correlation.",
+    "The correlation does not prove auth-chain cost, request fan-out causality, React commit causality, or the global-freeze root cause.",
+    "No runtime fix, finding disposition, Plan 2 eligibility, or production decision changed."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "CLIENT_DETAIL_ABORT_CORRELATED_WITH_STAGE6_DOMAIN_SWITCH_CLEANUP",
+    "candidateNarrowedFurther": true,
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  },
+  "nextAction": "Treat the client-detail abort as a client-side cancellation boundary associated with the expected summary-to-Forms domain switch, not as a confirmed product defect. Only if server-side continuation or premature transition remains material should a separately authorized controlled capture add a bounded server-completion marker."
+}

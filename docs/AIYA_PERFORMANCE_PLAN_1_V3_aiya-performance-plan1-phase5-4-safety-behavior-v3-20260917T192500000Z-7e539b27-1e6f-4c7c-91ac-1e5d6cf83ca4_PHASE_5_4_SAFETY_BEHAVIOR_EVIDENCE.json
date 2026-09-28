@@ -1,0 +1,725 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase5-4-safety-behavior-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "5",
+  "stage": "5.4",
+  "stageId": "5.4",
+  "runId": "aiya-performance-plan1-phase5-4-safety-behavior-v3-20260917T192500000Z-7e539b27-1e6f-4c7c-91ac-1e5d6cf83ca4",
+  "generatedAt": "2026-09-17T17:16:18.421Z",
+  "status": "COMPLETE",
+  "outcome": "SAFETY_BEHAVIOR_CHECKS_COMPLETE",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Verify safety and behavior contracts affected by the Phase 5.2 state/hydration investigation.",
+    "environment": "local_unit_and_static; local_rls_runtime_boundary",
+    "analysisOnly": true,
+    "inputExperimentReused": true,
+    "newMeasurementStarted": false,
+    "officialMeasurementStarted": false,
+    "newCausalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "databaseResetStarted": false,
+    "migrationStarted": false,
+    "providerTrafficStarted": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true,
+    "countedAsOfficialSample": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.7 COMPLETE / DIAGNOSIS_BLOCKED",
+      "5.1 COMPLETE / HYPOTHESES_PRE_REGISTERED",
+      "5.2 COMPLETE / REPEATABLE_PROVISIONAL_EFFECT",
+      "5.3 COMPLETE / LAYER_ATTRIBUTION_INCONCLUSIVE"
+    ],
+    "currentStage": "5.4",
+    "nextEligibleStage": "5.5"
+  },
+  "sourceIdentity": {
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branchMode": "DETACHED_HEAD",
+    "branch": "",
+    "statusLineCount": 88,
+    "statusHash": "7a926a4cc2cabda03d0c48ad1915ba01b050fdfdb9c2f574dfe31ac708d60ab1",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "e06da5b1457b102cb86a689fcb9d996bdfbeb6dfc4a3e4dbd71a6b23b2971634"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "1a89fe6dfcf3a0ee926012c1b7efba6d52eb586606ff991a09f6cd1ebaf6ad9d"
+      },
+      {
+        "path": "app/src/lib/use-aiya-state.ts",
+        "sha256": "3bee61e1b91de703a6b1ce9016d4c4d92b46366447bea8a350949894878c1d27"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "4424179730f0b88231e9b4cac04c04457b32fb600596d79ae8a99291b752d458"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-2-experiment.mjs",
+        "sha256": "2647ef3d2105a4067a96a71187182017738443f08c15402621b112c15d59c91d"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-2-experiment.test.mjs",
+        "sha256": "31aefc3c9bc090109b8e297dd4c4b553e2fa46883144c808d949bafb343918db"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "40c0625b5d78c087c5c7d142c149bd91bc59ecd2e6187bf3bc4790baf040eecf"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "b70ccd7abd892c81589f8ff4c1d195cff03a35784bcc97ba9f9b470dc11becb4"
+      },
+      {
+        "path": "app/package.json",
+        "sha256": "a9d740c1629069249c0fd17245dc7ad4c04addcce5aa66f031c86ad80a944c73"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "sha256": "bda7ced41b4ecd119fd1a99e01f57b9cfe730c6775c2681e090393084ece9c03"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+        "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-3-layer-attribution.mjs",
+        "sha256": "40e9b837774eff8d65ab1670b25279d757cd3c15153dd015122b09039fd92ce6"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-3-layer-attribution.test.mjs",
+        "sha256": "9f4d043566291b9413b9716eb55f7323fe12d6b6b77d72d8f1cc3b7ecc36773f"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057_PHASE_5_2_SINGLE_VARIABLE_EVIDENCE.json",
+        "sha256": "a6be5b17d3cc37ca43640b8f0c33e5945e056dc448f099cb4069fc8b70be927f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-4-safety-behavior.mjs",
+        "sha256": "7ee18da60c76c46955250b8f3488cdf4ae13ee95d862ddedb4838e567ecffaaa"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-4-safety-behavior.test.mjs",
+        "sha256": "a16c924d0b55d4f4ed39430cef30b37a5fe64379f2715d8eb4f5f3cae80a5113"
+      },
+      {
+        "path": "app/src/lib/auth-context.ts",
+        "sha256": "236d590124ef185e28321389f8024fa215227d587918c33145fc0e3ed39bd5e0"
+      },
+      {
+        "path": "app/src/lib/app-state-store.ts",
+        "sha256": "0784861c304551e51969e95db94ef32f1702ebcfe11809003ee6971f1f0e0119"
+      },
+      {
+        "path": "app/src/lib/supabase-store.ts",
+        "sha256": "0561e62560ac7fc44934e98d6c985358c17a83b6e11ca23d177dcf1e0745a767"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-4b2-state-merge.ts",
+        "sha256": "2e7c10abbe0b9cfe339e820bb8668670e8ba7feea01787bfac6db0c7cee890c2"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-4b2-mutations.ts",
+        "sha256": "53dad4f577faeb3e8f3956202d33d491412e71b1c19068e33a3c597f4c39fef8"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-provider-state.ts",
+        "sha256": "ab673ff5c187bf3f3207ba73c7e7b895a8f77cdd0036f95d5454d8d6469ccd3f"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-authenticated-mutation.ts",
+        "sha256": "f2ccbdac0a66a608e2a221977c587a3d54edb0fef8921e8c4f83c9cc8ef925d1"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-pwa.ts",
+        "sha256": "66777dda7fa5fff1a1efbb5037425a059b5c0d7f6e45f14e99ca14820e79dc3e"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-session-policy.ts",
+        "sha256": "e77fc25ec921bb0cb963a0972a31abc3183476c8563827e8b5220821e06c71ec"
+      },
+      {
+        "path": "app/src/app/api/app-state/route.ts",
+        "sha256": "3e315589d733cdaa90b2755398ba16e8648e6907e19d4d19fe6e008ad55eef72"
+      },
+      {
+        "path": "app/src/app/api/shell/bootstrap/route.ts",
+        "sha256": "1ebe04667e4d6285657a7b7d959f4a69da49e1124bf8260a0da77579d4bb9049"
+      },
+      {
+        "path": "app/public/sw.js",
+        "sha256": "c0850d9ec5f6fa20264c1f7e284df2829513a7abc0f4c88c85755e2a1c1237ea"
+      },
+      {
+        "path": "app/src/lib/auth-context.test.ts",
+        "sha256": "2cab618600c84156cc45a770658f2769c229d5aa41aa97777631222859da5f17"
+      },
+      {
+        "path": "app/src/app/auth/callback/route.test.ts",
+        "sha256": "0b07cd8eabfaabb1d47a90f63b98ac441be88721ec71ef9cf2487302e7d405e7"
+      },
+      {
+        "path": "app/src/app/api/auth/password-login/route.test.ts",
+        "sha256": "d479240aca44c7d13c16a9f4ad2ccf374a7affc98a96d00485a72997f6e92aec"
+      },
+      {
+        "path": "app/src/lib/phase-84d-customer-auth.test.ts",
+        "sha256": "bd401af1c88d2450296e13185910e84aaf31064d6123259b58e42f91950a0ffa"
+      },
+      {
+        "path": "app/src/lib/app-state-store.test.ts",
+        "sha256": "7c4cef98395b54f34e32e4e5ad497acbc5cd7823f742a2d6aac2fed025b30f65"
+      },
+      {
+        "path": "app/src/lib/supabase-store.test.ts",
+        "sha256": "c79bca6f596fb3f18037d2053595a7a3c55111b3550b6d9cde31d45a3af7f068"
+      },
+      {
+        "path": "app/src/lib/phase-79c-scoped-client-mutation.test.ts",
+        "sha256": "880af4b6a86d6adce5494c44bd3d8e7e86e58731de80ac7650985a7bea8e3471"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-4b2-mutations.test.ts",
+        "sha256": "36752ee5091168b2c263ab654c33f5e64a838ac8136d25342b16127d3a790251"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-4b2-state-merge.test.ts",
+        "sha256": "f9bd6b8f195005768e2e161feb73f701719cd01f8b3743488162c33f5f8cc649"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-provider-state.test.ts",
+        "sha256": "32820f3a0d7d5a9e3fe38a8f89b52efcd59a67a1b2b70ce1636d5e9191688360"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
+        "sha256": "f6ab37b7a74f534cf37611bf75a3fbe30310f180ee0dddde5bf139eadec9d226"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-session.test.ts",
+        "sha256": "bd7e7836641900a2f01db00eea13859c9e3939362fd8d56effc6bb394a439108"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-navigation.test.ts",
+        "sha256": "e102753a611b0ff1d62591cedb165f86045d579262a6d3d018842eec6552dcc8"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-pwa.test.ts",
+        "sha256": "49398ddee85180f1e70f13c391a455e93b87d5c1d9728942c4e241f57b11683f"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-privacy-scan.test.ts",
+        "sha256": "2119286c140d051e1683c42a940bf254a8baabba23b2342f93977aa25da3c48b"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+        "sha256": "8764126c142faf00c70086c5f27618484385344cfe76ab9a5ba1d5e38a7b263e"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-6-r1-mutation-idempotency.test.ts",
+        "sha256": "b0735e179c1dd9b8f7adff888ede8d87561a2cca2db03736292ae3b9006f6fb5"
+      },
+      {
+        "path": "app/src/lib/public-surface-phase-6-pwa.test.ts",
+        "sha256": "b9cc947b9922bb22dde1136d7763564d8034b1fadc1f8519e54096d2d7d2cfa2"
+      },
+      {
+        "path": "app/src/lib/public-surface-phase-7-closure.test.ts",
+        "sha256": "f42c5991ece03610756ca44ee83640f1b43f7c7b7ab6157feb9dfa0141d01f57"
+      },
+      {
+        "path": "app/src/lib/phase-83d-pwa-install-gate.test.ts",
+        "sha256": "fa9e17d8bad5379f0cbf23508c1a63d13224af9f709abdc7647908a59e94b913"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-4d-billing-pwa.test.ts",
+        "sha256": "1a93b43c01d56956fdb4aef73773804b904f194d0f5fca12d0d811c36c0ed9de"
+      },
+      {
+        "path": "app/src/lib/supabase-rls.integration.test.ts",
+        "sha256": "7a7bd5eb771905b365d32496d7a649cd23f24d7e29040f878758550453b0eacb"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b_PHASE_5_3_LAYER_ATTRIBUTION_EVIDENCE.json",
+        "sha256": "b09671115ebfa1385b3bc34d313b2b907a7ccea6cdfcac362fd26e47e3d1f04a"
+      }
+    ]
+  },
+  "inputAttribution": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b_PHASE_5_3_LAYER_ATTRIBUTION_EVIDENCE.json",
+    "runId": "aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b",
+    "status": "COMPLETE",
+    "outcome": "LAYER_ATTRIBUTION_INCONCLUSIVE",
+    "sha256": "b09671115ebfa1385b3bc34d313b2b907a7ccea6cdfcac362fd26e47e3d1f04a",
+    "checkpointReconciliation": {
+      "status": "COMPLETE",
+      "source": "phase5-2-input-checkpoint-read-only",
+      "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+      "eventCount": 27,
+      "hashChainRead": true,
+      "lastEventType": "run.status",
+      "newCheckpointCreated": false
+    }
+  },
+  "prerequisite": {
+    "status": "PASS",
+    "failures": [],
+    "inputEvidence": {
+      "runId": "aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b",
+      "status": "COMPLETE",
+      "outcome": "LAYER_ATTRIBUTION_INCONCLUSIVE",
+      "sha256": "b09671115ebfa1385b3bc34d313b2b907a7ccea6cdfcac362fd26e47e3d1f04a",
+      "checkpointReconciliation": {
+        "status": "COMPLETE",
+        "source": "phase5-2-input-checkpoint-read-only",
+        "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+        "eventCount": 27,
+        "hashChainRead": true,
+        "lastEventType": "run.status",
+        "newCheckpointCreated": false
+      }
+    }
+  },
+  "testExecution": {
+    "status": "PASS",
+    "reason": null,
+    "exitCode": 0,
+    "spawnErrorClass": null,
+    "testFilesPassed": 21,
+    "testFilesFailed": 0,
+    "testFilesSkipped": 0,
+    "testFilesTotal": 21,
+    "testsPassed": 164,
+    "testsFailed": 0,
+    "testsSkipped": 0,
+    "testsTotal": 164,
+    "testFiles": [
+      "src/lib/auth-context.test.ts",
+      "src/app/auth/callback/route.test.ts",
+      "src/app/api/auth/password-login/route.test.ts",
+      "src/lib/phase-84d-customer-auth.test.ts",
+      "src/lib/app-state-store.test.ts",
+      "src/lib/supabase-store.test.ts",
+      "src/lib/phase-79c-scoped-client-mutation.test.ts",
+      "src/lib/phase-85-stage-4b2-mutations.test.ts",
+      "src/lib/phase-85-stage-4b2-state-merge.test.ts",
+      "src/lib/phase-85-stage-5-shell-provider-state.test.ts",
+      "src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
+      "src/lib/phase-85-stage-5-shell-session.test.ts",
+      "src/lib/phase-85-stage-5-shell-navigation.test.ts",
+      "src/lib/phase-85-stage-5-shell-pwa.test.ts",
+      "src/lib/phase-85-stage-5-shell-privacy-scan.test.ts",
+      "src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+      "src/lib/phase-85-stage-6-r1-mutation-idempotency.test.ts",
+      "src/lib/public-surface-phase-6-pwa.test.ts",
+      "src/lib/public-surface-phase-7-closure.test.ts",
+      "src/lib/phase-83d-pwa-install-gate.test.ts",
+      "src/lib/phase-85-stage-4d-billing-pwa.test.ts"
+    ]
+  },
+  "staticContractChecks": [
+    {
+      "checkId": "authenticated_app_state_scope",
+      "path": "app/src/app/api/app-state/route.ts",
+      "status": "PASS",
+      "missingTokens": [],
+      "forbiddenMatches": []
+    },
+    {
+      "checkId": "single_flight_hydration_guard",
+      "path": "app/src/lib/use-aiya-state.ts",
+      "status": "PASS",
+      "missingTokens": [],
+      "forbiddenMatches": []
+    },
+    {
+      "checkId": "stale_bootstrap_sequence_guard",
+      "path": "app/src/lib/phase-85-stage-5-shell-provider-state.ts",
+      "status": "PASS",
+      "missingTokens": [],
+      "forbiddenMatches": []
+    },
+    {
+      "checkId": "mutation_revision_boundary",
+      "path": "app/src/lib/supabase-store.ts",
+      "status": "PASS",
+      "missingTokens": [],
+      "forbiddenMatches": []
+    },
+    {
+      "checkId": "network_only_privacy_lock",
+      "path": "app/public/sw.js",
+      "status": "PASS",
+      "missingTokens": [],
+      "forbiddenMatches": []
+    }
+  ],
+  "localSupabaseProbe": {
+    "status": "PASS",
+    "endpoint": "127.0.0.1:54321",
+    "httpStatus": 200,
+    "integrationTestStarted": true,
+    "integrationTestStatus": "PASS",
+    "integrationTestFile": "src/lib/supabase-rls.integration.test.ts",
+    "integrationTestExitCode": 0,
+    "spawnErrorClass": null,
+    "testFilesPassed": 1,
+    "testFilesFailed": 0,
+    "testFilesSkipped": 0,
+    "testFilesTotal": 1,
+    "testsPassed": 56,
+    "testsFailed": 0,
+    "testsSkipped": 0,
+    "testsTotal": 56,
+    "reason": null
+  },
+  "checkResults": [
+    {
+      "checkId": "auth_login_logout_session",
+      "status": "PASS",
+      "basis": "Auth route, callback, session-lock, and logout policy contracts passed in the focused local suite.",
+      "testFiles": [
+        "src/lib/auth-context.test.ts",
+        "src/app/auth/callback/route.test.ts",
+        "src/app/api/auth/password-login/route.test.ts",
+        "src/lib/phase-84d-customer-auth.test.ts",
+        "src/lib/app-state-store.test.ts",
+        "src/lib/supabase-store.test.ts",
+        "src/lib/phase-79c-scoped-client-mutation.test.ts",
+        "src/lib/phase-85-stage-4b2-mutations.test.ts",
+        "src/lib/phase-85-stage-4b2-state-merge.test.ts",
+        "src/lib/phase-85-stage-5-shell-provider-state.test.ts",
+        "src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
+        "src/lib/phase-85-stage-5-shell-session.test.ts",
+        "src/lib/phase-85-stage-5-shell-navigation.test.ts",
+        "src/lib/phase-85-stage-5-shell-pwa.test.ts",
+        "src/lib/phase-85-stage-5-shell-privacy-scan.test.ts",
+        "src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+        "src/lib/phase-85-stage-6-r1-mutation-idempotency.test.ts",
+        "src/lib/public-surface-phase-6-pwa.test.ts",
+        "src/lib/public-surface-phase-7-closure.test.ts",
+        "src/lib/phase-83d-pwa-install-gate.test.ts",
+        "src/lib/phase-85-stage-4d-billing-pwa.test.ts"
+      ],
+      "testFilesPassed": 21,
+      "testsPassed": 164,
+      "staticChecks": [
+        {
+          "checkId": "authenticated_app_state_scope",
+          "status": "PASS"
+        },
+        {
+          "checkId": "single_flight_hydration_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "stale_bootstrap_sequence_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "mutation_revision_boundary",
+          "status": "PASS"
+        },
+        {
+          "checkId": "network_only_privacy_lock",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "checkId": "tenant_context_role_capability",
+      "status": "PASS",
+      "basis": "Tenant membership resolution, role capability denial, assigned scope, and authenticated app-state boundaries passed in unit/static checks.",
+      "testFiles": [
+        "src/lib/auth-context.test.ts",
+        "src/app/auth/callback/route.test.ts",
+        "src/app/api/auth/password-login/route.test.ts",
+        "src/lib/phase-84d-customer-auth.test.ts",
+        "src/lib/app-state-store.test.ts",
+        "src/lib/supabase-store.test.ts",
+        "src/lib/phase-79c-scoped-client-mutation.test.ts",
+        "src/lib/phase-85-stage-4b2-mutations.test.ts",
+        "src/lib/phase-85-stage-4b2-state-merge.test.ts",
+        "src/lib/phase-85-stage-5-shell-provider-state.test.ts",
+        "src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
+        "src/lib/phase-85-stage-5-shell-session.test.ts",
+        "src/lib/phase-85-stage-5-shell-navigation.test.ts",
+        "src/lib/phase-85-stage-5-shell-pwa.test.ts",
+        "src/lib/phase-85-stage-5-shell-privacy-scan.test.ts",
+        "src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+        "src/lib/phase-85-stage-6-r1-mutation-idempotency.test.ts",
+        "src/lib/public-surface-phase-6-pwa.test.ts",
+        "src/lib/public-surface-phase-7-closure.test.ts",
+        "src/lib/phase-83d-pwa-install-gate.test.ts",
+        "src/lib/phase-85-stage-4d-billing-pwa.test.ts"
+      ],
+      "testFilesPassed": 21,
+      "testsPassed": 164,
+      "staticChecks": [
+        {
+          "checkId": "authenticated_app_state_scope",
+          "status": "PASS"
+        },
+        {
+          "checkId": "single_flight_hydration_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "stale_bootstrap_sequence_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "mutation_revision_boundary",
+          "status": "PASS"
+        },
+        {
+          "checkId": "network_only_privacy_lock",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "checkId": "state_freshness_late_response_single_flight",
+      "status": "PASS",
+      "basis": "Hydration single-flight and stale bootstrap sequence guards are present and their focused reducer/state contracts passed.",
+      "testFiles": [
+        "src/lib/auth-context.test.ts",
+        "src/app/auth/callback/route.test.ts",
+        "src/app/api/auth/password-login/route.test.ts",
+        "src/lib/phase-84d-customer-auth.test.ts",
+        "src/lib/app-state-store.test.ts",
+        "src/lib/supabase-store.test.ts",
+        "src/lib/phase-79c-scoped-client-mutation.test.ts",
+        "src/lib/phase-85-stage-4b2-mutations.test.ts",
+        "src/lib/phase-85-stage-4b2-state-merge.test.ts",
+        "src/lib/phase-85-stage-5-shell-provider-state.test.ts",
+        "src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
+        "src/lib/phase-85-stage-5-shell-session.test.ts",
+        "src/lib/phase-85-stage-5-shell-navigation.test.ts",
+        "src/lib/phase-85-stage-5-shell-pwa.test.ts",
+        "src/lib/phase-85-stage-5-shell-privacy-scan.test.ts",
+        "src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+        "src/lib/phase-85-stage-6-r1-mutation-idempotency.test.ts",
+        "src/lib/public-surface-phase-6-pwa.test.ts",
+        "src/lib/public-surface-phase-7-closure.test.ts",
+        "src/lib/phase-83d-pwa-install-gate.test.ts",
+        "src/lib/phase-85-stage-4d-billing-pwa.test.ts"
+      ],
+      "testFilesPassed": 21,
+      "testsPassed": 164,
+      "staticChecks": [
+        {
+          "checkId": "authenticated_app_state_scope",
+          "status": "PASS"
+        },
+        {
+          "checkId": "single_flight_hydration_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "stale_bootstrap_sequence_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "mutation_revision_boundary",
+          "status": "PASS"
+        },
+        {
+          "checkId": "network_only_privacy_lock",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "checkId": "mutation_revision_conflict_idempotency",
+      "status": "PASS",
+      "basis": "Scoped mutation, revision conflict, bounded merge, and idempotency contracts passed without broad reload or offline queue behavior.",
+      "testFiles": [
+        "src/lib/auth-context.test.ts",
+        "src/app/auth/callback/route.test.ts",
+        "src/app/api/auth/password-login/route.test.ts",
+        "src/lib/phase-84d-customer-auth.test.ts",
+        "src/lib/app-state-store.test.ts",
+        "src/lib/supabase-store.test.ts",
+        "src/lib/phase-79c-scoped-client-mutation.test.ts",
+        "src/lib/phase-85-stage-4b2-mutations.test.ts",
+        "src/lib/phase-85-stage-4b2-state-merge.test.ts",
+        "src/lib/phase-85-stage-5-shell-provider-state.test.ts",
+        "src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
+        "src/lib/phase-85-stage-5-shell-session.test.ts",
+        "src/lib/phase-85-stage-5-shell-navigation.test.ts",
+        "src/lib/phase-85-stage-5-shell-pwa.test.ts",
+        "src/lib/phase-85-stage-5-shell-privacy-scan.test.ts",
+        "src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+        "src/lib/phase-85-stage-6-r1-mutation-idempotency.test.ts",
+        "src/lib/public-surface-phase-6-pwa.test.ts",
+        "src/lib/public-surface-phase-7-closure.test.ts",
+        "src/lib/phase-83d-pwa-install-gate.test.ts",
+        "src/lib/phase-85-stage-4d-billing-pwa.test.ts"
+      ],
+      "testFilesPassed": 21,
+      "testsPassed": 164,
+      "staticChecks": [
+        {
+          "checkId": "authenticated_app_state_scope",
+          "status": "PASS"
+        },
+        {
+          "checkId": "single_flight_hydration_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "stale_bootstrap_sequence_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "mutation_revision_boundary",
+          "status": "PASS"
+        },
+        {
+          "checkId": "network_only_privacy_lock",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "checkId": "offline_privacy_reconnect",
+      "status": "PASS",
+      "basis": "Offline privacy-lock, network-only navigation/API, session foreground policy, and reconnect-related shell contracts passed locally.",
+      "testFiles": [
+        "src/lib/auth-context.test.ts",
+        "src/app/auth/callback/route.test.ts",
+        "src/app/api/auth/password-login/route.test.ts",
+        "src/lib/phase-84d-customer-auth.test.ts",
+        "src/lib/app-state-store.test.ts",
+        "src/lib/supabase-store.test.ts",
+        "src/lib/phase-79c-scoped-client-mutation.test.ts",
+        "src/lib/phase-85-stage-4b2-mutations.test.ts",
+        "src/lib/phase-85-stage-4b2-state-merge.test.ts",
+        "src/lib/phase-85-stage-5-shell-provider-state.test.ts",
+        "src/lib/phase-85-stage-5-shell-authenticated-mutation.test.ts",
+        "src/lib/phase-85-stage-5-shell-session.test.ts",
+        "src/lib/phase-85-stage-5-shell-navigation.test.ts",
+        "src/lib/phase-85-stage-5-shell-pwa.test.ts",
+        "src/lib/phase-85-stage-5-shell-privacy-scan.test.ts",
+        "src/lib/phase-85-stage-5-shell-migration-contract.test.ts",
+        "src/lib/phase-85-stage-6-r1-mutation-idempotency.test.ts",
+        "src/lib/public-surface-phase-6-pwa.test.ts",
+        "src/lib/public-surface-phase-7-closure.test.ts",
+        "src/lib/phase-83d-pwa-install-gate.test.ts",
+        "src/lib/phase-85-stage-4d-billing-pwa.test.ts"
+      ],
+      "testFilesPassed": 21,
+      "testsPassed": 164,
+      "staticChecks": [
+        {
+          "checkId": "authenticated_app_state_scope",
+          "status": "PASS"
+        },
+        {
+          "checkId": "single_flight_hydration_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "stale_bootstrap_sequence_guard",
+          "status": "PASS"
+        },
+        {
+          "checkId": "mutation_revision_boundary",
+          "status": "PASS"
+        },
+        {
+          "checkId": "network_only_privacy_lock",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "checkId": "cross_user_isolation_rls_runtime",
+      "status": "PASS",
+      "required": true,
+      "basis": "The local Supabase cross-user/RLS integration suite passed with no failed or skipped tests.",
+      "environment": {
+        "status": "PASS",
+        "endpoint": "127.0.0.1:54321",
+        "httpStatus": 200,
+        "integrationTestStarted": true,
+        "integrationTestStatus": "PASS",
+        "integrationTestFile": "src/lib/supabase-rls.integration.test.ts",
+        "integrationTestExitCode": 0,
+        "spawnErrorClass": null,
+        "testFilesPassed": 1,
+        "testFilesFailed": 0,
+        "testFilesSkipped": 0,
+        "testFilesTotal": 1,
+        "testsPassed": 56,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "testsTotal": 56,
+        "reason": null
+      },
+      "unitCoverage": "supabase-store.test.ts and static RLS contracts passed; these do not replace runtime RLS evidence."
+    }
+  ],
+  "blockers": [],
+  "findingDispositionChanges": [],
+  "attribution": {
+    "status": "NO_CAUSE_CONFIRMED",
+    "causeConfirmed": false,
+    "findingDispositionChanged": false
+  },
+  "deferredToLaterStages": [
+    "5.5 remaining candidate loop is eligible after this check set.",
+    "No production, hosted live-data, provider, billing, WhatsApp, or Z.ai operation was started.",
+    "Plan 2 remains locked until a finding reaches the required causal disposition."
+  ],
+  "constraints": [
+    "No offline health-data cache or mutation queue was added or enabled.",
+    "Unit/static tenant tests do not substitute for runtime RLS isolation.",
+    "A failed or unavailable environment is not converted to PASS by retry or omission.",
+    "Credentials, cookies, tokens, raw bodies, prompts, clinical content, and device serials are excluded.",
+    "Production remains NO-GO."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "sourceIdentityPass": true,
+    "inputEvidenceParsed": true,
+    "inputEvidenceIntegrityPass": true,
+    "inputCheckpointHashChain": true,
+    "newMeasurementStarted": false,
+    "officialMeasurementStarted": false,
+    "newCausalExperimentStarted": false,
+    "databaseResetStarted": false,
+    "migrationStarted": false,
+    "historicalEvidenceRewritten": false,
+    "runtimeFixAccepted": false,
+    "findingManifestChanged": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "SAFETY_BEHAVIOR_CHECKS_COMPLETE",
+    "phase4Closed": true,
+    "plan1Closed": false,
+    "newMeasurementStarted": false,
+    "newCausalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "nextAction": "Proceed to 5.5 remaining candidate loop; do not accept a fix from safety checks alone."
+  },
+  "checkpointReconciliation": {
+    "status": "COMPLETE",
+    "source": "phase5-3-input-checkpoint-read-only",
+    "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+    "eventCount": 27,
+    "hashChainRead": true,
+    "lastEventType": "run.status",
+    "newCheckpointCreated": false
+  }
+}

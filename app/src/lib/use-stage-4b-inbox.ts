@@ -25,6 +25,11 @@ import {
   resolveStage4BInboxPollDelayMs,
   shouldPauseStage4BInboxPolling,
 } from "./phase-85-stage-4b-inbox-scheduler";
+import {
+  isPhase55NavigationWindowActive,
+  recordPhase55ClientEvent,
+} from "./phase-55-polling-diagnostic";
+import { recordPhase52ClientEvent } from "./phase-52-diagnostic";
 
 export type Stage4BInboxSnapshot = {
   alerts: ClinicalAlertsListResponse | null;
@@ -81,6 +86,7 @@ export function useStage4BInbox(filters: Pick<
   const [lastSuccessAt, setLastSuccessAt] = useState<string | null>(null);
   const consecutiveErrorsRef = useRef(0);
   const pollTimerRef = useRef<number | null>(null);
+  const pollActiveRef = useRef(false);
   const mountedRef = useRef(true);
   const alertsOwnerKey = buildStage4BAlertsRequestQuery(filters).toString();
   const notificationsOwnerKey = buildStage4BNotificationsRequestQuery(filters).toString();
@@ -156,8 +162,10 @@ export function useStage4BInbox(filters: Pick<
   );
 
   const refresh = useCallback(
-    async (options?: { resetBackoff?: boolean }) => {
+    async (options?: { resetBackoff?: boolean; reason?: string }) => {
       const refreshSequence = ++refreshSequenceRef.current;
+      const reason = options?.reason ?? "manual";
+      recordPhase52ClientEvent("inbox_refresh_started", { reason });
       if (options?.resetBackoff) {
         consecutiveErrorsRef.current = 0;
       }
@@ -202,6 +210,7 @@ export function useStage4BInbox(filters: Pick<
         if (mountedRef.current && refreshSequence === refreshSequenceRef.current) {
           setIsRefreshing(false);
         }
+        recordPhase52ClientEvent("inbox_refresh_finished", { reason });
       }
     },
     [fetchAlertsPage, fetchNotificationsPage],
@@ -240,7 +249,7 @@ export function useStage4BInbox(filters: Pick<
   }, [fetchNotificationsPage, isLoadingMoreNotifications, notificationsNextCursor]);
 
   const refreshAfterMutation = useCallback(() => {
-    void refresh({ resetBackoff: true });
+    void refresh({ resetBackoff: true, reason: "mutation" });
   }, [refresh]);
 
   const applyNotificationMutation = useCallback((payload: Stage4BNotificationMutationResponse) => {
@@ -296,7 +305,7 @@ export function useStage4BInbox(filters: Pick<
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      void refresh({ resetBackoff: true });
+      void refresh({ resetBackoff: true, reason: "mount_or_filter_change" });
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [refresh]);
@@ -306,35 +315,58 @@ export function useStage4BInbox(filters: Pick<
       if (pollTimerRef.current != null) {
         window.clearTimeout(pollTimerRef.current);
       }
-      if (shouldPauseStage4BInboxPolling(document.visibilityState === "visible")) {
+      if (
+        shouldPauseStage4BInboxPolling(document.visibilityState === "visible") ||
+        isPhase55NavigationWindowActive()
+      ) {
         return;
       }
       const delay = resolveStage4BInboxPollDelayMs(consecutiveErrorsRef.current);
       pollTimerRef.current = window.setTimeout(() => {
-        void refresh().finally(schedule);
+        pollActiveRef.current = true;
+        recordPhase55ClientEvent("phase55_poll_started", { surface: "inbox" });
+        void refresh({ reason: "poll" }).finally(() => {
+          pollActiveRef.current = false;
+          recordPhase55ClientEvent("phase55_poll_finished", { surface: "inbox" });
+          schedule();
+        });
       }, delay);
     };
 
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        void refresh();
+        void refresh({ reason: "visibility" });
       }
       schedule();
     };
 
     const onFocus = () => {
-      void refresh();
+      void refresh({ reason: "focus" });
+    };
+
+    const onPhase55NavigationWindowChange = () => {
+      if (isPhase55NavigationWindowActive()) {
+        if (pollTimerRef.current != null) window.clearTimeout(pollTimerRef.current);
+        if (pollActiveRef.current) {
+          alertsAbortRef.current?.abort();
+          notificationsAbortRef.current?.abort();
+          recordPhase55ClientEvent("phase55_poll_cancelled", { surface: "inbox" });
+        }
+      }
+      schedule();
     };
 
     schedule();
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("focus", onFocus);
+    window.addEventListener("aiya-phase55-navigation-window-changed", onPhase55NavigationWindowChange);
     return () => {
       if (pollTimerRef.current != null) {
         window.clearTimeout(pollTimerRef.current);
       }
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("aiya-phase55-navigation-window-changed", onPhase55NavigationWindowChange);
     };
   }, [refresh]);
 

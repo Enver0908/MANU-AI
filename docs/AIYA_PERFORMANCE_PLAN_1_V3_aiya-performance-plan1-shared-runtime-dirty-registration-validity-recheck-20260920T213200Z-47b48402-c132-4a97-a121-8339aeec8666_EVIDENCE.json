@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-dirty-registration-validity-recheck-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-dirty-registration-validity-recheck",
+  "stageId": "aiya-performance-plan1-shared-runtime-dirty-registration-validity-recheck-20260920T213200Z-47b48402-c132-4a97-a121-8339aeec8666",
+  "runId": "aiya-performance-plan1-shared-runtime-dirty-registration-validity-recheck-20260920T213200Z-47b48402-c132-4a97-a121-8339aeec8666",
+  "generatedAt": "2026-09-20T21:32:00Z",
+  "status": "COMPLETE",
+  "outcome": "DIRTY_REGISTRATION_VALIDITY_RECHECK_J1_INELIGIBLE_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Repeat the stable dirty-registration candidate under the same local shared-runtime runner and reconcile observation validity with functional sample validity without promoting a retry over a failed request.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "runtimeCandidateKeptInCheckout": true,
+    "shellDirtyRegistrationPolicy": "stable",
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "healthDataUsed": false,
+    "liveProviderTraffic": false,
+    "fixture": "local-normal synthetic owner with real local password session and normal RLS/API path",
+    "localSupabaseOrigin": "http://127.0.0.1:54321"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "sourceRun": {
+    "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T200138105Z-49fb2c79-a39a-49bc-a567-d66663c6a0b0",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T200138105Z-49fb2c79-a39a-49bc-a567-d66663c6a0b0_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "evidenceSha256": "ED973A907E42F4EAE0370BFF3FC6433543564A6694D0FA29C69E275012AB0798",
+    "status": "COMPLETE",
+    "runnerOutcome": "SHARED_RUNTIME_DIAGNOSTIC_RECORDED"
+  },
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "candidateFile": {
+      "path": "app/src/lib/use-shell-dirty-registration.ts",
+      "sha256": "3b657c1e6cd2f1b235d49499edebd03c8f47a6c0154406e29acf708ce2ea7304"
+    },
+    "runnerFile": {
+      "path": "app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs",
+      "sha256": "349385873ba34bb115d8b469ec4158fcaf52743762bd77acb5eb35075915f2ac"
+    },
+    "phase44RunnerFile": {
+      "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+      "sha256": "bc364bcc530a311abe53503c0bbd31f966ca2b1e0bf391c03c0ccfa5f2e725db"
+    }
+  },
+  "validityContract": {
+    "observationValidity": "VALID means the authenticated trace structure and its observed success or failure boundary are complete; it does not mean functional success.",
+    "validSample": "true requires the full successful journey, every required read valid, expected route and mutation checks satisfied, and no forbidden mutation.",
+    "requiredReadRule": "A required read is invalid when any matching captured attempt is failed, non-2xx, or missing a completed body. A later successful attempt does not erase the earlier failed attempt.",
+    "retryPromotion": "FORBIDDEN",
+    "contractInterpretation": "The runner's 12/12 observationValid aggregate is correct for this run; the J1 functional failures are separately represented by validSample=false and functionalOutcome=FAILURE."
+  },
+  "sampleSummary": {
+    "attempted": 12,
+    "observationValid": 12,
+    "validSample": 6,
+    "functionalSuccess": 6,
+    "normal": 9,
+    "diagnostic": 3,
+    "officialBaselineSamples": 0
+  },
+  "j1NormalRecheck": [
+    {
+      "repetition": 1,
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "failureBoundary": {
+        "phase": "required_read",
+        "actionId": "first",
+        "reason": "required_read_incomplete_or_non_2xx",
+        "pattern": "/api/clients/:clientId/forms"
+      },
+      "attempts": {
+        "count": 2,
+        "first": "failed with no status or body completion",
+        "second": "200 with completed body"
+      },
+      "dispatchToReadyMs": 428,
+      "requestFanout": "57 total / 28 API / 3 document"
+    },
+    {
+      "repetition": 2,
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "failureBoundary": {
+        "phase": "required_read",
+        "actionId": "first",
+        "reason": "required_read_incomplete_or_non_2xx",
+        "pattern": "/api/clients/:clientId/forms"
+      },
+      "attempts": {
+        "count": 2,
+        "first": "failed with no status or body completion",
+        "second": "200 with completed body"
+      },
+      "dispatchToReadyMs": 460,
+      "requestFanout": "57 total / 28 API / 3 document"
+    },
+    {
+      "repetition": 3,
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "failureBoundary": {
+        "phase": "required_read",
+        "actionId": "first",
+        "reason": "required_read_incomplete_or_non_2xx",
+        "pattern": "/api/clients/:clientId/forms"
+      },
+      "attempts": {
+        "count": 2,
+        "first": "failed with no status or body completion",
+        "second": "200 with completed body"
+      },
+      "dispatchToReadyMs": 393,
+      "requestFanout": "57 total / 28 API / 3 document"
+    }
+  ],
+  "diagnosticSelection": {
+    "selectedJourney": "J2",
+    "reason": "J1 had no valid functional normal observation with a second-action tail; J2 supplied 3/3 valid successful normal candidates.",
+    "j2DiagnosticValidAndSuccessful": "3/3",
+    "j2ShellProviderCommits": [22, 21, 22],
+    "j2DashboardShellCommits": [21, 20, 21],
+    "j2DispatchToReadyMs": [109, 84, 92],
+    "interpretation": "J2 is a different low-commit journey and cannot confirm or refute the J1 dirty-registration commit-storm result. No new J1 profiler evidence was produced by this recheck."
+  },
+  "dbSampler": {
+    "status": "PASS",
+    "sampleCount": 807,
+    "sampleErrorCount": 0,
+    "lockWaitSampleCount": 0,
+    "blockedActivitySampleCount": 0,
+    "interpretation": "Bounded sampler result only; no global lock-absence claim."
+  },
+  "correctionOf": {
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-dirty-registration-ab-a-20260920T193800Z-57dc30c0-54ee-45a7-b69b-7cedb280df42_EVIDENCE.json",
+    "evidenceSha256AtPriorClose": "91F7B87CA1320CCB183BF6CDA7DC4AE4E8A20AC97B2DE19DF5392F12BD7A5029",
+    "supersededInterpretation": "The prior derived record called the separation between observationValidity and validSample a validity-contract gap.",
+    "correctedInterpretation": "The separation is intentional runner behavior: known functional failures remain observation-valid but are excluded from valid samples. The stable B J1 failure remains a functional validity limitation, not a runner contradiction."
+  },
+  "conclusion": {
+    "j1ValidityRecheckPassed": false,
+    "j1ValidFunctionalDiagnosticCount": "0/3 in this stable recheck because J1 was not selected for diagnostic repetition",
+    "dirtyRegistrationExactRootCauseConfirmed": false,
+    "dirtyRegistrationContributionStatus": "Prior A-B-A remains strong contributing-mechanism evidence; this recheck adds no new J1 profiler confirmation.",
+    "globalFreezeResolved": false,
+    "performanceProblemSolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnosticBoundary": "Understand the repeated aborted first /forms attempt or run a separately authorized controlled J1 confirmation without promoting a later retry over the failed attempt."
+  },
+  "explicitNonClaims": [
+    "The later successful /forms attempt is not used to erase the earlier failed attempt.",
+    "The 12/12 observationValid count is not a functional-success count.",
+    "J2 stable profiler counts are not interchangeable with the J1 commit-storm traces.",
+    "The stable policy is not an approved production fix and is not enabled by default.",
+    "This recheck is not an official nine-scenario acceptance run and does not reopen Plan 1 closure or authorize Plan 2."
+  ],
+  "redaction": {
+    "status": "PASS",
+    "rawPayloadsIncluded": false,
+    "scope": "Synthetic route outcomes, bounded timing, profiler counts, hashes, and validity metadata only; no credentials, tokens, cookies, raw bodies, prompts, or health data."
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "DIRTY_REGISTRATION_VALIDITY_RECHECK_J1_INELIGIBLE_GLOBAL_FREEZE_UNRESOLVED",
+    "runtimeState": "Stable policy was process-scoped for this recheck and the normal checkout default remains legacy.",
+    "acceptedProductionFix": false,
+    "performanceProblemSolved": false,
+    "remainingWork": [
+      "Keep the original failed /forms attempt visible and excluded from valid samples.",
+      "Do not change the validity calculator to promote retry-success traces.",
+      "If exact J1 causal count is required, run a separately authorized controlled J1 confirmation after the aborted-request boundary is understood.",
+      "Continue remaining request fan-out and auth/RSC localization separately; keep Plan 1 closure, Plan 2 eligibility, and production NO-GO unchanged."
+    ]
+  }
+}

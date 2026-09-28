@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-j1-active-client-preference-route-correlation-v1",
+  "evidenceId": "862ac27d-4543-486f-b1eb-f7d6f6fbce9a",
+  "generatedAt": "2026-09-21T08:52:03.356Z",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-active-client-preference-route-correlation",
+  "status": "COMPLETE",
+  "outcome": "J1_CONTROLLED_RESULT_INCONCLUSIVE",
+  "productionDecision": "NO-GO",
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "gitDiffCheck": "PASS",
+    "statusLineCountAtCorrectedRun": 185,
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "shellDirtyRegistrationPolicy": "stable",
+    "sourceFiles": [
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "b7c9877d00c51131fd8305c2715772f5028a417c1028d8a25d6c001444bc6aa0"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "937a52e3b430a2bc77052f8fd67f9dfb5d08db32d32f0bff2e377371c669c3af"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-active-client-preference-confirmation.mjs",
+        "sha256": "8060fe2a03f0eec1b4af0f1c658180698f8bb76a361aa90ac96ff8db5f05a7bf"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts",
+        "sha256": "b9bd90ccb60695ea01f63bdb416a1f55500c666293c6bb6004b554d2f179580c"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "1accddd158ba47a4e1c352a9f0371d92d05866ab0b0ebff861feddd5b2f96648"
+      }
+    ]
+  },
+  "parentEvidence": [
+    {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T080123439Z-c4d87d92-ce1e-4439-8103-77ec287524b9_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "sha256": "81EFF13B267745C7ED33DB59E387B0C513C67103285A9F5230C03ADF22F13EC8",
+      "role": "route-history-and-request-capture-source"
+    },
+    {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2_EVIDENCE.json",
+      "sha256": "FCFA4C955375A92442FE16E23887C974CB26E5E25C6CFC0C7A9823BC546324D5",
+      "role": "prior-diagnostic-Forms-cleanup-abort-correlation"
+    }
+  ],
+  "controlledRuns": {
+    "invalidProtocolRun": {
+      "runId": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T082533422Z-3011374c-84ea-4d8d-a2e9-a8d418ee0979",
+      "evidenceSha256": "33B36A7D154F3518B35C9D0CB251846F1D9B48F5057AF1C3C351BF692935F7E6",
+      "disposition": "PRESERVED_INVALID_CONTROL_SETUP",
+      "reason": "The gate was armed before the roster-navigation step and could match a different shell-preference intent. It is excluded from causal interpretation."
+    },
+    "correctedRun": {
+      "runId": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T084521559Z-7190e356-128a-4c48-b31e-dd8dc2f081ee",
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T084521559Z-7190e356-128a-4c48-b31e-dd8dc2f081ee_EVIDENCE.json",
+      "evidenceSha256": "4F44B41C6C27F951F39703D554E020643C37BE367FFAEDABF7BEB9AC4DD4CA7F",
+      "groups": [
+        {
+          "group": "A1",
+          "controlVariant": null,
+          "attempted": 3,
+          "observationValid": 3,
+          "validSample": 1,
+          "functionalSuccess": 1,
+          "summaryRouteAfterForms": "2/3",
+          "formsRequiredRequestAbort": "2/3",
+          "secondActionTailMs": [897, 379, 276]
+        },
+        {
+          "group": "B",
+          "controlVariant": "await_active_client_preference",
+          "attempted": 3,
+          "observationValid": 3,
+          "validSample": 2,
+          "functionalSuccess": 2,
+          "activeClientGatePassed": "3/3",
+          "summaryRouteAfterForms": "1/3",
+          "formsRequiredRequestAbort": "1/3",
+          "secondActionTailMs": [372, 380, 376]
+        },
+        {
+          "group": "A2",
+          "controlVariant": null,
+          "attempted": 3,
+          "observationValid": 3,
+          "validSample": 3,
+          "functionalSuccess": 3,
+          "summaryRouteAfterForms": "0/3",
+          "formsRequiredRequestAbort": "0/3",
+          "secondActionTailMs": [360, 437, 399]
+        }
+      ],
+      "overall": {
+        "attempted": 9,
+        "observationValid": 9,
+        "validSample": 6,
+        "officialBaselineSamples": 0,
+        "routeAndRequestFailuresRetained": true
+      }
+    }
+  },
+  "directPriorCorrelation": {
+    "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T080123439Z-c4d87d92-ce1e-4439-8103-77ec287524b9",
+    "journey": "J1",
+    "mode": "diagnostic",
+    "matchingRecords": 1,
+    "observation": {
+      "formsRouteAtMs": 1421,
+      "summaryRouteAfterFormsAtMs": 1845,
+      "formsEffectCleanupAtMs": 1866,
+      "formsLoadAbortedAtMs": 1877,
+      "cleanupToAbortMs": 11,
+      "summaryToCleanupMs": 21
+    },
+    "scope": "This is a prior trace-only diagnostic correlation, not an official sample and not a confirmation by itself."
+  },
+  "codeFlowCandidate": {
+    "candidate": "delayed Stage 6 active-client activation/navigation can race the Forms task navigation",
+    "references": [
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "lines": "486-524",
+        "role": "selectClient awaits Stage 6 activation and supplies the summary afterHref"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "lines": "574-581",
+        "role": "openClientTask builds Forms href and requests navigation"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "lines": "836-861",
+        "role": "activeClient preference PATCH completion is followed by commitDashboardHref and router.push"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-6-client-selection.ts",
+        "lines": "31-53",
+        "role": "Stage 6 activation awaits persistence before returning activated"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts",
+        "lines": "56-90",
+        "role": "shell preference PATCH and response parsing"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "lines": "82-174",
+        "role": "workspace load lifecycle and abort boundary"
+      }
+    ]
+  },
+  "interpretation": {
+    "candidateNarrowed": true,
+    "sharedInfrastructureCandidate": true,
+    "activeClientPreferenceGateWasObserved": "3/3 B records passed the intended gate",
+    "controlledDirection": "INCONCLUSIVE",
+    "reason": "B improved the post-Forms summary transition count relative to A1, but A2 returned to zero transitions and B still had one post-Forms summary transition plus one required-read abort. Speed tails also do not preserve a repeatable A-B-A direction.",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "runtimeFixAccepted": false,
+    "plan2Eligible": false
+  },
+  "nextDiagnosticStep": {
+    "scope": "trace-only",
+    "variable": "preference_intent_timing_and_completion",
+    "method": "Record only the sanitized intent-key set, request start, response header, body completion, and route transition for every shell-preference PATCH; correlate activeClientId and lastDestinationId responses separately with the next summary or Forms route.",
+    "reason": "The corrected gate proves that waiting for one activeClientId response is insufficient to explain the remaining post-Forms summary transition.",
+    "stopCondition": "Stop after one bounded J1 trace set identifies whether a second preference intent or a late continuation remains; do not modify product scheduling until that boundary is directly observed."
+  },
+  "constraints": [
+    "No product runtime change was made or accepted.",
+    "No official nine-scenario baseline sample was started.",
+    "No auth root cause was claimed from this evidence.",
+    "No real health data, live provider traffic, credentials, cookies, tokens, prompts, or raw request bodies were recorded.",
+    "Production remains NO-GO."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "J1_CONTROLLED_RESULT_INCONCLUSIVE",
+    "phase5StatusPreserved": "COMPLETE / DIAGNOSIS_BLOCKED",
+    "findingDispositionChanged": false,
+    "nextAction": "Add sanitized shell-preference intent timing to the trace-only J1 correlation, then reassess the candidate."
+  }
+}

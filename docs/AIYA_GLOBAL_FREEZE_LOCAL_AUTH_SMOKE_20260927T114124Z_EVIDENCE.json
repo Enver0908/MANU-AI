@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "aiya-global-freeze-local-smoke-evidence-v1",
+  "evidenceId": "aiya-global-freeze-local-auth-smoke-v1-20260927T114124Z-ed0b740b",
+  "createdAtUtc": "2026-09-27T11:41:24Z",
+  "status": "PASS_BOUNDED_LOCAL_FUNCTIONAL_SMOKE_ONLY",
+  "authority": {
+    "userApprovedLocalStackAndSyntheticAuthSmoke": true,
+    "approvalDateUtc": "2026-09-26",
+    "commitOrDeploymentApproved": false,
+    "plan1Status": "COMPLETE / DIAGNOSIS_BLOCKED",
+    "plan1DispositionChanged": false,
+    "plan2EligibleFindings": 0,
+    "productionStatus": "NO-GO"
+  },
+  "candidate": {
+    "baseCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "worktreePath": "C:\\Users\\Dell\\.codex\\worktrees\\aiya-freeze-candidate-restore\\MANU-AI",
+    "branchState": "detached",
+    "sourceRehydration": {
+      "priorWorktreePresent": false,
+      "recoverySource": "recorded source-change patches from the prior task history",
+      "byteIdenticalToEarlierCandidate": false,
+      "lineEndingNote": "Four existing files have line-ending-only hash differences from the earlier candidate; git diff --ignore-space-at-eol showed no additional logical differences. Two source hashes match the earlier evidence exactly."
+    },
+    "changedTrackedFiles": [
+      "app/src/components/dashboard/shell-provider.tsx",
+      "app/src/lib/phase-85-stage-4b-dashboard-routing.test.ts",
+      "app/src/lib/phase-85-stage-4b-dashboard-routing.ts",
+      "app/src/lib/use-dashboard-url.ts",
+      "app/src/lib/use-shell-dirty-registration.ts"
+    ],
+    "addedTestFiles": [
+      "app/src/lib/use-shell-dirty-registration.test.ts"
+    ],
+    "packageLockChanged": false,
+    "sourceSha256": {
+      "app/src/lib/use-shell-dirty-registration.ts": "FB48C52540EF5D6555816DDF66C3FAB280F7389D03E01EFF45CC5F78B1ADF484",
+      "app/src/lib/use-shell-dirty-registration.test.ts": "7D6825242C9FAD003114A681946FCB92D0CF024BF3279301779634C475950AAD",
+      "app/src/lib/phase-85-stage-4b-dashboard-routing.ts": "0C93C22E9E65F19972BB68969D8DA2A3E1763B7BC248938FE423BB3478DD5C39",
+      "app/src/lib/phase-85-stage-4b-dashboard-routing.test.ts": "B4A8C8FAF4DE3FF72E23D414A37A2D92DAA67DEBD94108F08989C88B946D95B9",
+      "app/src/lib/use-dashboard-url.ts": "488B1A10C9EBD179250A696FFA2BDA7DF521DB3514A8AAFD278A1AD3064857A8",
+      "app/src/components/dashboard/shell-provider.tsx": "87C62938EE724090F031EDCF7569C9FC844026C3DF89886A8A9DF8472BBC7229"
+    }
+  },
+  "verification": {
+    "dependencyInstall": {
+      "status": "PASS",
+      "command": "npm ci --no-audit --no-fund",
+      "packagesAdded": 494,
+      "packageLockChanged": false,
+      "separateAuditObservation": "npm reported 5 dependency advisories: 3 moderate, 1 high, 1 critical; no audit fix was run."
+    },
+    "focusedTests": {
+      "status": "PASS",
+      "files": 2,
+      "passed": 25,
+      "failed": 0
+    },
+    "productionBuild": {
+      "status": "PASS",
+      "typescript": "PASS during production build",
+      "staticPagesGenerated": 79,
+      "supabaseTarget": "127.0.0.1:54321",
+      "configuration": "Process-only build environment; no checkout environment file was loaded or modified and no key values were recorded.",
+      "warning": "Next.js reported a custom Cache-Control header for /_next/static/:path*; build completed."
+    },
+    "targetedLint": {
+      "status": "PASS",
+      "changedFiles": 6,
+      "errors": 0,
+      "warnings": 0
+    },
+    "migrationPreflight": {
+      "candidateMigrationFiles": 125,
+      "locallyAppliedVersions": 126,
+      "candidateVersionsPresentLocally": true,
+      "additionalLocalOnlyVersion": "20260911070000",
+      "migrationsAppliedDuringThisSmoke": false
+    }
+  },
+  "localEnvironment": {
+    "supabaseWasAlreadyRunning": true,
+    "applicationUsedLoopbackSupabaseOnly": true,
+    "externalServicesUsed": false,
+    "hostedProductionTouched": false,
+    "environmentFilesChanged": false,
+    "realClientOrHealthDataUsed": false,
+    "liveAiMessagingBillingOrWorkerCalls": false
+  },
+  "authenticatedSyntheticSmoke": {
+    "status": "PASS_LIMITED_SCOPE",
+    "browser": "headless desktop Chromium via Playwright",
+    "build": "local production build from the isolated candidate",
+    "authentication": "Unique synthetic local Auth user created through local admin API, then signed in through the actual /login UI; demo-login bypass was not used.",
+    "flow": [
+      "Open authenticated dashboard and navigate to Clients.",
+      "Enter a reserved fictional phone value using keyboard events; do not submit the client form.",
+      "Wait 2000 ms, then click Forms.",
+      "Observe the expected dirty-draft guard, discard the draft, and confirm Forms opens.",
+      "Return to Clients and confirm the discarded phone field is empty."
+    ],
+    "measurements": {
+      "loginToShellMs": 6491,
+      "clientsNavigationMs": 141,
+      "phoneTypingMs": 524,
+      "secondClickToDirtyGuardMs": 122,
+      "dashboardRscRequests": 4,
+      "dashboardDocumentNavigations": 1,
+      "clientMutationRequests": 0,
+      "httpErrorResponses": 0,
+      "consoleErrors": 0,
+      "pageErrors": 0,
+      "externalRequestsBlocked": 0
+    },
+    "functionalObservation": "The typed value was accepted, the delayed second click was handled, the expected dirty guard appeared, and discard cleared the unsaved draft.",
+    "formSubmitted": false,
+    "reloadTested": false,
+    "androidTested": false,
+    "hostedReleaseTested": false
+  },
+  "measurementLimitations": {
+    "numberOfRuns": 1,
+    "rawPlaywrightTimelinePersisted": false,
+    "rscRequestClassification": "The four RSC requests were counted, but this short smoke did not distinguish prefetch from transition traffic.",
+    "reactProfilerUsed": false,
+    "longTaskTraceCaptured": false,
+    "performanceConclusion": "This single local functional smoke did not reproduce a delayed second-click response in this flow. It does not establish that the reported general freeze is fixed, identify a root cause, or characterize hosted, reload, mobile, network, or server behavior."
+  },
+  "cleanup": {
+    "syntheticAuthUserDeleted": true,
+    "syntheticTenantAndOwnerMembershipDeleted": true,
+    "localAggregateCountsRestoredToBaseline": {
+      "authUsers": 8,
+      "tenants": 3,
+      "memberships": 9
+    },
+    "appendOnlySyntheticAccountSecurityAuditRowsRetained": 2,
+    "applicationServerStopped": true,
+    "applicationPort3000Free": true,
+    "supabaseLeftRunningBecauseItPreExistedAndWasAuthorized": true
+  },
+  "privacyReview": {
+    "credentialsOrSecretValuesRecorded": false,
+    "cookiesOrTokensRecorded": false,
+    "syntheticPhoneOrAccountIdentifiersRecorded": false,
+    "healthDataOrRawPromptsRecorded": false
+  },
+  "conclusion": {
+    "candidateSmokeOutcome": "FUNCTIONAL_FLOW_PASS; GENERAL_FREEZE_NOT_EVALUATED",
+    "rootCauseEstablished": false,
+    "candidateProvenAsGeneralFreezeFix": false,
+    "plan1DispositionChanged": false,
+    "productionReadinessChanged": false,
+    "candidateCommittedOrDeployed": false
+  },
+  "checkpoint": {
+    "phaseId": "aiya-global-freeze-local-auth-smoke-v1",
+    "phaseSchemaVersion": "aiya-global-freeze-local-auth-smoke-v1",
+    "runId": "aiya-global-freeze-local-auth-smoke-v1-20260927T114124Z-ed0b740b-9518-4f76-bb91-ffafd02fbe19",
+    "status": "COMPLETE",
+    "eventCount": 9,
+    "hashChain": "verified after finalization",
+    "path": ".manu-runtime/phase-execution/aiya-global-freeze-local-auth-smoke-v1/aiya-global-freeze-local-auth-smoke-v1-20260927T114124Z-ed0b740b-9518-4f76-bb91-ffafd02fbe19"
+  }
+}

@@ -1,0 +1,971 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase4-5-4-6-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "4",
+  "stage": "4.5-4.6",
+  "stageId": "4.5-4.6",
+  "runId": "aiya-performance-plan1-phase4-5-4-6-v3-20260917T113958580Z-33bb0c40-838d-45e5-a0f7-042aed2ce758",
+  "generatedAt": "2026-09-17T11:41:16.952Z",
+  "status": "BLOCKED",
+  "outcome": "ENVIRONMENT_OBSERVATIONS_BLOCKED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Capture matched hosted and physical Android/PWA observations for the expanded claim scope.",
+    "claimScope": "local_hosted_physical_android_chrome_pwa_common_interaction",
+    "environments": [
+      "hosted",
+      "android_chrome",
+      "android_pwa"
+    ],
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": true,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "countedAsOfficialSample": false,
+    "preservedExistingChanges": true
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.1 IDENTITY_LOCKED",
+      "4.2 REFERENCE_SEPARATED",
+      "4.3 GENERAL_DIAGNOSTIC_HARNESS_READY",
+      "4.4 LOCAL_CAPTURE_AND_OBSERVATION_CONTRACT"
+    ],
+    "currentStages": [
+      "4.5",
+      "4.6"
+    ],
+    "nextEligibleStage": "4.5-4.6"
+  },
+  "sourceIdentity": {
+    "worktreePath": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI",
+    "branchMode": "DETACHED_HEAD",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "",
+    "detachedHeadUpstream": "NOT_AVAILABLE_BECAUSE_HEAD_IS_DETACHED",
+    "hostedOrigin": "/",
+    "release": {
+      "status": "PASS",
+      "releaseId": "hs-a2b1e0908b29-ea9021bd6c91",
+      "commit": null,
+      "commitMatchesLocalHead": true
+    },
+    "device": {
+      "status": "READY_FOR_CDP_CAPTURE",
+      "model": "SM-S721B",
+      "androidVersion": "16",
+      "chromeVersionName": "152.0.7977.83",
+      "pwaStatus": "READY_FOR_LAUNCH"
+    },
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "exists": true,
+        "sha256": "a9d740c1629069249c0fd17245dc7ad4c04addcce5aa66f031c86ad80a944c73"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4.mjs",
+        "exists": true,
+        "sha256": "79172e2eb29da584cf76c6bef5c28aa64b50ab8e299c17b32e52621dec5f18a3"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "exists": true,
+        "sha256": "40c0625b5d78c087c5c7d142c149bd91bc59ecd2e6187bf3bc4790baf040eecf"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "exists": true,
+        "sha256": "76227ccd54174401158baf03c68f1b2564420349a309b119467338c6757038ae"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-5-4-6.mjs",
+        "exists": true,
+        "sha256": "759c660d200b0052d0ee2213f9ccf199dac8fdb8dcdb469cb2ac795d0aff5000"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-5-4-6.test.mjs",
+        "exists": true,
+        "sha256": "c76773de04ff093923863eb99b2b4cc9bb6d1d0212a3702dcfb7de181e11dfa1"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "exists": true,
+        "sha256": "bc12b9dbec9a624bab0927221713d6eb8ba284cc4bd4c3c921b0cc92095a71b9"
+      }
+    ],
+    "dirtyTreePreserved": true,
+    "diffCheck": "PASS"
+  },
+  "parentRunReferences": [
+    "docs/AIYA_PERFORMANCE_PLAN_1_V3_PHASE_4_5_4_6_SCOPE_EVIDENCE.json",
+    "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T075911349Z-64dd47c1-4cc0-4b6f-b1ff-6fe3b3373512_EVIDENCE.json"
+  ],
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-phase4-5-4-6-v3",
+    "checkpointSchemaVersion": "aiya-performance-plan1-phase4-5-4-6-v3",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "fixtureClass": "authorized_hosted_synthetic_owner",
+    "journeyIds": [
+      "J1",
+      "J2",
+      "J3"
+    ],
+    "repetitionsPerEnvironment": 3,
+    "plannedUnitCount": 27,
+    "secondActionDelayMs": 2000,
+    "mode": "normal",
+    "countedAsOfficialSample": false,
+    "supersedesRunId": null
+  },
+  "stageLedger": [
+    {
+      "stageId": "4.5",
+      "name": "Hosted comparison observations",
+      "prerequisites": [
+        "4.4 trustworthy local observation"
+      ],
+      "status": "BLOCKED"
+    },
+    {
+      "stageId": "4.6",
+      "name": "Physical Android Chrome and installed PWA observations",
+      "prerequisites": [
+        "4.4 trustworthy local observation"
+      ],
+      "status": "BLOCKED"
+    }
+  ],
+  "stageScheduler": {
+    "4.5": "BLOCKED",
+    "4.6": "BLOCKED",
+    "environmentSummaries": {
+      "hosted": {
+        "environment": "hosted",
+        "plannedCount": 9,
+        "attemptedCount": 9,
+        "observationValidCount": 0,
+        "validSampleCount": 0,
+        "invalidObservationCount": 9,
+        "functionalOutcomes": {
+          "FAILURE": 9
+        },
+        "status": "BLOCKED"
+      },
+      "android_chrome": {
+        "environment": "android_chrome",
+        "plannedCount": 9,
+        "attemptedCount": 0,
+        "observationValidCount": 0,
+        "validSampleCount": 0,
+        "invalidObservationCount": 0,
+        "functionalOutcomes": {},
+        "status": "NOT_STARTED"
+      },
+      "android_pwa": {
+        "environment": "android_pwa",
+        "plannedCount": 9,
+        "attemptedCount": 0,
+        "observationValidCount": 0,
+        "validSampleCount": 0,
+        "invalidObservationCount": 0,
+        "functionalOutcomes": {},
+        "status": "NOT_STARTED"
+      }
+    }
+  },
+  "environmentPreflight": {
+    "hosted": {
+      "status": "PASS",
+      "reason": null,
+      "origin": "/",
+      "inputs": {
+        "status": "READY",
+        "filePresent": true,
+        "filePath": ".manu-runtime/performance-phase4/hosted.env",
+        "requiredKeys": {
+          "AIYA_PHASE4_HOSTED_BASE_URL": true,
+          "AIYA_PHASE4_HOSTED_EMAIL": "<redacted>",
+          "AIYA_PHASE4_HOSTED_PASSWORD": "<redacted>"
+        },
+        "source": "hosted_env_file"
+      },
+      "health": {
+        "status": "PASS",
+        "httpStatus": 200,
+        "serviceStatus": "ok",
+        "releaseId": "hs-a2b1e0908b29-ea9021bd6c91",
+        "commit": null,
+        "commitMatchesLocalHead": true,
+        "failureBoundary": null
+      },
+      "credentialsAvailable": "<redacted>"
+    },
+    "device": {
+      "status": "PASS",
+      "reason": null,
+      "target": {
+        "status": "READY_FOR_CDP_CAPTURE",
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "unauthorizedDeviceCount": 0,
+        "offlineDeviceCount": 0,
+        "model": "SM-S721B",
+        "androidVersion": "16",
+        "chromeVersionName": "152.0.7977.83",
+        "chromeLaunchStatus": "PASS",
+        "cdpForwardStatus": "PASS",
+        "pwa": {
+          "status": "READY_FOR_LAUNCH",
+          "reason": null,
+          "packageFound": null,
+          "candidateCount": 1,
+          "launchActivityStatus": "PASS"
+        },
+        "connectionMonitoring": {
+          "status": "PASS",
+          "checkCount": 3,
+          "serialRecorded": false,
+          "checks": [
+            {
+              "checkpoint": "after_adb_authorization",
+              "status": "PASS",
+              "connected": true,
+              "reason": null,
+              "deviceCount": 1,
+              "authorizedDeviceCount": 1,
+              "serialRecorded": false
+            },
+            {
+              "checkpoint": "after_android_chrome_launch",
+              "status": "PASS",
+              "connected": true,
+              "reason": null,
+              "deviceCount": 1,
+              "authorizedDeviceCount": 1,
+              "serialRecorded": false
+            },
+            {
+              "checkpoint": "after_cdp_forward",
+              "status": "PASS",
+              "connected": true,
+              "reason": null,
+              "deviceCount": 1,
+              "authorizedDeviceCount": 1,
+              "serialRecorded": false
+            }
+          ]
+        },
+        "serialRecorded": false
+      },
+      "connectionMonitoring": {
+        "status": "PASS",
+        "checkCount": 3,
+        "serialRecorded": false,
+        "checks": [
+          {
+            "checkpoint": "after_adb_authorization",
+            "status": "PASS",
+            "connected": true,
+            "reason": null,
+            "deviceCount": 1,
+            "authorizedDeviceCount": 1,
+            "serialRecorded": false
+          },
+          {
+            "checkpoint": "after_android_chrome_launch",
+            "status": "PASS",
+            "connected": true,
+            "reason": null,
+            "deviceCount": 1,
+            "authorizedDeviceCount": 1,
+            "serialRecorded": false
+          },
+          {
+            "checkpoint": "after_cdp_forward",
+            "status": "PASS",
+            "connected": true,
+            "reason": null,
+            "deviceCount": 1,
+            "authorizedDeviceCount": 1,
+            "serialRecorded": false
+          }
+        ]
+      },
+      "chromeLaunch": {
+        "status": "PASS",
+        "reason": null,
+        "launchStatus": "PASS",
+        "serialRecorded": false
+      },
+      "chromeTarget": {
+        "status": "BLOCKED",
+        "navigation": "not_run",
+        "reason": "android_chrome_normal_tab_not_found"
+      },
+      "pwaTarget": {
+        "status": "BLOCKED",
+        "reason": "android_pwa_target_not_verified"
+      }
+    },
+    "androidPwa": {
+      "status": "PASS",
+      "reason": null,
+      "packageFound": true,
+      "packageLaunchStatus": "PASS",
+      "launchActivityStatus": "PASS",
+      "target": null,
+      "serialRecorded": false
+    }
+  },
+  "environmentSummary": {
+    "hosted": {
+      "environment": "hosted",
+      "plannedCount": 9,
+      "attemptedCount": 9,
+      "observationValidCount": 0,
+      "validSampleCount": 0,
+      "invalidObservationCount": 9,
+      "functionalOutcomes": {
+        "FAILURE": 9
+      },
+      "status": "BLOCKED"
+    },
+    "android_chrome": {
+      "environment": "android_chrome",
+      "plannedCount": 9,
+      "attemptedCount": 0,
+      "observationValidCount": 0,
+      "validSampleCount": 0,
+      "invalidObservationCount": 0,
+      "functionalOutcomes": {},
+      "status": "NOT_STARTED"
+    },
+    "android_pwa": {
+      "environment": "android_pwa",
+      "plannedCount": 9,
+      "attemptedCount": 0,
+      "observationValidCount": 0,
+      "validSampleCount": 0,
+      "invalidObservationCount": 0,
+      "functionalOutcomes": {},
+      "status": "NOT_STARTED"
+    }
+  },
+  "samples": [
+    {
+      "unitKey": "hosted:J1:r1",
+      "environment": "hosted",
+      "journeyId": "J1",
+      "repetition": 1,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645198996,
+          "loginPageResponseStatus": 200,
+          "loginPageReadyAtMs": 406,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "TimeoutError"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645198980,
+        "captureFinishedAtWallMs": 1789645219507,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 29,
+            "responseHeaderAtMs": 301,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": 200,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": false
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    },
+    {
+      "unitKey": "hosted:J1:r2",
+      "environment": "hosted",
+      "journeyId": "J1",
+      "repetition": 2,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645219541,
+          "loginPageResponseStatus": null,
+          "loginPageReadyAtMs": null,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "Error"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645219535,
+        "captureFinishedAtWallMs": 1789645229574,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 9,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": null,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": true
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    },
+    {
+      "unitKey": "hosted:J1:r3",
+      "environment": "hosted",
+      "journeyId": "J1",
+      "repetition": 3,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645229605,
+          "loginPageResponseStatus": null,
+          "loginPageReadyAtMs": null,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "Error"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645229599,
+        "captureFinishedAtWallMs": 1789645229670,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 9,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": null,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": true
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    },
+    {
+      "unitKey": "hosted:J2:r1",
+      "environment": "hosted",
+      "journeyId": "J2",
+      "repetition": 1,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645229697,
+          "loginPageResponseStatus": null,
+          "loginPageReadyAtMs": null,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "Error"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645229691,
+        "captureFinishedAtWallMs": 1789645229725,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 10,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": null,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": true
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    },
+    {
+      "unitKey": "hosted:J2:r2",
+      "environment": "hosted",
+      "journeyId": "J2",
+      "repetition": 2,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645229755,
+          "loginPageResponseStatus": null,
+          "loginPageReadyAtMs": null,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "Error"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645229749,
+        "captureFinishedAtWallMs": 1789645229772,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 9,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": null,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": true
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    },
+    {
+      "unitKey": "hosted:J2:r3",
+      "environment": "hosted",
+      "journeyId": "J2",
+      "repetition": 3,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645229797,
+          "loginPageResponseStatus": null,
+          "loginPageReadyAtMs": null,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "Error"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645229792,
+        "captureFinishedAtWallMs": 1789645229817,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 10,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": null,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": true
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    },
+    {
+      "unitKey": "hosted:J3:r1",
+      "environment": "hosted",
+      "journeyId": "J3",
+      "repetition": 1,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645229845,
+          "loginPageResponseStatus": null,
+          "loginPageReadyAtMs": null,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "Error"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645229840,
+        "captureFinishedAtWallMs": 1789645229865,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 9,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": null,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": true
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    },
+    {
+      "unitKey": "hosted:J3:r2",
+      "environment": "hosted",
+      "journeyId": "J3",
+      "repetition": 2,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645229889,
+          "loginPageResponseStatus": null,
+          "loginPageReadyAtMs": null,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "Error"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645229886,
+        "captureFinishedAtWallMs": 1789645229908,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 5,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": null,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": true
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    },
+    {
+      "unitKey": "hosted:J3:r3",
+      "environment": "hosted",
+      "journeyId": "J3",
+      "repetition": 3,
+      "status": "AUTH_FAILED",
+      "validSample": false,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "FAIL",
+        "timing": {
+          "sessionStartedAtWallMs": 1789645229934,
+          "loginPageResponseStatus": null,
+          "loginPageReadyAtMs": null,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": null,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": "auth_session",
+        "errorClass": "Error"
+      },
+      "targetSurface": {
+        "kind": "hosted_desktop_browser"
+      },
+      "requestSummary": {
+        "captureStartedAtWallMs": 1789645229929,
+        "captureFinishedAtWallMs": 1789645229955,
+        "requestCount": 1,
+        "apiRequestCount": 0,
+        "documentRequestCount": 1,
+        "requests": [
+          {
+            "route": "/login",
+            "method": "GET",
+            "resourceType": "document",
+            "startedAtMs": 10,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": "<redacted>",
+            "status": null,
+            "bodySizeBytes": "<redacted>",
+            "bodySizeSource": "<redacted>",
+            "serverTiming": [],
+            "failed": true
+          }
+        ],
+        "overlappingRequests": [],
+        "overlapCount": 0,
+        "serverTimingResponseCount": 0,
+        "bodySizeAvailableCount": "<redacted>",
+        "bodyFinishTimedOut": "<redacted>"
+      },
+      "failureBoundary": {
+        "phase": "auth_session",
+        "actionId": null,
+        "reason": "auth_session"
+      },
+      "countedAsOfficialSample": false
+    }
+  ],
+  "sampleSummary": {
+    "attemptedSamples": 9,
+    "plannedSamples": 27,
+    "observationValidSamples": 0,
+    "validSamples": 0,
+    "functionalOutcomes": {
+      "FAILURE": 9
+    },
+    "validSamplesAreNotOfficialBaseline": true,
+    "performanceOutcome": "NOT_EVALUABLE"
+  },
+  "blockers": [
+    "hosted_observation_incomplete",
+    "android_environment_observation_incomplete",
+    "invalid_observation:hosted:J1:r1",
+    "invalid_observation:hosted:J1:r2",
+    "invalid_observation:hosted:J1:r3",
+    "invalid_observation:hosted:J2:r1",
+    "invalid_observation:hosted:J2:r2",
+    "invalid_observation:hosted:J2:r3",
+    "invalid_observation:hosted:J3:r1",
+    "invalid_observation:hosted:J3:r2",
+    "invalid_observation:hosted:J3:r3"
+  ],
+  "deferredEnvironments": [],
+  "constraints": [
+    "No official nine-scenario baseline was started.",
+    "No runtime change is accepted as a Plan 1 fix.",
+    "Production remains NO-GO.",
+    "No credentials, cookies, tokens, raw bodies, prompts, clinical data, or device serials are recorded.",
+    "Historical v2 Android and Phase 4 evidence remains reference-only."
+  ],
+  "evidenceIntegrity": {
+    "historicalPhase4EvidenceRewritten": false,
+    "incompleteSamplesRemainInvalid": true,
+    "observedFailuresRemainNonSamples": true,
+    "officialMeasurementStarted": false,
+    "runtimeFixAccepted": false,
+    "redactionCheck": "PASS",
+    "redactionFailures": []
+  },
+  "closure": {
+    "status": "BLOCKED",
+    "outcome": "ENVIRONMENT_OBSERVATIONS_BLOCKED",
+    "phase4Closed": false,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "nextAction": "Preserve the blocked environment boundary and repair only the declared preflight or capture gap."
+  }
+}

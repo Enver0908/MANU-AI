@@ -1,0 +1,388 @@
+{
+  "schemaVersion": "aiya-performance-plan1-phase4-2-evidence-v1",
+  "planRevision": "plan1-final-v2",
+  "phase": "4",
+  "stage": "4.2",
+  "stageId": "4.2",
+  "runId": "aiya-performance-plan1-phase4-2-20260916T164836725Z-01dac400",
+  "generatedAt": "2026-09-16T16:48:36.725Z",
+  "status": "COMPLETE",
+  "outcome": "REFERENCE_SEPARATED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Review inherited performance evidence and separate the current dirty runtime variant from an ignored reference snapshot before any new measurement.",
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v2",
+    "historicalContentUsedAsInstruction": false,
+    "nextEligibleStage": "4.3"
+  },
+  "sourceIdentity": {
+    "worktreePath": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI",
+    "branchMode": "DETACHED_HEAD",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "sameHeadAttachedBranch": "codex/production-readiness-stage-1",
+    "sameHeadAttachedBranchAheadCount": 2,
+    "remoteProductionReadinessSha": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "detachedHeadUpstream": "NOT_AVAILABLE_BECAUSE_HEAD_IS_DETACHED",
+    "dirtyTreePreserved": true
+  },
+  "historicalEvidenceReview": {
+    "authority": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+    "historicalPhase4Run": {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+      "runId": "aiya-performance-plan1-phase4-20260915T195604720Z-497a3200-ada3-445d-a2d0-059cb0886940",
+      "status": "BLOCKED",
+      "outcome": "PERFORMANCE_BLOCKED",
+      "validEnvironmentCount": 2,
+      "requiredEnvironmentCount": 4,
+      "closureReproducedInterpretation": "Reproduction flag retained as historical evidence; it is not causal proof."
+    },
+    "reviewedEvidence": [
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+        "role": "inherited Phase 1 evidence",
+        "status": "COMPLETE",
+        "outcome": "NO_RUNTIME_CAUSE_CONFIRMED"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+        "role": "inherited Phase 2 harness evidence",
+        "status": "COMPLETE",
+        "outcome": "HARNESS_READY_WITH_NEGATIVE_CONTROLS"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "role": "inherited Phase 3 synthetic auth/store evidence",
+        "status": "COMPLETE",
+        "outcome": "SYNTHETIC_AUTH_STORE_READY"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+        "role": "five-finding disposition authority",
+        "status": "REVIEWED",
+        "outcome": "DISPOSITIONS_UNCHANGED"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_ANDROID_DIAGNOSTIC_EVIDENCE.json",
+        "role": "historical diagnostic evidence",
+        "status": "BLOCKED",
+        "outcome": "DIAGNOSTIC_FAILURES_CAPTURED"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE.json",
+        "role": "historical readiness evidence",
+        "status": "COMPLETE",
+        "outcome": "READY_FOR_PHASE4_BASELINE"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_CYCLIC_EXECUTION_SPEC.md",
+        "role": "historical checkpoint/cycle contract",
+        "status": "REVIEWED",
+        "outcome": "DIAGNOSTIC_AND_OFFICIAL_SAMPLES_REMAIN_SEPARATE"
+      }
+    ]
+  },
+  "findingReview": [
+    {
+      "id": "PERF-F2-001",
+      "phase1Disposition": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "observation": "Broad app-state hydration and store fan-out remain a high static risk candidate; inherited performance records do not identify a causal loader or consumer boundary.",
+      "affectedSurface": [
+        "app/src/lib/use-aiya-state.ts",
+        "app/src/app/api/app-state/route.ts",
+        "app/src/lib/supabase-store.ts",
+        "app/src/components/dashboard-app.tsx"
+      ],
+      "missingProof": "At least three matching valid authenticated traces must connect the broad hydration path to the missed task budget and identify the exact loader/consumer path.",
+      "reproductionJourney": [
+        "post_login_dashboard",
+        "client_roster",
+        "client_forms_workspace",
+        "nutrition_workspace",
+        "menu_workspace"
+      ],
+      "requiredClosureEvidence": "Three or more matching valid samples/traces with request, body-finish, parse, render, and task-ready boundaries plus exact file/function attribution.",
+      "dispositionChangedInPhase4_2": false
+    },
+    {
+      "id": "PERF-F2-002",
+      "phase1Disposition": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "observation": "Inbox, messaging, and AI Chat refresh paths remain a background-overlap candidate; historical failures do not isolate overlap from normal route/render work.",
+      "affectedSurface": [
+        "app/src/lib/use-stage-4b-inbox.ts",
+        "app/src/lib/use-stage-4b2-messaging.ts",
+        "app/src/lib/use-ai-chat.ts"
+      ],
+      "missingProof": "At least three matched valid traces must show overlapping refresh work and a repeatable task-ready or interaction delta without losing freshness behavior.",
+      "reproductionJourney": [
+        "post_login_dashboard",
+        "client_roster",
+        "messages",
+        "ai_chat"
+      ],
+      "requiredClosureEvidence": "A controlled natural-refresh versus diagnostic-pause comparison with request overlap/count, long-task, task-ready, and freshness checks.",
+      "dispositionChangedInPhase4_2": false
+    },
+    {
+      "id": "PERF-F2-003",
+      "phase1Disposition": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "observation": "The eager dashboard import and panel/render graph remains a bundle and main-thread candidate; no measured panel or import contribution was established by inherited evidence.",
+      "affectedSurface": [
+        "app/src/components/dashboard-app.tsx",
+        "app/src/components/dashboard/**",
+        "app/src/app/dashboard/**"
+      ],
+      "missingProof": "At least three matching valid traces must identify the heavy bundle, panel, or render path and its contribution to interaction or readiness delay.",
+      "reproductionJourney": [
+        "post_login_dashboard",
+        "client_roster",
+        "client_forms_workspace",
+        "nutrition_workspace",
+        "menu_workspace",
+        "ai_chat"
+      ],
+      "requiredClosureEvidence": "Main-thread parse/evaluate, long-task, layout, paint, panel, and task-ready timing with exact path attribution; no speculative split is accepted as proof.",
+      "dispositionChangedInPhase4_2": false
+    },
+    {
+      "id": "PERF-F12-001",
+      "phase1Disposition": "MEASUREMENT_GAP_CONFIRMED",
+      "observation": "AI Chat authentication and required-read coverage is a measurement-gate gap, not a runtime root-cause claim; a valid sample requires the authenticated conversation-list 2xx/body-finish and workspace-ready boundary.",
+      "affectedSurface": [
+        "app/scripts/measure-aiya-performance.mjs",
+        "app/scripts/measure-aiya-performance-phase-1-2.mjs",
+        "app/src/app/dashboard/ai-chat/page.tsx",
+        "app/src/lib/phase-85-stage-4c-route.ts"
+      ],
+      "missingProof": "The required authenticated AI Chat read and workspace selector must be present in valid samples; 401, timeout, or missing readiness remains a measurement/auth/store failure class.",
+      "reproductionJourney": [
+        "ai_chat"
+      ],
+      "requiredClosureEvidence": "Authenticated AI Chat samples with a 2xx conversation-list response, body-finish, and required workspace selector, with auth failure, response, parse, and render outcomes separated.",
+      "dispositionChangedInPhase4_2": false
+    },
+    {
+      "id": "PERF-F12-002",
+      "phase1Disposition": "MEASURED_CANDIDATE_PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+      "observation": "The warm AI Chat journey remains a measured historical candidate, but its candidate surface and causal layer are still unassigned; inherited slow samples cannot be treated as a fix or cause.",
+      "affectedSurface": [],
+      "missingProof": "At least three valid authenticated traces must separate auth, store, network, parse, render, and polling timing and map the result to exact files/functions.",
+      "reproductionJourney": [
+        "ai_chat"
+      ],
+      "requiredClosureEvidence": "A corrected warm-session journey with valid authenticated reads, task-ready, event-to-paint, render, and polling boundaries plus exact attribution.",
+      "dispositionChangedInPhase4_2": false
+    }
+  ],
+  "variantSeparation": {
+    "comparisonScope": {
+      "includedRoot": ".",
+      "excludedPaths": [
+        ".git/**",
+        ".manu-runtime/**",
+        "node_modules/**",
+        "app/node_modules/**",
+        ".next/**",
+        "app/.next/**",
+        "out/**",
+        "app/out/**",
+        "build/**",
+        "app/build/**",
+        "tmp/**",
+        ".env*",
+        "**/*.pem",
+        "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_2_EVIDENCE.json"
+      ],
+      "reason": "Generated evidence and local runtime artifacts are not application variant inputs."
+    },
+    "currentVariant": {
+      "label": "current_dirty_worktree",
+      "path": ".",
+      "stateProviderHydrationExperiment": "included",
+      "sourceFingerprint": "fc3fe4eda06a4512d1b5929d236508535950275eb19d30ed6ba8b7c595329039",
+      "fileCount": 2173
+    },
+    "referenceVariant": {
+      "label": "reference_without_state_provider_hydration_experiment",
+      "path": ".manu-runtime/phase4-2/reference-snapshot-20260916T164836725Z",
+      "manifestPath": ".manu-runtime/phase4-2/reference-snapshot-20260916T164836725Z-manifest.json",
+      "ignored": true,
+      "createdFrom": "current dirty worktree with the three experiment files withheld and restored from HEAD",
+      "stateProviderHydrationExperiment": "removed",
+      "sourceFingerprint": "996eb6c3b24fb11dabbd32b7fe5fd4810cd39154e59c9d6e088331b6067614ed",
+      "fileCount": 2173
+    },
+    "comparison": {
+      "currentOnlyCount": 0,
+      "referenceOnlyCount": 0,
+      "mismatchCount": 3,
+      "unrelatedMismatchCount": 0,
+      "mismatchesAreExactlyExperimentFiles": true,
+      "experimentFiles": [
+        {
+          "path": "app/src/lib/use-aiya-state.ts",
+          "currentSha256": "d7c299c41b85528d8be18dd50a6476a5852e7576572ec516013b892c4555346",
+          "referenceSha256": "e403a1be9134ec3231ce467290761c58f751b4b27aa03572a7c025f5946acbfd"
+        },
+        {
+          "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+          "currentSha256": "afbbc5f1e48819d7e8853028fdebc798bef2da10a3fb1e7a9d59636109e6c90c",
+          "referenceSha256": "59ddbef419bb9f92b40b5bdb3bc0a313faa0d3aba765538703105fc958df2b35"
+        },
+        {
+          "path": "app/src/components/dashboard-app.tsx",
+          "currentSha256": "bfbe3e367af82ac91214b1a4bf2de6e85feb02f0280a08094db8466c1303bf11",
+          "referenceSha256": "472e135b7e9e4521823fe5cd82fc579ea75670ced5c78cd0e586658920e6e5e4"
+        }
+      ],
+      "unrelatedMismatches": []
+    }
+  },
+  "stageLedger": [
+    {
+      "stageId": "4.2.1",
+      "name": "Historical evidence review",
+      "status": "COMPLETE",
+      "verified": [
+        "active final contract read",
+        "inherited Phase 1-3 evidence read",
+        "historical Phase 4 baseline and Android diagnostic evidence kept separate",
+        "readiness evidence not treated as a baseline"
+      ]
+    },
+    {
+      "stageId": "4.2.2",
+      "name": "Five-finding review",
+      "status": "COMPLETE",
+      "verified": [
+        "each finding has observation, affected surface, missing proof, reproduction journey, and closure evidence",
+        "finding manifest dispositions were not changed",
+        "speed failure and closure.reproduced were not promoted to causal proof"
+      ]
+    },
+    {
+      "stageId": "4.2.3",
+      "name": "Ignored reference snapshot creation",
+      "status": "COMPLETE",
+      "verified": [
+        "reference path is under .manu-runtime and is ignored",
+        "pre-existing runtime, harness, migration, diagnostic, and checkpoint changes were preserved",
+        "state-provider/hydration experiment files were restored from locked HEAD"
+      ]
+    },
+    {
+      "stageId": "4.2.4",
+      "name": "Current/reference identity comparison",
+      "status": "COMPLETE",
+      "verified": [
+        "current and reference comparison file sets are equal",
+        "only the three named experiment files differ",
+        "no unrelated mismatch was found"
+      ]
+    },
+    {
+      "stageId": "4.2.5",
+      "name": "Measurement and evidence gate",
+      "status": "COMPLETE",
+      "verified": [
+        "no official baseline was started",
+        "no diagnostic journey was started",
+        "no causal experiment or runtime optimization was started",
+        "production remains NO-GO"
+      ]
+    }
+  ],
+  "documentReconciliation": {
+    "updated": [
+      "docs/AIYA_PERFORMANCE_ACTION_PLAN.md",
+      "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+      "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+      "docs/RISK_REGISTER.md",
+      "HANDOFF_FOR_NEXT_CODEX.md"
+    ],
+    "preserved": [
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_1_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+    ],
+    "historicalPhase4EvidenceRewritten": false
+  },
+  "targetedVerification": {
+    "measurementStartedByTests": false,
+    "tests": [
+      {
+        "command": "node --test app/scripts/performance-plan-1-phase-4.test.mjs",
+        "status": "PARTIAL",
+        "passed": 33,
+        "failed": 2,
+        "failureClass": "hosted_env_file_missing",
+        "scope": "pre-existing hosted-input contract coverage; no hosted request or measurement was started",
+        "phase4_2ClosureImpact": "NONE"
+      },
+      {
+        "command": "node --test app/scripts/performance-plan-1-phase-4-readiness.test.mjs",
+        "status": "PASS",
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "command": "node --test tools/phase-execution/phase-execution.test.mjs",
+        "status": "PASS",
+        "passed": 11,
+        "failed": 0
+      },
+      {
+        "command": "JSON parse, redaction, ignored-snapshot, comparison, and git diff --check",
+        "status": "PASS",
+        "passed": 1,
+        "failed": 0
+      }
+    ],
+    "environmentInput": {
+      "path": ".manu-runtime/performance-phase4/hosted.env",
+      "present": false,
+      "valueRecorded": false
+    }
+  },
+  "blockers": [],
+  "constraints": [
+    "No official nine-scenario baseline or diagnostic run was started in 4.2.",
+    "No runtime change is accepted as a Plan 1 fix.",
+    "Production remains NO-GO.",
+    "No credentials, cookies, tokens, raw bodies, prompts, clinical data, or device serials are recorded."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "referenceSnapshotIgnored": true,
+    "comparisonScopeStable": true,
+    "manifestPath": ".manu-runtime/phase4-2/reference-snapshot-20260916T164836725Z-manifest.json"
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "REFERENCE_SEPARATED",
+    "nextEligibleStage": "4.3",
+    "phase4Closed": false,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false
+  },
+  "postWriteVerification": {
+    "status": "PASS_WITH_PREEXISTING_HOSTED_INPUT_TEST_GAP",
+    "gitDiffCheck": "PASS",
+    "gitStatus": "CAPTURED_WITH_EXISTING_DIRTY_INPUTS",
+    "jsonParse": "PASS",
+    "redaction": "PASS",
+    "referenceComparison": "PASS",
+    "runtimeTests": "NOT_RUN_CODE_UNCHANGED"
+  }
+}

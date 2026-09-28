@@ -1,16 +1,16 @@
 {
   "phase": "AIya Performance Plan 1 - Phase 3 Real Auth and Store Synthetic Environment",
   "schemaVersion": "aiya-performance-plan1-phase3-v1",
-  "generatedAt": "2026-09-10T14:17:57.595Z",
-  "startedAt": "2026-09-10T14:17:41.839Z",
+  "generatedAt": "2026-09-11T12:34:04.093Z",
+  "startedAt": "2026-09-11T12:33:48.211Z",
   "status": "COMPLETE",
   "outcome": "SYNTHETIC_AUTH_STORE_READY",
   "productionDecision": "NO-GO",
   "sourceIdentity": {
     "branch": "codex/production-readiness-stage-1",
-    "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
     "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
-    "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+    "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 2]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-4.mjs\n?? app/scripts/performance-plan-1-phase-4.test.mjs\n?? app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
     "diffCheck": "PASS"
   },
   "liveRelease": [
@@ -41,8 +41,8 @@
     "remoteMigration": false
   },
   "migrationFingerprint": {
-    "fileCount": 125,
-    "sha256": "f88ba8813fcc0a1ca727a6f2e60d66d50ea357fc79e91e65417633c40349748c",
+    "fileCount": 126,
+    "sha256": "30697cbbdf8c250923c2b922d14161828b2ff1550172fcc8fbcc3afe820d193d",
     "names": [
       "20260522000000_initial_manu_ai_schema.sql",
       "20260523000000_app_state_schema_fixes.sql",
@@ -168,14 +168,15 @@
       "20260904180000_public_surface_faz8_session_service_role.sql",
       "20260904181000_public_surface_faz8_admin_bulk_invite.sql",
       "20260904182000_public_surface_faz8_onboarding_claim_pending.sql",
-      "20260907181000_hosted_shell_schema_reconciliation.sql"
+      "20260907181000_hosted_shell_schema_reconciliation.sql",
+      "20260911070000_phase_85_stage_5_session_activity_race_fix.sql"
     ]
   },
   "migrationStatus": {
     "status": "PASS",
     "exitCode": 0,
     "timedOut": false,
-    "migrationLineCount": 125
+    "migrationLineCount": 126
   },
   "prerequisiteEvidence": {
     "phase2Path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
@@ -541,13 +542,13 @@
     {
       "stageId": "3.1",
       "status": "COMPLETE",
-      "startedAt": "2026-09-10T14:17:51.044Z",
-      "finishedAt": "2026-09-10T14:17:51.044Z",
+      "startedAt": "2026-09-11T12:33:56.238Z",
+      "finishedAt": "2026-09-11T12:33:56.238Z",
       "sourceIdentity": {
         "branch": "codex/production-readiness-stage-1",
-        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
         "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
-        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 2]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-4.mjs\n?? app/scripts/performance-plan-1-phase-4.test.mjs\n?? app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
         "diffCheck": "PASS"
       },
       "prerequisiteEvidence": [
@@ -572,7 +573,7 @@
           "status": "PASS",
           "exitCode": 0,
           "timedOut": false,
-          "migrationLineCount": 125
+          "migrationLineCount": 126
         },
         "requiredSchema": {
           "status": "PASS",
@@ -667,13 +668,13 @@
     {
       "stageId": "3.2",
       "status": "COMPLETE",
-      "startedAt": "2026-09-10T14:17:54.275Z",
-      "finishedAt": "2026-09-10T14:17:54.275Z",
+      "startedAt": "2026-09-11T12:33:58.467Z",
+      "finishedAt": "2026-09-11T12:33:58.467Z",
       "sourceIdentity": {
         "branch": "codex/production-readiness-stage-1",
-        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
         "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
-        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 2]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-4.mjs\n?? app/scripts/performance-plan-1-phase-4.test.mjs\n?? app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
         "diffCheck": "PASS"
       },
       "prerequisiteEvidence": [
@@ -767,13 +768,13 @@
     {
       "stageId": "3.3",
       "status": "COMPLETE",
-      "startedAt": "2026-09-10T14:17:57.587Z",
-      "finishedAt": "2026-09-10T14:17:57.587Z",
+      "startedAt": "2026-09-11T12:34:04.083Z",
+      "finishedAt": "2026-09-11T12:34:04.083Z",
       "sourceIdentity": {
         "branch": "codex/production-readiness-stage-1",
-        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
         "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
-        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 2]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-4.mjs\n?? app/scripts/performance-plan-1-phase-4.test.mjs\n?? app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
         "diffCheck": "PASS"
       },
       "prerequisiteEvidence": [
@@ -848,13 +849,13 @@
     {
       "stageId": "3.4",
       "status": "COMPLETE",
-      "startedAt": "2026-09-10T14:17:57.587Z",
-      "finishedAt": "2026-09-10T14:17:57.587Z",
+      "startedAt": "2026-09-11T12:34:04.083Z",
+      "finishedAt": "2026-09-11T12:34:04.083Z",
       "sourceIdentity": {
         "branch": "codex/production-readiness-stage-1",
-        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
         "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
-        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 2]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-4.mjs\n?? app/scripts/performance-plan-1-phase-4.test.mjs\n?? app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
         "diffCheck": "PASS"
       },
       "prerequisiteEvidence": [
@@ -907,13 +908,13 @@
     {
       "stageId": "3.5",
       "status": "COMPLETE",
-      "startedAt": "2026-09-10T14:17:57.595Z",
-      "finishedAt": "2026-09-10T14:17:57.595Z",
+      "startedAt": "2026-09-11T12:34:04.092Z",
+      "finishedAt": "2026-09-11T12:34:04.092Z",
       "sourceIdentity": {
         "branch": "codex/production-readiness-stage-1",
-        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
         "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
-        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 2]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-4.mjs\n?? app/scripts/performance-plan-1-phase-4.test.mjs\n?? app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
         "diffCheck": "PASS"
       },
       "prerequisiteEvidence": [
@@ -1072,13 +1073,13 @@
     {
       "stageId": "3.6",
       "status": "COMPLETE",
-      "startedAt": "2026-09-10T14:17:57.595Z",
-      "finishedAt": "2026-09-10T14:17:57.595Z",
+      "startedAt": "2026-09-11T12:34:04.092Z",
+      "finishedAt": "2026-09-11T12:34:04.092Z",
       "sourceIdentity": {
         "branch": "codex/production-readiness-stage-1",
-        "head": "3e0da4508b52b91946798ce424bf3437f085e63b",
+        "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
         "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
-        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 1]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/scripts/measure-aiya-performance-phase-2.mjs\n M app/scripts/performance-phase-2.test.mjs\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-2.mjs\n?? app/scripts/performance-plan-1-phase-2.test.mjs\n?? app/scripts/performance-plan-1-phase-3.mjs\n?? app/scripts/performance-plan-1-phase-3.test.mjs\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 2]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json\n M docs/RISK_REGISTER.md\n?? app/scripts/performance-plan-1-phase-4.mjs\n?? app/scripts/performance-plan-1-phase-4.test.mjs\n?? app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
         "diffCheck": "PASS"
       },
       "prerequisiteEvidence": [

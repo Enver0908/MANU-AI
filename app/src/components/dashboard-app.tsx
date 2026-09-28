@@ -28,7 +28,7 @@ import {
   type ClientMenuPlanV1State,
 } from "@/lib/phase-77f-client-menu-plan";
 import { getActiveFormSchema } from "@/lib/client-forms";
-import { useAiyaState } from "@/lib/use-aiya-state";
+import { useAiyaStateContext } from "@/lib/use-aiya-state";
 import { type SupportedLanguageCode } from "@/lib/languages";
 import { t } from "@/lib/i18n";
 import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
@@ -73,12 +73,16 @@ import {
 import { ShellHomeLauncher } from "@/components/dashboard/shell-home-launcher";
 import { ClientWorkspace } from "@/components/dashboard/client-workspace";
 import { ConversationPanel } from "@/components/dashboard/conversation-panel";
-import { MessagingPanel } from "@/components/dashboard/messaging-panel";
+import { Phase55MessagingPanel } from "@/components/dashboard/phase-55-messaging-panel-target";
 import { VoicePanel } from "@/components/dashboard/voice-panel";
 import { FormsPanel } from "@/components/dashboard/forms-panel";
 import { useMobileKeyboardScroll } from "@/components/dashboard/mobile-ergonomics";
 import { DashboardLoadingSkeleton, EmptyState, ErrorState } from "@/components/dashboard/state-primitives";
 import { resolveEffectiveShellActiveClientId } from "@/lib/phase-85-stage-5-shell-contracts";
+import {
+  recordPhase52ClientEvent,
+  resolvePhase52SharedReadStartPolicy,
+} from "@/lib/phase-52-diagnostic";
 
 export function DashboardApp({
   authInfo,
@@ -94,6 +98,7 @@ export function DashboardApp({
     authError,
     hydrateError,
     hydrateRequestId,
+    hydrate,
     retryHydrate,
     createClient,
     updateClient,
@@ -118,7 +123,7 @@ export function DashboardApp({
     addClientContextUpdate,
     mergeConversationDetailIntoState,
     mergeConversationMutationIntoState,
-  } = useAiyaState();
+  } = useAiyaStateContext();
   const router = useRouter();
   const {
     setHeaderSlots,
@@ -133,7 +138,34 @@ export function DashboardApp({
     dirtySnapshot,
   } = useShellProvider();
   const { urlState, section, navigateDashboard } = useDashboardUrl();
-  const stage4bInbox = useStage4BInbox(urlState);
+  const stage4bInboxFilters = useMemo(
+    () => ({
+      alertSeverity: urlState.alertSeverity,
+      alertQuery: urlState.alertQuery,
+      notificationStatus: urlState.notificationStatus,
+      notificationPriority: urlState.notificationPriority,
+      notificationCategory: urlState.notificationCategory,
+      notificationQuery: urlState.notificationQuery,
+    }),
+    [
+      urlState.alertQuery,
+      urlState.alertSeverity,
+      urlState.notificationCategory,
+      urlState.notificationPriority,
+      urlState.notificationQuery,
+      urlState.notificationStatus,
+    ],
+  );
+  const stage4bInbox = useStage4BInbox(stage4bInboxFilters);
+  const phase52SharedReadStartPolicy = resolvePhase52SharedReadStartPolicy();
+  useEffect(() => {
+    if (hydrated) return;
+    if (phase52SharedReadStartPolicy === "bootstrap_gate" && !bootstrap) return;
+    recordPhase52ClientEvent("dashboard_hydration_triggered", {
+      policy: phase52SharedReadStartPolicy,
+    });
+    void hydrate();
+  }, [bootstrap, hydrate, hydrated, phase52SharedReadStartPolicy]);
   const [search, setSearch] = useState("");
   const [manualReply, setManualReply] = useState("");
   const [isSendingManualReply, setIsSendingManualReply] = useState(false);
@@ -909,7 +941,7 @@ export function DashboardApp({
             )}
 
             {section === "messages" && (
-              <MessagingPanel
+              <Phase55MessagingPanel
                 uiLanguage={uiLanguage}
                 filters={urlState}
                 items={stage4bMessaging.listItems}

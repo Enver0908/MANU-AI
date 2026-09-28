@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "aiya-global-freeze-browser-observation-v1",
+  "evidenceId": "aiya-global-freeze-hosted-edge-rapid-navigation-20260928T122937Z-0da3e09e-fcc2-41d9-bd3c-fd7e7b88d922",
+  "createdAtUtc": "2026-09-28T12:33:31.619Z",
+  "status": "INFORMATIVE_UNPAIRED_RAPID_NAVIGATION_OBSERVATION",
+  "userRequest": "Exercise a sequence of rapid clicks rather than only a two-click pair.",
+  "scope": "One authenticated production Dashboard run using five rapid, non-form navigation clicks; no client records or form contents were read.",
+  "origin": "https://aiyaworkspace.com",
+  "identity": {
+    "branch": "codex/production-readiness-stage-1",
+    "checkoutHead": "a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a",
+    "checkoutSourceFingerprint": null,
+    "lastRecordedHostedRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "independentlyVerifiedInThisCapture": false
+    }
+  },
+  "environment": {
+    "browser": "Edge",
+    "dashboardSessionAuthenticated": true,
+    "extensionPresence": "not determined; EvaluateScript source URL metadata was unavailable for the recorded scripts",
+    "localHostSample": false,
+    "sourceOrDatabaseWrite": false,
+    "browserSettingsChanged": false
+  },
+  "interaction": {
+    "sequence": ["Ayarlar", "Diğer", "Ana Sayfa", "Ayarlar", "Ana Sayfa"],
+    "mechanism": "CDP mouseMoved/mousePressed/mouseReleased on visible navigation-rail links",
+    "clickEventsObservedInTrace": 5,
+    "elapsedMs": 5286,
+    "gapAfterReleaseBeforeNextPressMs": [348, 429, 331, 372],
+    "CDPDispatchRoundTripMs": [142, 645, 545, 685, 675],
+    "eachTargetPathObservedAt250msCheck": true,
+    "activeNavigationMarkerAt250msCheck": "remained on the preceding link for each transition",
+    "finalUrlPath": "/dashboard",
+    "finalActiveNavigationPath": "/dashboard",
+    "typingOrFormSubmit": false
+  },
+  "preliminaryLocatorSequence": {
+    "clickCount": 5,
+    "locatorClickCallDurationMs": [2072, 2713, 2721, 2726, 2740],
+    "interpretation": "The locator API waited multiple seconds per action, so this method was not used as the rapid-input result; direct CDP input was used for the recorded five-click sequence."
+  },
+  "browserTrace": {
+    "format": "Chrome trace JSON stream captured from Edge",
+    "bytes": 18280518,
+    "eventCount": 77143,
+    "dataLossOccurred": false,
+    "sha256": "1bb281144c2ed04ea5dffdac63e6aacfd2b92d7e6ddd9a70de2389de247b7d8d",
+    "rawTracePersistedToFile": false,
+    "rawTraceRetention": "held in the browser automation session through validation; no raw artifact or checkpoint was created",
+    "rendererMainThreadCount": 1,
+    "runTaskSlicesAtLeast50ms": 0,
+    "longestRunTaskMs": 49,
+    "clickEventCount": 5,
+    "longestClickEventDispatchMs": 5.9,
+    "clickEventDispatchesAtLeast50ms": 0,
+    "extensionScriptAttribution": "not possible from the available EvaluateScript source metadata"
+  },
+  "networkCapture": {
+    "eventCount": 104,
+    "eventBufferTruncated": false,
+    "requestStartsObserved": 36,
+    "responsesObserved": 34,
+    "loadingFinishedObserved": 33,
+    "loadingFailedObserved": 1,
+    "requestsStillIncompleteAtCaptureEnd": 2,
+    "fullyPairedRequests": 33,
+    "rscRequestsObserved": 5,
+    "observedRscResponsesStatus200": true,
+    "appReadsObserved": {
+      "/api/shell/bootstrap": { "count": 5, "maxDurationMs": 1032.7, "status": 200 },
+      "/api/app-state": { "count": 2, "maxDurationMs": 1024, "status": 200 },
+      "/api/alerts": { "count": 2, "maxDurationMs": 1023.3, "status": 200 },
+      "/api/notifications": { "count": 2, "maxDurationMs": 865.5, "status": 200 }
+    },
+    "failedRequest": {
+      "route": "/api/conversations",
+      "error": "net::ERR_ABORTED",
+      "canceled": true,
+      "httpStatus": null,
+      "interpretation": "request cancellation observed during route changes; not an HTTP error"
+    },
+    "completeness": "no event-buffer truncation, but two requests had no loadingFinished event by capture end"
+  },
+  "assessment": {
+    "rapidNavigationSequenceCompleted": true,
+    "reportedTypingOrClickFreezeReproduced": false,
+    "mainThreadLongTaskObserved": false,
+    "navigationMarkerLagObservedAt250ms": true,
+    "rootCauseEstablished": false,
+    "interpretation": "All five click events were dispatched and each target URL path appeared at the 250 ms check. The selected-navigation marker still reflected the prior route at that check, then eventually settled to Dashboard. No 50 ms main-thread RunTask or click EventDispatch occurred in this sequence. Shared shell/API reads and RSC traffic overlapped the clicks; the slowest observed completed app request was about 1.03 s. This does not identify whether those waits came from server, database, network, or client coordination."
+  },
+  "formalStatus": {
+    "hostedPhase1": "unchanged: BLOCKED, 0/3 valid paired records, 5/5 attempts consumed",
+    "countedAsPhase1Record": false,
+    "reasonNotCounted": "no aligned host sample; separate unpaired interaction observation"
+  },
+  "privacyAndSideEffects": {
+    "responseBodiesCaptured": false,
+    "requestHeadersOrCookiesPersisted": false,
+    "queryStringsPersisted": false,
+    "clientOrHealthDataReadOrPersisted": false,
+    "formSubmitted": false,
+    "productionDataChanged": false,
+    "applicationSourceChanged": false,
+    "browserSettingsChanged": false
+  },
+  "nextAction": "Do not repeat the exhausted Phase 1 identity or old test matrices. The rapid Edge sequence did not reproduce a renderer long-task freeze but did show short-lived navigation-marker lag and repeated shell/API reads. Any further causal test needs a new bounded evidence identity and a synchronized host sample; first verify script-source attribution and preserve the supported trace transfer path."
+}

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-environment-scope-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "generatedAt": "2026-09-17T08:35:56.2438656Z",
+  "phase": "4",
+  "stage": "4.5-4.6",
+  "status": "COMPLETE",
+  "outcome": "ENVIRONMENT_SCOPE_DECISION_RECORDED",
+  "decisionType": "DOCUMENTATION_ONLY",
+  "authority": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md#canonical-revision-plan1-final-v3-2026-09-17",
+  "source": {
+    "worktree": "C:\\Users\\Dell\\.codex\\worktrees\\38c0\\MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "localObservationRunId": "aiya-performance-plan1-phase4-4-local-v3-20260917T075911349Z-64dd47c1-4cc0-4b6f-b1ff-6fe3b3373512",
+    "localObservationEvidence": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T075911349Z-64dd47c1-4cc0-4b6f-b1ff-6fe3b3373512_EVIDENCE.json"
+  },
+  "claim": {
+    "boundary": "local_desktop_web_common_infrastructure",
+    "userComplaint": "General desktop web slowness and interaction stalls while moving between operations.",
+    "currentInvestigation": "Local synthetic authenticated desktop observations and their trace-integrity reconciliation.",
+    "hostedSpecificClaim": false,
+    "deviceSpecificClaim": false,
+    "serviceWorkerOrOfflineClaim": false,
+    "responsiveLayoutClaim": false,
+    "crossEnvironmentClaim": false,
+    "localHostedDiscrepancyEstablished": false,
+    "causalHypothesisDeclared": false
+  },
+  "stageLedger": [
+    {
+      "stage": "4.5",
+      "status": "DECISION_RECORDED",
+      "measurementDisposition": "DEFERRED_BY_CLAIM_SCOPE",
+      "reason": "The current claim does not include a hosted-specific behavior or a local/hosted discrepancy. Local evidence cannot be promoted to hosted acceptance.",
+      "measurementStarted": false
+    },
+    {
+      "stage": "4.6",
+      "status": "DECISION_RECORDED",
+      "measurementDisposition": "DEFERRED_BY_CLAIM_SCOPE",
+      "reason": "The current claim does not include device, service-worker, offline, responsive-layout, or cross-environment behavior. A physical Android/PWA run is not needed for the current desktop claim.",
+      "measurementStarted": false
+    }
+  ],
+  "environmentDecisions": {
+    "localDesktop": {
+      "status": "REQUIRED_CURRENT_SCOPE",
+      "measurementDisposition": "OBSERVATIONS_RECONCILED",
+      "reason": "The complaint and current diagnostic claim are explicitly limited to desktop web/common infrastructure.",
+      "evidence": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase4-4-local-v3-20260917T075911349Z-64dd47c1-4cc0-4b6f-b1ff-6fe3b3373512_EVIDENCE.json"
+    },
+    "hostedSandbox": {
+      "status": "DEFERRED_BY_CLAIM_SCOPE",
+      "measurementDisposition": "NOT_STARTED",
+      "reason": "No local/hosted discrepancy or hosted-specific hypothesis is established. The local result remains local-only and cannot support hosted or production acceptance.",
+      "measurementStarted": false
+    },
+    "physicalAndroidPwa": {
+      "status": "DEFERRED_BY_CLAIM_SCOPE",
+      "measurementDisposition": "NOT_STARTED",
+      "reason": "No device, service-worker, offline, responsive-layout, or cross-environment hypothesis is established. No phone access is assumed or required for the current desktop claim.",
+      "measurementStarted": false
+    }
+  },
+  "historicalReferences": {
+    "android1728": {
+      "status": "INCOMPLETE_REFERENCE_ONLY",
+      "evidence": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_ANDROID_DIAGNOSTIC_EVIDENCE.json",
+      "reason": "The historical Android 17/28 result remains incomplete and is not current v3 evidence or acceptance."
+    },
+    "historicalPhase4": {
+      "status": "REFERENCE_ONLY",
+      "evidence": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+      "reason": "Historical four-environment and v2 Phase 4 records are not rewritten or reclassified by this scope decision."
+    }
+  },
+  "scopeControls": {
+    "deferredIsNotPass": true,
+    "localEvidenceMaySupport": [
+      "Local desktop observation and failure-boundary analysis",
+      "A later explicitly declared local desktop hypothesis and experiment"
+    ],
+    "localEvidenceMayNotSupport": [
+      "Hosted or physical-device performance acceptance",
+      "Cross-environment root-cause attribution",
+      "Production readiness or a runtime fix"
+    ],
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "historicalEvidenceRewritten": false,
+    "productionDecision": "NO-GO"
+  },
+  "nextAction": {
+    "stage": "4.7",
+    "description": "Reconcile journey coverage, affected layers, findings, environment scope, and evidence integrity; or declare a specific local desktop hypothesis before any causal experiment.",
+    "conditions": [
+      "Do not start hosted or physical-device measurement unless the claim scope changes.",
+      "Do not infer a root cause or performance acceptance from the reconciled local observations alone."
+    ]
+  }
+}

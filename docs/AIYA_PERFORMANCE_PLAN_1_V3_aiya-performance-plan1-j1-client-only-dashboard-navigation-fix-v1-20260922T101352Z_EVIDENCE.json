@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-diagnostic-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-client-only-dashboard-navigation-fix",
+  "stageId": "aiya-performance-plan1-j1-client-only-dashboard-navigation-fix-v1",
+  "runId": "aiya-performance-plan1-j1-client-only-dashboard-navigation-fix-v1-20260922T101352Z",
+  "generatedAt": "2026-09-22T10:13:52Z",
+  "status": "COMPLETE",
+  "outcome": "CLIENT_ONLY_DASHBOARD_NAVIGATION_RUNTIME_GUARD_VALIDATED_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Small reversible fix and one local J1 functional verification for the observed same-document dashboard route/history race.",
+    "applicationRuntimeChanged": true,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "fixture": "local-normal-synthetic-owner",
+    "targetJourney": "J1",
+    "externalOperations": [],
+    "environmentPreparation": "Local production build with local Supabase environment; no migration, deploy, or provider traffic."
+  },
+  "hypothesis": {
+    "id": "same_dashboard_query_double_writer_route_race",
+    "observedBoundary": "Native commitDashboardHref push followed by router.push for the same /dashboard query can replay an older route after a newer click.",
+    "change": "Same-document /dashboard query navigation remains client-only; cross-route navigation still uses the App Router."
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "worktreeWasAlreadyDirty": true,
+    "sourceFiles": [
+      {
+        "path": "app/src/lib/phase-85-stage-4b-dashboard-routing.ts",
+        "sha256": "15ad93c1532181243f3b23015ce2dba3cfe74c78b7979a2ba34aff677033b396"
+      },
+      {
+        "path": "app/src/lib/use-dashboard-url.ts",
+        "sha256": "8c8e8e9d577de712271a33984e127dd110bd17fa4412eedb7238f33a1cef9584"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "3acf13226cb9c6201dba51357f5f719eef077aa1cd0a3e6a20b98719c4f24735"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-4b-dashboard-routing.test.ts",
+        "sha256": "2593be7b8c8a1db80095c92662b48c0a4a69d9286586d37ee9eaa97e9748e1f0"
+      }
+    ]
+  },
+  "measurementIdentity": {
+    "runner": "app/scripts/performance-plan-1-phase-4-4-local.mjs::runMeasurementUnit",
+    "unitKey": "short-fix-verification:J1:r1",
+    "repetition": 1,
+    "countedAsOfficialSample": false,
+    "localSupabase": "http://127.0.0.1:54321",
+    "authPath": "real-local-synthetic-session",
+    "observationValidity": "VALID",
+    "functionalOutcome": "SUCCESS",
+    "validSample": true
+  },
+  "observedEffect": {
+    "routeHistory": [
+      "/dashboard?section=clients",
+      "/dashboard?section=clients&clientId=<present>",
+      "/dashboard?section=clients&clientId=<present>&clientTask=forms",
+      "/dashboard?section=clients&clientId=<present>&clientTask=nutrition"
+    ],
+    "noIntermediarySummaryReentry": true,
+    "replaceStateEvents": 0,
+    "formsRequestRouteCount": 1,
+    "formsLifecycle": {
+      "effectSetup": 1,
+      "effectCleanup": 1,
+      "loadStarted": 1,
+      "loadSucceeded": 1,
+      "loadAborted": 0
+    }
+  },
+  "verification": {
+    "routingTest": "21/21 PASS",
+    "focusedTestSet": "5 files / 50 tests PASS",
+    "typecheck": "PASS",
+    "targetedLint": "PASS",
+    "fullLint": {
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 80
+    },
+    "productionBuild": {
+      "status": "PASS",
+      "staticPages": 79,
+      "buildEnvironment": "local Supabase values injected through the process environment"
+    },
+    "localSupabasePreflight": "PASS",
+    "runtime": "PASS / one local J1",
+    "gitDiffCheck": "PASS",
+    "sensitiveDataScan": "PASS"
+  },
+  "excludedAttempts": [
+    {
+      "classification": "environment-invalid",
+      "reason": "The first production runtime artifact did not receive the local Supabase build-time environment; login returned 500.",
+      "countedAsMeasurement": false
+    }
+  ],
+  "explicitNonClaims": [
+    "One J1 verification is not official acceptance or causal proof.",
+    "The global freeze/general slowdown is not declared solved.",
+    "The auth chain, RSC fan-out, React commit cost, Plan 2 disposition, migration, deployment, and production decision did not change.",
+    "No raw bodies, credentials, health data, or client identifiers are recorded."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "runtimeFixAppliedInWorkingTree": true,
+    "runtimeFixAcceptedForProduction": false,
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  }
+}

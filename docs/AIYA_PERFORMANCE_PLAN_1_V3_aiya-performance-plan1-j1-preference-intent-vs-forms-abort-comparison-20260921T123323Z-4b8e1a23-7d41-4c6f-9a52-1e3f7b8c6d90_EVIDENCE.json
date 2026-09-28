@@ -1,0 +1,86 @@
+{
+  "evidenceId": "aiya-performance-plan1-j1-preference-intent-vs-forms-abort-comparison-20260921T123323Z-4b8e1a23-7d41-4c6f-9a52-1e3f7b8c6d90",
+  "generatedAt": "2026-09-21T12:33:23.138Z",
+  "planRevision": "plan1-final-v3",
+  "stage": "shared-runtime-j1-preference-intent-vs-forms-abort-comparison",
+  "status": "COMPLETE",
+  "outcome": "CROSS_RUN_COMPARISON_INCONCLUSIVE",
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "cleanPreferenceTimingEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-correlation-20260921T122539Z-9f2c7d11-2c35-4a54-9f0a-6d4f7f8d9c21_EVIDENCE.json",
+    "cleanPreferenceTimingEvidenceSha256": "C79D40F49BEECEED3D63B64D5DE2FA076070BB11A87E40DE97FBEF4675E84180",
+    "formsAbortLifecycleEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2_EVIDENCE.json",
+    "formsAbortLifecycleEvidenceSha256": "FCFA4C955375A92442FE16E23887C974CB26E5E25C6CFC0C7A9823BC546324D5",
+    "formsAbortLifecycleSourceRunId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T001812103Z-92ab01f4-7c6e-476c-8de3-00f5c3562e38",
+    "formsAbortLifecycleSourceEvidenceSha256": "DC5EF27612AB83B8B6E875584EC429F1056EBC513711959B265F18437C98B6FD",
+    "officialMeasurement": false,
+    "localSupabase": "127.0.0.1:54321"
+  },
+  "comparisonScope": {
+    "comparisonType": "read_only_cross_run_evidence_review",
+    "sameBrowserJourneySamples": false,
+    "sameTraceVariant": false,
+    "runtimeBehaviorChanged": false,
+    "newRequestsSent": false,
+    "preferenceValuesAvailable": false,
+    "rawBodiesAvailable": false
+  },
+  "observedRecords": {
+    "cleanNormalPreferenceTiming": {
+      "validFunctionalSamples": "3/3",
+      "preferenceIntent": "activeClientId 3/3",
+      "preferenceHttp200BodySettled": "3/3",
+      "firstStage6CleanupAfterPreferenceSettled": "3/3",
+      "cleanupAfterSettledDeltaMs": [
+        32,
+        28,
+        41
+      ],
+      "formsAbortAfterPreferenceRequest": "0/3",
+      "formsRequiredRequestHttp200": "3/3"
+    },
+    "previouslyValidAbortLifecycle": {
+      "observationValid": "3/3 diagnostic J1 observations",
+      "formsEffectCleanupObserved": "3/3",
+      "formsLoadAbortedAfterCleanup": "2/3",
+      "formsLoadAbortedAfterCleanupDeltaMs": [
+        7,
+        10
+      ],
+      "formsRscRequestNetErrAborted": "3/3",
+      "preferenceIntentTimingCaptured": false
+    },
+    "previousFailureReasonRun": {
+      "normalJ1FirstFormsAbort": "3/3",
+      "laterRetryCompleted200": "3/3",
+      "preferenceIntentTimingCaptured": false,
+      "laterRetryPromotionAllowed": false
+    }
+  },
+  "comparisonResult": {
+    "sharedObservation": "The previously-valid abort lifecycle evidence confirms a client cleanup-to-abort boundary in the aborting diagnostic repetitions; the clean preference-timing evidence confirms that a normal activeClientId preference settle can precede Stage 6 cleanup without a Forms abort.",
+    "missingLink": "The abort-producing traces do not contain the same preference-intent request start, response header, body-finished, and settled timestamps. Therefore the records cannot establish whether activeClientId preference settlement preceded, followed, or caused the cleanup in the aborting samples.",
+    "stablePreferenceToAbortTransition": false,
+    "candidateNarrowedFurther": false,
+    "causalRootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "performanceImprovementDemonstrated": false
+  },
+  "closure": {
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeInstrumentationDefaultEnabled": false,
+    "productionDecision": "NO-GO",
+    "nextAction": "Do not run another preference-only confirmation. If further work is separately authorized, the smallest valid continuation is one matched trace-only J1 run that captures preference intent timing and Forms abort lifecycle in the same abort-capable sample; retain the existing no-retry and official-baseline exclusions."
+  },
+  "redaction": {
+    "rawPreferenceValues": false,
+    "rawRequestBodies": false,
+    "rawRequestUrls": false,
+    "credentials": false,
+    "healthData": false
+  }
+}

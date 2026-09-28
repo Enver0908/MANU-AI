@@ -1,0 +1,153 @@
+{
+  "evidenceId": "aiya-performance-plan1-j1-preference-intent-timing-correlation-20260921T122539Z-9f2c7d11-2c35-4a54-9f0a-6d4f7f8d9c21",
+  "generatedAt": "2026-09-21T12:25:39.856Z",
+  "planRevision": "plan1-final-v3",
+  "stage": "shared-runtime-j1-preference-intent-timing-correlation",
+  "status": "COMPLETE",
+  "outcome": "PREFERENCE_INTENT_TIMING_CORRELATION_INCONCLUSIVE",
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "traceVariant": "preference_intent_timing_and_completion",
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121916766Z-f12d3401-7014-4de4-a5ec-4845ae3599f2",
+    "sourceMeasurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121916766Z-f12d3401-7014-4de4-a5ec-4845ae3599f2_EVIDENCE.json",
+    "sourceMeasurementEvidenceSha256": "10771A9CE351910B9AC6C3A3A9D6C5C438E445FD99265A7629BD51FFEA540F76",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "officialMeasurement": false,
+    "localSupabase": "127.0.0.1:54321"
+  },
+  "protocol": {
+    "journey": "J1",
+    "repetitions": 3,
+    "observationValidityRule": "All three repetitions must retain the trace variant, successful preference body completion, Stage 6 lifecycle collection, and required Forms request outcome.",
+    "capturedFields": [
+      "allowlisted intent-key set",
+      "preference request start",
+      "preference response headers",
+      "preference body completion and settle",
+      "sanitized route/history transitions",
+      "Stage 6 cleanup lifecycle timestamps",
+      "Forms request completion or abort"
+    ],
+    "excludedFields": [
+      "preference values",
+      "raw preference request bodies",
+      "raw request URLs",
+      "credentials",
+      "health data"
+    ]
+  },
+  "excludedProtocolAttempts": [
+    {
+      "runId": "aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121031030Z-9d48c272-6f7a-4c76-b291-120501a92ee5",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121031030Z-9d48c272-6f7a-4c76-b291-120501a92ee5_EVIDENCE.json",
+      "reason": "Trace-only preference timing was captured, but Stage 6 lifecycle collection was not armed in the normal run; the result is preserved and excluded from lifecycle correlation."
+    },
+    {
+      "runId": "aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121517979Z-599c9a17-459c-4332-9dec-0bff0a52b858",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121517979Z-599c9a17-459c-4332-9dec-0bff0a52b858_EVIDENCE.json",
+      "reason": "Stage 6 events were present in the checkpoint, but the first compact analysis read only the phase52 channel; the result is preserved and excluded from the corrected summary."
+    }
+  ],
+  "observations": {
+    "attempted": 3,
+    "observationValid": "3/3",
+    "validFunctionalSamples": "3/3",
+    "functionalSuccess": "3/3",
+    "preferencePatchCount": 3,
+    "intentClassCounts": {
+      "active_client": 3,
+      "last_destination": 0,
+      "active_client_and_last_destination": 0,
+      "unclassified": 0
+    },
+    "preferenceResponses": {
+      "status200": "3/3",
+      "bodyFinished": "3/3",
+      "settled": "3/3"
+    },
+    "routeTransitionOrdering": {
+      "strictlyBeforePreferenceSettled": "1/3",
+      "atPreferenceSettled": "1/3",
+      "afterPreferenceSettled": "1/3",
+      "atOrBeforePreferenceSettled": "2/3"
+    },
+    "stage6CleanupOrdering": {
+      "beforePreferenceSettled": "0/3",
+      "afterPreferenceSettled": "3/3",
+      "firstCleanupAfterSettledDeltaMs": [
+        32,
+        28,
+        41
+      ]
+    },
+    "formsRequestOutcome": {
+      "requiredRequestCompleted200": "3/3",
+      "abortAfterPreferenceRequest": "0/3"
+    }
+  },
+  "sampleTiming": [
+    {
+      "unitKey": "J1:r1",
+      "intentClass": "active_client",
+      "preferenceRequestStartedAtMs": 537,
+      "preferenceResponseHeaderAtMs": 1525,
+      "preferenceBodyFinishedAtMs": 1532,
+      "preferenceSettledAtMs": 1533,
+      "firstStage6CleanupAtMs": 1565,
+      "firstStage6CleanupAfterSettledDeltaMs": 32,
+      "routeTransitionOrdering": "strictly_before_preference_settled",
+      "formsRequest": "completed_200_no_abort"
+    },
+    {
+      "unitKey": "J1:r2",
+      "intentClass": "active_client",
+      "preferenceRequestStartedAtMs": 525,
+      "preferenceResponseHeaderAtMs": 1161,
+      "preferenceBodyFinishedAtMs": 1162,
+      "preferenceSettledAtMs": 1166,
+      "firstStage6CleanupAtMs": 1194,
+      "firstStage6CleanupAfterSettledDeltaMs": 28,
+      "routeTransitionOrdering": "at_preference_settled",
+      "formsRequest": "completed_200_no_abort"
+    },
+    {
+      "unitKey": "J1:r3",
+      "intentClass": "active_client",
+      "preferenceRequestStartedAtMs": 1261,
+      "preferenceResponseHeaderAtMs": 1768,
+      "preferenceBodyFinishedAtMs": 1773,
+      "preferenceSettledAtMs": 1777,
+      "firstStage6CleanupAtMs": 1818,
+      "firstStage6CleanupAfterSettledDeltaMs": 41,
+      "routeTransitionOrdering": "after_preference_settled",
+      "formsRequest": "completed_200_no_abort"
+    }
+  ],
+  "candidateSurface": [
+    "app/src/components/dashboard-app.tsx",
+    "app/src/lib/phase-85-stage-6-client-selection.ts",
+    "app/src/components/dashboard/shell-provider.tsx",
+    "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts",
+    "app/src/lib/use-stage-6-client-workspace.ts"
+  ],
+  "interpretation": {
+    "observedRelation": "In all three valid normal J1 samples, an activeClientId preference PATCH completed before the first recorded Stage 6 workspace cleanup; cleanup followed preference settlement by 28-41 ms.",
+    "routeRelation": "Route transition ordering was not stable: one was strictly before preference settlement, one coincided with settlement, and one followed settlement.",
+    "abortRelation": "The corrected run did not reproduce a required Forms-request abort; all three required Forms requests completed with HTTP 200.",
+    "causalAssessment": "This is a normal-path timing correlation, not causal proof of the global freeze and not evidence that the preference PATCH or Stage 6 cleanup alone is the root cause.",
+    "candidateNarrowedFurther": false,
+    "globalFreezeResolved": false
+  },
+  "closure": {
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeInstrumentationDefaultEnabled": false,
+    "conditionalJ1ConfirmationAuthorized": false,
+    "productionDecision": "NO-GO",
+    "nextAction": "Keep this clean normal timing record separate and compare it with the already-valid abort-producing lifecycle traces. Do not run a conditional J1 confirmation unless a stable abort-producing transition is identified and separately authorized."
+  }
+}

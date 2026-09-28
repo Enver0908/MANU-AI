@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "aiya-global-freeze-local-trace-sanitizer-preflight-v1",
+  "evidenceId": "aiya-global-freeze-local-trace-sanitizer-preflight-20260928T092828Z-0af9f788-0845-435e-92ad-1d3c8380c723",
+  "createdAtUtc": "2026-09-28T09:28:28Z",
+  "status": "PASS_SCOPED_PREFLIGHT",
+  "outcome": "SYNTHETIC_LOCAL_FILE_ACCEPTED_BY_EXISTING_SANITIZER",
+  "relatedTransferPreflight": {
+    "evidenceId": "aiya-global-freeze-trace-transfer-preflight-20260927T214247Z-8f5ac140-9912-405a-a88e-9aad6d980506",
+    "sha256": "9607D072DC76989F81892C7AA549E5B0B08E71C6EE26CA61A3103804695393F3"
+  },
+  "phase1Budget": {
+    "attemptsUsed": 5,
+    "attemptsMaximum": 5,
+    "validPairedRecords": 0,
+    "newOfficialRunOpened": false
+  },
+  "test": {
+    "command": "node --test --test-name-pattern=\"compressed Chrome trace imports to a new redacted file\" scripts/performance-global-freeze-diagnostic.test.mjs",
+    "runtime": "Node.js v22.16.0",
+    "result": "PASS",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 380.7467,
+    "behaviorVerified": [
+      "A gzip-compressed synthetic Chrome trace was written to a temporary local file.",
+      "The existing readChromeTrace file importer accepted and sanitized the file.",
+      "One allowlisted trace event remained in the sanitized result.",
+      "The source bytes were unchanged after import.",
+      "The test removed its temporary directory on completion."
+    ]
+  },
+  "sourceIdentity": {
+    "app/scripts/performance-global-freeze-diagnostic.mjs": "A823350A0E6F1D71A2C5C16E2D4BD5B560E0C952BB24ECEBD90622BA86E83351",
+    "app/scripts/performance-global-freeze-diagnostic.test.mjs": "C97DF71DB4511617D0DD0A37F108E08520376C3AE9DAADB89E2AAA47DE6F5FEA"
+  },
+  "boundaries": {
+    "browserOrCdpTraceExportTested": false,
+    "browserToLocalFileTransferTested": false,
+    "realTracePersisted": false,
+    "hostSamplesCaptured": false,
+    "checkpointCreated": false,
+    "hostedPageOpenedOrChanged": false,
+    "applicationInteractionPerformed": false,
+    "runtimeOrDatabaseChanged": false,
+    "rawTraceOrUserDataPersisted": false,
+    "rootCauseAttribution": "NONE"
+  },
+  "conclusion": {
+    "syntheticLocalFileToSanitizer": "PASS",
+    "actualChromeTraceToLocalFile": "NOT_TESTED",
+    "officialPhase1Status": "BLOCKED_ATTEMPT_BUDGET_EXHAUSTED",
+    "nextGate": "Prove a supported Chrome/CDP trace export into a local file without page-side bulk injection, then pass that exact file through the existing sanitizer without opening a Phase 1 checkpoint. Only after the transfer gate passes and separate approval is granted may a new bounded capture identity be considered."
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-single-variable-ab-a",
+  "stageId": "aiya-performance-plan1-shared-runtime-ab-a-20260919T111921Z-cd652e70-18de-4d16-89e4-2aadfcd336ce",
+  "generatedAt": "2026-09-19T11:19:21.960Z",
+  "status": "COMPLETE",
+  "outcome": "REPEATABLE_CONTRIBUTING_BOUNDARY_CONFIRMED_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Local desktop A-B-A diagnosis of the DashboardApp inbox refresh dependency boundary.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsProductionFix": false,
+    "runtimeCandidateKeptInCheckout": true,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "healthDataUsed": false,
+    "liveProviderTraffic": false
+  },
+  "sourceIdentity": {
+    "cwd": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "candidateFile": "app/src/components/dashboard-app.tsx",
+    "candidateFunction": "DashboardApp",
+    "relatedHook": "app/src/lib/use-stage-4b-inbox.ts",
+    "runtimeChange": "memoized projection of six inbox filter fields passed to useStage4BInbox",
+    "nonRuntimeHarnessChange": "dashboard-app.tsx added to shared-runtime source identity list"
+  },
+  "experimentContract": {
+    "fixture": "local-normal synthetic_normal_owner",
+    "target": "desktop localhost authenticated real-password RLS path",
+    "journey": "J1",
+    "repetitionsPerVariant": 3,
+    "actionBoundary": "second trusted event to second readyState",
+    "singleVariable": "useStage4BInbox input object identity; all six semantic filter values unchanged",
+    "variants": {
+      "A1": "useStage4BInbox(urlState)",
+      "B": "useStage4BInbox(useMemo({ alertSeverity, alertQuery, notificationStatus, notificationPriority, notificationCategory, notificationQuery }))",
+      "A2": "useStage4BInbox(urlState) restored semantically"
+    }
+  },
+  "runReferences": [
+    {
+      "variant": "A1",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T104831696Z-9e818587-64fc-4ff8-bbd0-b6880e5e9c05",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T104831696Z-9e818587-64fc-4ff8-bbd0-b6880e5e9c05_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "status": "COMPLETE",
+      "observationValid": 12,
+      "sourceDashboardAppSha256": "9e75b30c2f2dc80ba05bdbd58c04882bcda6d507a6d030e6a1b0dd47f0e9b8e5"
+    },
+    {
+      "variant": "B",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T105721115Z-9a1ddd61-6f46-4b65-b4b0-f50507bae995",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T105721115Z-9a1ddd61-6f46-4b65-b4b0-f50507bae995_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "status": "COMPLETE",
+      "observationValid": 12,
+      "sourceDashboardAppSha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+    },
+    {
+      "variant": "A2",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T110612468Z-3c780e20-8473-4ff5-9262-e63adb281453",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T110612468Z-3c780e20-8473-4ff5-9262-e63adb281453_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "status": "COMPLETE",
+      "observationValid": 12,
+      "sourceDashboardAppSha256": "b20531e4d31b88148531f08a5194adb9b959e8e23b270e9295788116e48e05c9",
+      "byteIdentityNote": "The semantic baseline expression was restored; the post-patch file hash differs from A1 because the patch round-trip normalized file bytes. The experiment claim is limited to the observed semantic boundary and is not treated as byte-identical source proof."
+    }
+  ],
+  "measurements": {
+    "metricDefinition": "overlap is a request whose lifetime intersects the second trusted-event to readyState window; responseMs excludes the fixed 2000 ms inter-action delay",
+    "normalJ1": {
+      "A1": {
+        "responseMs": [535, 1064, 533],
+        "overlapRequests": [5, 5, 5],
+        "overlapRoutes": ["food-rule-profile", "shell/bootstrap", "dashboard RSC", "alerts", "notifications"]
+      },
+      "B": {
+        "responseMs": [412, 360, 409],
+        "overlapRequests": [3, 3, 3],
+        "overlapRoutes": ["food-rule-profile", "shell/bootstrap", "dashboard RSC"]
+      },
+      "A2": {
+        "responseMs": [560, 380, 448],
+        "overlapRequests": [5, 5, 5],
+        "overlapRoutes": ["food-rule-profile", "shell/bootstrap", "dashboard RSC", "alerts", "notifications"]
+      }
+    },
+    "diagnosticJ1": {
+      "A1": {
+        "responseMs": [1087, 426, 440],
+        "overlapRequests": [5, 5, 5],
+        "authTotalMs": [394, 160, 222],
+        "reactCommitCount": [136, 30, 44],
+        "reactCommitActualDurationMs": [333, 87, 130]
+      },
+      "B": {
+        "responseMs": [389, 484, 381],
+        "overlapRequests": [3, 3, 3],
+        "authTotalMs": [149, 197, 146],
+        "reactCommitCount": [31, 46, 25],
+        "reactCommitActualDurationMs": [85, 121, 80]
+      },
+      "A2": {
+        "responseMs": [396, 403, 511],
+        "overlapRequests": [5, 5, 5],
+        "authTotalMs": [203, 164, 214],
+        "reactCommitCount": [31, 29, 45],
+        "reactCommitActualDurationMs": [94, 89, 127]
+      }
+    }
+  },
+  "finding": {
+    "confirmed": "DashboardApp passes a render-unstable full DashboardUrlState object to useStage4BInbox; unrelated URL/state changes recreate refresh dependencies and trigger redundant alerts/notifications refreshes.",
+    "three_record_match": "All three B diagnostic repetitions removed the same two overlapping routes, while both A repetitions retained them.",
+    "specific_boundary": "app/src/components/dashboard-app.tsx DashboardApp -> app/src/lib/use-stage-4b-inbox.ts useEffect(refresh) dependency chain",
+    "contribution": "confirmed_repeatable_request_fanout_contributor",
+    "global_freeze": "not_confirmed",
+    "auth_chain": "still present; the candidate does not alter resolveAccountTenantContext or server auth spans",
+    "react_commit_cause": "not separately confirmed; commit counts vary and remain a downstream signal",
+    "db_lock": "inconclusive; all three runs report an unavailable sampler with one sample and zero observed waits, which is insufficient to establish absence"
+  },
+  "verification": {
+    "targetedHarnessTests": "PASS 7/7",
+    "checkpointTests": "PASS 18/18",
+    "inboxBehaviorRegression": "PASS 4 files, 39/39 tests",
+    "typecheck": "PASS after serial rerun",
+    "lint": "PASS 0 errors, 79 warnings",
+    "productionBuild": "PASS",
+    "gitDiffCheck": "PASS",
+    "officialBaselineChanged": false,
+    "findingManifestDispositionChanged": false,
+    "plan2EligibilityChanged": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "CONTRIBUTING_BOUNDARY_RECORDED",
+    "acceptedProductionFix": false,
+    "performanceProblemSolved": false,
+    "remainingWork": [
+      "Keep auth/session and RSC/bootstrap fan-out in scope for the next separately bounded candidate.",
+      "Repair or replace the Docker lock sampler before making a lock absence claim.",
+      "Complete a broader product-level validation and official remeasurement before any production-fix acceptance.",
+      "Do not change Plan 1 closure, Plan 2 eligibility, or production NO-GO from this evidence."
+    ],
+    "nextAction": "Use the retained candidate as the first scoped runtime correction under separate validation, then design the next single-variable auth/RSC boundary experiment without combining variables."
+  }
+}

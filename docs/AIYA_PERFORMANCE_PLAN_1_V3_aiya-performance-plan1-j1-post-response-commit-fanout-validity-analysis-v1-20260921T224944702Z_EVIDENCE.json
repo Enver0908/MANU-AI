@@ -1,0 +1,2686 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-post-response-commit-fanout-validity-analysis-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-post-response-commit-fanout-validity-analysis",
+  "stageId": "aiya-performance-plan1-j1-post-response-commit-fanout-validity-analysis-v1",
+  "runId": "aiya-performance-plan1-j1-post-response-commit-fanout-validity-analysis-v1-20260921T224944702Z",
+  "generatedAt": "2026-09-21T22:49:44.706Z",
+  "status": "COMPLETE",
+  "outcome": "B_REQUIRED_READ_ABORT_AND_FANOUT_CONFOUND_OBSERVED_COMMIT_COMPARISON_OPEN",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Separate the B required-read validity boundary from request fan-out in the completed J1 post-response commit checkpoint.",
+    "analysisOnly": true,
+    "browserRerunStarted": false,
+    "applicationRuntimeChanged": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 233,
+    "statusHash": "a9f5ff6298e98b3defa1cfc63e5a61b74843a75a8eb343a8e022392f291d9131",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/scripts/performance-plan-1-j1-post-response-commit-ownership-ab-a.mjs",
+        "sha256": "ae1f95fab8af66570018d37ea5fca37a1e0266fba36b99e609a9a4612b76b52a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "17c4b7cb55ec267dd2c708a462924cd294e9f0d8e4309e370cc71ed68915417c"
+      }
+    ]
+  },
+  "sourceMeasurement": {
+    "runId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b_EVIDENCE.json",
+    "evidenceSha256": "153c70f8254dcb474b94f1f82211880009f70840219e9d342ae91a87973b3cca",
+    "status": "COMPLETE",
+    "outcome": "POST_RESPONSE_COMMIT_OWNERSHIP_SIGNAL_OBSERVED_VALIDITY_OR_FANOUT_BOUNDARY_OPEN",
+    "validity": {
+      "A1": "3/3",
+      "B": "2/3",
+      "A2": "3/3",
+      "officialSample": false,
+      "noRetryPromotion": true,
+      "causalThreeValidRecordGate": "NOT_MET_FOR_SELECTED_J1_B"
+    },
+    "checkpoint": {
+      "phaseId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+      "status": "COMPLETE",
+      "eventCount": 37,
+      "lastSequence": 37,
+      "manifestSha256": "e31135162014f2f45b8f26eb23b91f7afa09beee7eac3c2ced607f6cff60f380",
+      "hashChainRead": true
+    }
+  },
+  "staticAssertions": {
+    "requiredReadUsesEveryMatchingRecord": true,
+    "requiredReadRequiresBodyCompletion": true,
+    "requiredReadRejectsFailedRecord": true,
+    "phase43DoesNotRetryMissingClick": true,
+    "stage6AbortsPreviousController": true,
+    "stage6DomainIncludesForms": true
+  },
+  "measurement": {
+    "journeyId": "J1",
+    "traceCount": 9,
+    "rows": [
+      {
+        "unitKey": "A1:diagnostic:J1:r1",
+        "variantId": "A1",
+        "repetition": 1,
+        "policy": "legacy",
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "eligibleFunctionalSample": true,
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null,
+          "pattern": null
+        },
+        "fanout": {
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 2,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 1,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 1,
+            "/api/conversations": 2,
+            "/api/notifications": 2,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 7,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2216,
+                "bodyFinishedAtMs": 2228,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 4096,
+                "bodyFinishedAtMs": 4105,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 1,
+          "completed": 1,
+          "failed": 0,
+          "incompleteBody": 0,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 7683,
+              "bodyFinishedAtMs": 7702
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 16,
+          "forms": {
+            "effectSetup": 1,
+            "effectCleanup": 1,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0,
+            "restarted": false
+          },
+          "summary": {
+            "effectSetup": 2,
+            "effectCleanup": 2,
+            "loadStarted": 1,
+            "loadSucceeded": 0,
+            "loadAborted": 1
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2155.5
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3118.4
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3119.6
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3119.7
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3119.7
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3449
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3452.8
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3452.9
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3453.2
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3456.1
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 4054.1
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5537.6
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5541.3
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5541.3
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5541.6
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5934.8
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 5991,
+          "shellProviderCommits": 1986,
+          "dashboardShellCommits": 1985
+        }
+      },
+      {
+        "unitKey": "A1:diagnostic:J1:r2",
+        "variantId": "A1",
+        "repetition": 2,
+        "policy": "legacy",
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "eligibleFunctionalSample": true,
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null,
+          "pattern": null
+        },
+        "fanout": {
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 2,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 1,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 1,
+            "/api/conversations": 2,
+            "/api/notifications": 2,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 7,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2594,
+                "bodyFinishedAtMs": 2610,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 4135,
+                "bodyFinishedAtMs": 4144,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 1,
+          "completed": 1,
+          "failed": 0,
+          "incompleteBody": 0,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 6076,
+              "bodyFinishedAtMs": 6101
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 16,
+          "forms": {
+            "effectSetup": 1,
+            "effectCleanup": 1,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0,
+            "restarted": false
+          },
+          "summary": {
+            "effectSetup": 2,
+            "effectCleanup": 2,
+            "loadStarted": 1,
+            "loadSucceeded": 0,
+            "loadAborted": 1
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 1739
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2734.8
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2735.6
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2735.6
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2735.7
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3154.3
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3157.5
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3157.5
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3157.9
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3161.1
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 4218.9
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5270
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5274.3
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5274.3
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5274.7
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5751.7
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 5588,
+          "shellProviderCommits": 1851,
+          "dashboardShellCommits": 1850
+        }
+      },
+      {
+        "unitKey": "A1:diagnostic:J1:r3",
+        "variantId": "A1",
+        "repetition": 3,
+        "policy": "legacy",
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "eligibleFunctionalSample": true,
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null,
+          "pattern": null
+        },
+        "fanout": {
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 2,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 1,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 1,
+            "/api/conversations": 2,
+            "/api/notifications": 2,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 7,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2074,
+                "bodyFinishedAtMs": 2088,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 4016,
+                "bodyFinishedAtMs": 4020,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 1,
+          "completed": 1,
+          "failed": 0,
+          "incompleteBody": 0,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 6128,
+              "bodyFinishedAtMs": 6160
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 16,
+          "forms": {
+            "effectSetup": 1,
+            "effectCleanup": 1,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0,
+            "restarted": false
+          },
+          "summary": {
+            "effectSetup": 2,
+            "effectCleanup": 2,
+            "loadStarted": 1,
+            "loadSucceeded": 0,
+            "loadAborted": 1
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2020.4
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3067.3
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3068.5
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3068.5
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3068.5
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3444.6
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3448
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3448
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3448.4
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3451.5
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 4029.7
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5536.6
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5540.5
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5540.6
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5541.2
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5955.3
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 5915,
+          "shellProviderCommits": 1960,
+          "dashboardShellCommits": 1959
+        }
+      },
+      {
+        "unitKey": "B:diagnostic:J1:r1",
+        "variantId": "B",
+        "repetition": 1,
+        "policy": "stable",
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "eligibleFunctionalSample": true,
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null,
+          "pattern": null
+        },
+        "fanout": {
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 2,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 1,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 1,
+            "/api/conversations": 2,
+            "/api/notifications": 2,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 7,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2645,
+                "bodyFinishedAtMs": 2645,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 4578,
+                "bodyFinishedAtMs": 4578,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 1,
+          "completed": 1,
+          "failed": 0,
+          "incompleteBody": 0,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 7951,
+              "bodyFinishedAtMs": 7959
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 16,
+          "forms": {
+            "effectSetup": 1,
+            "effectCleanup": 1,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0,
+            "restarted": false
+          },
+          "summary": {
+            "effectSetup": 2,
+            "effectCleanup": 2,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2128.1
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2948.4
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2949.8
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2950.2
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2950.2
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3371.3
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3496.8
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3500.8
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3500.8
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3501.2
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 4050.3
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5544.5
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5547.9
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5548
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5548.3
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5982.1
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 156,
+          "shellProviderCommits": 35,
+          "dashboardShellCommits": 34
+        }
+      },
+      {
+        "unitKey": "B:diagnostic:J1:r2",
+        "variantId": "B",
+        "repetition": 2,
+        "policy": "stable",
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "eligibleFunctionalSample": true,
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null,
+          "pattern": null
+        },
+        "fanout": {
+          "requestCount": 56,
+          "apiRequestCount": 27,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 2,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 2,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 1,
+            "/api/conversations": 2,
+            "/api/notifications": 2,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 9,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2603,
+                "bodyFinishedAtMs": 2609,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 4462,
+                "bodyFinishedAtMs": 4462,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 1,
+          "completed": 1,
+          "failed": 0,
+          "incompleteBody": 0,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 6088,
+              "bodyFinishedAtMs": 6108
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 23,
+          "forms": {
+            "effectSetup": 1,
+            "effectCleanup": 1,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0,
+            "restarted": false
+          },
+          "summary": {
+            "effectSetup": 4,
+            "effectCleanup": 4,
+            "loadStarted": 2,
+            "loadSucceeded": 0,
+            "loadAborted": 2
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 1619.9
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2663.5
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2664.4
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2664.4
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2664.5
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2817.4
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2818.4
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2828.2
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3188.1
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3188.8
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3188.9
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3189
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3505.1
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3507.8
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3507.9
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3508.5
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3514
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 4143.3
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5539.2
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5542.4
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 3,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5542.4
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 4,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5542.7
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 4,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5971.8
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 160,
+          "shellProviderCommits": 35,
+          "dashboardShellCommits": 34
+        }
+      },
+      {
+        "unitKey": "B:diagnostic:J1:r3",
+        "variantId": "B",
+        "repetition": 3,
+        "policy": "stable",
+        "validSample": false,
+        "observationValidity": "VALID",
+        "functionalOutcome": "FAILURE",
+        "eligibleFunctionalSample": false,
+        "failureBoundary": {
+          "phase": "required_read",
+          "actionId": "first",
+          "reason": "required_read_incomplete_or_non_2xx",
+          "pattern": "/api/clients/:clientId/forms"
+        },
+        "fanout": {
+          "requestCount": 60,
+          "apiRequestCount": 31,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 3,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 2,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 2,
+            "/api/conversations": 3,
+            "/api/notifications": 3,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 9,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 2,
+            "valid": false,
+            "recordCount": 2,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 1,
+            "failedCount": 1,
+            "non2xxCount": 0,
+            "duplicateCount": 1,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 1993,
+                "bodyFinishedAtMs": null,
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2501,
+                "bodyFinishedAtMs": 2502,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 3774,
+                "bodyFinishedAtMs": 3775,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 2,
+          "completed": 1,
+          "failed": 1,
+          "incompleteBody": 1,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": true,
+              "failureReason": "net::ERR_ABORTED",
+              "responseHeaderAtMs": 5812,
+              "bodyFinishedAtMs": null
+            },
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 6321,
+              "bodyFinishedAtMs": 6330
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 26,
+          "forms": {
+            "effectSetup": 2,
+            "effectCleanup": 2,
+            "loadStarted": 2,
+            "loadSucceeded": 1,
+            "loadAborted": 1,
+            "restarted": true
+          },
+          "summary": {
+            "effectSetup": 3,
+            "effectCleanup": 3,
+            "loadStarted": 2,
+            "loadSucceeded": 0,
+            "loadAborted": 2
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 1874.9
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2864.5
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2865.7
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2865.7
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2865.7
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3096.3
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3098.9
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3098.9
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3099.2
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3103.8
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3745.2
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3746.9
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3746.9
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3747.1
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3750.2
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3814
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3816.7
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 3,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3816.7
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 4,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3817
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3820.7
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 4,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 4260.9
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 4,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5137.7
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5146.2
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 4,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5146.2
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 5,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5146.7
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 5,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5531.5
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 183,
+          "shellProviderCommits": 40,
+          "dashboardShellCommits": 39
+        }
+      },
+      {
+        "unitKey": "A2:diagnostic:J1:r1",
+        "variantId": "A2",
+        "repetition": 1,
+        "policy": "legacy",
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "eligibleFunctionalSample": true,
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null,
+          "pattern": null
+        },
+        "fanout": {
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 2,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 1,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 1,
+            "/api/conversations": 2,
+            "/api/notifications": 2,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 7,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2013,
+                "bodyFinishedAtMs": 2021,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 4130,
+                "bodyFinishedAtMs": 4137,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 1,
+          "completed": 1,
+          "failed": 0,
+          "incompleteBody": 0,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 7412,
+              "bodyFinishedAtMs": 7430
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 16,
+          "forms": {
+            "effectSetup": 1,
+            "effectCleanup": 1,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0,
+            "restarted": false
+          },
+          "summary": {
+            "effectSetup": 2,
+            "effectCleanup": 2,
+            "loadStarted": 1,
+            "loadSucceeded": 0,
+            "loadAborted": 1
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2002.5
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3019.3
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3020.7
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3020.7
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3020.9
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3266.9
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3269.9
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3270
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3270.3
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3273.7
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3723.5
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5374.6
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5378.7
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5378.7
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5378.9
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5840.5
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 6093,
+          "shellProviderCommits": 2020,
+          "dashboardShellCommits": 2019
+        }
+      },
+      {
+        "unitKey": "A2:diagnostic:J1:r2",
+        "variantId": "A2",
+        "repetition": 2,
+        "policy": "legacy",
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "eligibleFunctionalSample": true,
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null,
+          "pattern": null
+        },
+        "fanout": {
+          "requestCount": 56,
+          "apiRequestCount": 27,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 3,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 1,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 1,
+            "/api/conversations": 3,
+            "/api/notifications": 3,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 7,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2068,
+                "bodyFinishedAtMs": 2076,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 3987,
+                "bodyFinishedAtMs": 3990,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 1,
+          "completed": 1,
+          "failed": 0,
+          "incompleteBody": 0,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 5773,
+              "bodyFinishedAtMs": 5791
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 16,
+          "forms": {
+            "effectSetup": 1,
+            "effectCleanup": 1,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0,
+            "restarted": false
+          },
+          "summary": {
+            "effectSetup": 2,
+            "effectCleanup": 2,
+            "loadStarted": 1,
+            "loadSucceeded": 0,
+            "loadAborted": 1
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 1863.6
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2695.5
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2696.6
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2696.6
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2696.6
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3228.7
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3232.5
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3232.6
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3232.9
+            },
+            {
+              "name": "stage6_workspace_load_aborted",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3235.8
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3821.1
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5329
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5331.4
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5331.4
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5331.5
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5734.3
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 8769,
+          "shellProviderCommits": 2908,
+          "dashboardShellCommits": 2907
+        }
+      },
+      {
+        "unitKey": "A2:diagnostic:J1:r3",
+        "variantId": "A2",
+        "repetition": 3,
+        "policy": "legacy",
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "eligibleFunctionalSample": true,
+        "failureBoundary": {
+          "phase": "none",
+          "actionId": null,
+          "reason": null,
+          "pattern": null
+        },
+        "fanout": {
+          "requestCount": 53,
+          "apiRequestCount": 24,
+          "documentRequestCount": 3,
+          "rscRequestCount": 26,
+          "apiRouteCounts": {
+            "/api/alerts": 2,
+            "/api/app-state": 2,
+            "/api/auth/password-login": 1,
+            "/api/clients/:clientId": 1,
+            "/api/clients/:clientId/food-rule-profile": 1,
+            "/api/clients/:clientId/forms": 1,
+            "/api/conversations": 2,
+            "/api/notifications": 2,
+            "/api/session/activity": 2,
+            "/api/shell/bootstrap": 7,
+            "/api/shell/preferences": 1,
+            "/api/shell/version": 2
+          }
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "/api/clients/:clientId/forms",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 2244,
+                "bodyFinishedAtMs": 2251,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "/api/clients/:clientId/food-rule-profile",
+            "count": 1,
+            "valid": true,
+            "recordCount": 1,
+            "completedRecordCount": 1,
+            "incompleteBodyCount": 0,
+            "failedCount": 0,
+            "non2xxCount": 0,
+            "duplicateCount": 0,
+            "records": [
+              {
+                "method": "GET",
+                "status": 200,
+                "responseHeaderAtMs": 4442,
+                "bodyFinishedAtMs": 4450,
+                "failed": false,
+                "failureReason": null
+              }
+            ]
+          }
+        },
+        "formsTransport": {
+          "total": 1,
+          "completed": 1,
+          "failed": 0,
+          "incompleteBody": 0,
+          "records": [
+            {
+              "method": "GET",
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "responseHeaderAtMs": 6163,
+              "bodyFinishedAtMs": 6179
+            }
+          ]
+        },
+        "stage6Lifecycle": {
+          "eventCount": 16,
+          "forms": {
+            "effectSetup": 1,
+            "effectCleanup": 1,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0,
+            "restarted": false
+          },
+          "summary": {
+            "effectSetup": 2,
+            "effectCleanup": 2,
+            "loadStarted": 1,
+            "loadSucceeded": 1,
+            "loadAborted": 0
+          },
+          "events": [
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 2247
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 0,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3148.3
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3149.6
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "summary",
+              "sequence": null,
+              "previousSequence": 0,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3149.6
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3149.6
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3612.6
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "summary",
+              "sequence": 1,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3680.7
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3684.2
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "forms",
+              "sequence": null,
+              "previousSequence": 1,
+              "hasPreviousController": true,
+              "atPerformanceMs": 3684.2
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 3684.6
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 4111.6
+            },
+            {
+              "name": "stage6_workspace_effect_cleanup",
+              "domain": "forms",
+              "sequence": 2,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5789.4
+            },
+            {
+              "name": "stage6_workspace_effect_setup",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5794.1
+            },
+            {
+              "name": "stage6_workspace_load_abort_previous",
+              "domain": "nutrition",
+              "sequence": null,
+              "previousSequence": 2,
+              "hasPreviousController": true,
+              "atPerformanceMs": 5794.2
+            },
+            {
+              "name": "stage6_workspace_load_started",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 5794.6
+            },
+            {
+              "name": "stage6_workspace_load_succeeded",
+              "domain": "nutrition",
+              "sequence": 3,
+              "previousSequence": null,
+              "hasPreviousController": false,
+              "atPerformanceMs": 6309.4
+            }
+          ]
+        },
+        "commitContext": {
+          "totalReactCommitEvents": 5801,
+          "shellProviderCommits": 1922,
+          "dashboardShellCommits": 1921
+        }
+      }
+    ],
+    "variantSummary": {
+      "A1": {
+        "attempted": "3/3",
+        "eligibleFunctional": "3/3",
+        "formsRequiredReadValid": "3/3",
+        "formsTransportAbortObserved": "0/3",
+        "formsDuplicateObserved": "0/3",
+        "requestCounts": [
+          53,
+          53,
+          53
+        ],
+        "apiRequestCounts": [
+          24,
+          24,
+          24
+        ]
+      },
+      "B": {
+        "attempted": "3/3",
+        "eligibleFunctional": "2/3",
+        "formsRequiredReadValid": "2/3",
+        "formsTransportAbortObserved": "1/3",
+        "formsDuplicateObserved": "1/3",
+        "requestCounts": [
+          53,
+          56,
+          60
+        ],
+        "apiRequestCounts": [
+          24,
+          27,
+          31
+        ]
+      },
+      "A2": {
+        "attempted": "3/3",
+        "eligibleFunctional": "3/3",
+        "formsRequiredReadValid": "3/3",
+        "formsTransportAbortObserved": "0/3",
+        "formsDuplicateObserved": "0/3",
+        "requestCounts": [
+          53,
+          56,
+          53
+        ],
+        "apiRequestCounts": [
+          24,
+          27,
+          24
+        ]
+      }
+    },
+    "matchedComparisons": [
+      {
+        "repetition": 1,
+        "allPresent": true,
+        "allEligible": true,
+        "fanout": {
+          "a1": 53,
+          "b": 53,
+          "a2": 53,
+          "bMinusA1": 0,
+          "bMinusA2": 0,
+          "apiBMinusA1": 0,
+          "apiBMinusA2": 0
+        },
+        "forms": {
+          "a1Records": 1,
+          "bRecords": 1,
+          "a2Records": 1,
+          "bValid": true,
+          "bAbortedRecords": 0,
+          "bIncompleteBodies": 0
+        },
+        "routeDeltaBMinusA1": {},
+        "routeDeltaBMinusA2": {}
+      },
+      {
+        "repetition": 2,
+        "allPresent": true,
+        "allEligible": true,
+        "fanout": {
+          "a1": 53,
+          "b": 56,
+          "a2": 56,
+          "bMinusA1": 3,
+          "bMinusA2": 0,
+          "apiBMinusA1": 3,
+          "apiBMinusA2": 0
+        },
+        "forms": {
+          "a1Records": 1,
+          "bRecords": 1,
+          "a2Records": 1,
+          "bValid": true,
+          "bAbortedRecords": 0,
+          "bIncompleteBodies": 0
+        },
+        "routeDeltaBMinusA1": {
+          "/api/clients/:clientId": 1,
+          "/api/shell/bootstrap": 2
+        },
+        "routeDeltaBMinusA2": {
+          "/api/alerts": -1,
+          "/api/clients/:clientId": 1,
+          "/api/conversations": -1,
+          "/api/notifications": -1,
+          "/api/shell/bootstrap": 2
+        }
+      },
+      {
+        "repetition": 3,
+        "allPresent": true,
+        "allEligible": false,
+        "fanout": {
+          "a1": 53,
+          "b": 60,
+          "a2": 53,
+          "bMinusA1": 7,
+          "bMinusA2": 7,
+          "apiBMinusA1": 7,
+          "apiBMinusA2": 7
+        },
+        "forms": {
+          "a1Records": 1,
+          "bRecords": 2,
+          "a2Records": 1,
+          "bValid": false,
+          "bAbortedRecords": 1,
+          "bIncompleteBodies": 1
+        },
+        "routeDeltaBMinusA1": {
+          "/api/alerts": 1,
+          "/api/clients/:clientId": 1,
+          "/api/clients/:clientId/forms": 1,
+          "/api/conversations": 1,
+          "/api/notifications": 1,
+          "/api/shell/bootstrap": 2
+        },
+        "routeDeltaBMinusA2": {
+          "/api/alerts": 1,
+          "/api/clients/:clientId": 1,
+          "/api/clients/:clientId/forms": 1,
+          "/api/conversations": 1,
+          "/api/notifications": 1,
+          "/api/shell/bootstrap": 2
+        }
+      }
+    ],
+    "validMatchedRowCount": 2,
+    "requestFanoutInvariantAcrossValidMatchedRows": false,
+    "requestFanoutInvariantRowCount": 1,
+    "formsAbortRows": [
+      "B:diagnostic:J1:r3"
+    ],
+    "formsDuplicateRows": [
+      "B:diagnostic:J1:r3"
+    ]
+  },
+  "interpretation": "B repetition 3 is invalid because the first Forms matching record received HTTP 200 headers but ended with an aborted, body-incomplete request; a second Forms record completed with HTTP 200, but the required-read validator evaluates every matching record, so the later success does not promote the unit. The same unit has additional API fan-out, including duplicate Forms, client-summary, bootstrap, alerts, notifications, and conversations requests relative to the matched legacy rows. This leaves required-read validity and fan-out confounded with the earlier commit observation.",
+  "evidenceGaps": [
+    "This is a read-only re-analysis of one completed A-B-A checkpoint, not a new controlled capture.",
+    "The B group has only 2/3 eligible functional repetitions, so the three-valid-record causal gate is not met.",
+    "Fan-out is not invariant across the fully valid matched repetitions; the next controlled capture must hold request fan-out and required-read validity as explicit gates.",
+    "The request trace shows browser-visible cancellation and route/domain churn, but it does not prove server continuation after cancellation or the global freeze root cause."
+  ],
+  "explicitNonClaims": [
+    "The duplicate Forms request is not declared a product defect by this analysis.",
+    "The observed fan-out and required-read failure do not prove that the shell dirty-registration policy caused the global freeze.",
+    "No runtime fix, finding disposition, Plan 2 entry, migration, deployment, or production decision changed."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "B_REQUIRED_READ_ABORT_AND_FANOUT_CONFOUND_OBSERVED_COMMIT_COMPARISON_OPEN",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  },
+  "nextAction": "Do not repeat the same A-B-A. Design one separately identified capture that preserves the existing dirty-registration variable while explicitly recording and controlling the Forms lifecycle and request fan-out; accept only repetitions with one completed Forms required read and a predeclared route-count envelope."
+}

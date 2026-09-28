@@ -1,0 +1,203 @@
+{
+  "schemaVersion": "aiya-global-freeze-phase-1-evidence-v1",
+  "evidenceId": "aiya-global-freeze-phase-1-20260924T195845623Z-6029109a-b6cb-46b3-8bc0-b355420234a5",
+  "createdAtUtc": "2026-09-24T19:58:45.625Z",
+  "status": "BLOCKED",
+  "outcome": "BLOCKED_BROWSER_TRACE_HARNESS_BLOCKED",
+  "blockerReason": "browser_trace_harness_blocked",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_ACTION_PLAN.md",
+  "identity": {
+    "phaseId": "aiya-global-freeze-diagnostic-v1",
+    "phaseSchemaVersion": "aiya-global-freeze-diagnostic-v1",
+    "fixtureClass": "user_confirmed_synthetic_test_data",
+    "captureTargetOrigin": "https://aiyaworkspace.com",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "sourceFiles": [
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "sha256": "1c32842cc7a83d6572b2fba93cc1f6031355a7bbe73f2e24a0d3832d1a9d9ebb"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "3acf13226cb9c6201dba51357f5f719eef077aa1cd0a3e6a20b98719c4f24735"
+      },
+      {
+        "path": "app/src/lib/auth-context.ts",
+        "sha256": "606e3dbe7f3be9e01110a825464e96f253f65e342fdb76902e687dca98b9f05c"
+      },
+      {
+        "path": "app/src/lib/dashboard-server-auth.ts",
+        "sha256": "a227dc6445e28c46f5b09fdc0c18d5411e622bcf956c52521e55132a1ba08e48"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "13293d7124f02c8aa57167a4ecb33861eee0340ee2a0584b9927d2f674a2b047"
+      },
+      {
+        "path": "app/src/lib/performance-diagnostic.ts",
+        "sha256": "e1dc3c40a9452765f9cf7207744468a2ae61b7acabad982a70d71a8a0da6e864"
+      },
+      {
+        "path": "app/src/lib/use-aiya-state.ts",
+        "sha256": "40880cd6438c5310dd96c0ca4c3835e76a037910a0c2ed3e7dd63e69d91b9769"
+      },
+      {
+        "path": "app/src/lib/use-shell-dirty-registration.ts",
+        "sha256": "486bc337fab9d21ae36a8c3296380acff5c3dcec4767fb54471529d7af9fd998"
+      },
+      {
+        "path": "app/src/lib/use-stage-4b-inbox.ts",
+        "sha256": "9b92f6a25454c56d207d2271d98279951e690d960e3d90f3585b9f2b6f4c6eee"
+      },
+      {
+        "path": "app/src/lib/use-stage-4b2-messaging.ts",
+        "sha256": "fcaeda79bbbca550f987cad9255baa21715ca52fce64fac30c7e33002164c237"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "17c4b7cb55ec267dd2c708a462924cd294e9f0d8e4309e370cc71ed68915417c"
+      },
+      {
+        "path": "app/src/lib/supabase-store.ts",
+        "sha256": "b65f45ea1fba32331a5076c94261ae5073c27145bc906a9e234841da227d8025"
+      },
+      {
+        "path": "app/next.config.ts",
+        "sha256": "2463c8e6ac8e0e4f631492985e1b884fb3a77ae07d15bae916fbfe9e8410a747"
+      },
+      {
+        "path": "app/scripts/performance-global-freeze-diagnostic.mjs",
+        "sha256": "85789183b1306cf6eeb9d5b9237deda6200bdf9e0259f6db6e4fb274dfcdf693"
+      },
+      {
+        "path": "app/scripts/performance-global-freeze-diagnostic.test.mjs",
+        "sha256": "86fb866b514c21b2ce327e4fa66b9915635ed30f2a5a6a607c5d8dc21b9e4e7d"
+      },
+      {
+        "path": "app/scripts/lib/aiya-global-freeze-phase.mjs",
+        "sha256": "b9f76e69f777e82d51efdfcb812fd382d34a26c45c8c302204999f6cfe6c991c"
+      }
+    ],
+    "sourceFingerprint": "3ff27d4cfac1e134d25ff59d261cc81a756b64f44e2de84e4bc77113a91a1f43",
+    "liveRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+    },
+    "measurements": {
+      "browser": "Chrome DevTools Performance runtime trace; screenshots and resource contents disabled",
+      "host": "SSH siriusai.store; read-only procfs, cgroup, and pressure counters",
+      "officialPerformanceAcceptance": false
+    }
+  },
+  "priorIdentityFailureAttempts": [
+    {
+      "checkpointRunId": "aiya-global-freeze-diagnostic-v1-20260924T183531298Z-402eb7b1-3680-45a8-ae52-bcf60d11a967",
+      "checkpointStatus": "BLOCKED",
+      "sourceFingerprint": "d9f74aa3ca1d314e34178f21f23c52114f6e8973047cb9c1d8d78c5b6a20d62b",
+      "failureCodes": [
+        {
+          "eventType": "host.clock_sync.failed",
+          "reasonCode": "host_clock_sync_uncertainty_exceeded"
+        }
+      ]
+    },
+    {
+      "checkpointRunId": "aiya-global-freeze-diagnostic-v1-20260924T184116330Z-490e5f9d-2cbb-471d-a82f-c44303792583",
+      "checkpointStatus": "RUNNING",
+      "sourceFingerprint": "bab7a67a2388ebf08b5ca5cb52004da0b128c14f8154f5e3a4152e53dbae8def",
+      "failureCodes": [
+        {
+          "eventType": "host.capture.completed",
+          "reasonCode": "application_process_not_found"
+        }
+      ]
+    },
+    {
+      "checkpointRunId": "aiya-global-freeze-diagnostic-v1-20260924T185032190Z-83506e01-b867-486a-9b32-b80e6290269d",
+      "checkpointStatus": "INTERRUPTED",
+      "sourceFingerprint": "c005906390bc7ee1823b669fae6ed42a14d2e9a912271b4b5484dbaafb47e34f",
+      "failureCodes": [
+        {
+          "eventType": "browser.trace.incomplete",
+          "reasonCode": "capture_window_expired"
+        }
+      ]
+    },
+    {
+      "checkpointRunId": "aiya-global-freeze-diagnostic-v1-20260924T194434128Z-97d5d1a7-f726-47b8-bcf2-b3e951ba7d9f",
+      "checkpointStatus": "INTERRUPTED",
+      "sourceFingerprint": "c005906390bc7ee1823b669fae6ed42a14d2e9a912271b4b5484dbaafb47e34f",
+      "failureCodes": [
+        {
+          "eventType": "host.clock_sync.failed",
+          "reasonCode": "host_clock_sync_uncertainty_exceeded"
+        }
+      ]
+    }
+  ],
+  "attemptCount": 1,
+  "validRecordCount": 0,
+  "observedFreezeCount": 0,
+  "attempts": [
+    {
+      "checkpointRunId": "aiya-global-freeze-diagnostic-v1-20260924T195119517Z-61e8f694-e2e2-465f-9512-5737058fc0f6",
+      "checkpointStatus": "INTERRUPTED",
+      "observationValidity": "INVALID",
+      "clockAlignment": "UNAVAILABLE",
+      "alignedTraceDurationMs": null,
+      "alignedHostSampleCount": null,
+      "hostClockUncertaintyMs": 40,
+      "sourceFingerprint": "3ff27d4cfac1e134d25ff59d261cc81a756b64f44e2de84e4bc77113a91a1f43",
+      "liveRelease": {
+        "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+        "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+        "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+      },
+      "browserTraceSha256": null,
+      "sanitizedTraceSha256": null,
+      "hostSamplesSha256": null,
+      "hostSampleCount": 0,
+      "hostSummary": {
+        "status": "SAMPLED",
+        "sampleCount": 150,
+        "sampleStartUtc": "2026-09-24T19:51:48Z",
+        "sampleEndUtc": "2026-09-24T19:54:32Z",
+        "vcpu": 2,
+        "load1Peak": 0.12,
+        "hostCpuBusyPercentPeak": 13.57,
+        "hostCpuBusyPercentAverage": 5.37,
+        "memoryAvailableKbMin": 3016776,
+        "swapInPagesDelta": 0,
+        "swapOutPagesDelta": 0,
+        "appProcessFound": true,
+        "appProcessMissingCount": 0,
+        "cgroupNrThrottledDelta": 0,
+        "cgroupThrottledUsecDelta": 0,
+        "cgroupMemoryHighEventsDelta": 0,
+        "cgroupOomKillEventsDelta": 0,
+        "cpuPressurePeakAvg10": 0.36,
+        "memoryPressurePeakAvg10": 0,
+        "ioPressurePeakAvg10": 0
+      },
+      "traceSummary": null,
+      "interactionObservation": null,
+      "failureCodes": [
+        {
+          "eventType": "browser.trace.capture.failed",
+          "reasonCode": "browser_trace_capture_unavailable"
+        }
+      ]
+    }
+  ],
+  "phase2Eligible": false,
+  "plan1Status": "COMPLETE / DIAGNOSIS_BLOCKED",
+  "plan2EligibleFindings": 0,
+  "production": "NO-GO",
+  "rawTraceOrHostSamplesEmbedded": false
+}

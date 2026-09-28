@@ -1,0 +1,1662 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-auth-coverage-capture",
+  "stageId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1",
+  "runId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5",
+  "generatedAt": "2026-09-21T15:42:29.028Z",
+  "status": "COMPLETE",
+  "outcome": "SHARED_API_AUTH_COVERAGE_PARTIAL_RSC_MARKER_OBSERVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Capture diagnostic-only timing for shared API auth paths and the bounded dashboard RSC auth marker in one current-source J1 trace.",
+    "analysisOnly": false,
+    "browserRerunStarted": true,
+    "applicationRuntimeChanged": false,
+    "diagnosticInstrumentationEnabled": true,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "targetJourney": "J1",
+    "fixture": "local-normal synthetic owner"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 221,
+    "statusHash": "3f4d727332d459c2ba1da341336ab362cdfcb27b23598abc20aaca81848b7ae1",
+    "diffCheck": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "shellDirtyRegistrationPolicy": "legacy",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-shared-runtime-auth-coverage.mjs",
+        "sha256": "49511444070d76970661e82d78af4ca4e07409a3c3569fc44b812643e20a45a9"
+      },
+      {
+        "path": "app/src/lib/performance-diagnostic.ts",
+        "sha256": "e1dc3c40a9452765f9cf7207744468a2ae61b7acabad982a70d71a8a0da6e864"
+      },
+      {
+        "path": "app/src/lib/dashboard-server-auth.ts",
+        "sha256": "a227dc6445e28c46f5b09fdc0c18d5411e622bcf956c52521e55132a1ba08e48"
+      },
+      {
+        "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "sha256": "1c32842cc7a83d6572b2fba93cc1f6031355a7bbe73f2e24a0d3832d1a9d9ebb"
+      },
+      {
+        "path": "app/src/app/dashboard/layout.tsx",
+        "sha256": "3e2c65a333a11d7490b85eb7f059dc9ea6990889e0dd15da5e1a8a576cdf6d06"
+      },
+      {
+        "path": "app/src/app/dashboard/page.tsx",
+        "sha256": "cea0686797029538a38437c313e794093ebfcb77a6ddd7b3a05d6f499f6247e9"
+      },
+      {
+        "path": "app/src/app/api/conversations/route.ts",
+        "sha256": "b810e744d7ceb733f15ba7657274db82f30dff62c6d67fdbcbff7d1a4a4f9486"
+      },
+      {
+        "path": "app/src/app/api/alerts/route.ts",
+        "sha256": "3e1e4b70a43b8a7484040a6aa60697d9bdcbb8241ed04badcc4069e1293b2c28"
+      },
+      {
+        "path": "app/src/app/api/notifications/route.ts",
+        "sha256": "7a29c987747ac56ea036f4e688bbe7656a2b64df0ebeac234a133b4d2512bd9f"
+      },
+      {
+        "path": "app/src/app/api/shell/preferences/route.ts",
+        "sha256": "d9448d2e5f17b25331021256f7cea2a52f409b7f3f491629401f08779301137c"
+      },
+      {
+        "path": "app/src/app/api/clients/[id]/route.ts",
+        "sha256": "07e2b0dfe7728973b053d7fe92e2376f5d4a08019ee2f63a28723577d7ea40a3"
+      },
+      {
+        "path": "app/src/app/api/clients/[id]/forms/route.ts",
+        "sha256": "093f6a07f918fd57c963f730cde4c51aac4a70c3ff81dfead7dd8c60996f67e3"
+      }
+    ]
+  },
+  "preflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "authentication": "real_password_session_required",
+    "storePath": "normal_rls_api_path_required",
+    "fallbackStoreAllowed": false,
+    "targetOrigin": "http://127.0.0.1:3156",
+    "localSupabase": {
+      "status": "PASS",
+      "targetHost": "127.0.0.1:54321",
+      "urlIsLocal": true,
+      "credentialsPresent": "<redacted>"
+    },
+    "credentialsAvailable": "<redacted>",
+    "blockers": []
+  },
+  "stageLedger": [
+    {
+      "stageId": "ARC.1",
+      "name": "Current source identity and local preflight",
+      "status": "COMPLETE"
+    },
+    {
+      "stageId": "ARC.2",
+      "name": "One diagnostic J1 capture",
+      "status": "COMPLETE"
+    },
+    {
+      "stageId": "ARC.3",
+      "name": "Shared API auth coverage and RSC marker extraction",
+      "status": "COMPLETE"
+    }
+  ],
+  "validity": {
+    "attempted": "1/1",
+    "observationValid": "VALID",
+    "functionalOutcome": "SUCCESS",
+    "validSample": true,
+    "officialSample": false
+  },
+  "coverage": {
+    "expectedRoutes": [
+      {
+        "route": "/api/conversations",
+        "responseCount": 2,
+        "timedResponseCount": 1,
+        "timingNames": [
+          "auth",
+          "auth_dietitian",
+          "auth_get_session",
+          "auth_get_user",
+          "auth_membership",
+          "auth_session_activity",
+          "auth_total",
+          "entitlement",
+          "json",
+          "route",
+          "store"
+        ]
+      },
+      {
+        "route": "/api/alerts",
+        "responseCount": 2,
+        "timedResponseCount": 2,
+        "timingNames": [
+          "auth",
+          "auth_dietitian",
+          "auth_get_session",
+          "auth_get_user",
+          "auth_membership",
+          "auth_session_activity",
+          "auth_total",
+          "entitlement",
+          "json",
+          "route",
+          "store"
+        ]
+      },
+      {
+        "route": "/api/notifications",
+        "responseCount": 2,
+        "timedResponseCount": 2,
+        "timingNames": [
+          "auth",
+          "auth_dietitian",
+          "auth_get_session",
+          "auth_get_user",
+          "auth_membership",
+          "auth_session_activity",
+          "auth_total",
+          "entitlement",
+          "json",
+          "route",
+          "store"
+        ]
+      },
+      {
+        "route": "/api/shell/preferences",
+        "responseCount": 1,
+        "timedResponseCount": 1,
+        "timingNames": [
+          "auth",
+          "auth_dietitian",
+          "auth_get_session",
+          "auth_get_user",
+          "auth_membership",
+          "auth_session_activity",
+          "auth_total",
+          "entitlement",
+          "json",
+          "rate_limit",
+          "route",
+          "store"
+        ]
+      },
+      {
+        "route": "/api/clients/%3Cuuid%3E",
+        "responseCount": 1,
+        "timedResponseCount": 0,
+        "timingNames": []
+      },
+      {
+        "route": "/api/clients/%3Cuuid%3E/forms",
+        "responseCount": 1,
+        "timedResponseCount": 1,
+        "timingNames": [
+          "auth",
+          "auth_dietitian",
+          "auth_get_session",
+          "auth_get_user",
+          "auth_membership",
+          "auth_session_activity",
+          "auth_total",
+          "entitlement",
+          "json",
+          "route",
+          "store"
+        ]
+      }
+    ],
+    "expectedRouteSet": [
+      "/api/conversations",
+      "/api/alerts",
+      "/api/notifications",
+      "/api/shell/preferences",
+      "/api/clients/%3Cuuid%3E",
+      "/api/clients/%3Cuuid%3E/forms"
+    ],
+    "apiRequestCount": 24,
+    "timedApiRequestCount": 15,
+    "allApiRequestsTimed": false,
+    "missingExpectedRoutes": [
+      "/api/clients/%3Cuuid%3E"
+    ],
+    "rscMarkerCount": 2,
+    "rscMarkers": [
+      {
+        "name": "rsc_auth_server_marker_observed",
+        "scope": "layout",
+        "atWallMs": 1790005121171,
+        "atPerformanceMs": 1614.9,
+        "authGetUserMs": 406.9429,
+        "authMembershipMs": 57.586999999999534,
+        "authCustomerSessionFactsMs": null,
+        "authDietitianMs": 39.35989999999947,
+        "authEntitlementMs": 17.3737000000001,
+        "authTotalMs": 522.0992999999999
+      },
+      {
+        "name": "rsc_auth_server_marker_observed",
+        "scope": "page",
+        "atWallMs": 1790005121675,
+        "atPerformanceMs": 2119.8,
+        "authGetUserMs": 407.64969999999994,
+        "authMembershipMs": 57.60870000000068,
+        "authCustomerSessionFactsMs": null,
+        "authDietitianMs": 38.78659999999945,
+        "authEntitlementMs": 17.778299999999945,
+        "authTotalMs": 523.7808000000005
+      }
+    ],
+    "requests": [
+      {
+        "route": "/login",
+        "method": "GET",
+        "requestKind": "document",
+        "startedAtMs": 0,
+        "endAtMs": null,
+        "responseHeaderAtMs": 59,
+        "bodyFinishedAtMs": 92,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 867,
+        "endAtMs": null,
+        "responseHeaderAtMs": 911,
+        "bodyFinishedAtMs": 922,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 921,
+        "endAtMs": null,
+        "responseHeaderAtMs": 946,
+        "bodyFinishedAtMs": 970,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/auth/password-login",
+        "method": "POST",
+        "requestKind": "api_or_other",
+        "startedAtMs": 1081,
+        "endAtMs": null,
+        "responseHeaderAtMs": 2002,
+        "bodyFinishedAtMs": 3855,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard",
+        "method": "GET",
+        "requestKind": "document",
+        "startedAtMs": 2010,
+        "endAtMs": null,
+        "responseHeaderAtMs": 3829,
+        "bodyFinishedAtMs": 3908,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/shell/bootstrap",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 4083,
+        "endAtMs": null,
+        "responseHeaderAtMs": null,
+        "bodyFinishedAtMs": null,
+        "status": null,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/session/activity",
+        "method": "POST",
+        "requestKind": "api_or_other",
+        "startedAtMs": 4084,
+        "endAtMs": null,
+        "responseHeaderAtMs": 4717,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/shell/version",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 4084,
+        "endAtMs": null,
+        "responseHeaderAtMs": 4638,
+        "bodyFinishedAtMs": 4640,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/shell/bootstrap",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 4283,
+        "endAtMs": null,
+        "responseHeaderAtMs": 4791,
+        "bodyFinishedAtMs": 4883,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 402.34
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 280.56
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 22.64
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 30.79
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.35
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 39.38
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 374.32
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 26.25
+          },
+          {
+            "name": "rate_limit",
+            "durationMs": 19.1
+          },
+          {
+            "name": "store",
+            "durationMs": 59.9
+          },
+          {
+            "name": "json",
+            "durationMs": 0.57
+          },
+          {
+            "name": "route",
+            "durationMs": 481.91
+          }
+        ]
+      },
+      {
+        "route": "/api/app-state",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 4826,
+        "endAtMs": null,
+        "responseHeaderAtMs": 6001,
+        "bodyFinishedAtMs": 6707,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 515.27
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 339.79
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 55
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 41.51
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.41
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 39.67
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 476.93
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 37.71
+          },
+          {
+            "name": "store",
+            "durationMs": 640.57
+          },
+          {
+            "name": "json",
+            "durationMs": 1.76
+          },
+          {
+            "name": "route",
+            "durationMs": 1157.62
+          }
+        ]
+      },
+      {
+        "route": "/api/alerts",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 4883,
+        "endAtMs": null,
+        "responseHeaderAtMs": 6172,
+        "bodyFinishedAtMs": 6708,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 1070.66
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 391.18
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 126.24
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 189.15
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.34
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 327.28
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 1034.77
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 34.26
+          },
+          {
+            "name": "store",
+            "durationMs": 191.55
+          },
+          {
+            "name": "json",
+            "durationMs": 2.64
+          },
+          {
+            "name": "route",
+            "durationMs": 1264.86
+          }
+        ]
+      },
+      {
+        "route": "/api/notifications",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 4883,
+        "endAtMs": null,
+        "responseHeaderAtMs": 6155,
+        "bodyFinishedAtMs": 6708,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 1139.81
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 542.88
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 351.68
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 56.05
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.33
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 93.18
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 1044.7
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 93.87
+          },
+          {
+            "name": "store",
+            "durationMs": 86.24
+          },
+          {
+            "name": "json",
+            "durationMs": 0.41
+          },
+          {
+            "name": "route",
+            "durationMs": 1226.47
+          }
+        ]
+      },
+      {
+        "route": "/dashboard/ai-chat",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 4901,
+        "endAtMs": null,
+        "responseHeaderAtMs": 5492,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/more",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 4901,
+        "endAtMs": null,
+        "responseHeaderAtMs": 5553,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/settings",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 4901,
+        "endAtMs": null,
+        "responseHeaderAtMs": 5544,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 4901,
+        "endAtMs": null,
+        "responseHeaderAtMs": 6101,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard",
+        "method": "GET",
+        "requestKind": "document",
+        "startedAtMs": 5293,
+        "endAtMs": null,
+        "responseHeaderAtMs": 6684,
+        "bodyFinishedAtMs": 6741,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard?section=clients",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 5561,
+        "endAtMs": null,
+        "responseHeaderAtMs": 6050,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard?section=messages",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 5569,
+        "endAtMs": null,
+        "responseHeaderAtMs": 6326,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard?section=alerts",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 5570,
+        "endAtMs": null,
+        "responseHeaderAtMs": null,
+        "bodyFinishedAtMs": null,
+        "status": null,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/conversations",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 6042,
+        "endAtMs": null,
+        "responseHeaderAtMs": null,
+        "bodyFinishedAtMs": null,
+        "status": null,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/ai-chat",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 6114,
+        "endAtMs": null,
+        "responseHeaderAtMs": null,
+        "bodyFinishedAtMs": null,
+        "status": null,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/more",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 6161,
+        "endAtMs": null,
+        "responseHeaderAtMs": 6663,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/settings",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 6337,
+        "endAtMs": null,
+        "responseHeaderAtMs": null,
+        "bodyFinishedAtMs": null,
+        "status": null,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/shell/bootstrap",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 6920,
+        "endAtMs": null,
+        "responseHeaderAtMs": 7402,
+        "bodyFinishedAtMs": 7435,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 348.73
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 255.58
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 16.99
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 18.31
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.33
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 33.48
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 325.23
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 21.84
+          },
+          {
+            "name": "rate_limit",
+            "durationMs": 21.81
+          },
+          {
+            "name": "store",
+            "durationMs": 105.01
+          },
+          {
+            "name": "json",
+            "durationMs": 0.27
+          },
+          {
+            "name": "route",
+            "durationMs": 475.83
+          }
+        ]
+      },
+      {
+        "route": "/api/session/activity",
+        "method": "POST",
+        "requestKind": "api_or_other",
+        "startedAtMs": 6920,
+        "endAtMs": null,
+        "responseHeaderAtMs": 7440,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/shell/version",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 6920,
+        "endAtMs": null,
+        "responseHeaderAtMs": 7345,
+        "bodyFinishedAtMs": 7353,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/app-state",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 7423,
+        "endAtMs": null,
+        "responseHeaderAtMs": 8855,
+        "bodyFinishedAtMs": 8880,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 706.73
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 472.91
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 126.83
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 27.6
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.3
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 48.97
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 677.12
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 28.9
+          },
+          {
+            "name": "store",
+            "durationMs": 709.67
+          },
+          {
+            "name": "json",
+            "durationMs": 2.83
+          },
+          {
+            "name": "route",
+            "durationMs": 1419.24
+          }
+        ]
+      },
+      {
+        "route": "/api/alerts",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 7439,
+        "endAtMs": null,
+        "responseHeaderAtMs": 8108,
+        "bodyFinishedAtMs": 8114,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 511.09
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 345.48
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 61.4
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 20.06
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.3
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 63.3
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 490.98
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 18.47
+          },
+          {
+            "name": "store",
+            "durationMs": 143.81
+          },
+          {
+            "name": "json",
+            "durationMs": 0.2
+          },
+          {
+            "name": "route",
+            "durationMs": 655.11
+          }
+        ]
+      },
+      {
+        "route": "/api/notifications",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 7439,
+        "endAtMs": null,
+        "responseHeaderAtMs": 8342,
+        "bodyFinishedAtMs": 8346,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 621.01
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 448.28
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 50.5
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 38.26
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.3
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 50.16
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 588.16
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 30.11
+          },
+          {
+            "name": "store",
+            "durationMs": 241.6
+          },
+          {
+            "name": "json",
+            "durationMs": 0.21
+          },
+          {
+            "name": "route",
+            "durationMs": 862.82
+          }
+        ]
+      },
+      {
+        "route": "/dashboard/ai-chat",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 7455,
+        "endAtMs": null,
+        "responseHeaderAtMs": 7846,
+        "bodyFinishedAtMs": 7860,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/more",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 7455,
+        "endAtMs": null,
+        "responseHeaderAtMs": 7991,
+        "bodyFinishedAtMs": 8002,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/settings",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 7455,
+        "endAtMs": null,
+        "responseHeaderAtMs": 8005,
+        "bodyFinishedAtMs": 8013,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 7456,
+        "endAtMs": null,
+        "responseHeaderAtMs": 8761,
+        "bodyFinishedAtMs": 8771,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard?section=clients",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 7752,
+        "endAtMs": null,
+        "responseHeaderAtMs": 8788,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/shell/bootstrap",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 7770,
+        "endAtMs": null,
+        "responseHeaderAtMs": 9034,
+        "bodyFinishedAtMs": 9048,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 1049.28
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 462.63
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 411.09
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 111.22
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.37
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 31.79
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 1017.74
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 26.52
+          },
+          {
+            "name": "rate_limit",
+            "durationMs": 25.25
+          },
+          {
+            "name": "store",
+            "durationMs": 92.26
+          },
+          {
+            "name": "json",
+            "durationMs": 0.27
+          },
+          {
+            "name": "route",
+            "durationMs": 1167.06
+          }
+        ]
+      },
+      {
+        "route": "/dashboard?section=clients",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 7771,
+        "endAtMs": null,
+        "responseHeaderAtMs": 8626,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard?section=messages",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 7995,
+        "endAtMs": null,
+        "responseHeaderAtMs": 8971,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard?section=alerts",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 8008,
+        "endAtMs": null,
+        "responseHeaderAtMs": 9338,
+        "bodyFinishedAtMs": 9358,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/ai-chat",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 8767,
+        "endAtMs": null,
+        "responseHeaderAtMs": 9375,
+        "bodyFinishedAtMs": 9398,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/dashboard/more",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 8796,
+        "endAtMs": null,
+        "responseHeaderAtMs": 9409,
+        "bodyFinishedAtMs": 9423,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/conversations",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 8938,
+        "endAtMs": null,
+        "responseHeaderAtMs": 9711,
+        "bodyFinishedAtMs": 9720,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 696.71
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 575.67
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 17.44
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 22.83
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.31
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 54.85
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 671.57
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 24.08
+          },
+          {
+            "name": "store",
+            "durationMs": 31.62
+          },
+          {
+            "name": "json",
+            "durationMs": 0.27
+          },
+          {
+            "name": "route",
+            "durationMs": 728.61
+          }
+        ]
+      },
+      {
+        "route": "/dashboard/settings",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 8978,
+        "endAtMs": null,
+        "responseHeaderAtMs": 9496,
+        "bodyFinishedAtMs": 9508,
+        "status": 200,
+        "failed": false,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/shell/preferences",
+        "method": "PATCH",
+        "requestKind": "api_or_other",
+        "startedAtMs": 9273,
+        "endAtMs": null,
+        "responseHeaderAtMs": 9830,
+        "bodyFinishedAtMs": 9845,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 384.4
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 318.23
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 17.32
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 14.07
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.3
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 18.72
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 369.06
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 12.94
+          },
+          {
+            "name": "rate_limit",
+            "durationMs": 13.64
+          },
+          {
+            "name": "store",
+            "durationMs": 78.67
+          },
+          {
+            "name": "json",
+            "durationMs": 0.74
+          },
+          {
+            "name": "route",
+            "durationMs": 477.45
+          }
+        ]
+      },
+      {
+        "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 9845,
+        "endAtMs": null,
+        "responseHeaderAtMs": 10174,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/clients/%3Cuuid%3E",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 9890,
+        "endAtMs": null,
+        "responseHeaderAtMs": null,
+        "bodyFinishedAtMs": null,
+        "status": null,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/shell/bootstrap",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 9891,
+        "endAtMs": null,
+        "responseHeaderAtMs": null,
+        "bodyFinishedAtMs": null,
+        "status": null,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/clients/%3Cuuid%3E/forms",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 10362,
+        "endAtMs": null,
+        "responseHeaderAtMs": 11064,
+        "bodyFinishedAtMs": 11074,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 565.76
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 400.26
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 79.46
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 35.78
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.33
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 27.17
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 543.45
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 21.19
+          },
+          {
+            "name": "store",
+            "durationMs": 116.52
+          },
+          {
+            "name": "json",
+            "durationMs": 0.34
+          },
+          {
+            "name": "route",
+            "durationMs": 682.62
+          }
+        ]
+      },
+      {
+        "route": "/api/shell/bootstrap",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 10362,
+        "endAtMs": null,
+        "responseHeaderAtMs": 10989,
+        "bodyFinishedAtMs": 11003,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 524.58
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 410.71
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 43.98
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 32.26
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.3
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 19.15
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 506.88
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 16.37
+          },
+          {
+            "name": "rate_limit",
+            "durationMs": 18.62
+          },
+          {
+            "name": "store",
+            "durationMs": 48.47
+          },
+          {
+            "name": "json",
+            "durationMs": 0.29
+          },
+          {
+            "name": "route",
+            "durationMs": 591.96
+          }
+        ]
+      },
+      {
+        "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 10362,
+        "endAtMs": null,
+        "responseHeaderAtMs": 10868,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      },
+      {
+        "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 12453,
+        "endAtMs": null,
+        "responseHeaderAtMs": 13014,
+        "bodyFinishedAtMs": 13028,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 374.55
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 269.23
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 27.9
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 10.76
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.34
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 32.38
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 341.36
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 32.33
+          },
+          {
+            "name": "store",
+            "durationMs": 167.49
+          },
+          {
+            "name": "json",
+            "durationMs": 0.95
+          },
+          {
+            "name": "route",
+            "durationMs": 542.99
+          }
+        ]
+      },
+      {
+        "route": "/api/shell/bootstrap",
+        "method": "GET",
+        "requestKind": "api_or_other",
+        "startedAtMs": 12454,
+        "endAtMs": null,
+        "responseHeaderAtMs": 13053,
+        "bodyFinishedAtMs": 13071,
+        "status": 200,
+        "failed": false,
+        "serverTiming": [
+          {
+            "name": "auth",
+            "durationMs": 372.47
+          },
+          {
+            "name": "auth_get_user",
+            "durationMs": 219.89
+          },
+          {
+            "name": "auth_membership",
+            "durationMs": 47.34
+          },
+          {
+            "name": "auth_dietitian",
+            "durationMs": 35.36
+          },
+          {
+            "name": "auth_get_session",
+            "durationMs": 0.29
+          },
+          {
+            "name": "auth_session_activity",
+            "durationMs": 35.07
+          },
+          {
+            "name": "auth_total",
+            "durationMs": 338.36
+          },
+          {
+            "name": "entitlement",
+            "durationMs": 33.13
+          },
+          {
+            "name": "rate_limit",
+            "durationMs": 101.7
+          },
+          {
+            "name": "store",
+            "durationMs": 86.54
+          },
+          {
+            "name": "json",
+            "durationMs": 0.24
+          },
+          {
+            "name": "route",
+            "durationMs": 560.94
+          }
+        ]
+      },
+      {
+        "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+        "method": "GET",
+        "requestKind": "rsc",
+        "startedAtMs": 12454,
+        "endAtMs": null,
+        "responseHeaderAtMs": 12724,
+        "bodyFinishedAtMs": null,
+        "status": 200,
+        "failed": true,
+        "serverTiming": []
+      }
+    ],
+    "observation": {
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "validSample": true,
+      "performanceOutcome": "NOT_EVALUABLE",
+      "secondActionTailMs": null
+    }
+  },
+  "interpretation": {
+    "observed": "Diagnostic timing is available for the API responses that completed in this trace; the bounded RSC marker records server-measured dashboard auth timing without exposing identity or response bodies.",
+    "notEstablished": "One J1 trace cannot establish repeatability, causality, or the global freeze root cause. Missing or aborted routes remain unmeasured."
+  },
+  "evidenceGaps": [
+    "This is one trace-only J1 capture and is not an official acceptance sample.",
+    "A route with no completed response cannot emit a response timing header in this capture.",
+    "The RSC marker is a server-provided timing payload observed by the client; it is not a causal experiment or a full response-header timing boundary."
+  ],
+  "nextAction": "Review the single trace. Do not change auth behavior or promote the result to a root-cause finding; repeat only with separate authorization if the missing timing boundary still blocks the diagnosis.",
+  "explicitNonClaims": [
+    "No auth cache, request coalescing, navigation, database, migration, or production fix was applied.",
+    "No external provider, WhatsApp, billing, production worker, or real health-data path was used.",
+    "The run does not change Plan 1 closure, Plan 2 eligibility, or production NO-GO."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "SHARED_API_AUTH_COVERAGE_PARTIAL_RSC_MARKER_OBSERVED",
+    "globalFreezeResolved": false,
+    "rootCauseConfirmed": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  },
+  "evidenceGeneration": {
+    "reconstructedFromCheckpoint": true,
+    "browserCaptureReexecutedDuringRebuild": false
+  }
+}

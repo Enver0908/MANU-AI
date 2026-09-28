@@ -17,6 +17,7 @@ import type { TenantRole } from "@/lib/types";
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
+import { beginPhase55NavigationWindow } from "@/lib/phase-55-polling-diagnostic";
 
 export type ShellNavBadges = { alerts: number; notifications: number; messages: number };
 
@@ -120,6 +121,7 @@ function ShellNavLink({
       title={layout === "rail" ? item.label : undefined}
       onClick={(event) => {
         event.preventDefault();
+        beginPhase55NavigationWindow(`shell_navigation_click:${item.destinationId}`);
         requestHrefNavigation(item.href);
       }}
     >

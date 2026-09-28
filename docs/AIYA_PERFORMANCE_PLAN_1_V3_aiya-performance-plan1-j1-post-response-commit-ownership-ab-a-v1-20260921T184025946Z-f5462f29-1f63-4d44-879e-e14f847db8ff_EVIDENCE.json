@@ -1,0 +1,1674 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-post-response-commit-ownership-ab-a",
+  "stageId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+  "runId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T184025946Z-f5462f29-1f63-4d44-879e-e14f847db8ff",
+  "generatedAt": "2026-09-21T18:48:34.812Z",
+  "status": "COMPLETE",
+  "outcome": "POST_RESPONSE_COMMIT_OWNERSHIP_COMPARISON_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Current-source local diagnostic A1 legacy -> B stable -> A2 legacy comparison of post-response shell commit ownership at the J1 second-action boundary.",
+    "analysisOnly": false,
+    "browserRerunStarted": true,
+    "applicationRuntimeChanged": false,
+    "processScopedDiagnosticVariable": "shell_dirty_registration_policy",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "fixture": "local-normal synthetic owner",
+    "targetJourney": "J1"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "hypothesis": {
+    "id": "post_response_state_commit_ownership",
+    "variableId": "shell_dirty_registration_policy",
+    "A1": "legacy registration dependency",
+    "B": "stable saveRef dependency",
+    "A2": "legacy registration dependency",
+    "heldConstant": [
+      "J1 journey and synthetic fixture",
+      "diagnostic browser instrumentation",
+      "auth/RLS/store path",
+      "request fan-out contract",
+      "required-read validity gate",
+      "local Supabase target"
+    ]
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 229,
+    "statusHash": "6c75f607cb99538d1862940a383a10f25aeea3d051871d58b1f0c639fea499d5",
+    "diffCheck": "PASS",
+    "variableId": "shell_dirty_registration_policy",
+    "variantPolicies": [
+      {
+        "id": "A1",
+        "policy": "legacy"
+      },
+      {
+        "id": "B",
+        "policy": "stable"
+      },
+      {
+        "id": "A2",
+        "policy": "legacy"
+      }
+    ],
+    "configurationIdentity": {
+      "sourceKinds": [
+        "active_worktree_app_env_local"
+      ],
+      "availableKeys": [
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "MANU_DEV_FALLBACK_STORE"
+      ],
+      "credentialSource": "<redacted>",
+      "phase3FixtureReady": true
+    },
+    "sourceFiles": [
+      {
+        "path": "app/src/lib/use-shell-dirty-registration.ts",
+        "sha256": "3b657c1e6cd2f1b235d49499edebd03c8f47a6c0154406e29acf708ce2ea7304"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-dirty-registry.ts",
+        "sha256": "b75f03b1c9ca82e43930439ee1854624f9978e0543faf15ff5f3afe320f23358"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "sha256": "1c32842cc7a83d6572b2fba93cc1f6031355a7bbe73f2e24a0d3832d1a9d9ebb"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "13293d7124f02c8aa57167a4ecb33861eee0340ee2a0584b9927d2f674a2b047"
+      },
+      {
+        "path": "app/src/lib/performance-diagnostic.ts",
+        "sha256": "e1dc3c40a9452765f9cf7207744468a2ae61b7acabad982a70d71a8a0da6e864"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/scripts/lib/diagnostic-db-lock-sampler.mjs",
+        "sha256": "70a6888a083291f90664e87bee5745295bdd2cf184058af7c8344d2b64e40387"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-post-response-commit-ownership-ab-a.mjs",
+        "sha256": "a3b0a0dec566bbb178b40a7a7d7df32f0d685f137d5d6f9a0a4349470fac8d20"
+      },
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "sha256": "8439d39efe8ec51f61a8d365bb1808d669bd730dafc5a6febbb336503f2b050f"
+      }
+    ]
+  },
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+    "checkpointSchemaVersion": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "journeyId": "J1",
+    "repetitionsPerVariant": 3,
+    "secondActionDelayMs": 2000,
+    "variants": [
+      {
+        "id": "A1",
+        "policy": "legacy"
+      },
+      {
+        "id": "B",
+        "policy": "stable"
+      },
+      {
+        "id": "A2",
+        "policy": "legacy"
+      }
+    ],
+    "countedAsOfficialSample": false
+  },
+  "runReferences": {
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T184025946Z-f5462f29-1f63-4d44-879e-e14f847db8ff",
+    "variantBuilds": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "status": "PASS",
+        "reason": null,
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "status": "PASS",
+        "reason": null,
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "status": "PASS",
+        "reason": null,
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true
+      }
+    ],
+    "checkpoint": {
+      "status": "COMPLETE",
+      "eventCount": null,
+      "hashChainRead": true
+    }
+  },
+  "selectedJ1DiagnosticMetrics": {
+    "A1": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 1,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 2,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 3,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      }
+    ],
+    "B": [
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 1,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "stable"
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 2,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "stable"
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 3,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "stable"
+      }
+    ],
+    "A2": [
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 1,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 2,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 3,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      }
+    ]
+  },
+  "measuredEffect": {
+    "validity": {
+      "A1": {
+        "attempted": "3/3",
+        "validSuccessful": "0/3",
+        "observationValid": "0/3"
+      },
+      "B": {
+        "attempted": "3/3",
+        "validSuccessful": "0/3",
+        "observationValid": "0/3"
+      },
+      "A2": {
+        "attempted": "3/3",
+        "validSuccessful": "0/3",
+        "observationValid": "0/3"
+      }
+    },
+    "rows": {
+      "A1": [
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 1,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 2,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 3,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        }
+      ],
+      "B": [
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 1,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "stable"
+        },
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 2,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "stable"
+        },
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 3,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "stable"
+        }
+      ],
+      "A2": [
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 1,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 2,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 3,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        }
+      ]
+    },
+    "commitOwnership": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allValid": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 2,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allValid": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 3,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allValid": false,
+          "bLowerThanBoth": false
+        }
+      ],
+      "repeatableReductionAcrossFullyValidRows": false,
+      "reductionRowCount": 0
+    },
+    "speed": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allValid": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 2,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allValid": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 3,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allValid": false,
+          "bLowerThanBoth": false
+        }
+      ],
+      "repeatableImprovementAcrossFullyValidRows": false,
+      "improvementRowCount": 0
+    },
+    "requestFanout": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "a1": 0,
+          "b": 0,
+          "a2": 0,
+          "allValid": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 2,
+          "a1": 0,
+          "b": 0,
+          "a2": 0,
+          "allValid": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 3,
+          "a1": 0,
+          "b": 0,
+          "a2": 0,
+          "allValid": false,
+          "bLowerThanBoth": false
+        }
+      ],
+      "invariantAcrossFullyValidRows": false,
+      "invariantRowCount": 0
+    },
+    "selectedJ1DiagnosticValidAndSuccessful": {
+      "A1": "0/3",
+      "B": "0/3",
+      "A2": "0/3"
+    },
+    "dbSampler": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 33,
+        "commandAttempts": {
+          "psql": 33,
+          "docker": 33
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 33
+        },
+        "intervalMs": 50,
+        "sampleCount": 33,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxLockWaitCount": 0,
+        "maxBlockedActivityCount": 0,
+        "maxBlockerCount": 0,
+        "queryDurationMs": {
+          "min": 332,
+          "max": 971
+        },
+        "samples": [
+          {
+            "atMs": 1790016217019,
+            "queryDurationMs": 445,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016217407,
+            "queryDurationMs": 332,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016217865,
+            "queryDurationMs": 454,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016218405,
+            "queryDurationMs": 511,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016218921,
+            "queryDurationMs": 492,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016219470,
+            "queryDurationMs": 515,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016220156,
+            "queryDurationMs": 638,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016220568,
+            "queryDurationMs": 382,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016220989,
+            "queryDurationMs": 387,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016221364,
+            "queryDurationMs": 349,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016221808,
+            "queryDurationMs": 391,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016222244,
+            "queryDurationMs": 393,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016222869,
+            "queryDurationMs": 614,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016223375,
+            "queryDurationMs": 449,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016224018,
+            "queryDurationMs": 643,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016224772,
+            "queryDurationMs": 711,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016225327,
+            "queryDurationMs": 525,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016226174,
+            "queryDurationMs": 791,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016226650,
+            "queryDurationMs": 417,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016227058,
+            "queryDurationMs": 361,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016227480,
+            "queryDurationMs": 421,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016227959,
+            "queryDurationMs": 423,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016228506,
+            "queryDurationMs": 515,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016229326,
+            "queryDurationMs": 789,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016230096,
+            "queryDurationMs": 712,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016230936,
+            "queryDurationMs": 840,
+            "activeCount": 4,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016231720,
+            "queryDurationMs": 784,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016232219,
+            "queryDurationMs": 487,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016232906,
+            "queryDurationMs": 632,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016233624,
+            "queryDurationMs": 681,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016234595,
+            "queryDurationMs": 971,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016235513,
+            "queryDurationMs": 873,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016236470,
+            "queryDurationMs": 934,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 29,
+        "commandAttempts": {
+          "psql": 29,
+          "docker": 29
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 29
+        },
+        "intervalMs": 50,
+        "sampleCount": 29,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxLockWaitCount": 0,
+        "maxBlockedActivityCount": 0,
+        "maxBlockerCount": 0,
+        "queryDurationMs": {
+          "min": 327,
+          "max": 905
+        },
+        "samples": [
+          {
+            "atMs": 1790016365237,
+            "queryDurationMs": 395,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016365792,
+            "queryDurationMs": 503,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016366220,
+            "queryDurationMs": 419,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016366654,
+            "queryDurationMs": 409,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016367069,
+            "queryDurationMs": 389,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016367435,
+            "queryDurationMs": 327,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016367796,
+            "queryDurationMs": 339,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016368344,
+            "queryDurationMs": 519,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016368860,
+            "queryDurationMs": 490,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016369497,
+            "queryDurationMs": 613,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016370440,
+            "queryDurationMs": 905,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016371038,
+            "queryDurationMs": 557,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016371708,
+            "queryDurationMs": 655,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016372407,
+            "queryDurationMs": 694,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016372830,
+            "queryDurationMs": 417,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016373207,
+            "queryDurationMs": 376,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016373693,
+            "queryDurationMs": 446,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016374282,
+            "queryDurationMs": 581,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016374935,
+            "queryDurationMs": 622,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016375704,
+            "queryDurationMs": 757,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016376277,
+            "queryDurationMs": 564,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016376943,
+            "queryDurationMs": 643,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016377505,
+            "queryDurationMs": 520,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016377925,
+            "queryDurationMs": 403,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016378675,
+            "queryDurationMs": 704,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016379300,
+            "queryDurationMs": 599,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016379917,
+            "queryDurationMs": 595,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016380500,
+            "queryDurationMs": 565,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016381009,
+            "queryDurationMs": 509,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 28,
+        "commandAttempts": {
+          "psql": 28,
+          "docker": 28
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 28
+        },
+        "intervalMs": 50,
+        "sampleCount": 28,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxLockWaitCount": 0,
+        "maxBlockedActivityCount": 0,
+        "maxBlockerCount": 0,
+        "queryDurationMs": {
+          "min": 300,
+          "max": 1031
+        },
+        "samples": [
+          {
+            "atMs": 1790016499161,
+            "queryDurationMs": 395,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016499710,
+            "queryDurationMs": 496,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016500531,
+            "queryDurationMs": 757,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016500984,
+            "queryDurationMs": 408,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016501504,
+            "queryDurationMs": 503,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016501845,
+            "queryDurationMs": 300,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016502238,
+            "queryDurationMs": 335,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016502699,
+            "queryDurationMs": 439,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016503080,
+            "queryDurationMs": 364,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016503654,
+            "queryDurationMs": 560,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016504695,
+            "queryDurationMs": 1031,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016505248,
+            "queryDurationMs": 497,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016505959,
+            "queryDurationMs": 684,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016506369,
+            "queryDurationMs": 373,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016506734,
+            "queryDurationMs": 327,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016507172,
+            "queryDurationMs": 408,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016507735,
+            "queryDurationMs": 532,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016508375,
+            "queryDurationMs": 617,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016508808,
+            "queryDurationMs": 433,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016509569,
+            "queryDurationMs": 734,
+            "activeCount": 6,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016510196,
+            "queryDurationMs": 595,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016510684,
+            "queryDurationMs": 466,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016511120,
+            "queryDurationMs": 405,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016511619,
+            "queryDurationMs": 482,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016512197,
+            "queryDurationMs": 553,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016512837,
+            "queryDurationMs": 602,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016513445,
+            "queryDurationMs": 569,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790016514302,
+            "queryDurationMs": 811,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      }
+    ]
+  },
+  "validity": {
+    "A1": "0/3",
+    "B": "0/3",
+    "A2": "0/3",
+    "officialSample": false,
+    "noRetryPromotion": true,
+    "causalThreeValidRecordGate": "NOT_MET_FOR_SELECTED_J1_B"
+  },
+  "conclusion": "POST_RESPONSE_COMMIT_OWNERSHIP_COMPARISON_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED",
+  "explicitNonClaims": [
+    "A commit-count reversal is a contributing-boundary observation, not proof of the global freeze root cause.",
+    "The official nine-scenario acceptance contract is not exercised by this run.",
+    "Invalid or failed required-read repetitions are retained and excluded; no retry is promoted.",
+    "No production runtime fix, Plan 2 finding, migration, deployment, or production decision changed.",
+    "DB sampler results are bounded local observations and do not prove lock absence outside these windows."
+  ],
+  "redaction": {
+    "rawBodiesRecorded": false,
+    "credentialsRecorded": "<redacted>",
+    "rawClientIdentifiersRecorded": false,
+    "policy": "sanitizePhase44Evidence"
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "POST_RESPONSE_COMMIT_OWNERSHIP_COMPARISON_INCONCLUSIVE_GLOBAL_FREEZE_UNRESOLVED",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  }
+}

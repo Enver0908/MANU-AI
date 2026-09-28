@@ -1,0 +1,941 @@
+{
+  "evidenceId": "aiya-performance-plan1-j1-preference-intent-abort-matched-v1-20260921T124313022Z-ccf40f62-de85-4c5f-8b1b-2fec306e04b3",
+  "generatedAt": "2026-09-21T12:46:35.635Z",
+  "planRevision": "plan1-final-v3",
+  "stage": "shared-runtime-j1-preference-intent-abort-matched",
+  "status": "COMPLETE",
+  "outcome": "MATCHED_PREFERENCE_ABORT_TRACE_RECORDED",
+  "runId": "aiya-performance-plan1-j1-preference-intent-abort-matched-v1-20260921T124313022Z-ccf40f62-de85-4c5f-8b1b-2fec306e04b3",
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 194,
+    "statusHash": "3a33a7869a4531a7cedf82e74c4b6a8ff1031e9b7dfd16559ce7368bc2505130",
+    "diffCheck": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "shellDirtyRegistrationPolicy": "legacy",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "bf6eb9045c43ec7426152c93fcf695e70cdbe91df49a2ad85ae3afa1117665b6"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-preference-intent-timing.mjs",
+        "sha256": "8fd702c4943bc74b3b362d9dcb6f7e69813eb0fb7267343e497a2c3c8fa92e3f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-preference-intent-abort-matched.mjs",
+        "sha256": "b9c5570f8fa33484d00d8bbb2423f121c69316e03ca6a971cbd98cae4d34d7f0"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts",
+        "sha256": "b9bd90ccb60695ea01f63bdb416a1f55500c666293c6bb6004b554d2f179580c"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "1accddd158ba47a4e1c352a9f0371d92d05866ab0b0ebff861feddd5b2f96648"
+      }
+    ]
+  },
+  "checkpoint": {
+    "phaseId": "aiya-performance-plan1-j1-preference-intent-abort-matched-v1",
+    "schemaVersion": "aiya-performance-plan1-j1-preference-intent-abort-matched-v1",
+    "executionMode": "diagnostic",
+    "traceVariant": "preference_intent_timing_and_completion",
+    "officialMeasurement": false,
+    "countedAsOfficialSample": false,
+    "localSupabase": "127.0.0.1:54321"
+  },
+  "preflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "authentication": "real_password_session_required",
+    "storePath": "normal_rls_api_path_required",
+    "fallbackStoreAllowed": false,
+    "targetOrigin": "http://127.0.0.1:3153",
+    "localSupabase": {
+      "status": "PASS",
+      "targetHost": "127.0.0.1:54321",
+      "urlIsLocal": true,
+      "credentialsPresent": {
+        "anonKey": true,
+        "serviceRoleKey": true
+      }
+    },
+    "credentialsAvailable": {
+      "email": true,
+      "password": true
+    },
+    "blockers": []
+  },
+  "summary": {
+    "attempted": 3,
+    "observationValid": 3,
+    "validFunctionalSamples": 3,
+    "functionalSuccess": 3,
+    "preferencePatchCount": 3,
+    "intentClassCounts": {
+      "active_client": 3
+    },
+    "eventsWithRouteTransitionBeforePreferenceSettled": 1,
+    "eventsWithStage6CleanupBeforePreferenceSettled": 0,
+    "eventsWithFormsAbortAfterPreferenceRequest": 0,
+    "traceVariant": "preference_intent_timing_and_completion"
+  },
+  "samples": [
+    {
+      "unitKey": "diagnostic:J1:r1",
+      "mode": "diagnostic",
+      "journeyId": "J1",
+      "repetition": 1,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "trace": {
+        "traceVariant": "preference_intent_timing_and_completion",
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 67,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 776,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 958,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3046,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 65,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 361,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 957,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3045,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "preferenceIntentTiming": {
+          "traceVariant": "preference_intent_timing_and_completion",
+          "requestCount": 1,
+          "bodyFinishTimedOut": false,
+          "events": [
+            {
+              "sequence": 1,
+              "bodyShape": "object",
+              "intentKeys": [
+                "activeClientId"
+              ],
+              "intentClass": "active_client",
+              "requestStartedAtMs": 372,
+              "responseHeaderAtMs": 767,
+              "bodyFinishedAtMs": 771,
+              "settledAtMs": 773,
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "routeAtRequestStart": "/dashboard?section=clients",
+              "routeAtResponseHeader": "/dashboard?section=clients",
+              "routeAtBodyFinished": "/dashboard?section=clients",
+              "routeAtSettled": "/dashboard?section=clients",
+              "correlationWindowEndAtMs": 2773,
+              "routeTransitionsAfterStart": [
+                {
+                  "atMs": 776,
+                  "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                },
+                {
+                  "atMs": 958,
+                  "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                }
+              ],
+              "lifecycleEventsAfterStart": [
+                {
+                  "name": "stage6_workspace_effect_cleanup",
+                  "atMs": 812,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_setup",
+                  "atMs": 813,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_abort_previous",
+                  "atMs": 813,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_started",
+                  "atMs": 813,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_cleanup",
+                  "atMs": 966,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_setup",
+                  "atMs": 969,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_abort_previous",
+                  "atMs": 969,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_started",
+                  "atMs": 969,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_aborted",
+                  "atMs": 972,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_succeeded",
+                  "atMs": 1823,
+                  "cleanupSequence": null
+                }
+              ],
+              "formsRequestsAfterStart": [
+                {
+                  "startedAtMs": 977,
+                  "responseHeaderAtMs": 1813,
+                  "bodyFinishedAtMs": 1817,
+                  "status": 200,
+                  "failed": false,
+                  "failureReason": null
+                }
+              ],
+              "temporalRelations": {
+                "routeTransitionBeforePreferenceSettled": false,
+                "cleanupBeforePreferenceSettled": false,
+                "formsAbortAfterPreferenceRequest": false
+              }
+            }
+          ]
+        },
+        "lifecycleEvents": [
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 94,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 812,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 813,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 813,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 813,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 966,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 969,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 969,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 969,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_aborted",
+            "atMs": 972,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_succeeded",
+            "atMs": 1823,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 3051,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 3055,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 3055,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 3055,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_succeeded",
+            "atMs": 3434,
+            "cleanupSequence": null
+          }
+        ],
+        "formsRequests": [
+          {
+            "startedAtMs": 977,
+            "responseHeaderAtMs": 1813,
+            "bodyFinishedAtMs": 1817,
+            "status": 200,
+            "failed": false,
+            "failureReason": null
+          }
+        ],
+        "firstAction": {
+          "functionalOutcome": "SUCCESS",
+          "requiredRequestStartAtMs": 977,
+          "responseHeaderAtMs": 1813,
+          "responseBodyFinishedAtMs": 1817
+        }
+      }
+    },
+    {
+      "unitKey": "diagnostic:J1:r2",
+      "mode": "diagnostic",
+      "journeyId": "J1",
+      "repetition": 2,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "trace": {
+        "traceVariant": "preference_intent_timing_and_completion",
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 72,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 780,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1320,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3420,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 70,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 287,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1319,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3419,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "preferenceIntentTiming": {
+          "traceVariant": "preference_intent_timing_and_completion",
+          "requestCount": 1,
+          "bodyFinishTimedOut": false,
+          "events": [
+            {
+              "sequence": 1,
+              "bodyShape": "object",
+              "intentKeys": [
+                "activeClientId"
+              ],
+              "intentClass": "active_client",
+              "requestStartedAtMs": 295,
+              "responseHeaderAtMs": 774,
+              "bodyFinishedAtMs": 777,
+              "settledAtMs": 780,
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "routeAtRequestStart": "/dashboard?section=clients",
+              "routeAtResponseHeader": "/dashboard?section=clients",
+              "routeAtBodyFinished": "/dashboard?section=clients",
+              "routeAtSettled": "/dashboard?section=clients",
+              "correlationWindowEndAtMs": 2780,
+              "routeTransitionsAfterStart": [
+                {
+                  "atMs": 780,
+                  "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                },
+                {
+                  "atMs": 1320,
+                  "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                }
+              ],
+              "lifecycleEventsAfterStart": [
+                {
+                  "name": "stage6_workspace_effect_cleanup",
+                  "atMs": 804,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_setup",
+                  "atMs": 806,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_abort_previous",
+                  "atMs": 806,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_started",
+                  "atMs": 806,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_succeeded",
+                  "atMs": 1255,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_cleanup",
+                  "atMs": 1327,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_setup",
+                  "atMs": 1330,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_abort_previous",
+                  "atMs": 1330,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_started",
+                  "atMs": 1330,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_succeeded",
+                  "atMs": 1795,
+                  "cleanupSequence": null
+                }
+              ],
+              "formsRequestsAfterStart": [
+                {
+                  "startedAtMs": 1335,
+                  "responseHeaderAtMs": 1783,
+                  "bodyFinishedAtMs": 1799,
+                  "status": 200,
+                  "failed": false,
+                  "failureReason": null
+                }
+              ],
+              "temporalRelations": {
+                "routeTransitionBeforePreferenceSettled": true,
+                "cleanupBeforePreferenceSettled": false,
+                "formsAbortAfterPreferenceRequest": false
+              }
+            }
+          ]
+        },
+        "lifecycleEvents": [
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 94,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 804,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 806,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 806,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 806,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_succeeded",
+            "atMs": 1255,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 1327,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 1330,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 1330,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 1330,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_succeeded",
+            "atMs": 1795,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 3424,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 3428,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 3428,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 3428,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_succeeded",
+            "atMs": 3700,
+            "cleanupSequence": null
+          }
+        ],
+        "formsRequests": [
+          {
+            "startedAtMs": 1335,
+            "responseHeaderAtMs": 1783,
+            "bodyFinishedAtMs": 1799,
+            "status": 200,
+            "failed": false,
+            "failureReason": null
+          }
+        ],
+        "firstAction": {
+          "functionalOutcome": "SUCCESS",
+          "requiredRequestStartAtMs": 1335,
+          "responseHeaderAtMs": 1783,
+          "responseBodyFinishedAtMs": 1799
+        }
+      }
+    },
+    {
+      "unitKey": "diagnostic:J1:r3",
+      "mode": "diagnostic",
+      "journeyId": "J1",
+      "repetition": 3,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "trace": {
+        "traceVariant": "preference_intent_timing_and_completion",
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 69,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1257,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1604,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3734,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 68,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 537,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1602,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3732,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "preferenceIntentTiming": {
+          "traceVariant": "preference_intent_timing_and_completion",
+          "requestCount": 1,
+          "bodyFinishTimedOut": false,
+          "events": [
+            {
+              "sequence": 1,
+              "bodyShape": "object",
+              "intentKeys": [
+                "activeClientId"
+              ],
+              "intentClass": "active_client",
+              "requestStartedAtMs": 552,
+              "responseHeaderAtMs": 1239,
+              "bodyFinishedAtMs": 1252,
+              "settledAtMs": 1253,
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "routeAtRequestStart": "/dashboard?section=clients",
+              "routeAtResponseHeader": "/dashboard?section=clients",
+              "routeAtBodyFinished": "/dashboard?section=clients",
+              "routeAtSettled": "/dashboard?section=clients",
+              "correlationWindowEndAtMs": 3253,
+              "routeTransitionsAfterStart": [
+                {
+                  "atMs": 1257,
+                  "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                },
+                {
+                  "atMs": 1604,
+                  "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                }
+              ],
+              "lifecycleEventsAfterStart": [
+                {
+                  "name": "stage6_workspace_effect_cleanup",
+                  "atMs": 1306,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_setup",
+                  "atMs": 1307,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_abort_previous",
+                  "atMs": 1307,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_started",
+                  "atMs": 1307,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_cleanup",
+                  "atMs": 1619,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_effect_setup",
+                  "atMs": 1624,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_abort_previous",
+                  "atMs": 1624,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_started",
+                  "atMs": 1624,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_aborted",
+                  "atMs": 1627,
+                  "cleanupSequence": null
+                },
+                {
+                  "name": "stage6_workspace_load_succeeded",
+                  "atMs": 2567,
+                  "cleanupSequence": null
+                }
+              ],
+              "formsRequestsAfterStart": [
+                {
+                  "startedAtMs": 1639,
+                  "responseHeaderAtMs": 2554,
+                  "bodyFinishedAtMs": 2561,
+                  "status": 200,
+                  "failed": false,
+                  "failureReason": null
+                }
+              ],
+              "temporalRelations": {
+                "routeTransitionBeforePreferenceSettled": false,
+                "cleanupBeforePreferenceSettled": false,
+                "formsAbortAfterPreferenceRequest": false
+              }
+            }
+          ]
+        },
+        "lifecycleEvents": [
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 434,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 1306,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 1307,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 1307,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 1307,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 1619,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 1624,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 1624,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 1624,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_aborted",
+            "atMs": 1627,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_succeeded",
+            "atMs": 2567,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "atMs": 3742,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "atMs": 3749,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "atMs": 3749,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "atMs": 3749,
+            "cleanupSequence": null
+          },
+          {
+            "name": "stage6_workspace_load_succeeded",
+            "atMs": 4651,
+            "cleanupSequence": null
+          }
+        ],
+        "formsRequests": [
+          {
+            "startedAtMs": 1639,
+            "responseHeaderAtMs": 2554,
+            "bodyFinishedAtMs": 2561,
+            "status": 200,
+            "failed": false,
+            "failureReason": null
+          }
+        ],
+        "firstAction": {
+          "functionalOutcome": "SUCCESS",
+          "requiredRequestStartAtMs": 1639,
+          "responseHeaderAtMs": 2554,
+          "responseBodyFinishedAtMs": 2561
+        }
+      }
+    }
+  ],
+  "findings": {
+    "candidateSurface": [
+      "app/src/components/dashboard-app.tsx:selectClient/openClientTask",
+      "app/src/lib/phase-85-stage-6-client-selection.ts:persistActiveClient",
+      "app/src/components/dashboard/shell-provider.tsx:commitDashboardHref",
+      "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts:update",
+      "app/src/lib/use-stage-6-client-workspace.ts:cleanup/load_aborted"
+    ],
+    "candidateNarrowed": false,
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO"
+  },
+  "explicitNonClaims": [
+    "This matched diagnostic capture is outside the official nine-scenario baseline.",
+    "The trace records preference intent keys only; preference values and raw request bodies are excluded.",
+    "The same-sample preference/lifecycle ordering is observational and is not causal proof or runtime-fix acceptance.",
+    "No external provider, WhatsApp, billing, production worker, migration, deploy, or real health-data path was used."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "MATCHED_PREFERENCE_ABORT_TRACE_RECORDED",
+    "runtimeFixAccepted": false,
+    "plan2Eligible": false,
+    "abortSamplesObserved": 0,
+    "nextAction": "Compare same-sample preference timing with the observed Forms abort lifecycle; treat absent aborts or invalid samples as non-confirmation and do not promote this diagnostic to the official baseline."
+  }
+}

@@ -34,6 +34,20 @@ export type DashboardNavKey = DashboardSection | "ai_chat" | "settings" | "more"
 export const AI_CHAT_ROOT_PATH = "/dashboard/ai-chat";
 export const MORE_ROOT_PATH = "/dashboard/more";
 export const DASHBOARD_ROOT_PATH = "/dashboard";
+
+/**
+ * Dashboard query changes are owned by the client-side URL synchronizer.
+ * Calling the App Router as well creates a second asynchronous history write
+ * for the same document and can replay an older query after a newer click.
+ */
+export function shouldUseClientOnlyDashboardNavigation(pathname: string, href: string) {
+  if (pathname !== DASHBOARD_ROOT_PATH) return false;
+  try {
+    return new URL(href, "http://manu-ai.local").pathname === DASHBOARD_ROOT_PATH;
+  } catch {
+    return false;
+  }
+}
 export { SETTINGS_ROOT_PATH };
 /**
  * Server-evaluated only (no `NEXT_PUBLIC_` prefix): callers must resolve this

@@ -90,6 +90,10 @@ describe("public surface Faz 8 session service-role contract", () => {
     join(process.cwd(), "supabase/migrations/20260904180000_public_surface_faz8_session_service_role.sql"),
     "utf8",
   );
+  const phase4RaceFixSql = readFileSync(
+    join(process.cwd(), "supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql"),
+    "utf8",
+  );
 
   it("revokes authenticated execute on v2 and grants v3 to service_role only", () => {
     expect(faz8Sql).toContain("p85_stage_5_record_session_activity_v3");
@@ -101,5 +105,13 @@ describe("public surface Faz 8 session service-role contract", () => {
     );
     expect(faz8Sql).toContain("perform p85_stage_5_assert_session_activity_v1()");
     expect(faz8Sql).not.toContain("p85_stage_5_record_session_activity_v2('assert')");
+  });
+
+  it("keeps first-touch session activity idempotent under concurrent service-role calls", () => {
+    expect(phase4RaceFixSql).toContain("create or replace function p85_stage_5_record_session_activity_v3");
+    expect(phase4RaceFixSql).toContain("on conflict (session_id) do nothing");
+    expect(phase4RaceFixSql).toContain("for update");
+    expect(phase4RaceFixSql).toContain("session_claim_mismatch");
+    expect(phase4RaceFixSql).toContain("grant execute on function p85_stage_5_record_session_activity_v3");
   });
 });

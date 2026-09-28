@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "aiya-performance-dirty-registration-fix-phase-2-startup-blocker-v1",
+  "planRevision": "plan1-final-v3",
+  "runId": "aiya-performance-dirty-registration-fix-phase-2-startup-blocker-20260922",
+  "generatedAt": "2026-09-22",
+  "status": "BLOCKED_BEFORE_CHECKPOINT",
+  "productionDecision": "NO-GO",
+  "attemptType": "runner_startup_validation_not_a_measurement_attempt",
+  "command": "node app/scripts/performance-plan-1-j1-dirty-registration-verification.mjs --run",
+  "sourceIdentityAtFailure": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a",
+    "runnerSha256": "3157B1B4899D70AE3938E77BF1D4AD13C0CE90C84AE30E9EABF194B51EED966E"
+  },
+  "failure": {
+    "stage": "source_identity_before_checkpoint_open",
+    "cause": "appRoot was resolved from the runner file path instead of its containing scripts directory, so rg --files src public ran with cwd app/scripts and failed.",
+    "sanitizedError": "rg --files src public: src and public directories not found under app/scripts",
+    "resolution": "Resolve scriptDir with dirname(import.meta.url), then appRoot as its parent; add a regression test for appRoot/repoRoot/Next CLI paths."
+  },
+  "sideEffects": {
+    "checkpointCreated": false,
+    "buildStarted": false,
+    "serverStarted": false,
+    "browserStarted": false,
+    "j1SamplesStarted": 0,
+    "dirtySmokeStarted": false,
+    "databaseMutation": false,
+    "credentialsPrinted": false
+  },
+  "repairVerification": {
+    "runnerSha256": "B77A8DC452EF69F20EB85555C13AC81FE9E2DA9F6190339FC128B5F1FD4C4F70",
+    "testSha256": "8266D55082600BEC44EDF339BE280C7AAF9CB1F9BA4270E749732FDAB3E6209E",
+    "nodeTests": "4/4 PASS",
+    "eslint": "0 errors, 0 warnings",
+    "typecheck": "PASS",
+    "nodeCheck": "PASS"
+  },
+  "checkpointAfterFailure": {
+    "phaseId": "aiya-performance-plan1-j1-dirty-registration-verification-v1",
+    "runCount": 0,
+    "status": "NO_EXISTING_RUN"
+  },
+  "redaction": {
+    "status": "PASS",
+    "credentials": false,
+    "requestBodies": false,
+    "healthData": false,
+    "clientIdentifiers": false
+  },
+  "decision": "Do not count this as a J1 repetition. One corrected runner invocation remains authorized; retain this startup failure and do not retry a started measurement unit."
+}

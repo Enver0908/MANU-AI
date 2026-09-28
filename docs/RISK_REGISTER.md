@@ -1,6 +1,904 @@
 # MANU-AI Risk Register
 
-Current AIya Performance Plan 1 Phase 3 closure, 2026-09-10: `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json` records stages 3.1-3.6 as `COMPLETE` with `SYNTHETIC_AUTH_STORE_READY`. Local migration/schema checks, deterministic two-tenant fixture seed, eight password sessions, owner/assistant/viewer/auditor/anonymous RLS boundaries, AI Chat boundary, viewer write block, and owner store-read matrix passed. The local fixture remains for Plan 1 Phase 4. No performance baseline, freeze reproduction, root-cause attribution, runtime change, hosted account, physical Android/PWA capture, deploy, remote migration, provider/channel egress, or production gate change was performed. Production remains `NO-GO`.
+## Active Plan 1 risks - plan1-final-v3 - 2026-09-18
+
+The canonical v3 section in `docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md`
+governs current execution. The overengineering review and documentation
+revision are complete; no runtime cause or performance acceptance is added.
+
+R-P5-016: The 2026-09-20 first-three-stage shared-runtime localization
+reproduced a J1 second-action boundary at the required
+`/api/clients/:clientId/food-rule-profile` read and the following
+readiness/React interval in 3/3 selected diagnostic traces. Response-header
+latency was `312/320/395` ms and the diagnostic route timing was
+`295.65/302.13/375.75` ms. The runner used local Docker Supabase, so hosted
+network latency and external provider paths remain unmeasured. The DB sampler
+recorded two lock-wait/blocked-activity samples before the second trusted
+event and none in the second-action window. Status: open, localized for the
+next single-variable experiment, but not a root cause, runtime fix, global
+lock conclusion, Plan 2 input, or production acceptance. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-localization-v1-20260920T160215Z-7f672bcb-8f49-4b20-bc11-c26c578f7021_EVIDENCE.json`.
+
+R-P5-017: The 2026-09-20 food-rule-profile loader A-B-A continuation tested
+only the server-side broad versus narrow state read. B reduced the contained
+food-route `store` timing in all three repetitions (`40.57/23.94/29.56` ms)
+against A1 (`113.02/155.97/106.19` ms) and A2 (`147.95/104.09/83.68` ms),
+but request fan-out stayed at `53` total, `24` API, and `3` document requests
+and second-action dispatch-to-ready did not improve in a repeatable A-B-A
+direction. Status: contained server-cost contributor confirmed; global freeze
+root cause, finding disposition, Plan 2 eligibility, runtime-fix acceptance,
+and production readiness remain unchanged. The B sampler is `PARTIAL` because
+one sample errored; no global lock-absence claim is allowed. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-food-rule-profile-ab-a-20260920T165844Z-96a93331-d252-4eb5-8474-4a91424bf13f_EVIDENCE.json`.
+
+R-P5-018: The 2026-09-20 dirty-registration commit-ownership A-B-A
+continuation tested the process-scoped dependency policy in
+`app/src/lib/use-shell-dirty-registration.ts`. Stable B reduced observed
+`shell-provider` commits from A1 `2270/2187/2216` to `37/34/37` and A2
+`2082/2081/1892`, with the matching `dashboard-shell` reversal; legacy A2
+restored the storm. This is a high-confidence contributing mechanism for
+shared-shell React work, not an exact global root-cause closure. B J1
+repetition 1 failed the required forms read and is `validSample=false`, so
+only 2/3 selected B diagnostic records are valid and successful. The source
+run's 12/12 `observationValidity` count is intentional structural validity,
+separate from the stricter full-success `validSample` gate; a later retry does
+not erase an earlier failed required request. Status: open diagnostic
+candidate; stable remains process-scoped and unaccepted, global freeze remains
+unresolved, finding dispositions and Plan 2 eligibility are unchanged, and
+production remains `NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-dirty-registration-ab-a-20260920T193800Z-57dc30c0-54ee-45a7-b69b-7cedb280df42_EVIDENCE.json`.
+
+R-P5-019: The 2026-09-20 dirty-registration validity recheck recorded
+`12/12 observationValidity`, `6/12 validSample`, and `6/12` functional
+successes under the stable process policy. All three normal J1 repetitions
+were ineligible because the first matching
+`/api/clients/:clientId/forms` attempt failed before a later complete `200`
+response; the required-read rule correctly did not promote that retry. J2 was
+selected for diagnostic profiling and was `3/3` valid, so the recheck added no
+new J1 profiler evidence. This resolves the interpretation of the aggregate
+fields, but not the UI-freeze diagnosis. Status: open; the next controlled
+boundary is the aborted first forms request or a separately authorized J1
+confirmation, followed by request fan-out/auth/RSC localization. Stable is
+still unaccepted, no finding disposition or Plan 2 entry changed, and
+production remains `NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-dirty-registration-validity-recheck-20260920T213200Z-47b48402-c132-4a97-a121-8339aeec8666_EVIDENCE.json`.
+
+R-P5-020: The 2026-09-21 lifecycle continuation correlated the first Forms
+fetch's bounded `net::ERR_ABORTED` with
+`useStage6ClientWorkspace` effect cleanup and its `AbortController.abort()` in
+`2/3` current diagnostic J1 repetitions. Current normal J1 was `3/3`
+successful with no first-Forms abort, while the current diagnostic J1 was
+`2/3` abort/incomplete and `1/3` successful; the earlier normal run had the
+first-Forms abort in `3/3`. The current diagnostic J1 also recorded an aborted
+Forms RSC request in `3/3`. Status: open diagnostic candidate; cleanup is a
+localized cancellation mechanism, but frequency and the upstream
+route/history or state trigger remain unproven. No runtime fix is accepted,
+Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 eligibility is zero, and
+production remains `NO-GO`. Next control: sanitized route/history transition
+capture followed by one reversible single-variable J1 confirmation. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2_EVIDENCE.json`.
+
+R-P5-021: The corrected 2026-09-21 J1 active-client preference confirmation
+retained `9/9` observation-valid repetitions and `6/9` valid functional
+samples: A1 `1/3`, B `2/3`, A2 `3/3`. The exact `activeClientId` preference
+completion gate passed B `3/3`, but B still had a post-Forms summary route and
+a required Forms-request abort in `1/3`; A1 had `2/3` and A2 `0/3`. Waiting
+for that one preference response is insufficient and the controlled direction
+is `INCONCLUSIVE`. The candidate is narrowed to the shared Stage 6 active-client
+activation/navigation boundary, not confirmed as the global freeze cause.
+Status: open diagnostic candidate; the first two control-protocol attempts are
+preserved and excluded, no runtime fix or finding-disposition change is
+accepted, Plan 2 eligibility remains zero, and production remains `NO-GO`.
+The trace-only `preference_intent_timing_and_completion` follow-up is complete
+and recorded as R-P5-022 below.
+
+R-P5-022: The corrected 2026-09-21 preference-intent timing run retained 3/3
+observation-valid and 3/3 valid functional J1 samples. All three observed
+allowlisted `activeClientId` preference PATCHes completed with HTTP 200, body
+completion, and settlement. Stage 6 cleanup followed settlement by 32 ms,
+28 ms, and 41 ms. Route ordering was one strictly-before, one-at-settlement,
+and one-after; all three required Forms requests completed with HTTP 200 and
+none aborted. The first two attempts are preserved and excluded because the
+first lacked lifecycle collection and the second's initial analysis read the
+wrong lifecycle channel. Status: open diagnostic candidate; this is a
+normal-path timing correlation, not causal proof or a runtime fix. No finding
+disposition changed, Plan 2 remains unauthorized, and production remains
+`NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-timing-correlation-20260921T122539Z-9f2c7d11-2c35-4a54-9f0a-6d4f7f8d9c21_EVIDENCE.json`.
+The read-only comparison is complete and recorded as R-P5-023 below. Do not
+run a conditional J1 confirmation unless a stable abort-producing transition
+is identified and separately authorized.
+
+R-P5-023: The 2026-09-21 cross-run comparison links two separate records but
+does not merge them: the clean normal preference-timing run measured
+activeClientId preference settlement before Stage 6 cleanup in 3/3 samples,
+with cleanup 28-41 ms later and no Forms abort; the previously-valid
+abort-producing lifecycle evidence measured Forms effect cleanup followed by
+`load_aborted` in 2/2 aborting repetitions 7-10 ms later, but did not capture
+preference-intent timing in those same samples. The preference-to-abort link is
+therefore a measurement gap, not causal proof. Status: open diagnostic
+candidate; no finding disposition changed, Plan 2 remains unauthorized, and
+production remains `NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-vs-forms-abort-comparison-20260921T123323Z-4b8e1a23-7d41-4c6f-9a52-1e3f7b8c6d90_EVIDENCE.json`.
+The separately authorized matched trace-only J1 capture is complete and
+recorded as R-P5-024 below. It captured both timelines but reproduced no Forms
+abort, so no duplicate run is authorized without a new trigger hypothesis.
+
+R-P5-024: The 2026-09-21 matched diagnostic J1 run retained 3/3
+observation-valid and 3/3 valid functional samples. All three allowlisted
+activeClientId preference PATCHes completed with HTTP 200/body
+completion/settlement; Stage 6 cleanup followed by 39 ms, 24 ms, and 53 ms;
+all required Forms requests completed with HTTP 200; Forms abort was `0/3`.
+The same-trace capture boundary is valid, but the historical abort was not
+reproduced. Status: open diagnostic candidate; this does not prove or disprove
+the preference-to-abort link, does not resolve the global freeze, and does not
+change finding disposition, Plan 2 eligibility, runtime-fix acceptance, or
+production `NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-abort-matched-analysis-20260921T124727Z-9c4e2b71-6a8d-4f53-b102-7e9c3d5a8f24_EVIDENCE.json`.
+Next exact action: isolate a reproducible route/state transition that produces
+the historical Forms abort before considering another matched run; separate
+authorization is required.
+
+R-P5-025: The 2026-09-21 Stage 6 route-state trigger-isolation capture retained
+3/3 observation-valid and 3/3 successful functional J1 samples, with complete
+route-state capture in 3/3 and Forms abort in `0/3`. Current setup was
+`summary -> forms -> nutrition` in every repetition. The historical lifecycle
+evidence had an extra `summary -> forms -> summary -> forms -> nutrition`
+sequence in both aborting repetitions, while the historical non-aborting
+repetition did not. Status: open diagnostic candidate association; the
+historical records lack the new route-state fields, the current run reproduced
+no abort, and no single-variable speed or causal confirmation was performed.
+Performance remains `NOT_EVALUABLE`; finding disposition, Plan 2 eligibility,
+runtime-fix acceptance, and production `NO-GO` are unchanged. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-stage6-trigger-isolation-analysis-20260921T131935Z-e026a6cf-2f81-4bdd-82c2-c0dfefb19c31_EVIDENCE.json`.
+Next exact action: separately authorize one reversible, single-variable
+confirmation of only the extra summary re-entry boundary; report functional
+outcome and second-action speed separately, and do not repeat the same matched
+run automatically.
+
+R-P5-026: The 2026-09-21 authorized J1 A1 -> B -> A2 confirmation changed only
+the harness timing: B waited for the initial client-selection summary request
+to settle before Forms dispatch. The gate passed 3/3, all 9/9 samples were
+observation-valid and functionally successful, and post-Forms summary re-entry,
+Forms request abort, and Forms lifecycle abort were `0/3` in A1, B, and A2.
+Status: open diagnostic candidate remains unconfirmed; the historical boundary
+was not reproduced. Second-action tails were captured separately but remain
+`NOT_EVALUABLE` for performance acceptance. Finding disposition, Plan 2
+eligibility, runtime-fix acceptance, and production `NO-GO` are unchanged.
+Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-analysis-20260921T134721Z-e9c0f0c1-7b7d-4c6a-9d54-2f0a1e8b6c3d_EVIDENCE.json`.
+Next exact action: do not repeat the same settlement-gated run automatically;
+keep the global diagnosis blocked and require separate authorization for any
+distinct trigger.
+
+R-P5-027: The 2026-09-21 shared-runtime auth/fan-out/React commit overlap
+analysis reused 3/3 valid functional J1 traces and observed first-to-second
+fan-out of 7/10/10 API plus 9/13/13 RSC requests, followed by 2/2/2 API plus
+1/1/1 RSC in the second-action window and 44/40/29 distinct React commit waves.
+Available auth timing covered only 2/3/4 API requests (28.6%/30%/40%); most
+API routes and all RSC/document auth paths were uninstrumented. Status: open
+diagnostic measurement gap; fan-out/commit overlap is observed, but complete
+per-request auth cost, causality, and the global-freeze root cause remain
+unproven. Outcome:
+`AUTH_FANOUT_COMMIT_OVERLAP_OBSERVED_AUTH_COVERAGE_INCOMPLETE_GLOBAL_FREEZE_UNRESOLVED`.
+No runtime fix is accepted and production remains `NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-fanout-commit-overlap-v1-20260921T141433347Z-5146b711-7709-41be-a5a7-c606ead3922c_EVIDENCE.json`.
+Next exact action: separately authorize diagnostic-only timing for uninstrumented
+shared API routes and one bounded dashboard RSC auth marker, then capture one
+current-source J1 run without changing auth behavior.
+
+R-P5-028: The 2026-09-21 trace-only shared-runtime auth coverage capture
+completed `1/1` current-source J1 observation with `VALID` observation,
+`SUCCESS` functional outcome, and `officialSample=false`. It recorded 24 API
+request records, 15 timed API responses, and two bounded server-provided RSC
+auth markers. Added route coverage was conversations `1/2`, alerts `2/2`,
+notifications `2/2`, shell preferences `1/1`, client Forms `1/1`, and client
+detail `0/1` because the request aborted before a response. Status: open
+diagnostic measurement gap narrowed; the capture is one trace, the client-detail
+boundary is incomplete, and no repeatability, causality, or global-freeze root
+cause is established. The evidence was reconstructed from the completed
+checkpoint after metadata/redaction corrections without a second browser run.
+No runtime fix or finding-disposition change is accepted, Plan 2 eligibility
+remains zero, and production remains `NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5_EVIDENCE.json`.
+Next exact action: review the single trace and the aborted client-detail
+boundary; any repeat requires separate authorization.
+
+R-P5-029: The 2026-09-21 read-only analysis of the completed J1
+auth-coverage checkpoint correlated the one client-detail GET with the Stage 6
+summary-to-Forms domain switch. The trace route history was selected client,
+summary, Forms, Nutrition; lifecycle events showed summary effect cleanup,
+Forms effect setup, and summary load abort. The source hook explicitly aborts
+the active controller during effect cleanup and reloads by domain. Status: open
+diagnostic boundary narrowed to client-side cancellation; this may be expected
+navigation behavior and does not prove premature transition, server-side
+continuation, causality, or the global-freeze root cause. No runtime fix or
+finding-disposition change is accepted, Plan 2 eligibility remains zero, and
+production remains `NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-client-detail-abort-boundary-analysis-v1-20260921T160221659Z_EVIDENCE.json`.
+Next exact action: do not repeat automatically; separately authorize a bounded
+server-completion marker only if post-cancellation server work remains material.
+
+R-P5-030: The 2026-09-21 read-only second-action timeline analysis reused the
+completed current-source auth-coverage checkpoint and aligned the trusted
+interaction, required read, concurrent bootstrap, RSC request, context events,
+Stage 6 lifecycle, event timing, long-task, and ready boundaries. The one valid
+functional trace measured `1,045 ms` trusted-click-to-ready, with `593 ms` to
+the required body boundary and `452 ms` body-to-ready. The required read and
+bootstrap both exposed measured server timing; two shell context commits were
+observed in the tail, but no React profiler commit or in-window long task was
+observed. Status: open diagnostic boundary narrowed to a network/server-first
+segment plus an unresolved post-body client tail. This is not a root-cause,
+causal, or global-freeze resolution. No runtime fix or finding-disposition
+change is accepted, Plan 2 eligibility remains zero, and production remains
+`NO-GO`. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-second-action-timeline-analysis-v1-20260921T170813873Z_EVIDENCE.json`.
+Next exact action: separately authorize one single-variable comparison for
+required-read/server scheduling or post-response state/commit scheduling;
+hold request fan-out and the other boundary constant.
+
+R-P5-031: The 2026-09-21 authorized current-source J1 A1 legacy -> B stable
+`saveRef` -> A2 legacy comparison tested only the process-scoped
+`shell_dirty_registration_policy` boundary. The run attempted `9/9` traces and
+closed a 37-event checkpoint with a valid hash chain. A1/A2 were `3/3` valid
+functional; B was observation-valid `3/3` but functionally valid `2/3` because
+its third repetition failed the first-action
+`/api/clients/:clientId/forms` required-read completion. In the two fully valid
+paired repetitions, B shell/dashboard commit counts were `35/34` versus A1
+`1986/1851` and A2 `2020/2908`, an observed post-response commit-ownership
+signal. The strict three-valid-record gate was not met, request fan-out was not
+invariant (`53/53/53` then `53/56/56`), and B was slower at trusted-click-to-
+ready (`966/931 ms` versus A1 `527/607 ms` and A2 `1048/522 ms`). Status: open
+diagnostic contributor candidate with validity/fan-out boundary unresolved; it
+is not a global-freeze root cause, accepted runtime fix, Plan 2 input, or
+production acceptance. The earlier runner attempt with an unsupported trace
+variant is preserved separately and excluded as harness-invalid. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-ownership-ab-a-v1-20260921T185539646Z-b4ef5bf1-8927-4107-af0d-a6867406050b_EVIDENCE.json`.
+Next exact action: do not repeat this same A-B-A automatically; any distinct
+continuation must first isolate the B required-read/fan-out validity boundary
+and keep request fan-out controlled.
+
+R-P5-032: The 2026-09-22 read-only analysis of the completed J1 post-response
+commit checkpoint isolated the open validity boundary. B repetition 3 had two
+matching Forms records: the first reached HTTP 200 headers but was aborted
+before body completion, and the second completed with HTTP 200. The validator
+uses every matching record, so the unit remained invalid. The same trace had
+`60` total / `31` API requests versus `53` / `24` in both matched legacy rows,
+with additional bootstrap, client-summary, Forms, alerts, notifications, and
+conversations requests; Stage 6 showed a Forms setup/start restart and one
+Forms abort. Status: open diagnostic validity/fan-out boundary; no root cause,
+runtime fix, disposition change, Plan 2 entry, or production acceptance.
+Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-fanout-validity-analysis-v1-20260921T224944702Z_EVIDENCE.json`.
+Next exact action: do not repeat the same A-B-A; use a distinct controlled
+capture with one completed Forms read and a predeclared route-count fan-out
+envelope.
+
+R-P5-033: The 2026-09-22 distinct legacy J1 control capture established the
+declared Forms and request fan-out validity boundary. Under unchanged legacy
+dirty-registration policy, local-normal synthetic auth, and local Supabase,
+3/3 repetitions were observation-valid and functionally successful. Every
+repetition had exactly one completed Forms read and one completed Nutrition
+read; Forms setup/start/success was `1/1/1` and Forms abort was `0/3`. The
+fan-out envelope passed 3/3: r1 `56` total / `27` API / `3` document / `26`
+RSC, r2 and r3 `53` / `24` / `3` / `26`, with all declared API route counts
+inside bounds. Status: validity boundary mitigated for this local diagnostic
+path; this is not an official sample, root-cause proof, global-freeze
+resolution, runtime fix, Plan 2 input, or production acceptance. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260922T000153108Z-df90576e-8f10-4162-bf26-2916efbe1289_EVIDENCE.json`.
+The first build attempt remains separately `BLOCKED`; its evidence records
+`outputRecorded=false` before browser capture, and a follow-up same-command
+local diagnostic identified `EPERM` in the OneDrive default `.next` cleanup.
+The successful run used a run-scoped diagnostic distDir. Next exact action:
+use this envelope and lifecycle gate as immutable controls for one separately
+authorized, single-variable candidate comparison. Plan 1 remains `COMPLETE /
+DIAGNOSIS_BLOCKED`, Plan 2 eligibility remains zero, and production remains
+`NO-GO`.
+
+R-P5-034: The 2026-09-22 envelope-controlled J1 A-B-A candidate capture
+completed 9/9 observation-valid attempts and 3/3 variant builds, but eligibility
+was A1 `3/3`, B `2/3`, and A2 `3/3`. B repetition 2 simultaneously exceeded
+the declared request envelope (`57` total / `28` API), produced two Forms
+records with one incomplete, restarted the Forms lifecycle (`2` setups and
+`2` starts), and observed one Forms abort. No repetition had an exact full
+fan-out shape across A1/B/A2. Eligible B rows still showed low shell-provider
+commit counts (`36`, `31`) compared with legacy rows, but the strict
+three-valid-record and fan-out invariants were not met. Status: candidate
+validity boundary remains open; signal is not causal proof, a runtime fix,
+Plan 2 input, or production acceptance. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T082334317Z-c732dc73-de03-43b6-8881-a4880cbf977a_EVIDENCE.json`.
+The prior 9/9 harness-invalid attempt is preserved and excluded after the
+runner passed unsupported arbitrary labels into the phase-4.3 control enum.
+Next exact action: do not repeat automatically; first control the stable-policy
+Forms/fan-out divergence, then require 3/3 eligible matched repetitions.
+
+R-P5-035: The authorized 2026-09-22 current-source J1 continuation completed
+3/3 observation-valid and 3/3 functionally successful records after the
+same-document dashboard navigation guard. Every record had one completed
+Forms read, Forms lifecycle `1/1/1`, zero Forms aborts, one completed Nutrition
+read, and an accepted second action; route history had no summary re-entry.
+The second-click-to-ready interval was `1,040/1,087/576 ms`. The earlier
+statement that no long task overlapped that interval is withdrawn: the analyzer
+compared browser `performance.now()` timestamps with trace-relative action
+timestamps without aligning their clock origins, so overlap status from those
+records is unknown pending aligned reanalysis. However, all three records measured `49`
+total / `24` API / `3` document / `22` RSC, so the historical `53-56` total /
+`26` RSC fan-out envelope failed `3/3` and eligibility was `0/3`. Status:
+the narrow stall was not reproduced, but performance is `NOT_EVALUABLE` and
+the current-source control envelope is not established; this is not causal
+proof, root-cause closure, runtime-fix acceptance, Plan 2 input, or production
+acceptance. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-fanout-envelope-baseline-v1-20260922T155536674Z-bcf71d30-b2df-41f5-98c5-f6d863fb3ef6_EVIDENCE.json`.
+Follow-up on 2026-09-22/23: default-stable J1 then produced three eligible,
+observation-valid and functionally successful records with one Forms request,
+zero Forms aborts, one Nutrition read, and no summary re-entry. Trusted-click to
+visible-ready was `914/872/936 ms`; the response-body-to-ready boundary was
+`700/690/498 ms`. The aligned long-task observer recorded zero tasks in each
+full trace, but React profiling was disabled, so the UI-ready interval remains
+unattributed. The full fan-out (`49/24/3/22`) did not match the historical
+legacy envelope; speed remains `NOT_EVALUABLE`. The separate dirty smoke failed
+on a fixture-mismatched textarea selector before its save path and was not
+retried. Evidence:
+`docs/AIYA_PERFORMANCE_DIRTY_REGISTRATION_FIX_PHASE_3_ANALYSIS_EVIDENCE.json`;
+the raw run is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-dirty-registration-verification-v1-20260922T204750028Z-be78a2d5-cc2f-4fdb-9543-8f74559bb628_EVIDENCE.json`.
+Status remains open: this only says the narrow stall was not reproduced in
+these three runs, does not confirm a root cause, and does not change Plan 2 or
+production `NO-GO`. Do not repeat J1 automatically.
+Follow-up on 2026-09-23: the authorized one-time smoke-only continuation used the
+visible enabled `textarea`/`input[type=text]` selector in the client form field
+container. Stay preserved the synthetic draft, Discard navigated, and Save &
+Continue issued exactly one `POST /api/clients/forms` with HTTP `200`, followed
+by Nutrition visibility. One synthetic local form mutation completed; form
+values and response bodies were not recorded. The 10-event checkpoint passed
+its hash-chain check, the server closed, and port `3167` was free. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-dirty-navigation-smoke-only-v1-20260922T213853024Z-950a560c-dc4c-49bb-b332-a4bb8750ea12_EVIDENCE.json`.
+The preceding smoke-only preflight stopped on a mistyped expected evidence SHA
+before server or smoke startup; its separate record is
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-dirty-navigation-smoke-only-v1-20260922T213552307Z-475af6bd-8365-4168-8055-a7d4061aa20a_EVIDENCE.json`.
+This closes only the local dirty-navigation smoke contract. Performance remains
+`NOT_EVALUABLE`; the global freeze cause remains unresolved, and Plan 2 and
+production status do not change. Do not repeat J1 or the successful smoke.
+
+R-P5-036: On 2026-09-24 the user supplied a hosted-site recording and
+confirmed the same broad input, left-navigation, and reload stall occurs on
+desktop and Android while using synthetic test data. This is direct evidence
+that the reported symptom is real in the user's hosted/device context; it does
+not identify browser, network, Next.js process, auth/session, store, or database
+as the cause. The local 2026-09-22/23 J1 non-reproductions are not contradictory
+because they used a different local build and environment. The hosted release
+is commit `1c9756046b01cb1bd224fb601ec9094a7f471606`, while local HEAD is
+`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a`. A quiet host snapshot outside a
+freeze showed no pressure and cannot rule out transient load. The planned
+captures were attempted on 2026-09-24 and closed as `BLOCKED` under R-P5-037;
+resume only when the documented Chrome trace/control harness blocker is cleared.
+Plan 1
+remains `COMPLETE / DIAGNOSIS_BLOCKED`; finding dispositions, Plan 2 eligibility,
+and production `NO-GO` remain unchanged. No production change or deployment is
+authorized.
+
+R-P5-037: The 2026-09-24 hosted global-freeze Phase 1 acquired one validly
+parsed 150-sample host window with 40 ms clock uncertainty, but Chrome control
+calls timed out before the planned interaction and no browser trace was
+available. Host CPU averaged 5.37% and peaked at 13.57%, with no swap,
+cgroup-throttling/OOM, memory-pressure, or IO-pressure increase in that
+window. Because no verified freeze overlapped those samples, this does not
+exclude server, database, network, or browser causes. Phase 1 closed
+`BLOCKED / browser_trace_harness_blocked` with 0/3 valid paired records;
+evidence and the separately hashed host artifact addendum are recorded in
+`docs/aiya-global-freeze-phase-1-20260924T195845623Z-6029109a-b6cb-46b3-8bc0-b355420234a5_EVIDENCE.json` and
+`docs/aiya-global-freeze-phase-1-host-capture-addendum-20260924T200803Z-86d11645-08e5-490a-8b86-8563dd32e6c9_EVIDENCE.json`.
+Status: open, measurement-blocked, root cause unknown. Resume only with a
+supported Chrome trace/control channel. No runtime fix, Plan 2 eligibility,
+deployment, or production readiness is implied.
+
+Follow-up CUA probe on 2026-09-24: a synthetic phone-field fill call returned
+in 1,651 ms; after a 2,000 ms pause, the Formlar click timed out in the
+automation Input.dispatchMouseEvent path. DOM, reload-completion, and console
+log reads then timed out in Emulation.setFocusEmulationEnabled. Supplemental
+evidence is
+`docs/aiya-global-freeze-phase-1-cua-followup-20260924T203252Z-b84b86c1-ab57-46b8-a1de-9ea7d9a4e8fd_EVIDENCE.json`
+(SHA-256 `6F223F9D421B21D0BD31C75B79D8A997D7FF20DFAE7229A79D79F3025E62768B`).
+It is invalid for Phase 1 and does not establish a page freeze. Local source
+inspection predicts a Stay/Discard dirty-draft dialog for a phone-only client
+draft; that could explain deferred navigation only if rendered and cannot
+explain typing or reload delay. No form was submitted; root cause and risk
+disposition remain unchanged.
+
+R-P5-011: The 2026-09-19 shared-runtime A-B-A continuation confirmed one
+repeatable contributing boundary. Passing the full `DashboardUrlState` object
+from `DashboardApp` to `useStage4BInbox` recreated refresh dependencies on
+unrelated URL/state changes; the memoized six-field projection removed two
+overlapping inbox refresh requests in all three B repetitions. Status:
+contributing boundary confirmed and candidate retained locally; global freeze
+root cause, production-fix acceptance, Plan 2 eligibility, and production
+readiness remain open/unchanged. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-ab-a-20260919T111921Z-cd652e70-18de-4d16-89e4-2aadfcd336ce_EVIDENCE.json`.
+
+R-P5-012: Earlier shared-runtime runs recorded `UNAVAILABLE` or incomplete
+Docker sampler evidence because host `psql` fallback and transient failures
+were not handled robustly. The repair run now records 756 successful Docker
+aggregate observations with zero sampler errors, zero lock-wait observations,
+and zero blocked-activity observations. Status: mitigated for this bounded
+local diagnostic path; the historical runs remain unchanged and the result is
+not evidence that session-activity row locks are absent outside the observed
+windows. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_shared-runtime-sampler-validity-repair-20260919T132757Z-d3c7bee6-b396-4d64-9f6c-3576caeed017_EVIDENCE.json`.
+
+R-P5-013: The 2026-09-19 auth/RSC A-B-A continuation tested a request-local
+React cache around `resolveDashboardAuth` while holding the retained inbox
+projection constant. Selected J1 normal and diagnostic observations were 6/6
+valid and successful in A1, B, and A2, but response, RSC, auth_total,
+request-window, and React-commit signals did not move in one repeatable
+direction. A2 also contained one invalid J2 timing unit and three incomplete
+J3 normal units; those were excluded from the selected J1 decision and remain
+visible in evidence. Status: candidate inconclusive, cache removed, uncached
+baseline restored; auth/session and RSC/bootstrap remain open, and no runtime
+fix, Plan 2 entry, or production decision changed. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-cache-ab-a-20260919T123718Z-479575bb-ed48-487c-b099-f935ad403948_EVIDENCE.json`.
+
+R-P5-014: The 2026-09-19 request-coalescing A-B-A continuation tested only
+same-key in-flight `/api/shell/bootstrap` GET coalescing in
+`shell-provider.tsx:fetchShellBootstrap`. Selected J1 diagnostic observations
+were 3/3 valid and successful in A1, B, and A2. B reduced bootstrap counts from
+`7/7/7` to `5/5/6`, but total request fan-out, second-action tails, and React
+commit metrics had no stable speed direction. Status: bounded bootstrap
+duplication contributor recorded, speed inconclusive, B removed and A2 baseline
+restored; global freeze, auth-chain root cause, Plan 2 eligibility, and
+production readiness remain open/unchanged. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-request-coalescing-ab-a-20260919T141815Z-2bf54fb2-080c-4470-a920-05ebc5f5b7ab_EVIDENCE.json`.
+
+R-P5-015: The 2026-09-20 auth-chain ownership A-B-A continuation removed only
+the repeated `assertShellSessionActivity` RPC from normal
+`resolveAccountTenantContext` calls while retaining the explicit session
+activity endpoint. The contained RPC span fell to approximately zero in all
+three B repetitions, but request fan-out stayed at `53/24/26` and selected J1
+second-action tails showed no repeatable improvement: A1 `1147/524/660` ms, B
+`1196/1395/1234` ms, A2 `622/1534/552` ms. Status: auth RPC cost measured,
+speed inconclusive, B removed and A2 baseline restored; global freeze,
+finding dispositions, Plan 2 eligibility, and production readiness remain
+open/unchanged. A2 sampler status is `PARTIAL` because one sample errored; no
+global lock-absence claim is allowed. Evidence:
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-auth-ownership-ab-a-20260920T150730Z-c86defe0-6be6-46e9-bd56-a5560d140fa1_EVIDENCE.json`.
+
+R-P5-009: The earlier blocked shared-runtime checkpoint
+`aiya-performance-plan1-shared-runtime-diagnostic-v3-20260918T185554350Z-3d620a1a-d1a5-4da8-b706-6a94cd9c1b07`
+remains preserved as historical evidence. The selected continuation was later
+completed through A1, B, and A2 runs, all with 12/12 observation-valid units.
+Status: the runner continuation is complete, but the global performance
+diagnosis remains open; no finding disposition, Plan 2 eligibility, or
+production decision changed. The earlier local-input-blocked run remains
+historical.
+
+R-P5-010: The shared-runtime instrumentation now has diagnostic
+Server-Timing, request-overlap, React-profiler, selected-J1 A-B-A records, and
+a repaired bounded aggregate DB sampler. The evidence confirms the inbox
+refresh fan-out boundary only; the separate auth/RSC cache candidate was
+inconclusive, and auth/session, RSC/bootstrap, and global React-commit
+causality remain unresolved. Status: open and bounded; do not treat the
+request-fan-out candidate or zero observed DB waits as complete performance
+recovery or a global lock-absence claim.
+
+R-P4-019: The v2 J1 timer starts at journey start, including client selection,
+rather than the trusted Forms click. Waiting for an abandoned panel can also
+confuse a normal navigation lifecycle with a freeze. Status: mitigated for
+the v3 J1 success capture: the timer is anchored to the trusted Forms click,
+and target readiness/route events are recorded independently. The v3 normal
+run observed and reconciled the navigation-away branch for J3; a genuine
+target-failure branch still requires scoped evidence.
+Historical 13/18 validity counts remain v2-only and cannot certify v3
+semantics.
+
+R-P4-020: Unconditional environment ordering and successful-operation gates
+can prevent diagnosis of an observed failure. Status: mitigated in the v3
+plan and runner by explicit dependencies and separate
+observation/functional/speed outcomes. The targeted probe passed 4.4.2
+without promoting any result to the official baseline; failed operations
+remain non-successful samples.
+
+R-P4-021: Historical worktree references had diverged from the available
+working tree, and the former 38c0 directory is empty. Status: reconciled for
+the current source. The active execution target is the main checkout at
+`C:\Users\Dell\OneDrive\Masaüstü\MANU-AI`; the recovered snapshot commit and
+preserved dirty-state manifest are recorded in
+`docs/WORKTREE_RECONCILIATION_20260918T163307Z_EVIDENCE.json`. Historical
+measurement identities remain unchanged.
+
+R-P4-022: Scoped desktop investigation can leave hosted/device behavior
+unverified. Status: mitigated for diagnostic observation coverage after the
+user explicitly reopened 4.5/4.6 and the hosted, Android Chrome, and
+installed Android PWA units were captured. The coverage is not environment
+acceptance and does not establish a cross-environment performance result.
+Production remains NO-GO.
+
+R-P4-025: Local v3 observations and the newly captured hosted/device
+observations are not portable official acceptance evidence. Status: open and
+controlled by the separate environment evidence and its observation-versus-
+functional-versus-performance separation. No cross-environment acceptance or
+root-cause attribution is permitted from the current diagnostic runs.
+
+R-P4-023: The v3 targeted J1 probe completed both required reads and the
+expected navigation preference mutation, while three non-required background
+requests were observed as failed or unfinished at the bounded observation
+deadline. Status: mitigated for the current v3 normal run: reconciliation
+retained completed, failed/aborted, and pending-at-capture-end states. These
+states do not invalidate the required J1 boundary and must not be treated as
+a root-cause location.
+
+R-P4-024: The v3 normal run produced 9/9 observation-valid records and 6/9
+successful functional samples. All three J3 observations consistently recorded
+`first_target_abandoned_after_navigation` while the Dashboard target became
+ready. Status: reconciled in 4.4.4; this is valid navigation-away evidence,
+not a confirmed application performance cause. Performance remains
+`NOT_EVALUABLE` and broader diagnosis is still open.
+
+R-P4-026: The explicitly reopened 4.5/4.6 run completed 27/27
+observation-valid units across hosted, Android Chrome, and installed Android
+PWA, with 17 valid functional samples, 8 functional failures, and 2
+incomplete outcomes. Status: reconciled for diagnostic environment coverage;
+performance remains `NOT_EVALUABLE`, official measurement has not started,
+and no root cause or runtime fix is established.
+
+R-P4-027: A later retry under a temporary behavior-neutral environment-runner
+cleanup ended `BLOCKED` after Android Chrome and PWA observation completeness
+degraded, although environment preflight remained ready. Status: contained;
+the cleanup was restored to the completed run's runner identity, the retry is
+preserved as a separate failed record, and its observations are not merged
+with the compatible 27/27 environment evidence.
+
+R-P4-028: Phase 4.7 reconciled all current diagnostic observations, but no
+common-layer delay repeated with an accepted timing boundary and performance
+remains `NOT_EVALUABLE`. Status: open and explicitly bounded by the
+`DIAGNOSIS_BLOCKED` closure; at the time of 4.7 all five finding dispositions
+were unchanged. The first identity-invalid 4.7 attempt is excluded, and no
+causal experiment, runtime fix, Plan 2 entry, or production action is
+authorized without a separately approved hypothesis and timing evidence.
+
+R-P5-001: Phase 5.1 has four pre-registered candidates, but measured
+contribution is unavailable because the 4.7 performance outcome is
+`NOT_EVALUABLE`. Status: controlled by provisional ordering only; H-5.1-001
+has provisional effect evidence, H-5.1-002 is `INCONCLUSIVE`, and H-5.1-003
+now has a repeatable provisional effect, but no candidate is optimized or
+treated as causal. Stage 5.2 completed its first
+single-variable experiment and Stage 5.3 completed layer attribution as
+`LAYER_ATTRIBUTION_INCONCLUSIVE`; no cause claim follows. The next supported
+action was the Phase 5.6 finding-disposition review, now complete. It assigned
+the three F2 findings `INCONCLUSIVE` and left both F12 findings
+`OPEN_BLOCKED`; the warm AI Chat candidate remains deferred until a dedicated
+AI Chat journey is captured.
+
+R-P5-002: The H-5.1-001 local desktop experiment produced a repeatable
+provisional effect for the trace-only `shared_read_start_policy` variable:
+the bootstrap-gated B path was slower at route-commit to target-ready in all
+three matched cycles (+28.5 ms, +292.5 ms, and +89 ms). Status: open and
+bounded; this is not root-cause proof, an official baseline, a finding-
+disposition change, or an accepted runtime fix. The required read and client
+boundaries were valid, while unrelated request tracking reached its bounded
+body-finish deadline and remains a diagnostic limitation. The separately
+authorized 5.3 layer-attribution contract is complete but inconclusive;
+preserve the A default and the first trusted-click-invalid run as excluded
+evidence. The 5.6 review later assigned `PERF-F2-001` to `INCONCLUSIVE` and
+did not authorize a runtime or Plan 2 change.
+
+R-P5-003: Phase 5.3 found repeatable co-variation in app-state store/route
+timing and downstream hydration/readiness, but no independently isolated layer
+or exact file/function cause. DNS/TLS and service-worker paths were not
+exercised; auth was not separated; read-start order was not attributed; and
+the ancillary unrelated-request body-finish deadline remains visible. Status:
+open and bounded; no finding disposition, runtime fix, official baseline, or
+Plan 2 entry is authorized from this result. Phase 5.4 completed the safe
+local checks and the required runtime RLS boundary; no fix proposal or Plan 2
+entry follows from that gate, and the H-5.1-002 loop has now completed without
+a causal result. H-5.1-003 has now produced only a provisional diagnostic
+effect; the 5.6 review later assigned `PERF-F2-001` to `INCONCLUSIVE` and kept
+Plan 2 locked.
+
+R-P5-004: Phase 5.4 safe local behavior checks passed 21/21 focused files and
+164/164 tests for auth/session, tenant/capability, freshness/late-response,
+mutation revision/conflict/idempotency, and offline/privacy/reconnect
+contracts. The required runtime cross-user/RLS boundary then passed locally
+at `127.0.0.1:54321`: 1/1 integration file and 56/56 tests, with no failed or
+skipped tests. Status: mitigated for the local safety gate; this does not
+establish production or cross-environment acceptance. Keep production
+`NO-GO`; the safety gate did not itself alter finding dispositions. The later
+5.6 review assigned bounded dispositions and kept Plan 2 locked after the
+H-5.1-003 provisional effect.
+
+R-P5-005: The H-5.1-002 background-polling candidate loop used the trace-only
+`foreground_polling_policy` variable across three matched local desktop
+A-before -> B -> A-after cycles. All 9/9 traces were observation-valid, but
+the directions were `B_SLOWER`, `B_FASTER`, and `B_SLOWER`, so the result is
+`COMPLETE / INCONCLUSIVE` rather than a repeatable effect. B navigation-window
+pause/cancel was observed in all three cycles; this is a diagnostic behavior
+observation, not a confirmed product cause or accepted fix. Four earlier
+invalid or interrupted attempts remain separate and excluded. Status: open
+and bounded; the later 5.6 review assigned `PERF-F2-002` to `INCONCLUSIVE`,
+with no official baseline, Plan 2 entry, or runtime remediation. H-5.1-003
+remains provisional and is not an accepted runtime fix.
+
+R-P5-006: The latest H-5.1-003 dashboard bundle/import/render loop is recorded
+at `docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T094941316Z-2e94ad8b-d576-4fa5-9bc0-ddf5c62f673d_EVIDENCE.json`.
+The trace-only `target_panel_loading` variable produced 9/9 valid local
+desktop observations across three matched A-before -> B -> A-after cycles;
+B was slower at route-commit to target-ready by `+842 ms`, `+297 ms`, and
+`+356 ms`, with the dynamic import and panel mount observed in every B trace.
+Status: open and bounded as `REPEATABLE_PROVISIONAL_EFFECT`; this is not exact
+file/function root-cause proof, a finding disposition, an accepted runtime
+fix, an official baseline, or a Plan 2 entry. The first same-candidate run is
+preserved as inconclusive because its B build still used the eager wrapper; the
+second is preserved as blocked with 6/9 valid traces after the corrected build
+exposed a runner-boundary issue. Neither is merged into the latest run. The
+5.6 review assigned `PERF-F2-003` to `INCONCLUSIVE`; the provisional effect
+does not establish an eager-path cause. Production remains `NO-GO`.
+
+R-P5-007: Phase 5.6 completed the offline review in
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-6-finding-disposition-review-v3-20260918T123600Z-aae55ab8-db06-40b5-9d56-8c2de6bbb5e7_EVIDENCE.json`.
+`PERF-F2-001`, `PERF-F2-002`, and `PERF-F2-003` are `INCONCLUSIVE`; the two
+AI Chat findings are `OPEN_BLOCKED` because no dedicated authenticated
+journey supplied their required boundaries. Phase 5.7 closed Plan 1 as
+`DIAGNOSIS_BLOCKED` for this scoped diagnosis; zero findings are eligible for
+Plan 2 and production remains `NO-GO`.
+
+R-P5-008: Phase 5.7 closed Plan 1 with the prioritized five-entry Plan 2 input
+in
+`docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-7-plan1-closure-v3-20260918T125452Z-f5305ee2-b35b-43c5-91df-42f313d0da29_EVIDENCE.json`.
+The closure is `DIAGNOSIS_BLOCKED`: the three F2 findings are `INCONCLUSIVE`,
+the two F12 findings are `OPEN_BLOCKED`, and no finding is eligible for Plan 2.
+Status: open and bounded as a diagnostic-continuation dependency; no runtime,
+database, provider, deployment, or production action is authorized.
+
+R-WR-001: The supplemental reconciliation audit in
+`docs/WORKTREE_RECONCILIATION_20260918T163307Z_SUPPLEMENTAL_AUDIT.json`
+corroborates the recovered-path integrity claim: 123/123 recovered paths are
+present, 117 match the snapshot hash, and the six non-matching paths are
+expected active authority documents. Status: mitigated for recovery integrity,
+but bounded by evidence limitations. The pre-reconciliation dirty state is
+preserved in the external recovery backup and manifest rather than
+byte-identically in the active tree, and the reference/sensitive-pattern scans
+are scoped metadata checks, not proof that every historical document is clean.
+No performance fix, Plan 2 eligibility, or production readiness follows.
+
+## Historical risk updates
+
+Records below retain their original statuses and wording. Current Plan 1
+execution follows v3 and the open risks above; historical Plan 1 instructions
+do not override it. Unrelated product/security risks remain in force.
+
+## Current Plan 1 final revision and Phase 4.4 local reproduction - 2026-09-16
+
+R-P4-008: Plan 1 is now governed by revision `plan1-final-v2`. Phase 4.1
+locked the detached worktree, dirty-file inventory, source/tool/configuration
+hashes, inherited evidence references, and live release references. Phase 4.2
+reviewed the historical evidence and separated the current variant from an
+ignored reference snapshot. The runtime comparison has exactly the three
+locked state-provider/hydration experiment mismatches and zero unrelated
+mismatches. Status: `mitigated for identity and reference separation`; no new
+official measurement or causal claim is valid from this lock alone.
+
+R-P4-009: Older Phase 4/5 prose remains in this register and related documents
+as historical context. It is superseded by `plan1-final-v2`; the next eligible
+unit is Phase 4.4. Status: `mitigated by canonical-document marker`.
+
+R-P4-010: The current/reference separation is explicit and reproducible from
+the ignored Phase 4.2 snapshot, but the state-provider/hydration behavior has
+not been measured causally. The snapshot is a diagnosis input, not a fix, and
+must not be treated as an accepted runtime optimization. Status: `open`; next
+action is Phase 4.4 local authenticated diagnosis with both identities held
+separate.
+
+R-P4-011: The Phase 4.3 general interaction harness is now separate from the
+official nine-scenario baseline. Its normal and diagnostic profiler modes,
+fixed two-second second-action timing, single-attempt click policy, and
+required timing fields are contract-tested. No journey has run yet, so the
+harness is measurement-ready evidence rather than a performance result.
+Status: `mitigated for harness identity`; next action is Phase 4.4.
+
+R-P4-012: Phase 4.4 local authenticated reproduction was started with a
+separate checkpoint and an 18-unit J1-J3 contract (three normal and three
+diagnostic repetitions per journey). The first preflight could not reach the
+local app at `127.0.0.1:3136` or local Supabase at `127.0.0.1:54321`, and the
+process environment did not contain the synthetic account inputs. Status:
+`blocked`; no unit was attempted, no official sample was added, and the same
+checkpoint must resume after the local inputs and existing credential
+configuration are restored. Credential values are not recorded. This is an
+environment/input blocker, not a product root-cause claim.
+
+R-P4-013: The 4.4 runner records request overlap/count/status/body-size,
+auth/session, Server-Timing, browser parse/render, long-task, and exact
+failure-boundary evidence while redacting raw bodies and credentials. Its
+normal and diagnostic modes and non-official-sample disposition are tested;
+the actual trace set remains uncollected until R-P4-012 clears. Status:
+`mitigated for measurement contract`; no 4.5 or causal work may begin.
+
+R-P4-014: The first post-preflight 4.4 attempt exposed a harness-only
+responsive-navigation selector defect: a hidden medium-rail link was selected
+before the visible shell link. The selector now targets visible layout copies,
+and the Phase 4.3 and 4.4 contract tests pass at 8/8 and 14/14. The affected
+run remains preserved as historical checkpoint evidence; no application root
+cause is inferred. Status: `mitigated`; compatible continuation used the
+corrected harness identity.
+
+R-P4-015: The latest authenticated local 4.4 run attempted all 18 planned
+units and produced 13 valid and 5 invalid samples. All five invalid samples
+are J1 Forms-to-Nutrition repetitions, while J2 and J3 are 12/12 valid. The
+result is `BLOCKED / LOCAL_INVALID_SAMPLES`; the J1 boundary is a candidate
+interaction/readiness issue, not a confirmed root cause. Status: `open`; the
+next action is a separately identified 4.4 review of Forms reads, the
+Nutrition ready boundary, and overlapping request/render timing.
+
+R-P4-016: An unbounded request body-finish drain could leave an interrupted
+measurement live. The runner now applies a bounded wait and records the unit
+as incomplete/invalid on timeout. The interrupted checkpoint run is preserved,
+and the earlier bootstrap failure remains marked stale. Status: `mitigated`;
+no incomplete sample is eligible for PASS.
+
+R-P4-017: J1 is currently valid in only 1/6 repetitions under the fixed
+2,000 ms second-action interval. The available records do not provide three
+matching valid traces or a repeatable single-variable experiment, so they
+cannot establish a file/function root cause. Status: `open`; keep runtime
+changes out of Plan 1 until the failure boundary is reproducibly isolated.
+
+R-P4-018: J2's inbox list is preloaded during authenticated dashboard
+hydration and the journey does not click a conversation detail. The required
+read contract was corrected to reflect that behavior. The client-activation
+`/api/shell/preferences` PATCH is separately classified as an expected
+successful navigation mutation; other mutations remain forbidden. Status:
+`mitigated for measurement semantics`; no finding disposition changed.
+
+## Current Phase 4 baseline risks - 2026-09-16
+
+R-P4-001: The latest canonical run
+`aiya-performance-plan1-phase4-20260915T195604720Z-497a3200-ada3-445d-a2d0-059cb0886940`
+completed stages 4.1-4.3 and produced 20 valid rounds for all nine
+scenarios in local small, local normal, and owner-PC hosted profiles. Android
+Chrome readiness and connection monitoring passed, but the baseline stopped
+at 17 valid rounds after the locked 28 attempts, with 11 discarded and 0
+failed attempts. The installed PWA baseline was not run by ordered
+dependency. Status: `open`; no Android/PWA performance PASS may be claimed.
+
+R-P4-002: Android discard reasons are heterogeneous and include repeated AI
+Chat destination/workspace readiness timeouts, one required-read failure, one
+password-login response miss, one unstable menu-tab click, and one page
+navigation timeout. The phone was connected and 66 connection-monitor checks
+passed, so these records identify an incomplete Android measurement path but
+do not prove a single dominant cause. Three diagnostic cycles, each with
+three repetitions and zero official samples, now provide repeated
+valid-but-budget-failing AI Chat candidate evidence. The latest cycle records
+one workspace-ready timeout, long More-page readiness and real AI Chat
+item-click completion, and successful HTTP 200/body-finished conversation
+reads in its valid samples. No common click failure or device disconnect was
+reproduced. Status: `blocked`; the route/navigation/render causal chain
+remains open and no runtime fix is authorized in Plan 1.
+
+R-P4-003: Validity and speed budgets remain separate. Local and hosted
+profiles have validity/functional PASS with repeated workspace, communication,
+and AI Chat budget FAILs; the partial Android samples also contain budget
+FAILs. These are reproduction candidates only. `closure.reproduced=true`
+does not establish a causal root cause or authorize Plan 2/runtime changes.
+Status: `open`.
+
+R-P4-004: The canonical closure is `BLOCKED / PERFORMANCE_BLOCKED` with
+`validEnvironmentCount=2/4`; Stage 4.4 is blocked on the incomplete Android
+20-sample contract and Stage 4.5 is blocked by order. The next eligible work
+is a controlled causal diagnosis of the Android More-to-AI-Chat
+route/navigation/render path. A reproducible harness defect may be followed
+by a harness-only compatible checkpoint continuation; an application runtime
+correction requires a causal trace, focused regression test, and explicit
+Plan 2/scope authorization. Production remains `NO-GO`. Status: `blocked`.
+
+R-P4-005: On 2026-09-15, an attempted npm status invocation did not forward
+the `--status` argument on this host and briefly reopened the already closed
+checkpoint. The process was stopped before a measurement attempt; checkpoint
+events 216-217 restore terminal `BLOCKED`, the hash chain validates, and no
+new `phase4.*` measurement event was written. This is an operator-command
+risk, not a product or performance result. Status: `mitigated`; inspect with
+the direct `node scripts/performance-plan-1-phase-4.mjs --status` command
+from `app`.
+
+R-P4-006: A multi-hour measurement can be interrupted by computer shutdown or
+session loss between two durable event boundaries. The cycle controller now
+persists cycle identity/state, resumes an active cycle after identity and lock
+checks, records interruption, and keeps diagnostic/unfinished work out of
+official samples. Its tests pass and per-cycle diagnostic history is written
+separately. Filesystem/hardware loss between atomic commits remains outside
+the guarantee. Status: `mitigated locally`.
+
+R-P4-007: Android AI Chat readiness can exceed the locked speed budgets even
+when authentication, interaction trust, and the conversations request are
+valid. The three diagnostic cycles provide repeated candidate evidence, but
+the trace has not yet isolated one causal application function or a single
+variable experiment. Status: `open`; next action is targeted route,
+shell/bootstrap, render/long-task, ready-selector, and request timing
+diagnosis. Do not change runtime code or call this a confirmed root cause
+without the required causal trace and focused test.
+
+## Historical prior Phase 4 baseline risks - 2026-09-15
+
+R-P4-001: The latest canonical run
+`aiya-performance-plan1-phase4-20260915T130141721Z-6aa263db-c0ff-4192-9333-c20d769f4692`
+completed local and owner-PC hosted baselines at 20 valid rounds per scenario,
+but Android Chrome preparation stopped at
+`preparation_failed:locator.click: Timeout 8000ms exceeded.` ADB/CDP,
+target-origin, and target-launch checks passed; the connection monitor also
+passed. This is an Android authenticated-interaction measurement blocker. No
+Android or PWA sample may be counted until the preparation round completes.
+
+R-P4-002: `normal_synthetic` completed 20/20 valid samples for all nine local
+scenarios, with functional and validity PASS. Workspace, communication, and AI
+Chat paths contain repeated warm-navigation/body-finish/long-task budget FAILs.
+These records establish a performance reproduction candidate only. They do not
+prove a runtime cause, authorize optimization, or justify Plan 2 before the
+small profile and the remaining environments satisfy the Phase 4 contract.
+
+R-P4-003: The current canonical closure is `BLOCKED / PERFORMANCE_BLOCKED`
+with `validEnvironmentCount=2/4`; Stage 4.4 is blocked and Stage 4.5 was not
+run by ordered dependency. Historical hosted-DNS and PWA notes must not be
+merged with this run. Production remains `NO-GO`.
+
+## Resume infrastructure risks - 2026-09-15
+
+R-RESUME-001: A power loss can still interrupt the operation currently between
+its start and commit boundaries. The shared checkpoint store bounds the loss to
+that work unit, records an interrupted attempt on the next open, and never
+counts an incomplete measurement round as valid. This is mitigated locally,
+not a guarantee against filesystem or hardware failure.
+
+R-RESUME-002: A changed source, fixture, migration, artifact, or harness could
+make old measurements incomparable. The checkpoint identity gate now blocks
+silent continuation. The Phase 4 harness now has an explicit compatible
+migration command for the narrow case where only checkpoint recovery and
+error-observability code changed; it verifies the source hash chain, fixture,
+build, schema, and locked sample contract before copying measurement events.
+The source run remains immutable and prior events remain inspectable. This is
+mitigated locally; affected-scope restart or compatible migration remains an
+explicit operator action.
+
+R-RESUME-003: Checkpoint files could leak credentials or clinical data. Phase 4
+sanitization runs before event serialization and the test suite checks secret
+redaction; raw payloads, cookies, tokens, prompts, clinical content, and device
+serials remain prohibited. This is mitigated locally and does not authorize
+production data processing.
+
+The current Step 3 control is implemented on 2026-09-14. The Phase 4
+measurement launcher now executes the readiness command before stage 4.1 and
+fails closed unless H1-H4 are complete in order, local/hosted/physical
+Android/PWA environment gates are PASS, real hosted authentication and
+shell-bootstrap body-finish are proven, `baselineStarted=false`, the approved
+runtime-file input source is unchanged, local/hosted inputs are unchanged,
+and source/fixture/migration/build identity matches at measurement start. The
+readiness-created build is reused only after those checks; no local server or
+20-sample baseline starts on failure. Readiness run
+`aiya-phase4-readiness-20260914T184904329Z` and direct gate evaluation passed.
+This mitigates measurement-start drift only; it does not close any performance
+finding or change production `NO-GO`.
+
+The first entry below is the supporting Step 2 and startup-flow authority. On
+2026-09-14, Plan 1 Phase 4 was changed to load only the ignored repo-root
+`.manu-runtime/performance-phase4/hosted.env`, require the exact three
+`AIYA_PHASE4_HOSTED_*` keys, reject missing/invalid/symlink files and
+process/file conflicts, enforce the approved test-VPS origin and HTTP 200 plus
+`apiStatus=ok` release health, and require real password-login, authenticated
+`/dashboard`, and `/api/shell/bootstrap` 2xx/body-finished evidence before any
+long measurement. Android readiness now requires one authorized physical
+device, real Chrome CDP forwarding/handshake, explicit Chrome and installed
+WebAPK launch paths, standalone/service-worker/online PWA target evidence, and
+connection monitoring around the run. Readiness run
+`aiya-phase4-readiness-20260914T184904329Z` records the hosted preflight,
+local Supabase/Docker/build, Android device/CDP, normal Chrome, installed PWA,
+and 13/13 connection checks as `PASS`. H1-H4 and the ordered readiness closure
+are `COMPLETE / READY_FOR_PHASE4_BASELINE`; no Phase 4 baseline started, and
+this is not evidence that any performance finding is fixed. Older same-day
+Phase 4 wording below is historical/diagnostic context.
+
+Approved non-production hosted synthetic account preparation completed on 2026-09-13 on test VPS `65.21.52.249` with strict SSH host-key verification. Exactly one `aiya-phase4-hosted-*` Auth user has one owner membership and one dietitian profile on the existing active synthetic tenant; password-login returned HTTP 200 and authenticated RLS/store checks passed. Values are stored only in ignored `.manu-runtime/performance-phase4/hosted.env` and are absent from evidence, logs, chat, and Git. No production account, migration, deploy, provider/channel traffic, billing, or worker change was performed.
+
+Historical readiness implementation snapshot (2026-09-13): the prior readiness run and its environment observations are superseded by the 2026-09-14 evidence above. It is retained for history and was not rewritten as a new run.
+
+Historical last Phase 4 baseline attempt (pre-startup correction): the canonical evidence remains `BLOCKED / PERFORMANCE_BLOCKED`; local samples completed, but the hosted stage failed before valid hosted samples and later stages were blocked. No causal proof or post-correction baseline exists.
+
+Historical AIya Performance Plan 1 Phase 3 closure, 2026-09-10: `docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json` records stages 3.1-3.6 as `COMPLETE` with `SYNTHETIC_AUTH_STORE_READY`. Local migration/schema checks, deterministic two-tenant fixture seed, eight password sessions, owner/assistant/viewer/auditor/anonymous RLS boundaries, AI Chat boundary, viewer write block, and owner store-read matrix passed. The local fixture remains for Plan 1 Phase 4. No performance baseline, freeze reproduction, root-cause attribution, runtime change, hosted account, physical Android/PWA capture, deploy, remote migration, provider/channel egress, or production gate change was performed. Production remains `NO-GO`.
+
+Superseded AIya Performance Plan 1 Phase 4 note, 2026-09-11: an earlier summary said local desktop Stage 4.2 and test-VPS hosted Stage 4.3 completed and only physical-device capture blocked closure. That note is superseded by the 2026-09-13 canonical evidence above and must not be used as the current Phase 4 state.
 
 Historical AIya Performance Plan 1 Phase 1 closure, 2026-09-10: `docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json` records the ordered source/finding/closure work as `COMPLETE` with all five stages complete and the final closure gate `PASS`. After the user started Docker, local Supabase was started and only the local database was reset. With all full-rehearsal flags enabled, the clean full-repository run produced 288/288 test files and 1726/1726 tests passed, with zero failed and zero skipped. `docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json` keeps all five performance findings open for valid authenticated reproduction. No runtime cause is confirmed and no runtime change is authorized. Local/upstream HEAD is `568a1ffba833db0dd182a3d9fad5b034f7cf98e5`; live customer/admin release remains commit `1c9756046b01cb1bd224fb601ec9094a7f471606`. Plan 1 Phase 2 is eligible only after explicit user approval and has not started. Production remains `NO-GO`.
 
@@ -10,7 +908,7 @@ Historical Revizyon 2 AIya performance Phase 2 execution note, 2026-09-10: `docs
 
 The Revizyon 2 note below is retained only as historical context; the current Plan 1 Phase 3 closure and next eligible Phase 4 are authoritative.
 
-Current AIya performance Revizyon 2 note, 2026-09-10: `docs/AIYA_PERFORMANCE_ACTION_PLAN.md` is the canonical performance action plan and `docs/AIYA_PERFORMANCE_PHASE_2_EXECUTION_SCOPE.md` is the revised Phase 2 scope lock. The next eligible phase is **Faz 2 - Gecerli Olcum, Kok Neden ve Lokal Remediasyon**. Phase 2 must first validate measurement on real authenticated paths and prove causal root cause before runtime performance changes. Phase 1 and Phase 1.2 evidence remains historical. The Phase 1.2 Android result is `READY_FOR_CDP_CAPTURE`, meaning ADB/Chrome DevTools readiness only; it is not physical Android/PWA performance PASS. Current open performance risks are measurement validity, real-auth baseline absence, unproven broad dashboard freeze reproduction, AI Chat diagnostic auth separation, broad `/api/app-state` static risk, background refresh contention risk, and dashboard static import/render risk. Production remains `NO-GO`; no runtime behavior, deploy, remote migration, production gate, secret/env, provider/channel egress, live billing, production worker, external system, or real health-data path changed.
+Historical AIya performance Revizyon 2 note, 2026-09-10: the older direct Phase 2 interpretation is superseded by the active Plan 1 contract and its ordered Phase 4 baseline gate. The five performance findings remain open for valid authenticated measurement; no runtime cause is confirmed. Production remains `NO-GO`.
 
 Historical AIya performance audit Phase 1.2 note, 2026-09-10: `docs/AIYA_PERFORMANCE_PHASE_1_2_PLAN.md`, `docs/AIYA_PERFORMANCE_PHASE_1_2_EVIDENCE.json`, and `docs/AIYA_PERFORMANCE_COMBINED_FINDING_MANIFEST.json` record the corrected post-login performance diagnosis. The stricter harness replaced obsolete `workspace=` routes with canonical authenticated dashboard routes, required real clicks and feature-specific success selectors, propagated API failures, measured body-finished request timing, prepared standalone Next static/public assets, and compared desktop Chrome with Android Chrome emulation on one local production-like server. Local/emulated evidence did not reproduce a broad all-app freeze: dashboard, clients, forms, nutrition, menu, messages, alerts, and notifications rendered with low ready/request timings. Remaining performance-readiness risks were AI Chat diagnostic `401` on `/api/ai-chat/conversations` and still-supported Phase 1 code risks around broad `/api/app-state`, background refresh competition, and broad dashboard static imports. Production remained `NO-GO`; no runtime behavior, deploy, remote migration, production gate, secret/env, provider/channel egress, live billing, production worker, external system, or real health-data path changed.
 
@@ -328,3 +1226,91 @@ R7 closes R-4B2-01 through R-4B2-10 as mitigated in the local prototype after ze
 ## Stage 7R Authority And Finding Lock - 2026-08-24
 
 R-Stage7R-001: Stage 7.1 through Stage 7.4 evidence could be mistaken for final frontend QA/accessibility closure even though the review found incomplete harness execution, visual baseline proof, hard-gate enforcement, assistive-technology output proof, performance proof, and continuity reconciliation. Stage 7R.0 mitigates this by superseding Stage 7.1 through Stage 7.4 for closure, preserving the old evidence as historical only, and locking 15 remediation findings in `docs/PHASE_85_STAGE_7R_FINDING_LOCK.json`. Stage 7R.1 resolves the harness assertion dispatch, role/assignment metadata, and deterministic network fixture boundary findings. Stage 7R.2 records the trusted deterministic baseline. Stage 7R.3 resolves the shared/public/commercial remediation set with zero open `remediationPhase: "7.2"` findings. Stage 7R.4 resolves the dashboard/PWA remediation set with zero open `remediationPhase: "7.3"` findings. Stage 7R.5 resolves the hard-gate/evidence-reclosure set with zero open Stage 7 findings and zero open locked P0/P1/P2 findings. Status: Stage 7R remediation is implemented, validated, and superseded for closure by Stage 7.5. Stage 7 is locally STAGE_7_CLOSED, Stage 7.5 is complete, production remains `NO-GO`, and physical iPhone remains `WAIVED_NOT_EXECUTED`.
+Superseded AIya Performance Plan 1 Phase 4 closure note, 2026-09-11: an earlier summary said local authenticated baseline collection and non-production hosted collection each completed 20/20 valid samples and only physical-device environments blocked final closure. That note is superseded by the 2026-09-13 canonical evidence above and must not be treated as current Phase 4 state.
+
+## AIya performance continuation note - 2026-09-22
+
+The bounded route/history race is recorded in `docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-client-only-dashboard-navigation-fix-v1-20260922T101352Z_EVIDENCE.json` (SHA-256 `55B6DF4617967D2FD73964E884CCE4A63D335ECBD319C154B5AA642A185D3652`). The working-tree guard mitigates one same-document `/dashboard` duplicate-writer boundary locally, but it does not reduce the risk that shared auth/session work, RSC fan-out, or broad React commits cause the general freeze. The related performance findings remain evidence-open/blocked, no production acceptance is granted, and production remains `NO-GO`. A repeated bounded J1 or real interaction capture is still required before deciding whether this boundary recurs and what latency remains.
+
+## Hosted Global-Freeze Attempt-Budget Update - 2026-09-27
+
+Update to R-P5-036/R-P5-037: the user authenticated to the same hosted
+synthetic clinic and authorized five bounded Phase 1 attempts. All five
+150-sample host captures completed under release
+`hs-1c9756046b01-b55ed4ff550f`; average CPU ranged `5.85-6.38%`, peak CPU
+`28.77-58.33%`, the application process remained present, and swap, cgroup
+throttling/OOM, memory-pressure, and IO-pressure deltas were zero. No browser
+trace was persisted and aligned, so these windows are not evidence against a
+transient server/database issue or evidence for a browser-only cause.
+
+The Playwright and CDP input-control calls timed out in this session, while a
+simple page-side JS evaluation returned quickly on one attempt. These failures
+remain classified as browser-control/trace-capture limitations, not confirmed
+application freezes. Attempt 3's reload call returned in `478 ms`; attempt 5's
+reload completion was not captured. The new evidence is
+`docs/aiya-global-freeze-phase-1-20260927T203028151Z-ba4f64ee-de8c-4661-8142-d4f4d9df4637_EVIDENCE.json`
+(SHA-256 `97DE789E4A62A2F0CCE7899412CE6B6B4E6712144E8DC799DC2CF8ABD4375919`):
+five interrupted attempts, `0/3` valid paired records, all checkpoint chains
+validated, and outcome `BLOCKED_ATTEMPT_BUDGET_EXHAUSTED`. Risk remains open;
+root cause, finding disposition, Plan 2 eligibility, and production readiness
+are unchanged. Do not repeat this identity, start Phase 2, or change/deploy
+runtime code. A future capture requires separate approval for a fresh bounded
+identity and a trace-export path proven to meet the host-overlap gate before a
+run starts.
+
+## Hosted Global-Freeze Trace-Transfer Preflight - 2026-09-28
+
+R-P5-036/R-P5-037 remain open and un-attributed. A read-only trace-transfer
+preflight received CDP trace completion and read the stream to EOF without
+reported data loss, but could not persist the trace as a local file; the
+existing sanitizer was therefore not exercised. The 100-row host sample was
+not persisted, and its 89.127-second overlap estimate used a clock probe made
+after capture. Neither is formal paired evidence. The host summary did not
+show elevated pressure in that window, but cannot rule out a transient or
+non-host cause. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_TRACE_TRANSFER_PREFLIGHT_20260927T214247Z-8f5ac140-9912-405a-a88e-9aad6d980506_EVIDENCE.json`
+(SHA-256 `9607D072DC76989F81892C7AA549E5B0B08E71C6EE26CA61A3103804695393F3`).
+
+The attempted browser reload followed the injected large-buffer transfer
+attempt; page state after reload was not verifiable and must not be counted as
+application performance evidence. No source, runtime, database, environment,
+secret, or production state changed. The hosted v1 diagnostic remains
+`BLOCKED / attempt_budget_exhausted` (5/5 attempts, 0/3 valid pairs). Do not
+retry that identity or infer that any layer has been cleared. Before any new
+bounded hosted measurement, prove local-file trace export without page-side
+bulk injection and pass the existing sanitizer. A newly versioned measurement
+identity also requires separate approval. Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`; Plan 2 eligible findings remain zero;
+production remains `NO-GO`.
+
+## Local Synthetic Trace Sanitizer Sub-Gate - 2026-09-28
+
+The existing `readChromeTrace` importer passed a focused test using a
+gzip-compressed synthetic trace written to a temporary local file; the input
+bytes stayed unchanged and the temp directory was removed. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_LOCAL_TRACE_SANITIZER_PREFLIGHT_20260928T092828Z-0af9f788-0845-435e-92ad-1d3c8380c723_EVIDENCE.json`
+(SHA-256 `B6DBEE968F3997358ED41B0502C6C362B1B1039B2E19C6CBE051001BC89994CB`).
+This closes only synthetic file parsing/redaction. R-P5-036/R-P5-037 remain
+open: actual Chrome/CDP-to-local-file export and sanitizer import of that exact
+export have not been proved, and no freeze/cause layer was measured. Hosted
+Phase 1 remains blocked at 5/5 attempts and 0/3 valid paired records. No new
+measurement identity is authorized by this sub-gate.
+
+## Browser Export Bridge Policy Block - 2026-09-28
+
+R-P5-036/R-P5-037 remain open. A tiny synthetic transfer test in a new blank
+Chrome tab was stopped when browser URL policy rejected the requested
+`data:` navigation before it occurred. The policy explicitly prohibited
+trying the same outcome by raw CDP, another browser surface, or workaround; no
+such retry was made. No download/trace artifact or checkpoint resulted, and
+no hosted app or production state was touched. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_TRACE_EXPORT_POLICY_BLOCK_20260928T095640Z-b69eaddf-a297-4bfb-a5ea-7291a6c44c22_EVIDENCE.json`
+(SHA-256 `804AE205B5C9A2F82CFBC3D1BAAD8923976A56298F0ABDAC512498DFA0AAF39F`).
+
+The synthetic local-file sanitizer test remains passed, but actual browser
+trace export is now explicitly blocked by the available browser capability.
+Do not attempt an alternate browser route or raw CDP to bypass this restriction.
+Resume only if the platform exposes an approved trace-to-file capability;
+Phase 1 remains `BLOCKED / attempt_budget_exhausted` (5/5, 0/3). Cause and
+responsible layer remain unknown; Plan 1 closure, Plan 2 eligibility zero, and
+production `NO-GO` are unchanged.

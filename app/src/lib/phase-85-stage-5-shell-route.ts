@@ -13,17 +13,39 @@ import { isSupabaseStoreConfigured } from "./supabase-store";
 export async function resolveShellReadAccountContext(): Promise<AccountTenantContext> {
   assertSupabaseShellStoreConfigured(isSupabaseStoreConfigured());
   const context = await resolveAccountTenantContext();
+  const entitlementStartedAt = performance.now();
   await assertActiveCommercialEntitlement(context.tenantId);
   requireCapability(context, "read_app_state");
-  return context;
+  return {
+    ...context,
+    ...(process.env.AIYA_PERF_DIAGNOSTIC === "1"
+      ? {
+          authTiming: {
+            ...context.authTiming,
+            entitlementMs: performance.now() - entitlementStartedAt,
+          },
+        }
+      : {}),
+  };
 }
 
 export async function resolveShellSessionActivityContext(): Promise<AccountTenantContext> {
   assertSupabaseShellStoreConfigured(isSupabaseStoreConfigured());
   const context = await resolveAccountTenantContextForSessionActivity();
+  const entitlementStartedAt = performance.now();
   await assertActiveCommercialEntitlement(context.tenantId);
   requireCapability(context, "read_app_state");
-  return context;
+  return {
+    ...context,
+    ...(process.env.AIYA_PERF_DIAGNOSTIC === "1"
+      ? {
+          authTiming: {
+            ...context.authTiming,
+            entitlementMs: performance.now() - entitlementStartedAt,
+          },
+        }
+      : {}),
+  };
 }
 
 export async function enforceShellBootstrapRateLimit(context: AccountTenantContext) {

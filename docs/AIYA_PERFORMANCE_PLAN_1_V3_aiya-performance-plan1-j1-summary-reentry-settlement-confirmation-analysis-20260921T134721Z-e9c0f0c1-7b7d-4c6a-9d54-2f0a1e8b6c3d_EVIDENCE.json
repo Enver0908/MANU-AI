@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-j1-summary-reentry-settlement-confirmation-analysis-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-summary-reentry-settlement-confirmation-analysis",
+  "stageId": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-analysis-v1",
+  "runId": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-analysis-20260921T134721Z-e9c0f0c1-7b7d-4c6a-9d54-2f0a1e8b6c3d",
+  "generatedAt": "2026-09-21T13:47:21Z",
+  "status": "COMPLETE",
+  "outcome": "SUMMARY_REENTRY_BOUNDARY_CONFIRMATION_INCONCLUSIVE",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": []
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "currentStage": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1"
+  },
+  "sourceRuns": {
+    "measurement": {
+      "runId": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1-20260921T134112924Z-a9f02392-5f1a-4359-861c-f94bebba8d58",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1-20260921T134112924Z-a9f02392-5f1a-4359-861c-f94bebba8d58_EVIDENCE.json",
+      "evidenceSha256": "EA0DA0728A8BDFAF39F3C21FD76FB9679051266BD1F81E0C200F55641DEB3C33",
+      "status": "COMPLETE",
+      "branch": "codex/production-readiness-stage-1",
+      "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+      "fixtureId": "local-normal",
+      "officialMeasurement": false
+    },
+    "priorRouteStateAnalysis": {
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-stage6-trigger-isolation-analysis-20260921T131935Z-e026a6cf-2f81-4bdd-82c2-c0dfefb19c31_EVIDENCE.json",
+      "evidenceSha256": "8FA31BE6AC891A97D2FE41FDDA8FA5560C9A6CA089319BAD907107C0359BB070"
+    }
+  },
+  "singleVariable": {
+    "name": "initial_summary_navigation_settlement_gate",
+    "controlVariant": "await_initial_summary_navigation",
+    "A1AndA2": "Existing J1 timing with no harness gate",
+    "B": "Wait for the client-selection summary dashboard request to settle before dispatching the Forms click",
+    "productRuntimeChanged": false,
+    "gateApplied": "B 3/3; all settled as request_failed before Forms dispatch"
+  },
+  "validity": {
+    "attempted": 9,
+    "observationValid": "9/9",
+    "validFunctionalSamples": "9/9",
+    "A1": {
+      "observationValid": "3/3",
+      "functionalSuccess": "3/3",
+      "postFormsSummaryReentry": "0/3",
+      "formsRequestAbort": "0/3",
+      "formsLifecycleAbort": "0/3",
+      "secondActionTailMs": [397, 538, 515]
+    },
+    "B": {
+      "observationValid": "3/3",
+      "functionalSuccess": "3/3",
+      "controlPassed": "3/3",
+      "postFormsSummaryReentry": "0/3",
+      "formsRequestAbort": "0/3",
+      "formsLifecycleAbort": "0/3",
+      "secondActionTailMs": [527, 582, 423]
+    },
+    "A2": {
+      "observationValid": "3/3",
+      "functionalSuccess": "3/3",
+      "postFormsSummaryReentry": "0/3",
+      "formsRequestAbort": "0/3",
+      "formsLifecycleAbort": "0/3",
+      "secondActionTailMs": [521, 535, 478]
+    }
+  },
+  "interpretation": {
+    "observationResult": "The controlled run did not reproduce the historical post-Forms summary re-entry in either baseline or the settlement-gated group.",
+    "functionalResult": "All nine samples completed the Forms and Nutrition actions successfully.",
+    "speedResult": "Second-action tails were captured per group, but this diagnostic run is not a performance acceptance run and no causal speed comparison is claimed.",
+    "candidateBoundaryConfirmed": false,
+    "threeMatchingValidAbortRecords": false,
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false
+  },
+  "blockers": [
+    "The controlled A1-B-A2 run reproduced neither the historical post-Forms summary re-entry nor a Forms abort.",
+    "The candidate therefore has no current abort contrast and no three-matching valid abort records.",
+    "The historical abort traces still lack the new route-state fields."
+  ],
+  "explicitNonClaims": [
+    "The settlement gate is a harness-only diagnostic control, not a product fix.",
+    "No auth, routing, request-coalescing, scheduling, or React-render remediation was accepted.",
+    "This evidence is outside the official nine-scenario baseline and does not change Plan 1 closure or Plan 2 eligibility.",
+    "No external provider, WhatsApp, billing, production worker, migration, deploy, or real health-data path was used."
+  ],
+  "redaction": {
+    "status": "PASS",
+    "rawIdentifiersIncluded": false,
+    "rawBodiesIncluded": false,
+    "credentialsIncluded": false,
+    "healthDataIncluded": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "SUMMARY_REENTRY_BOUNDARY_CONFIRMATION_INCONCLUSIVE",
+    "nextAction": "Do not repeat this same settlement-gated A-B-A automatically. Preserve the result, keep the global diagnosis blocked, and choose a distinct trigger only if separately authorized.",
+    "productionDecision": "NO-GO"
+  }
+}

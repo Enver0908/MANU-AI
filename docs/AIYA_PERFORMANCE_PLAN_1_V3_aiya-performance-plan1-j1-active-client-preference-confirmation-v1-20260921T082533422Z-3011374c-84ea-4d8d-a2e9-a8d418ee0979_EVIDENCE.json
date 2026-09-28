@@ -1,0 +1,1652 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-single-variable-confirmation",
+  "stageId": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1",
+  "runId": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T082533422Z-3011374c-84ea-4d8d-a2e9-a8d418ee0979",
+  "generatedAt": "2026-09-21T08:33:09.178Z",
+  "status": "COMPLETE",
+  "outcome": "J1_SINGLE_VARIABLE_CONFIRMATION_RECORDED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Trace-only local desktop J1 A-B-A confirmation of the active-client preference/navigation race candidate.",
+    "officialMeasurementStarted": false,
+    "diagnosticExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "controlVariant": "await_active_client_preference",
+    "groupOrder": [
+      "A1",
+      "B",
+      "A2"
+    ],
+    "repetitionsPerGroup": 3,
+    "countedAsOfficialSample": false,
+    "externalOperations": []
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "currentStage": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1"
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 183,
+    "statusHash": "10b7dd984aca4c733c4ee4ec2b36a501300b4b0767aac98c740a9b98afa87823",
+    "diffCheck": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "localSupabaseTarget": "/",
+    "shellDirtyRegistrationPolicy": "stable",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "a3ce58434ae02c693c9e89e5d4d783060ff254ceab86f1932a285c77c4c757e3"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "937a52e3b430a2bc77052f8fd67f9dfb5d08db32d32f0bff2e377371c669c3af"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-active-client-preference-confirmation.mjs",
+        "sha256": "fa70eab99af636a92db02aa03292cc1eed91dea8292ce182708070ab47963221"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts",
+        "sha256": "b9bd90ccb60695ea01f63bdb416a1f55500c666293c6bb6004b554d2f179580c"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "1accddd158ba47a4e1c352a9f0371d92d05866ab0b0ebff861feddd5b2f96648"
+      }
+    ]
+  },
+  "parentEvidenceReferences": [
+    "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T080123439Z-c4d87d92-ce1e-4439-8103-77ec287524b9_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json"
+  ],
+  "measurementIdentity": {
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "storePath": "normal_rls_api_path_required",
+    "localSupabaseTarget": "/",
+    "journeyId": "J1",
+    "secondActionDelayMs": 2000,
+    "serverControl": "one_managed_normal_server",
+    "officialMeasurement": false,
+    "groups": [
+      {
+        "id": "A1",
+        "controlVariant": null,
+        "repetitions": 3
+      },
+      {
+        "id": "B",
+        "controlVariant": "await_active_client_preference",
+        "repetitions": 3
+      },
+      {
+        "id": "A2",
+        "controlVariant": null,
+        "repetitions": 3
+      }
+    ]
+  },
+  "sampleSummary": {
+    "attempted": 9,
+    "planned": 9,
+    "validSamples": 6,
+    "observationValid": 9,
+    "officialBaselineSamples": 0,
+    "byGroup": [
+      {
+        "group": "A1",
+        "controlVariant": null,
+        "attempted": 3,
+        "planned": 3,
+        "validSample": 2,
+        "observationValid": 3,
+        "functionalSuccess": 2,
+        "summaryRouteAfterFormsCount": 1,
+        "formsAbortCount": 0,
+        "preferenceGatePassed": 0,
+        "secondActionTailMs": [
+          389,
+          935,
+          898
+        ]
+      },
+      {
+        "group": "B",
+        "controlVariant": "await_active_client_preference",
+        "attempted": 3,
+        "planned": 3,
+        "validSample": 1,
+        "observationValid": 3,
+        "functionalSuccess": 1,
+        "summaryRouteAfterFormsCount": 2,
+        "formsAbortCount": 0,
+        "preferenceGatePassed": 3,
+        "secondActionTailMs": [
+          969,
+          1083,
+          918
+        ]
+      },
+      {
+        "group": "A2",
+        "controlVariant": null,
+        "attempted": 3,
+        "planned": 3,
+        "validSample": 3,
+        "observationValid": 3,
+        "functionalSuccess": 3,
+        "summaryRouteAfterFormsCount": 0,
+        "formsAbortCount": 0,
+        "preferenceGatePassed": 0,
+        "secondActionTailMs": [
+          384,
+          392,
+          302
+        ]
+      }
+    ]
+  },
+  "results": [
+    {
+      "unitKey": "A1:J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 24,
+            "trustedEventAtMs": 68,
+            "routeCommittedAtMs": 69,
+            "requiredRequestStartAtMs": 759,
+            "responseHeaderAtMs": 1493,
+            "responseBodyFinishedAtMs": 1496,
+            "parseRenderCompletedAtMs": 1687,
+            "readyStateAtMs": 1672,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 759,
+                "responseHeaderAtMs": 1493,
+                "bodyFinishedAtMs": 1496,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 2735,
+            "dispatchAtMs": 2737,
+            "trustedEventAtMs": 2760,
+            "routeCommittedAtMs": 2760,
+            "requiredRequestStartAtMs": 2778,
+            "responseHeaderAtMs": 3010,
+            "responseBodyFinishedAtMs": 3011,
+            "parseRenderCompletedAtMs": 3169,
+            "readyStateAtMs": 3149,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 2778,
+                "responseHeaderAtMs": 3010,
+                "bodyFinishedAtMs": 3011,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 69,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 610,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 620,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 736,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1622,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 2760,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3104,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 68,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 287,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 735,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 2760,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 736,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 389
+      }
+    },
+    {
+      "unitKey": "A1:J1:r2",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 2,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "required_read",
+        "actionId": "first",
+        "reason": "required_read_incomplete_or_non_2xx",
+        "pattern": "/api/clients/:clientId/forms"
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 8,
+            "trustedEventAtMs": 96,
+            "routeCommittedAtMs": 97,
+            "requiredRequestStartAtMs": 1900,
+            "responseHeaderAtMs": 3524,
+            "responseBodyFinishedAtMs": 3525,
+            "parseRenderCompletedAtMs": 3897,
+            "readyStateAtMs": 3865,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 1900,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 3107,
+                "responseHeaderAtMs": 3524,
+                "bodyFinishedAtMs": 3525,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3863,
+            "dispatchAtMs": 3865,
+            "trustedEventAtMs": 3904,
+            "routeCommittedAtMs": 3905,
+            "requiredRequestStartAtMs": 3928,
+            "responseHeaderAtMs": 4310,
+            "responseBodyFinishedAtMs": 4312,
+            "parseRenderCompletedAtMs": 4863,
+            "readyStateAtMs": 4839,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 3928,
+                "responseHeaderAtMs": 4310,
+                "bodyFinishedAtMs": 4312,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 97,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1677,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1864,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2783,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3067,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3905,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4466,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 96,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 686,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1863,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3904,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1864,
+          "summaryRouteAfterForms": true
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 935
+      }
+    },
+    {
+      "unitKey": "A1:J1:r3",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 3,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 7,
+            "trustedEventAtMs": 58,
+            "routeCommittedAtMs": 59,
+            "requiredRequestStartAtMs": 1972,
+            "responseHeaderAtMs": 2248,
+            "responseBodyFinishedAtMs": 2249,
+            "parseRenderCompletedAtMs": 2423,
+            "readyStateAtMs": 2407,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 1972,
+                "responseHeaderAtMs": 2248,
+                "bodyFinishedAtMs": 2249,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3955,
+            "dispatchAtMs": 3959,
+            "trustedEventAtMs": 3984,
+            "routeCommittedAtMs": 3985,
+            "requiredRequestStartAtMs": 4005,
+            "responseHeaderAtMs": 4290,
+            "responseBodyFinishedAtMs": 4290,
+            "parseRenderCompletedAtMs": 4907,
+            "readyStateAtMs": 4882,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 4005,
+                "responseHeaderAtMs": 4290,
+                "bodyFinishedAtMs": 4290,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 59,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 933,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1241,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1725,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1956,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2335,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3985,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4419,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 58,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 410,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1955,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3984,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1956,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 898
+      }
+    },
+    {
+      "unitKey": "B:J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "group": "B",
+      "controlVariant": "await_active_client_preference",
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "INCOMPLETE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "first_action",
+        "actionId": "first",
+        "reason": "first_target_abandoned_after_navigation"
+      },
+      "control": {
+        "variant": "await_active_client_preference",
+        "status": "PASSED",
+        "armedAtMs": 11,
+        "completedAtMs": 2683,
+        "responseStatus": 200
+      },
+      "trace": {
+        "status": "INCOMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 12,
+            "trustedEventAtMs": 102,
+            "routeCommittedAtMs": 103,
+            "requiredRequestStartAtMs": 2807,
+            "responseHeaderAtMs": 4656,
+            "responseBodyFinishedAtMs": 4657,
+            "parseRenderCompletedAtMs": null,
+            "readyStateAtMs": null,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 2807,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 3835,
+                "responseHeaderAtMs": 4656,
+                "bodyFinishedAtMs": 4657,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "ABANDONED",
+            "targetReadyStatus": "ABANDONED",
+            "targetUnmounted": true
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 4759,
+            "dispatchAtMs": 4759,
+            "trustedEventAtMs": 4816,
+            "routeCommittedAtMs": 4817,
+            "requiredRequestStartAtMs": 4854,
+            "responseHeaderAtMs": 5360,
+            "responseBodyFinishedAtMs": 5361,
+            "parseRenderCompletedAtMs": 5802,
+            "readyStateAtMs": 5785,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 4854,
+                "responseHeaderAtMs": 5360,
+                "bodyFinishedAtMs": 5361,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 103,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1964,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 2264,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2760,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3491,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3792,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4817,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 5421,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 102,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1729,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 2759,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 4816,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 2760,
+          "summaryRouteAfterForms": true
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 969
+      }
+    },
+    {
+      "unitKey": "B:J1:r2",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 2,
+      "group": "B",
+      "controlVariant": "await_active_client_preference",
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": {
+        "variant": "await_active_client_preference",
+        "status": "PASSED",
+        "armedAtMs": 8,
+        "completedAtMs": 1977,
+        "responseStatus": 200
+      },
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 8,
+            "trustedEventAtMs": 69,
+            "routeCommittedAtMs": 71,
+            "requiredRequestStartAtMs": 2034,
+            "responseHeaderAtMs": 2285,
+            "responseBodyFinishedAtMs": 2288,
+            "parseRenderCompletedAtMs": 2387,
+            "readyStateAtMs": 2359,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 2034,
+                "responseHeaderAtMs": 2285,
+                "bodyFinishedAtMs": 2288,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 4015,
+            "dispatchAtMs": 4034,
+            "trustedEventAtMs": 4094,
+            "routeCommittedAtMs": 4096,
+            "requiredRequestStartAtMs": 4136,
+            "responseHeaderAtMs": 4864,
+            "responseBodyFinishedAtMs": 4864,
+            "parseRenderCompletedAtMs": 5221,
+            "readyStateAtMs": 5177,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 4136,
+                "responseHeaderAtMs": 4864,
+                "bodyFinishedAtMs": 4864,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 71,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1330,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1500,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1858,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 2015,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2378,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 4096,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 5116,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 69,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1084,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 2015,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 4094,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 2015,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 1083
+      }
+    },
+    {
+      "unitKey": "B:J1:r3",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 3,
+      "group": "B",
+      "controlVariant": "await_active_client_preference",
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "required_read",
+        "actionId": "first",
+        "reason": "required_read_incomplete_or_non_2xx",
+        "pattern": "/api/clients/:clientId/forms"
+      },
+      "control": {
+        "variant": "await_active_client_preference",
+        "status": "PASSED",
+        "armedAtMs": 7,
+        "completedAtMs": 1938,
+        "responseStatus": 200
+      },
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 8,
+            "trustedEventAtMs": 63,
+            "routeCommittedAtMs": 64,
+            "requiredRequestStartAtMs": 2008,
+            "responseHeaderAtMs": 2872,
+            "responseBodyFinishedAtMs": 2873,
+            "parseRenderCompletedAtMs": 3238,
+            "readyStateAtMs": 3201,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 2008,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 2661,
+                "responseHeaderAtMs": 2872,
+                "bodyFinishedAtMs": 2873,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3980,
+            "dispatchAtMs": 3994,
+            "trustedEventAtMs": 4028,
+            "routeCommittedAtMs": 4029,
+            "requiredRequestStartAtMs": 4048,
+            "responseHeaderAtMs": 4402,
+            "responseBodyFinishedAtMs": 4405,
+            "parseRenderCompletedAtMs": 4955,
+            "readyStateAtMs": 4946,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 4048,
+                "responseHeaderAtMs": 4402,
+                "bodyFinishedAtMs": 4405,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 64,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1295,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1525,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1981,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2134,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2637,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4029,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4505,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 63,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1020,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1980,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 4028,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1981,
+          "summaryRouteAfterForms": true
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 918
+      }
+    },
+    {
+      "unitKey": "A2:J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 8,
+            "trustedEventAtMs": 52,
+            "routeCommittedAtMs": 55,
+            "requiredRequestStartAtMs": 1247,
+            "responseHeaderAtMs": 1563,
+            "responseBodyFinishedAtMs": 1563,
+            "parseRenderCompletedAtMs": 1893,
+            "readyStateAtMs": 1872,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 1247,
+                "responseHeaderAtMs": 1563,
+                "bodyFinishedAtMs": 1563,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3213,
+            "dispatchAtMs": 3221,
+            "trustedEventAtMs": 3244,
+            "routeCommittedAtMs": 3245,
+            "requiredRequestStartAtMs": 3272,
+            "responseHeaderAtMs": 3465,
+            "responseBodyFinishedAtMs": 3466,
+            "parseRenderCompletedAtMs": 3659,
+            "readyStateAtMs": 3628,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 3272,
+                "responseHeaderAtMs": 3465,
+                "bodyFinishedAtMs": 3466,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 55,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 764,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 777,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1178,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1214,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1781,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3245,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3530,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 52,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 288,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1213,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3244,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1214,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 384
+      }
+    },
+    {
+      "unitKey": "A2:J1:r2",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 2,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 8,
+            "trustedEventAtMs": 62,
+            "routeCommittedAtMs": 63,
+            "requiredRequestStartAtMs": 1838,
+            "responseHeaderAtMs": 2086,
+            "responseBodyFinishedAtMs": 2087,
+            "parseRenderCompletedAtMs": 2241,
+            "readyStateAtMs": 2217,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 1838,
+                "responseHeaderAtMs": 2086,
+                "bodyFinishedAtMs": 2087,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3803,
+            "dispatchAtMs": 3817,
+            "trustedEventAtMs": 3850,
+            "routeCommittedAtMs": 3850,
+            "requiredRequestStartAtMs": 3863,
+            "responseHeaderAtMs": 4117,
+            "responseBodyFinishedAtMs": 4117,
+            "parseRenderCompletedAtMs": 4274,
+            "readyStateAtMs": 4242,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 3863,
+                "responseHeaderAtMs": 4117,
+                "bodyFinishedAtMs": 4117,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 63,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1057,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1186,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1573,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1804,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2197,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3850,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4184,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 62,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 297,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1803,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3850,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1804,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 392
+      }
+    },
+    {
+      "unitKey": "A2:J1:r3",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 3,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 11,
+            "trustedEventAtMs": 91,
+            "routeCommittedAtMs": 93,
+            "requiredRequestStartAtMs": 2636,
+            "responseHeaderAtMs": 2897,
+            "responseBodyFinishedAtMs": 2898,
+            "parseRenderCompletedAtMs": 3059,
+            "readyStateAtMs": 3042,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 2636,
+                "responseHeaderAtMs": 2897,
+                "bodyFinishedAtMs": 2898,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 4612,
+            "dispatchAtMs": 4622,
+            "trustedEventAtMs": 4642,
+            "routeCommittedAtMs": 4643,
+            "requiredRequestStartAtMs": 4661,
+            "responseHeaderAtMs": 4819,
+            "responseBodyFinishedAtMs": 4819,
+            "parseRenderCompletedAtMs": 4969,
+            "readyStateAtMs": 4944,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 4661,
+                "responseHeaderAtMs": 4819,
+                "bodyFinishedAtMs": 4819,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 93,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1830,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1838,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2363,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2613,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3059,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 4643,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4894,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 91,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 562,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 2612,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 4642,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 2613,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 302
+      }
+    }
+  ],
+  "blockers": [],
+  "interpretation": {
+    "status": "UNINTERPRETED_PENDING_REVIEW",
+    "rootCauseConfirmed": false,
+    "runtimeFixAccepted": false,
+    "productionGo": false,
+    "requiredForConfirmation": [
+      "three matched valid A1-B-A2 cycles",
+      "same route/request/fixture/browser inputs outside the one B gate",
+      "direct correlation of summary transition and Forms lifecycle, if reproduced",
+      "separate functional and speed results"
+    ]
+  },
+  "explicitNonClaims": [
+    "This trace-only A-B-A run is not the official nine-scenario baseline.",
+    "The active-client preference gate is a harness control, not a product change.",
+    "A route transition correlation does not alone prove the global freeze thesis or auth as the root cause.",
+    "No finding disposition, Plan 2 eligibility, or production decision changes here.",
+    "Production remains NO-GO."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "J1_SINGLE_VARIABLE_CONFIRMATION_RECORDED",
+    "runtimeFixAccepted": false,
+    "plan2Eligible": false,
+    "nextAction": "Review the three A-B-A groups together with the prior route/lifecycle correlation before any code change."
+  }
+}

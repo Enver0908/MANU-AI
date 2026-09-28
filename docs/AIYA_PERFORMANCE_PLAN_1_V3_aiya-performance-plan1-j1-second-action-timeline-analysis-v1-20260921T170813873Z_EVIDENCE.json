@@ -1,0 +1,600 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-second-action-timeline-analysis-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-second-action-timeline-analysis",
+  "stageId": "aiya-performance-plan1-j1-second-action-timeline-analysis-v1",
+  "runId": "aiya-performance-plan1-j1-second-action-timeline-analysis-v1-20260921T170813873Z",
+  "generatedAt": "2026-09-21T17:13:14.433Z",
+  "status": "COMPLETE",
+  "outcome": "NETWORK_SERVER_FIRST_WITH_CONTEXT_TAIL_MAIN_THREAD_CAUSE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Align the existing current-source J1 second trusted interaction with request intervals, server timing, route/state events, browser event timing, long tasks, and available React/context commit evidence.",
+    "analysisOnly": true,
+    "browserRerunStarted": false,
+    "applicationRuntimeChanged": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 227,
+    "statusHash": "c52cd0eede72eec89713879543c6db0004d08fd06ebcd149480c333484436961",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/src/lib/auth-context.ts",
+        "sha256": "606e3dbe7f3be9e01110a825464e96f253f65e342fdb76902e687dca98b9f05c"
+      },
+      {
+        "path": "app/src/lib/dashboard-server-auth.ts",
+        "sha256": "a227dc6445e28c46f5b09fdc0c18d5411e622bcf956c52521e55132a1ba08e48"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "17c4b7cb55ec267dd2c708a462924cd294e9f0d8e4309e370cc71ed68915417c"
+      },
+      {
+        "path": "app/src/lib/performance-diagnostic.ts",
+        "sha256": "e1dc3c40a9452765f9cf7207744468a2ae61b7acabad982a70d71a8a0da6e864"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-shared-runtime-auth-coverage.mjs",
+        "sha256": "49511444070d76970661e82d78af4ca4e07409a3c3569fc44b812643e20a45a9"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-shared-runtime-auth-fanout-commit-overlap.mjs",
+        "sha256": "dd9ab4abadd3e84dffed670259e3be3ebbe45be13d84d7eb1087c99843e4d715"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-second-action-timeline-analysis.mjs",
+        "sha256": "a5d899a94d9fd41c04439eb43d0d2545cd1fde5089eb493e5a65c261fbbf2be3"
+      }
+    ]
+  },
+  "sourceMeasurement": {
+    "runId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5",
+    "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1-20260921T153517537Z-2e376ebf-fde3-4868-96bc-6413fcd0a6e5_EVIDENCE.json",
+    "evidenceSha256": "a343ff1bd61b423705dcb478da46e35f5605b6093ffee3056468f05d323a4968",
+    "status": "COMPLETE",
+    "outcome": "SHARED_API_AUTH_COVERAGE_PARTIAL_RSC_MARKER_OBSERVED",
+    "validity": {
+      "attempted": "1/1",
+      "observationValid": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "validSample": true,
+      "officialSample": false
+    },
+    "checkpoint": {
+      "phaseId": "aiya-performance-plan1-j1-shared-runtime-auth-coverage-v1",
+      "status": "COMPLETE",
+      "eventCount": 8,
+      "lastEventType": "run.status",
+      "hashChainRead": true
+    }
+  },
+  "validity": {
+    "sourceTrace": "1/1 valid functional J1 trace",
+    "observationValidity": "VALID",
+    "functionalOutcome": "SUCCESS",
+    "validSample": true,
+    "officialSample": false,
+    "secondActionBoundary": "COMPLETE"
+  },
+  "measurement": {
+    "journeyId": "J1",
+    "unitKey": "diagnostic:J1:r1",
+    "timeline": {
+      "status": "COMPLETE",
+      "windowClock": "trace action and browser performance timestamps; request-summary intervals are wall-clock aligned to trace start",
+      "window": {
+        "trustedEventAtMs": 4749,
+        "readyStateAtMs": 5794,
+        "trustedToReadyMs": 1045
+      },
+      "actionBoundaries": {
+        "dispatchAtMs": 4650,
+        "trustedEventAtMs": 4749,
+        "routeCommittedAtMs": 4750,
+        "requiredRequestStartAtMs": 4774,
+        "requiredResponseHeaderAtMs": 5334,
+        "requiredResponseBodyFinishedAtMs": 5342,
+        "readyStateAtMs": 5794,
+        "parseRenderCompletedAtMs": 5837
+      },
+      "actionDurations": {
+        "dispatchToTrustedMs": 99,
+        "trustedToRouteCommittedMs": 1,
+        "trustedToRequiredRequestStartMs": 25,
+        "trustedToRequiredResponseHeaderMs": 585,
+        "trustedToRequiredBodyFinishedMs": 593,
+        "requiredBodyToReadyMs": 452,
+        "readyToParseRenderCompleteMs": 43
+      },
+      "requiredRequest": {
+        "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+        "method": "GET",
+        "requestStartAtMs": 4774,
+        "responseHeaderAtMs": 5334,
+        "responseBodyFinishedAtMs": 5342,
+        "status": 200,
+        "failed": false,
+        "failureReason": null
+      },
+      "requests": {
+        "overlapCount": 3,
+        "apiCount": 2,
+        "rscCount": 1,
+        "requiredNetworkRequest": {
+          "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+          "method": "GET",
+          "requestKind": "api_or_other",
+          "startAtMs": 4752,
+          "endAtMs": 5327,
+          "status": 200,
+          "failed": false,
+          "serverTiming": [
+            {
+              "name": "auth",
+              "durationMs": 374.55
+            },
+            {
+              "name": "auth_get_user",
+              "durationMs": 269.23
+            },
+            {
+              "name": "auth_membership",
+              "durationMs": 27.9
+            },
+            {
+              "name": "auth_dietitian",
+              "durationMs": 10.76
+            },
+            {
+              "name": "auth_get_session",
+              "durationMs": 0.34
+            },
+            {
+              "name": "auth_session_activity",
+              "durationMs": 32.38
+            },
+            {
+              "name": "auth_total",
+              "durationMs": 341.36
+            },
+            {
+              "name": "entitlement",
+              "durationMs": 32.33
+            },
+            {
+              "name": "store",
+              "durationMs": 167.49
+            },
+            {
+              "name": "json",
+              "durationMs": 0.95
+            },
+            {
+              "name": "route",
+              "durationMs": 542.99
+            }
+          ]
+        },
+        "bootstrapRequests": [
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "requestKind": "api_or_other",
+            "startAtMs": 4753,
+            "endAtMs": 5370,
+            "status": 200,
+            "failed": false,
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 372.47
+              },
+              {
+                "name": "auth_get_user",
+                "durationMs": 219.89
+              },
+              {
+                "name": "auth_membership",
+                "durationMs": 47.34
+              },
+              {
+                "name": "auth_dietitian",
+                "durationMs": 35.36
+              },
+              {
+                "name": "auth_get_session",
+                "durationMs": 0.29
+              },
+              {
+                "name": "auth_session_activity",
+                "durationMs": 35.07
+              },
+              {
+                "name": "auth_total",
+                "durationMs": 338.36
+              },
+              {
+                "name": "entitlement",
+                "durationMs": 33.13
+              },
+              {
+                "name": "rate_limit",
+                "durationMs": 101.7
+              },
+              {
+                "name": "store",
+                "durationMs": 86.54
+              },
+              {
+                "name": "json",
+                "durationMs": 0.24
+              },
+              {
+                "name": "route",
+                "durationMs": 560.94
+              }
+            ]
+          }
+        ],
+        "rscRequests": [
+          {
+            "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+            "method": "GET",
+            "requestKind": "rsc",
+            "startAtMs": 4753,
+            "endAtMs": 5023,
+            "status": 200,
+            "failed": true,
+            "serverTiming": []
+          }
+        ],
+        "all": [
+          {
+            "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+            "method": "GET",
+            "requestKind": "api_or_other",
+            "startAtMs": 4752,
+            "endAtMs": 5327,
+            "status": 200,
+            "failed": false,
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 374.55
+              },
+              {
+                "name": "auth_get_user",
+                "durationMs": 269.23
+              },
+              {
+                "name": "auth_membership",
+                "durationMs": 27.9
+              },
+              {
+                "name": "auth_dietitian",
+                "durationMs": 10.76
+              },
+              {
+                "name": "auth_get_session",
+                "durationMs": 0.34
+              },
+              {
+                "name": "auth_session_activity",
+                "durationMs": 32.38
+              },
+              {
+                "name": "auth_total",
+                "durationMs": 341.36
+              },
+              {
+                "name": "entitlement",
+                "durationMs": 32.33
+              },
+              {
+                "name": "store",
+                "durationMs": 167.49
+              },
+              {
+                "name": "json",
+                "durationMs": 0.95
+              },
+              {
+                "name": "route",
+                "durationMs": 542.99
+              }
+            ]
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "requestKind": "api_or_other",
+            "startAtMs": 4753,
+            "endAtMs": 5370,
+            "status": 200,
+            "failed": false,
+            "serverTiming": [
+              {
+                "name": "auth",
+                "durationMs": 372.47
+              },
+              {
+                "name": "auth_get_user",
+                "durationMs": 219.89
+              },
+              {
+                "name": "auth_membership",
+                "durationMs": 47.34
+              },
+              {
+                "name": "auth_dietitian",
+                "durationMs": 35.36
+              },
+              {
+                "name": "auth_get_session",
+                "durationMs": 0.29
+              },
+              {
+                "name": "auth_session_activity",
+                "durationMs": 35.07
+              },
+              {
+                "name": "auth_total",
+                "durationMs": 338.36
+              },
+              {
+                "name": "entitlement",
+                "durationMs": 33.13
+              },
+              {
+                "name": "rate_limit",
+                "durationMs": 101.7
+              },
+              {
+                "name": "store",
+                "durationMs": 86.54
+              },
+              {
+                "name": "json",
+                "durationMs": 0.24
+              },
+              {
+                "name": "route",
+                "durationMs": 560.94
+              }
+            ]
+          },
+          {
+            "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+            "method": "GET",
+            "requestKind": "rsc",
+            "startAtMs": 4753,
+            "endAtMs": 5023,
+            "status": 200,
+            "failed": true,
+            "serverTiming": []
+          }
+        ],
+        "requiredBoundaryToRequestSummaryDeltaMs": {
+          "requestStart": 22,
+          "endOrBodyBoundary": 7,
+          "note": "Non-zero deltas are retained as instrumentation-boundary differences; the two timing sources are not silently merged."
+        }
+      },
+      "browserWork": {
+        "phase52Events": [
+          {
+            "name": "shell_bootstrap_started",
+            "relativeAtMs": 309.4,
+            "transition": null,
+            "runtime": null,
+            "reason": "route",
+            "status": null,
+            "requestSequence": null
+          },
+          {
+            "name": "shell_context_state_committed",
+            "relativeAtMs": 345.7,
+            "transition": "update",
+            "runtime": "ready",
+            "reason": null,
+            "status": null,
+            "requestSequence": 4
+          },
+          {
+            "name": "shell_bootstrap_completed",
+            "relativeAtMs": 960.5,
+            "transition": null,
+            "runtime": null,
+            "reason": null,
+            "status": "success",
+            "requestSequence": null
+          },
+          {
+            "name": "shell_context_state_committed",
+            "relativeAtMs": 968.2,
+            "transition": "update",
+            "runtime": "ready",
+            "reason": null,
+            "status": null,
+            "requestSequence": 4
+          }
+        ],
+        "contextEvents": [
+          {
+            "name": "shell_context_state_committed",
+            "relativeAtMs": 345.7,
+            "transition": "update",
+            "runtime": "ready",
+            "reason": null,
+            "status": null,
+            "requestSequence": 4
+          },
+          {
+            "name": "shell_context_state_committed",
+            "relativeAtMs": 968.2,
+            "transition": "update",
+            "runtime": "ready",
+            "reason": null,
+            "status": null,
+            "requestSequence": 4
+          }
+        ],
+        "contextCommitCount": 2,
+        "reactProfilerCommitEventCountInWindow": 0,
+        "reactProfilerCommitEventCountFullTrace": 0,
+        "reactProfilerClockAvailability": "NOT_OBSERVED_IN_TRACE",
+        "phase55Events": [
+          {
+            "name": "stage6_workspace_effect_cleanup",
+            "relativeAtMs": 302.8,
+            "domain": "summary",
+            "routeSection": "clients",
+            "routeClientTask": "forms",
+            "sequence": 1,
+            "previousSequence": null,
+            "hasPreviousController": false
+          },
+          {
+            "name": "stage6_workspace_effect_setup",
+            "relativeAtMs": 306.8,
+            "domain": "forms",
+            "routeSection": "clients",
+            "routeClientTask": "forms",
+            "sequence": null,
+            "previousSequence": null,
+            "hasPreviousController": false
+          },
+          {
+            "name": "stage6_workspace_load_abort_previous",
+            "relativeAtMs": 306.9,
+            "domain": "forms",
+            "routeSection": "clients",
+            "routeClientTask": "forms",
+            "sequence": null,
+            "previousSequence": 1,
+            "hasPreviousController": true
+          },
+          {
+            "name": "stage6_workspace_load_started",
+            "relativeAtMs": 307.1,
+            "domain": "forms",
+            "routeSection": "clients",
+            "routeClientTask": "forms",
+            "sequence": 2,
+            "previousSequence": null,
+            "hasPreviousController": false
+          },
+          {
+            "name": "stage6_workspace_load_aborted",
+            "relativeAtMs": 313.6,
+            "domain": "summary",
+            "routeSection": "clients",
+            "routeClientTask": "forms",
+            "sequence": 1,
+            "previousSequence": null,
+            "hasPreviousController": false
+          },
+          {
+            "name": "stage6_workspace_load_succeeded",
+            "relativeAtMs": 1032.7,
+            "domain": "forms",
+            "routeSection": "clients",
+            "routeClientTask": "forms",
+            "sequence": 2,
+            "previousSequence": null,
+            "hasPreviousController": false
+          }
+        ],
+        "eventTimings": [
+          {
+            "name": "pointerdown",
+            "relativeStartMs": 264.8,
+            "processingDelayMs": 9.8,
+            "processingDurationMs": 6.7,
+            "durationMs": 72,
+            "interactionId": 2148
+          },
+          {
+            "name": "pointerup",
+            "relativeStartMs": 264.8,
+            "processingDelayMs": 17.4,
+            "processingDurationMs": 0.1,
+            "durationMs": 72,
+            "interactionId": 2148
+          },
+          {
+            "name": "click",
+            "relativeStartMs": 264.8,
+            "processingDelayMs": 17.5,
+            "processingDurationMs": 31.9,
+            "durationMs": 72,
+            "interactionId": 2148
+          }
+        ],
+        "longTasksInWindow": [],
+        "fullTraceLongTaskCount": 4,
+        "firstLongTaskStartingAtOrAfterReady": {
+          "relativeToTrustedMs": 1083.1,
+          "relativeToReadyMs": 38.1,
+          "durationMs": 60
+        }
+      },
+      "segments": {
+        "largestDirectlyBoundedSegment": {
+          "segment": "trusted_to_required_response_body",
+          "durationMs": 593
+        },
+        "interpretation": "The largest bounded segment is descriptive for this trace; overlapping requests and context events do not establish causality."
+      }
+    }
+  },
+  "interpretation": "In this one valid current-source trace, the largest directly bounded interval is the trusted interaction through required response-body completion. The required food-rule-profile read and a concurrent shell bootstrap carried server timing, while context-state commits were observed before ready. No React profiler commit event or long task was observed inside the second-action window, so the post-body readiness tail and the proposed global commit storm remain unresolved.",
+  "evidenceGaps": [
+    "This is one diagnostic trace, not the required repeated causal record.",
+    "The request-summary clock and action timing clock retain measurable boundary deltas; they are reported separately rather than silently combined.",
+    "The client-detail request had no response timing and the dashboard RSC request ended as failed/aborted, so server continuation is not measured.",
+    "No React profiler commit event was present in this trace, so context-state commits cannot be converted into a React render-duration claim."
+  ],
+  "explicitNonClaims": [
+    "The trace does not confirm the global freeze root cause.",
+    "Auth timing and request fan-out co-occurrence are not a causal proof or an accepted runtime fix.",
+    "No performance recovery, finding-disposition change, Plan 2 entry, or production approval follows."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "NETWORK_SERVER_FIRST_WITH_CONTEXT_TAIL_MAIN_THREAD_CAUSE_UNRESOLVED",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  },
+  "nextAction": "Use this aligned boundary to choose one separately authorized controlled comparison: required-read/server scheduling or post-response state/commit scheduling. Hold the other boundary and request fan-out constant; do not combine variables or claim a root cause from this single trace."
+}

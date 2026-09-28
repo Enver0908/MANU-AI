@@ -1,0 +1,2732 @@
+{
+  "schemaVersion": "aiya-performance-plan1-shared-runtime-auth-fanout-commit-overlap-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-auth-fanout-commit-overlap-analysis",
+  "stageId": "aiya-performance-plan1-shared-runtime-auth-fanout-commit-overlap",
+  "runId": "aiya-performance-plan1-shared-runtime-auth-fanout-commit-overlap-v1-20260921T141433347Z-5146b711-7709-41be-a5a7-c606ead3922c",
+  "generatedAt": "2026-09-21T14:15:40.463Z",
+  "status": "COMPLETE",
+  "outcome": "AUTH_FANOUT_COMMIT_OVERLAP_OBSERVED_AUTH_COVERAGE_INCOMPLETE_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Correlate one real authenticated J1 interaction's request fan-out, available API auth timing, RSC intervals, and React commit waves.",
+    "analysisOnly": true,
+    "browserRerunStarted": false,
+    "applicationRuntimeChanged": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "fixture": "local-normal synthetic owner from completed shared-runtime evidence",
+    "targetJourney": "J1"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "hypothesisBoundary": {
+    "statement": "A single client interaction may create overlapping API/RSC work whose available auth spans and React commit waves occupy the second-action boundary.",
+    "tested": [
+      "first-click-to-second-click request fan-out is present",
+      "second-action window contains tracked API/RSC requests",
+      "available API auth timing and React commit events can be aligned on one trace clock"
+    ],
+    "notTested": [
+      "every API route's auth chain, because most routes do not emit Server-Timing auth stages",
+      "server-side RSC resolveDashboardAuth stage timings",
+      "causality, because no single variable was changed"
+    ]
+  },
+  "sourceEvidence": {
+    "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T192740772Z-0263538b-baee-4e08-8668-eed92fd2cd6d",
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T192740772Z-0263538b-baee-4e08-8668-eed92fd2cd6d_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "sha256": "962252c6744ba03f4f75be04532bc8f1dbbeb6df3cc44d73d63c471391d52c4a",
+    "sourceHead": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "sourceBranch": "codex/production-readiness-stage-1",
+    "sourceMeasurementStatus": "COMPLETE",
+    "sourceCheckpoint": {
+      "checkpointPhaseId": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+      "checkpointSchemaVersion": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+      "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+      "fixtureId": "local-normal",
+      "journeyIds": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "normalRepetitions": 3,
+      "diagnosticRepetitions": 3,
+      "secondActionDelayMs": 2000,
+      "databaseLockSamplingIntervalMs": 50,
+      "countedAsOfficialSample": false,
+      "foodRuleProfileReadPolicy": "broad",
+      "shellDirtyRegistrationPolicy": "legacy"
+    },
+    "runtimeSourceComparison": {
+      "checkedCount": 15,
+      "matchCount": 15,
+      "mismatchCount": 0,
+      "allRuntimeFilesMatch": true,
+      "files": [
+        {
+          "path": "app/src/lib/auth-context.ts",
+          "evidenceSha256": "606e3dbe7f3be9e01110a825464e96f253f65e342fdb76902e687dca98b9f05c",
+          "currentSha256": "606e3dbe7f3be9e01110a825464e96f253f65e342fdb76902e687dca98b9f05c",
+          "match": true
+        },
+        {
+          "path": "app/src/lib/phase-85-stage-5-shell-route.ts",
+          "evidenceSha256": "f5932eae48cb1254107898a54eda26f5b60bba2c6f785689dc209765f76209ef",
+          "currentSha256": "f5932eae48cb1254107898a54eda26f5b60bba2c6f785689dc209765f76209ef",
+          "match": true
+        },
+        {
+          "path": "app/src/app/api/shell/bootstrap/route.ts",
+          "evidenceSha256": "76e7ae08573be857bb9db08914b95547fbd401a0bd3c6fcdb8007a33ff7261fa",
+          "currentSha256": "76e7ae08573be857bb9db08914b95547fbd401a0bd3c6fcdb8007a33ff7261fa",
+          "match": true
+        },
+        {
+          "path": "app/src/app/api/app-state/route.ts",
+          "evidenceSha256": "a36bb82f774ec17721055cecdb23a973dbb1c9f7d3cc4b3d7caf98c2ddc597f4",
+          "currentSha256": "a36bb82f774ec17721055cecdb23a973dbb1c9f7d3cc4b3d7caf98c2ddc597f4",
+          "match": true
+        },
+        {
+          "path": "app/src/components/dashboard-app.tsx",
+          "evidenceSha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17",
+          "currentSha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17",
+          "match": true
+        },
+        {
+          "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+          "evidenceSha256": "0cfb3f5e5c6933184f7639a070134ccc14d81538fd3c15bf4db89742dc478a8c",
+          "currentSha256": "0cfb3f5e5c6933184f7639a070134ccc14d81538fd3c15bf4db89742dc478a8c",
+          "match": true
+        },
+        {
+          "path": "app/src/components/dashboard/shell-provider.tsx",
+          "evidenceSha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1",
+          "currentSha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1",
+          "match": true
+        },
+        {
+          "path": "app/src/lib/dashboard-server-auth.ts",
+          "evidenceSha256": "142c3aab1d836eeedb38d807c23b42d00a339c40823d8aaa7927666d67a5773f",
+          "currentSha256": "142c3aab1d836eeedb38d807c23b42d00a339c40823d8aaa7927666d67a5773f",
+          "match": true
+        },
+        {
+          "path": "app/src/lib/phase-52-diagnostic.ts",
+          "evidenceSha256": "13293d7124f02c8aa57167a4ecb33861eee0340ee2a0584b9927d2f674a2b047",
+          "currentSha256": "13293d7124f02c8aa57167a4ecb33861eee0340ee2a0584b9927d2f674a2b047",
+          "match": true
+        },
+        {
+          "path": "app/src/lib/use-shell-dirty-registration.ts",
+          "evidenceSha256": "3b657c1e6cd2f1b235d49499edebd03c8f47a6c0154406e29acf708ce2ea7304",
+          "currentSha256": "3b657c1e6cd2f1b235d49499edebd03c8f47a6c0154406e29acf708ce2ea7304",
+          "match": true
+        },
+        {
+          "path": "app/src/lib/use-aiya-state.ts",
+          "evidenceSha256": "40880cd6438c5310dd96c0ca4c3835e76a037910a0c2ed3e7dd63e69d91b9769",
+          "currentSha256": "40880cd6438c5310dd96c0ca4c3835e76a037910a0c2ed3e7dd63e69d91b9769",
+          "match": true
+        },
+        {
+          "path": "app/src/lib/use-stage-4b-inbox.ts",
+          "evidenceSha256": "9b92f6a25454c56d207d2271d98279951e690d960e3d90f3585b9f2b6f4c6eee",
+          "currentSha256": "9b92f6a25454c56d207d2271d98279951e690d960e3d90f3585b9f2b6f4c6eee",
+          "match": true
+        },
+        {
+          "path": "app/src/lib/use-stage-4b2-messaging.ts",
+          "evidenceSha256": "fcaeda79bbbca550f987cad9255baa21715ca52fce64fac30c7e33002164c237",
+          "currentSha256": "fcaeda79bbbca550f987cad9255baa21715ca52fce64fac30c7e33002164c237",
+          "match": true
+        },
+        {
+          "path": "app/src/lib/supabase-store.ts",
+          "evidenceSha256": "b65f45ea1fba32331a5076c94261ae5073c27145bc906a9e234841da227d8025",
+          "currentSha256": "b65f45ea1fba32331a5076c94261ae5073c27145bc906a9e234841da227d8025",
+          "match": true
+        },
+        {
+          "path": "app/src/app/api/clients/[id]/food-rule-profile/route.ts",
+          "evidenceSha256": "edda2bbaba3dcb0e0bb6859e25c1b0787c32b3e9a3d78849c38ba00298716179",
+          "currentSha256": "edda2bbaba3dcb0e0bb6859e25c1b0787c32b3e9a3d78849c38ba00298716179",
+          "match": true
+        }
+      ],
+      "note": "Runtime app source hashes are compared separately from the historical harness/document hashes."
+    },
+    "analysisRunnerPath": "app/scripts/performance-plan-1-shared-runtime-auth-fanout-commit-overlap.mjs",
+    "analysisRunnerSha256": "dd9ab4abadd3e84dffed670259e3be3ebbe45be13d84d7eb1087c99843e4d715"
+  },
+  "windowContract": {
+    "definitions": {
+      "firstToSecondTrusted": "first trusted interaction through second trusted interaction",
+      "firstToSecondReady": "first trusted interaction through second ready state",
+      "secondAction": "second trusted interaction through second ready state"
+    },
+    "requestIntervalClock": "captureStartedAtWallMs + request-relative time - trace.startedAtWallMs",
+    "reactEventClock": "phase52 event atWallMs - trace.startedAtWallMs",
+    "authSpanPlacement": "request start through request start plus auth_total; inferred because Server-Timing provides duration only",
+    "nestedReactProfilerHandling": "report raw profiler events and distinct commitTimeMs waves separately; do not sum nested profiler durations as CPU time"
+  },
+  "stageLedger": [
+    {
+      "stageId": "AFC.1",
+      "name": "Source evidence and runtime hash check",
+      "status": "COMPLETE"
+    },
+    {
+      "stageId": "AFC.2",
+      "name": "Three valid J1 observation selection",
+      "status": "COMPLETE"
+    },
+    {
+      "stageId": "AFC.3",
+      "name": "Request/auth/React clock alignment",
+      "status": "COMPLETE"
+    },
+    {
+      "stageId": "AFC.4",
+      "name": "Coverage and causal boundary",
+      "status": "COMPLETE"
+    }
+  ],
+  "validity": {
+    "sourceObservationsAvailable": 3,
+    "validFunctionalObservations": 3,
+    "observationValid": "3/3 selected J1 observations",
+    "allFanoutObserved": true,
+    "allSecondActionCommitWaves": true,
+    "authTimingCoverageIncomplete": true,
+    "firstToSecondApiRequestCount": [
+      7,
+      10,
+      10
+    ],
+    "firstToSecondRscRequestCount": [
+      9,
+      13,
+      13
+    ],
+    "secondActionApiRequestCount": [
+      2,
+      2,
+      2
+    ],
+    "secondActionRscRequestCount": [
+      1,
+      1,
+      1
+    ]
+  },
+  "observations": [
+    {
+      "unitKey": "diagnostic:J1:r1",
+      "journeyId": "J1",
+      "validSample": true,
+      "functionalOutcome": "SUCCESS",
+      "observationValidity": "VALID",
+      "secondActionTailMs": 443,
+      "windows": {
+        "firstToSecondTrusted": {
+          "totalRequestCount": 16,
+          "apiRequestCount": 7,
+          "rscRequestCount": 9,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/clients/%3Cuuid%3E",
+            "/api/clients/%3Cuuid%3E/forms",
+            "/api/conversations",
+            "/api/shell/bootstrap",
+            "/api/shell/preferences",
+            "/dashboard/ai-chat",
+            "/dashboard/more",
+            "/dashboard/settings",
+            "/dashboard?section=alerts",
+            "/dashboard?section=clients",
+            "/dashboard?section=clients&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+            "/dashboard?section=messages"
+          ],
+          "timedApiRequestCount": 2,
+          "untimedApiRequestCount": 5,
+          "authTimingCoverage": 0.286,
+          "authTotalMs": 565.58,
+          "authStages": {
+            "auth_get_user": 452.05,
+            "auth_membership": 21.57,
+            "auth_dietitian": 40.23,
+            "auth_get_session": 0.65,
+            "auth_session_activity": 49.6
+          },
+          "entitlementMs": 30.64,
+          "derivedAuthSpanCount": 2,
+          "derivedAuthSpansOverlappingWindow": 2,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -103,
+              "endAtMs": 195,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=messages",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -102,
+              "endAtMs": 185,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=alerts",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -101,
+              "endAtMs": 237,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/conversations",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -98,
+              "endAtMs": 362,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 49,
+              "endAtMs": 296,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 109,
+              "endAtMs": 499,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 287.29,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 109,
+              "endAtMs": 440,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 193,
+              "endAtMs": 450,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 204,
+              "endAtMs": 490,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/preferences",
+              "method": "PATCH",
+              "requestKind": "api_or_other",
+              "startAtMs": 333,
+              "endAtMs": 623,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 596,
+              "endAtMs": 723,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 629,
+              "endAtMs": 629,
+              "status": null,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 629,
+              "endAtMs": 629,
+              "status": null,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/forms",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 757,
+              "endAtMs": 1161,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 758,
+              "endAtMs": 1235,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 278.29,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 758,
+              "endAtMs": 1046,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        },
+        "firstToSecondReady": {
+          "totalRequestCount": 19,
+          "apiRequestCount": 9,
+          "rscRequestCount": 10,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/clients/%3Cuuid%3E",
+            "/api/clients/%3Cuuid%3E/food-rule-profile",
+            "/api/clients/%3Cuuid%3E/forms",
+            "/api/conversations",
+            "/api/shell/bootstrap",
+            "/api/shell/preferences",
+            "/dashboard/ai-chat",
+            "/dashboard/more",
+            "/dashboard/settings",
+            "/dashboard?section=alerts",
+            "/dashboard?section=clients",
+            "/dashboard?section=clients&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+            "/dashboard?section=messages"
+          ],
+          "timedApiRequestCount": 4,
+          "untimedApiRequestCount": 5,
+          "authTimingCoverage": 0.444,
+          "authTotalMs": 896.3,
+          "authStages": {
+            "auth_get_user": 694.01,
+            "auth_membership": 49.47,
+            "auth_dietitian": 65.79,
+            "auth_get_session": 1.33,
+            "auth_session_activity": 83.4
+          },
+          "entitlementMs": 59.77,
+          "derivedAuthSpanCount": 4,
+          "derivedAuthSpansOverlappingWindow": 4,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -103,
+              "endAtMs": 195,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=messages",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -102,
+              "endAtMs": 185,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=alerts",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -101,
+              "endAtMs": 237,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/conversations",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -98,
+              "endAtMs": 362,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 49,
+              "endAtMs": 296,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 109,
+              "endAtMs": 499,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 287.29,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 109,
+              "endAtMs": 440,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 193,
+              "endAtMs": 450,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 204,
+              "endAtMs": 490,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/preferences",
+              "method": "PATCH",
+              "requestKind": "api_or_other",
+              "startAtMs": 333,
+              "endAtMs": 623,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 596,
+              "endAtMs": 723,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 629,
+              "endAtMs": 629,
+              "status": null,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 629,
+              "endAtMs": 629,
+              "status": null,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/forms",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 757,
+              "endAtMs": 1161,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 758,
+              "endAtMs": 1235,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 278.29,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 758,
+              "endAtMs": 1046,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 2820,
+              "endAtMs": 3129,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 170.66,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 2820,
+              "endAtMs": 3129,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 160.06,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 2820,
+              "endAtMs": 3006,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        },
+        "secondAction": {
+          "totalRequestCount": 3,
+          "apiRequestCount": 2,
+          "rscRequestCount": 1,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/clients/%3Cuuid%3E/food-rule-profile",
+            "/api/shell/bootstrap",
+            "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E"
+          ],
+          "timedApiRequestCount": 2,
+          "untimedApiRequestCount": 0,
+          "authTimingCoverage": 1,
+          "authTotalMs": 330.72,
+          "authStages": {
+            "auth_get_user": 241.96,
+            "auth_membership": 27.9,
+            "auth_dietitian": 25.56,
+            "auth_get_session": 0.68,
+            "auth_session_activity": 33.8
+          },
+          "entitlementMs": 29.13,
+          "derivedAuthSpanCount": 2,
+          "derivedAuthSpansOverlappingWindow": 2,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 2820,
+              "endAtMs": 3129,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 170.66,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 2820,
+              "endAtMs": 3129,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 160.06,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 2820,
+              "endAtMs": 3006,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        }
+      },
+      "secondActionReact": {
+        "profilerCommitEventCount": 138,
+        "commitWaveCount": 44,
+        "profilerEventCounts": {
+          "dashboard-content": 3,
+          "dashboard-shell": 44,
+          "aiya-state-provider": 3,
+          "shell-provider": 44,
+          "authenticated-shell": 44
+        },
+        "actualDurationByProfilerMs": {
+          "dashboard-content": 5,
+          "dashboard-shell": 137.1,
+          "aiya-state-provider": 7.6,
+          "shell-provider": 143.4,
+          "authenticated-shell": 143.4
+        },
+        "contextEventCounts": {
+          "shell_bootstrap_completed": 1,
+          "shell_bootstrap_started": 1,
+          "shell_context_state_committed": 2,
+          "shell_dirty_registration_policy": 1
+        },
+        "firstCommitAtMs": 2817,
+        "lastCommitAtMs": 3253,
+        "fullTraceLongTaskCount": 1,
+        "longTaskWindowCorrelation": "not_evaluated; browser long-task timestamps use a different clock in the source trace"
+      },
+      "requestSource": {
+        "requestSummaryCount": 53,
+        "requestBodyFinishTimedOut": true
+      }
+    },
+    {
+      "unitKey": "diagnostic:J1:r2",
+      "journeyId": "J1",
+      "validSample": true,
+      "functionalOutcome": "SUCCESS",
+      "observationValidity": "VALID",
+      "secondActionTailMs": 511,
+      "windows": {
+        "firstToSecondTrusted": {
+          "totalRequestCount": 23,
+          "apiRequestCount": 10,
+          "rscRequestCount": 13,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/alerts",
+            "/api/app-state",
+            "/api/clients/%3Cuuid%3E",
+            "/api/clients/%3Cuuid%3E/forms",
+            "/api/conversations",
+            "/api/notifications",
+            "/api/shell/bootstrap",
+            "/api/shell/preferences",
+            "/dashboard",
+            "/dashboard/ai-chat",
+            "/dashboard/more",
+            "/dashboard/settings",
+            "/dashboard?section=alerts",
+            "/dashboard?section=clients",
+            "/dashboard?section=clients&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+            "/dashboard?section=messages"
+          ],
+          "timedApiRequestCount": 3,
+          "untimedApiRequestCount": 7,
+          "authTimingCoverage": 0.3,
+          "authTotalMs": 1098.81,
+          "authStages": {
+            "auth_get_user": 819.76,
+            "auth_membership": 81.69,
+            "auth_dietitian": 93.2,
+            "auth_get_session": 1.19,
+            "auth_session_activity": 100.78
+          },
+          "entitlementMs": 93.18,
+          "derivedAuthSpanCount": 3,
+          "derivedAuthSpansOverlappingWindow": 3,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/api/app-state",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -278,
+              "endAtMs": 369,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 387.66,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/alerts",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -263,
+              "endAtMs": 530,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/notifications",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -263,
+              "endAtMs": 474,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -259,
+              "endAtMs": 116,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -259,
+              "endAtMs": 143,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -258,
+              "endAtMs": 117,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -258,
+              "endAtMs": 426,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 76,
+              "endAtMs": 654,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 98,
+              "endAtMs": 699,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 430.87,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 99,
+              "endAtMs": 434,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=messages",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 127,
+              "endAtMs": 734,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=alerts",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 130,
+              "endAtMs": 751,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/conversations",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 426,
+              "endAtMs": 851,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 502,
+              "endAtMs": 908,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/preferences",
+              "method": "PATCH",
+              "requestKind": "api_or_other",
+              "startAtMs": 578,
+              "endAtMs": 976,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 630,
+              "endAtMs": 953,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 754,
+              "endAtMs": 932,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 955,
+              "endAtMs": 1084,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 987,
+              "endAtMs": 987,
+              "status": null,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 988,
+              "endAtMs": 988,
+              "status": null,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/forms",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1139,
+              "endAtMs": 1605,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1139,
+              "endAtMs": 1645,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 280.28,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 1139,
+              "endAtMs": 1409,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        },
+        "firstToSecondReady": {
+          "totalRequestCount": 26,
+          "apiRequestCount": 12,
+          "rscRequestCount": 14,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/alerts",
+            "/api/app-state",
+            "/api/clients/%3Cuuid%3E",
+            "/api/clients/%3Cuuid%3E/food-rule-profile",
+            "/api/clients/%3Cuuid%3E/forms",
+            "/api/conversations",
+            "/api/notifications",
+            "/api/shell/bootstrap",
+            "/api/shell/preferences",
+            "/dashboard",
+            "/dashboard/ai-chat",
+            "/dashboard/more",
+            "/dashboard/settings",
+            "/dashboard?section=alerts",
+            "/dashboard?section=clients",
+            "/dashboard?section=clients&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+            "/dashboard?section=messages"
+          ],
+          "timedApiRequestCount": 5,
+          "untimedApiRequestCount": 7,
+          "authTimingCoverage": 0.417,
+          "authTotalMs": 1475.27,
+          "authStages": {
+            "auth_get_user": 1071.8,
+            "auth_membership": 125.15,
+            "auth_dietitian": 140.13,
+            "auth_get_session": 1.77,
+            "auth_session_activity": 133.09
+          },
+          "entitlementMs": 127.74,
+          "derivedAuthSpanCount": 5,
+          "derivedAuthSpansOverlappingWindow": 5,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/api/app-state",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -278,
+              "endAtMs": 369,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 387.66,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/alerts",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -263,
+              "endAtMs": 530,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/notifications",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -263,
+              "endAtMs": 474,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -259,
+              "endAtMs": 116,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -259,
+              "endAtMs": 143,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -258,
+              "endAtMs": 117,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -258,
+              "endAtMs": 426,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 76,
+              "endAtMs": 654,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 98,
+              "endAtMs": 699,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 430.87,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 99,
+              "endAtMs": 434,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=messages",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 127,
+              "endAtMs": 734,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=alerts",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 130,
+              "endAtMs": 751,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/conversations",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 426,
+              "endAtMs": 851,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 502,
+              "endAtMs": 908,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/preferences",
+              "method": "PATCH",
+              "requestKind": "api_or_other",
+              "startAtMs": 578,
+              "endAtMs": 976,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 630,
+              "endAtMs": 953,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 754,
+              "endAtMs": 932,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 955,
+              "endAtMs": 1084,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 987,
+              "endAtMs": 987,
+              "status": null,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 988,
+              "endAtMs": 988,
+              "status": null,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/forms",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1139,
+              "endAtMs": 1605,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1139,
+              "endAtMs": 1645,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 280.28,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 1139,
+              "endAtMs": 1409,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 3207,
+              "endAtMs": 3579,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 196.78,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 3207,
+              "endAtMs": 3539,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 179.68,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 3207,
+              "endAtMs": 3391,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        },
+        "secondAction": {
+          "totalRequestCount": 3,
+          "apiRequestCount": 2,
+          "rscRequestCount": 1,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/clients/%3Cuuid%3E/food-rule-profile",
+            "/api/shell/bootstrap",
+            "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E"
+          ],
+          "timedApiRequestCount": 2,
+          "untimedApiRequestCount": 0,
+          "authTimingCoverage": 1,
+          "authTotalMs": 376.46,
+          "authStages": {
+            "auth_get_user": 252.04,
+            "auth_membership": 43.46,
+            "auth_dietitian": 46.93,
+            "auth_get_session": 0.58,
+            "auth_session_activity": 32.31
+          },
+          "entitlementMs": 34.56,
+          "derivedAuthSpanCount": 2,
+          "derivedAuthSpansOverlappingWindow": 2,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 3207,
+              "endAtMs": 3579,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 196.78,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 3207,
+              "endAtMs": 3539,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 179.68,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 3207,
+              "endAtMs": 3391,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        }
+      },
+      "secondActionReact": {
+        "profilerCommitEventCount": 126,
+        "commitWaveCount": 40,
+        "profilerEventCounts": {
+          "dashboard-content": 3,
+          "dashboard-shell": 40,
+          "aiya-state-provider": 3,
+          "shell-provider": 40,
+          "authenticated-shell": 40
+        },
+        "actualDurationByProfilerMs": {
+          "dashboard-content": 5.4,
+          "dashboard-shell": 133.2,
+          "aiya-state-provider": 11.8,
+          "shell-provider": 137.9,
+          "authenticated-shell": 137.9
+        },
+        "contextEventCounts": {
+          "shell_bootstrap_completed": 1,
+          "shell_bootstrap_started": 1,
+          "shell_context_state_committed": 2,
+          "shell_dirty_registration_policy": 1
+        },
+        "firstCommitAtMs": 3199,
+        "lastCommitAtMs": 3699,
+        "fullTraceLongTaskCount": 0,
+        "longTaskWindowCorrelation": "not_evaluated; browser long-task timestamps use a different clock in the source trace"
+      },
+      "requestSource": {
+        "requestSummaryCount": 53,
+        "requestBodyFinishTimedOut": true
+      }
+    },
+    {
+      "unitKey": "diagnostic:J1:r3",
+      "journeyId": "J1",
+      "validSample": true,
+      "functionalOutcome": "SUCCESS",
+      "observationValidity": "VALID",
+      "secondActionTailMs": 422,
+      "windows": {
+        "firstToSecondTrusted": {
+          "totalRequestCount": 23,
+          "apiRequestCount": 10,
+          "rscRequestCount": 13,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/alerts",
+            "/api/app-state",
+            "/api/clients/%3Cuuid%3E",
+            "/api/clients/%3Cuuid%3E/forms",
+            "/api/conversations",
+            "/api/notifications",
+            "/api/shell/bootstrap",
+            "/api/shell/preferences",
+            "/dashboard",
+            "/dashboard/ai-chat",
+            "/dashboard/more",
+            "/dashboard/settings",
+            "/dashboard?section=alerts",
+            "/dashboard?section=clients",
+            "/dashboard?section=clients&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+            "/dashboard?section=messages"
+          ],
+          "timedApiRequestCount": 4,
+          "untimedApiRequestCount": 6,
+          "authTimingCoverage": 0.4,
+          "authTotalMs": 796.6,
+          "authStages": {
+            "auth_get_user": 543.19,
+            "auth_membership": 68.32,
+            "auth_dietitian": 90.61,
+            "auth_get_session": 1.25,
+            "auth_session_activity": 91.34
+          },
+          "entitlementMs": 66.76,
+          "derivedAuthSpanCount": 4,
+          "derivedAuthSpansOverlappingWindow": 4,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/api/app-state",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -57,
+              "endAtMs": 395,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 257.17,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/alerts",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -46,
+              "endAtMs": 513,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/notifications",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -46,
+              "endAtMs": 510,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -39,
+              "endAtMs": 356,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -39,
+              "endAtMs": 353,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -39,
+              "endAtMs": 291,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -39,
+              "endAtMs": 833,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 56,
+              "endAtMs": 901,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 74,
+              "endAtMs": 867,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 232.01,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 74,
+              "endAtMs": 720,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/conversations",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 454,
+              "endAtMs": 1071,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=messages",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 482,
+              "endAtMs": 857,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=alerts",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 483,
+              "endAtMs": 1222,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/preferences",
+              "method": "PATCH",
+              "requestKind": "api_or_other",
+              "startAtMs": 563,
+              "endAtMs": 1287,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 817,
+              "endAtMs": 1242,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 881,
+              "endAtMs": 1239,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 897,
+              "endAtMs": 1348,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 1286,
+              "endAtMs": 1460,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1317,
+              "endAtMs": 1722,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1318,
+              "endAtMs": 1585,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 166.77,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/forms",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1694,
+              "endAtMs": 1948,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1694,
+              "endAtMs": 1961,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 140.65,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 1694,
+              "endAtMs": 1865,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        },
+        "firstToSecondReady": {
+          "totalRequestCount": 26,
+          "apiRequestCount": 12,
+          "rscRequestCount": 14,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/alerts",
+            "/api/app-state",
+            "/api/clients/%3Cuuid%3E",
+            "/api/clients/%3Cuuid%3E/food-rule-profile",
+            "/api/clients/%3Cuuid%3E/forms",
+            "/api/conversations",
+            "/api/notifications",
+            "/api/shell/bootstrap",
+            "/api/shell/preferences",
+            "/dashboard",
+            "/dashboard/ai-chat",
+            "/dashboard/more",
+            "/dashboard/settings",
+            "/dashboard?section=alerts",
+            "/dashboard?section=clients",
+            "/dashboard?section=clients&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+            "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+            "/dashboard?section=messages"
+          ],
+          "timedApiRequestCount": 6,
+          "untimedApiRequestCount": 6,
+          "authTimingCoverage": 0.5,
+          "authTotalMs": 1120.72,
+          "authStages": {
+            "auth_get_user": 780.06,
+            "auth_membership": 94.35,
+            "auth_dietitian": 120.49,
+            "auth_get_session": 2.22,
+            "auth_session_activity": 120.56
+          },
+          "entitlementMs": 128.27,
+          "derivedAuthSpanCount": 6,
+          "derivedAuthSpansOverlappingWindow": 6,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/api/app-state",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -57,
+              "endAtMs": 395,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 257.17,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/alerts",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -46,
+              "endAtMs": 513,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/notifications",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": -46,
+              "endAtMs": 510,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -39,
+              "endAtMs": 356,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -39,
+              "endAtMs": 353,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -39,
+              "endAtMs": 291,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": -39,
+              "endAtMs": 833,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 56,
+              "endAtMs": 901,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 74,
+              "endAtMs": 867,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 232.01,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 74,
+              "endAtMs": 720,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/conversations",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 454,
+              "endAtMs": 1071,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=messages",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 482,
+              "endAtMs": 857,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=alerts",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 483,
+              "endAtMs": 1222,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/preferences",
+              "method": "PATCH",
+              "requestKind": "api_or_other",
+              "startAtMs": 563,
+              "endAtMs": 1287,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/ai-chat",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 817,
+              "endAtMs": 1242,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/more",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 881,
+              "endAtMs": 1239,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard/settings",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 897,
+              "endAtMs": 1348,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 1286,
+              "endAtMs": 1460,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1317,
+              "endAtMs": 1722,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1318,
+              "endAtMs": 1585,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 166.77,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/forms",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1694,
+              "endAtMs": 1948,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 1694,
+              "endAtMs": 1961,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 140.65,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 1694,
+              "endAtMs": 1865,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            },
+            {
+              "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 3760,
+              "endAtMs": 4061,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 155.66,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 3762,
+              "endAtMs": 4076,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 168.46,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 3763,
+              "endAtMs": 3926,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        },
+        "secondAction": {
+          "totalRequestCount": 3,
+          "apiRequestCount": 2,
+          "rscRequestCount": 1,
+          "documentRequestCount": 0,
+          "uniqueRoutes": [
+            "/api/clients/%3Cuuid%3E/food-rule-profile",
+            "/api/shell/bootstrap",
+            "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E"
+          ],
+          "timedApiRequestCount": 2,
+          "untimedApiRequestCount": 0,
+          "authTimingCoverage": 1,
+          "authTotalMs": 324.12,
+          "authStages": {
+            "auth_get_user": 236.87,
+            "auth_membership": 26.03,
+            "auth_dietitian": 29.88,
+            "auth_get_session": 0.97,
+            "auth_session_activity": 29.22
+          },
+          "entitlementMs": 61.51,
+          "derivedAuthSpanCount": 2,
+          "derivedAuthSpansOverlappingWindow": 2,
+          "derivedAuthSpanPlacement": "diagnostic inference only; Server-Timing exposes duration, not sub-span timestamps",
+          "requests": [
+            {
+              "route": "/api/clients/%3Cuuid%3E/food-rule-profile",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 3760,
+              "endAtMs": 4061,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 155.66,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/api/shell/bootstrap",
+              "method": "GET",
+              "requestKind": "api_or_other",
+              "startAtMs": 3762,
+              "endAtMs": 4076,
+              "status": 200,
+              "failed": false,
+              "authTotalMs": 168.46,
+              "serverTimingNames": [
+                "auth",
+                "auth_get_user",
+                "auth_membership",
+                "auth_dietitian",
+                "auth_get_session",
+                "auth_session_activity",
+                "auth_total",
+                "entitlement",
+                "rate_limit",
+                "store",
+                "json",
+                "route"
+              ]
+            },
+            {
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "method": "GET",
+              "requestKind": "rsc",
+              "startAtMs": 3763,
+              "endAtMs": 3926,
+              "status": 200,
+              "failed": true,
+              "authTotalMs": null,
+              "serverTimingNames": []
+            }
+          ]
+        }
+      },
+      "secondActionReact": {
+        "profilerCommitEventCount": 93,
+        "commitWaveCount": 29,
+        "profilerEventCounts": {
+          "dashboard-content": 3,
+          "dashboard-shell": 29,
+          "aiya-state-provider": 3,
+          "shell-provider": 29,
+          "authenticated-shell": 29
+        },
+        "actualDurationByProfilerMs": {
+          "dashboard-content": 8.7,
+          "dashboard-shell": 89.3,
+          "aiya-state-provider": 11.8,
+          "shell-provider": 92.6,
+          "authenticated-shell": 92.6
+        },
+        "contextEventCounts": {
+          "shell_bootstrap_completed": 1,
+          "shell_bootstrap_started": 1,
+          "shell_context_state_committed": 2,
+          "shell_dirty_registration_policy": 1
+        },
+        "firstCommitAtMs": 3749,
+        "lastCommitAtMs": 4165,
+        "fullTraceLongTaskCount": 1,
+        "longTaskWindowCorrelation": "not_evaluated; browser long-task timestamps use a different clock in the source trace"
+      },
+      "requestSource": {
+        "requestSummaryCount": 53,
+        "requestBodyFinishTimedOut": true
+      }
+    }
+  ],
+  "aggregate": {
+    "firstToSecondTrustedApiRequests": {
+      "count": 3,
+      "min": 7,
+      "median": 10,
+      "max": 10
+    },
+    "firstToSecondTrustedRscRequests": {
+      "count": 3,
+      "min": 9,
+      "median": 13,
+      "max": 13
+    },
+    "firstToSecondTrustedTimedApiRequests": {
+      "count": 3,
+      "min": 2,
+      "median": 3,
+      "max": 4
+    },
+    "firstToSecondTrustedAuthTimingCoverage": {
+      "count": 3,
+      "min": 0.286,
+      "median": 0.3,
+      "max": 0.4
+    },
+    "secondActionApiRequests": {
+      "count": 3,
+      "min": 2,
+      "median": 2,
+      "max": 2
+    },
+    "secondActionRscRequests": {
+      "count": 3,
+      "min": 1,
+      "median": 1,
+      "max": 1
+    },
+    "secondActionAuthTotalMs": {
+      "count": 3,
+      "min": 324.12,
+      "median": 330.72,
+      "max": 376.46
+    },
+    "secondActionReactCommitWaves": {
+      "count": 3,
+      "min": 29,
+      "median": 40,
+      "max": 44
+    },
+    "secondActionTailMs": {
+      "count": 3,
+      "min": 422,
+      "median": 443,
+      "max": 511
+    }
+  },
+  "interpretation": {
+    "supported": "Across three valid J1 traces from the same runtime source, the first-click-to-second-click interval contained 7-10 API and 9-13 RSC requests, while the second-action interval contained 2 API and 1 RSC request in every trace. React commit waves were present in all three second-action windows.",
+    "authChainObservation": "Available Server-Timing showed auth_total and component stages on only a subset of API requests; this records measurable auth cost but cannot support the claim that every API request paid the full chain.",
+    "rscObservation": "RSC request intervals were visible at the browser boundary, but resolveDashboardAuth stage timing was not emitted for those responses.",
+    "causalStatus": "INCONCLUSIVE; the record is observational and did not perturb one variable.",
+    "globalFreezeResolved": false,
+    "rootCauseConfirmed": false
+  },
+  "evidenceGaps": [
+    "Uninstrumented API routes prevent complete per-request auth-chain coverage.",
+    "The browser trace has no server-side resolveDashboardAuth timing for RSC/document responses.",
+    "Long-task timestamps in the source trace use a different clock and were not assigned to the second-action window.",
+    "Request overlap and commit co-occurrence do not establish that auth, network fan-out, or React commits caused the freeze."
+  ],
+  "nextAction": "A separately bounded diagnostic-only instrumentation step should add redacted auth timing coverage to the uninstrumented shared API routes and a bounded server-side marker for dashboard RSC auth, then repeat one current-source J1 capture. Do not change auth behavior or accept a runtime fix.",
+  "explicitNonClaims": [
+    "No production fix was proposed or accepted.",
+    "No Plan 2 entry was authorized.",
+    "No external provider, billing, worker, migration, or real health-data path was used.",
+    "The analysis does not prove a six-to-seven-hop auth cost on every request."
+  ],
+  "redaction": {
+    "status": "PASS_BY_CONTRACT",
+    "rawBodiesIncluded": false,
+    "credentialsIncluded": "<redacted>",
+    "cookiesIncluded": "<redacted>",
+    "tokensIncluded": "<redacted>",
+    "healthDataIncluded": false,
+    "deviceSerialIncluded": false,
+    "routeValuesSanitized": true
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "AUTH_FANOUT_COMMIT_OVERLAP_OBSERVED_AUTH_COVERAGE_INCOMPLETE_GLOBAL_FREEZE_UNRESOLVED",
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  }
+}

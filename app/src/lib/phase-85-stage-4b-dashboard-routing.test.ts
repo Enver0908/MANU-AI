@@ -21,6 +21,7 @@ import {
   resolveMessagingRouteSelection,
   resolveMessagingUnreadBadgeCount,
   resolveStage6CommunicationDestination,
+  shouldUseClientOnlyDashboardNavigation,
   serializeDashboardSearchParams,
 } from "./phase-85-stage-4b-dashboard-routing";
 
@@ -30,6 +31,13 @@ describe("phase-85-stage-4b dashboard routing", () => {
     expect(resolveDashboardSection("conversation")).toBe("messages");
     expect(resolveDashboardSection("handoffs")).toBe("alerts");
     expect(resolveDashboardSection("unknown")).toBe("overview");
+  });
+
+  it("keeps same-dashboard query navigation client-only", () => {
+    expect(shouldUseClientOnlyDashboardNavigation("/dashboard", "/dashboard?section=clients")).toBe(true);
+    expect(shouldUseClientOnlyDashboardNavigation("/dashboard", "/dashboard?section=clients&clientTask=forms")).toBe(true);
+    expect(shouldUseClientOnlyDashboardNavigation("/dashboard", "/dashboard/settings")).toBe(false);
+    expect(shouldUseClientOnlyDashboardNavigation("/dashboard/settings", "/dashboard?section=clients")).toBe(false);
   });
 
   it("round-trips section and filter params", () => {

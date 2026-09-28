@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { DashboardGatedState } from "@/components/auth-states";
+import { DashboardRscAuthDiagnosticMarker } from "@/components/dashboard/authenticated-shell-boundary";
 import { MorePageClient } from "@/components/dashboard/more-page-client";
 import {
   deriveDashboardAccessGate,
@@ -34,13 +35,19 @@ export default async function MorePage() {
 
   if (auth.gate === "fallback") {
     return (
-      <Suspense fallback={null}>
-        <MorePageClient
-          uiLanguage={normalizeLanguageCode(undefined)}
-          aiChatEnabled={aiChatEnabled}
-          role="dietitian"
+      <>
+        <DashboardRscAuthDiagnosticMarker
+          scope="page"
+          timing={undefined}
         />
-      </Suspense>
+        <Suspense fallback={null}>
+          <MorePageClient
+            uiLanguage={normalizeLanguageCode(undefined)}
+            aiChatEnabled={aiChatEnabled}
+            role="dietitian"
+          />
+        </Suspense>
+      </>
     );
   }
 
@@ -51,16 +58,30 @@ export default async function MorePage() {
   });
 
   if (gate !== "ok") {
-    return <DashboardGatedState gate={gate} />;
+    return (
+      <>
+        <DashboardRscAuthDiagnosticMarker
+          scope="page"
+          timing={auth.gate === "resolved" ? auth.authTiming : undefined}
+        />
+        <DashboardGatedState gate={gate} />
+      </>
+    );
   }
 
   return (
-    <Suspense fallback={null}>
-      <MorePageClient
-        uiLanguage={auth.uiLanguage}
-        aiChatEnabled={aiChatEnabled}
-        role={asTenantRole(auth.role)}
+    <>
+      <DashboardRscAuthDiagnosticMarker
+        scope="page"
+        timing={auth.gate === "resolved" ? auth.authTiming : undefined}
       />
-    </Suspense>
+      <Suspense fallback={null}>
+        <MorePageClient
+          uiLanguage={auth.uiLanguage}
+          aiChatEnabled={aiChatEnabled}
+          role={asTenantRole(auth.role)}
+        />
+      </Suspense>
+    </>
   );
 }

@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "aiya-performance-dirty-registration-fix-phase-3-analysis-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": 3,
+  "phaseName": "read-only-three-record-j1-correlation",
+  "runId": "aiya-performance-dirty-registration-fix-phase-3-analysis-20260922T210119Z",
+  "generatedAt": "2026-09-22T21:01:19Z",
+  "status": "COMPLETE_READ_ONLY_ANALYSIS_WITH_PHASE_2_SMOKE_BLOCKER",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "browserStarted": false,
+    "serverStarted": false,
+    "buildStarted": false,
+    "databaseMutationStarted": false,
+    "measurementStarted": false,
+    "sourceRuntimeChanged": false,
+    "reactProfilerEnabled": false,
+    "usedSavedPhase2EvidenceAndCheckpointOnly": true,
+    "officialSampleCount": 0
+  },
+  "inputs": {
+    "phase1Evidence": {
+      "path": "docs/AIYA_PERFORMANCE_DIRTY_REGISTRATION_FIX_PHASE_1_EVIDENCE.json",
+      "sha256": "CCFD5E683CBDCBFB84C2B443FCC9C0A7A34C7FDD072CC3FE25402ACDD7C39148"
+    },
+    "phase2Evidence": {
+      "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-dirty-registration-verification-v1-20260922T204750028Z-be78a2d5-cc2f-4fdb-9543-8f74559bb628_EVIDENCE.json",
+      "sha256": "82A14522B96FE6757D1B041D89D568C2F1A462C9541ED04D7FEEDE7969C83CA2",
+      "runnerStatus": "BLOCKED",
+      "j1CaptureOutcome": "J1_STABLE_THREE_VALID_FUNCTIONAL_RECORDS"
+    },
+    "phase2StartupBlockerEvidence": {
+      "path": "docs/AIYA_PERFORMANCE_DIRTY_REGISTRATION_FIX_PHASE_2_STARTUP_BLOCKER_EVIDENCE.json",
+      "sha256": "A44D5F80F1E01440B04F09A60CD20242E8B79F27F01823DDCCA3957D28AD0A41",
+      "measurementAttempts": 0
+    },
+    "checkpoint": {
+      "phaseId": "aiya-performance-plan1-j1-dirty-registration-verification-v1",
+      "runStatus": "BLOCKED",
+      "eventCount": 16,
+      "lastSequence": 16,
+      "hashChainRead": true,
+      "startedUnits": 3,
+      "completedUnits": 3,
+      "smokeStarted": true,
+      "smokeCompleted": false
+    }
+  },
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a",
+    "appSourceTreeSha256": "348136270afe4be21616dbad18fb548332e61d00d09df9db9f326dbf64953e3f",
+    "runnerSha256": "B77A8DC452EF69F20EB85555C13AC81FE9E2DA9F6190339FC128B5F1FD4C4F70",
+    "runnerTestSha256": "8266D55082600BEC44EDF339BE280C7AAF9CB1F9BA4270E749732FDAB3E6209E",
+    "timelineAnalyzerSha256": "E2A9F3C4FA2B1054C61A99D5258FC8B3B0483A5AE83063A3AEA60DCE99389917",
+    "sourceFileHashMismatches": 0,
+    "build": "PASS",
+    "localSupabaseTarget": "127.0.0.1:54321",
+    "fixtureClass": "synthetic_normal_owner"
+  },
+  "validityAndFunction": {
+    "attemptedJ1Records": 3,
+    "observationValid": 3,
+    "functionalSuccess": 3,
+    "stablePolicyObserved": 3,
+    "formsExactlyOneCompletedRead": 3,
+    "nutritionExactlyOneCompletedRead": 3,
+    "formsLifecyclePass": 3,
+    "secondClickAcceptedOnce": 3,
+    "eligible": 3,
+    "officialSamples": 0,
+    "routeSequence": [
+      "/dashboard?section=clients",
+      "/dashboard?section=clients&clientId=%3Cpresent%3E",
+      "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+      "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E"
+    ],
+    "summaryReentryObserved": false,
+    "formsLifecyclePerRecord": { "setup": 1, "cleanup": 1, "loadStarted": 1, "loadSucceeded": 1, "loadAborted": 0 }
+  },
+  "secondActionTiming": {
+    "scheduledDelayFromFirstTrustedFormsClickMs": 2000,
+    "actualDispatchAfterPlannedTimeMs": [14, 14, 12],
+    "secondTrustedEventAfterPlannedTimeMs": [50, 48, 35],
+    "trustedClickToVisibleNutritionReadyMs": [914, 872, 936],
+    "result": "STALL_NOT_REPRODUCED_IN_THESE_THREE_RUNS"
+  },
+  "requestAndRscTimeline": {
+    "performanceOutcome": "NOT_EVALUABLE",
+    "requestSummaryClockOrigin": "captured_first_request_wall_origin",
+    "requiredNutritionRead": {
+      "routeTemplate": "/api/clients/%3Cuuid%3E/food-rule-profile",
+      "statusPerRecord": [200, 200, 200],
+      "trustedClickToStartMs": [13, 9, 16],
+      "trustedClickToResponseHeaderMs": [213, 181, 437],
+      "trustedClickToBodyFinishedMs": [214, 182, 438],
+      "bodyToVisibleReadyMs": [700, 690, 498]
+    },
+    "concurrentShellBootstrap": { "statusPerRecord": [200, 200, 200], "countPerRecord": 1 },
+    "secondActionOverlappingRequestsPerRecord": { "api": 2, "rsc": 0, "total": 2 },
+    "readyToParseRenderCompleteMs": [11, 18, 22],
+    "fullJourneyFanoutPerRecord": { "total": 49, "api": 24, "document": 3, "rsc": 22 },
+    "historicalLegacyEnvelope": { "requiredTotal": "53-56", "requiredRsc": 26, "passedRecords": 0 },
+    "envelopeDisposition": "OBSERVATION_ONLY_NOT_AN_ELIGIBILITY_GATE_FOR_DEFAULT_STABLE_SOURCE",
+    "boundaryInterpretation": "The largest directly bounded interval in every record was response-body completion to visible Nutrition readiness. This interval includes state propagation, scheduling, rendering, and selector readiness; the trace does not assign it to one function."
+  },
+  "browserWork": {
+    "performanceClockStatusPerRecord": ["ALIGNED", "ALIGNED", "ALIGNED"],
+    "pairedWallPerformanceSamples": [35, 35, 33],
+    "clockSpreadMs": [1.1, 1.0, 1.1],
+    "fullTraceLongTasksPerRecord": [0, 0, 0],
+    "longTaskObserverUnavailable": [false, false, false],
+    "phase52ShellContextCommitsPerRecord": [2, 2, 2],
+    "reactProfilerCommitEventsPerRecord": [0, 0, 0],
+    "reactProfilerInterpretation": "Profiler was disabled; zero captured profiler events provide no render-duration measurement.",
+    "alignedSecondClickEventTiming": [
+      { "clickStartRelativeToTrustedMs": -1.6, "processingStartRelativeToTrustedMs": 0.3, "processingEndRelativeToTrustedMs": 9.3, "eventDurationMs": 16 },
+      { "clickStartRelativeToTrustedMs": -2.0, "processingStartRelativeToTrustedMs": -0.1, "processingEndRelativeToTrustedMs": 8.6, "eventDurationMs": 16 },
+      { "clickStartRelativeToTrustedMs": -3.0, "processingStartRelativeToTrustedMs": -0.2, "processingEndRelativeToTrustedMs": 12.0, "eventDurationMs": 24 }
+    ],
+    "eventTimingBoundaryNote": "The analyzer's start-inside-window filter excludes these click entries because their starts precede the trusted-click boundary by 1.6-3.0 ms; paired clocks show their processing overlaps the boundary and ends 8.6-12.0 ms after it. This is a short event, not a long-task observation.",
+    "interpretation": "No >=50 ms long task was recorded in these traces; this does not exclude sequences of shorter work or identify the 498-700 ms body-to-ready interval."
+  },
+  "dirtyNavigationSmoke": {
+    "status": "FAIL_BEFORE_SAVE_PATH",
+    "sanitizedErrorCode": "locator_inputValue_timeout_waiting_for_client_form_textarea",
+    "likelyCause": "The local-normal client's active form did not expose a textarea matching the smoke's assumed selector.",
+    "saveRequestPathReached": false,
+    "databaseMutation": "NOT_REACHED_BY_SMOKE_CONTROL_FLOW",
+    "basis": "Both answer.inputValue call sites occur before the script installs its POST listener and invokes Save & Continue. The failure was at locator_inputValue; the save request and mutation code path was not reached.",
+    "smokeContractEstablished": false,
+    "automaticRetry": false,
+    "responseBodyRecorded": false
+  },
+  "conclusion": {
+    "narrowQuestion": "The delayed second-click stall was not reproduced in these three default-stable current-source J1 runs.",
+    "dominantCandidate": "UNRESOLVED",
+    "mostVisibleUnexplainedBoundary": "nutrition_response_body_to_visible_ready_498_to_700_ms",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "runtimeFixAcceptedForProduction": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "officialPlan1Status": "COMPLETE / DIAGNOSIS_BLOCKED",
+    "findingManifestChanged": false,
+    "productionDecision": "NO-GO"
+  },
+  "redaction": {
+    "status": "PASS",
+    "credentials": false,
+    "cookiesOrTokens": false,
+    "requestBodies": false,
+    "healthData": false,
+    "rawClientIdentifiers": false
+  },
+  "nextAction": "Stop this run: do not repeat J1 or the failed smoke. Any later work must be a separately authorized, single smoke-only harness correction using a field selector present in the synthetic form; no claim of global performance recovery follows from this evidence."
+}

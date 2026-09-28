@@ -1,0 +1,3143 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase5-5-candidate-loop-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "5",
+  "stage": "5.5",
+  "stageId": "5.5",
+  "runId": "aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T073104562Z-b5061681-fede-4e25-8a5c-a7cec35ca4ef",
+  "generatedAt": "2026-09-18T07:39:56.579Z",
+  "status": "BLOCKED",
+  "outcome": "CANDIDATE_LOOP_BLOCKED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Run the remaining supported candidate loop for H-5.1-002 with matched local desktop A -> B -> A cycles.",
+    "environment": "local_desktop",
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": true,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true,
+    "countedAsOfficialSample": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "5.1 COMPLETE / HYPOTHESES_PRE_REGISTERED",
+      "5.2 COMPLETE / REPEATABLE_PROVISIONAL_EFFECT",
+      "5.3 COMPLETE / LAYER_ATTRIBUTION_INCONCLUSIVE",
+      "5.4 COMPLETE / SAFETY_BEHAVIOR_CHECKS_COMPLETE"
+    ],
+    "currentStage": "5.5",
+    "nextEligibleStage": "5.5 next supported candidate or 5.6 disposition review after candidate coverage"
+  },
+  "sourceIdentity": {
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branchMode": "DETACHED_HEAD",
+    "branch": "",
+    "statusLineCount": 96,
+    "statusHash": "f79fc219f7ef24e3280ff10d1a6bed8df9607f73dfccc73d0a38119239162db2",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/src/components/dashboard/dashboard-navigation.tsx",
+        "sha256": "86f922d11934a55f1bfc397d99355f4a83b0d5264167719930007a15e6c3b490"
+      },
+      {
+        "path": "app/src/lib/use-stage-4b-inbox.ts",
+        "sha256": "2ff5fcf9bcb4207dabfcf21e72e5087adc2ed30e4ef19da43aabb40a90a29d34"
+      },
+      {
+        "path": "app/src/lib/use-stage-4b2-messaging.ts",
+        "sha256": "4fc772e4c9902aa03ab77d65922cf06891edecbf2f494f13f428844f6a873795"
+      },
+      {
+        "path": "app/src/lib/phase-55-polling-diagnostic.ts",
+        "sha256": "76a830204ed7dc8e3800da0afa761f11730e944d74edc0c64a47bc102ee338a6"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-5-candidate-loop.mjs",
+        "sha256": "6e7478cd56e7c8ea4bcec6d6ca8d7904bc39d6de523c18d63c12641d18b6f2b4"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-5-candidate-loop.test.mjs",
+        "sha256": "c2376e7978e7fca03a281b3914163d5e9f3d3c9fb65ed2afad2d51d5d15a7b2a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "b70ccd7abd892c81589f8ff4c1d195cff03a35784bcc97ba9f9b470dc11becb4"
+      },
+      {
+        "path": "app/package.json",
+        "sha256": "809a7c59bfc579a7a285ecb2ebf65a3dcd37ee22bb7495e621c3ffc259fbc137"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "sha256": "bda7ced41b4ecd119fd1a99e01f57b9cfe730c6775c2681e090393084ece9c03"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+        "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-4-safety-behavior-v3-20260917T192500000Z-7e539b27-1e6f-4c7c-91ac-1e5d6cf83ca4_PHASE_5_4_SAFETY_BEHAVIOR_EVIDENCE.json",
+        "sha256": "a26318fe6c88f7d3ca89248458b640f76e458540e738a99046c5a16d33970611"
+      }
+    ]
+  },
+  "prerequisites": {
+    "status": "PASS",
+    "failures": [],
+    "parentEvidence": {
+      "runId": "aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f",
+      "status": "COMPLETE",
+      "outcome": "HYPOTHESES_PRE_REGISTERED",
+      "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+    },
+    "safetyEvidence": {
+      "runId": "aiya-performance-plan1-phase5-4-safety-behavior-v3-20260917T192500000Z-7e539b27-1e6f-4c7c-91ac-1e5d6cf83ca4",
+      "status": "COMPLETE",
+      "outcome": "SAFETY_BEHAVIOR_CHECKS_COMPLETE",
+      "sha256": "a26318fe6c88f7d3ca89248458b640f76e458540e738a99046c5a16d33970611"
+    },
+    "candidateId": "H-5.1-002"
+  },
+  "experimentContract": {
+    "candidateId": "H-5.1-002",
+    "title": "Background inbox and messaging polling overlap during navigation",
+    "variableId": "foreground_polling_policy",
+    "variable": {
+      "A": "current",
+      "B": "navigation_window_pause_cancel",
+      "BDescription": "Pause the polling timer and cancel an active polling request during the trace-only navigation window.",
+      "runtimeDefault": "current",
+      "traceOnlyEnablement": "window.__aiyaPhase55TraceEnabled=true plus policy flag"
+    },
+    "exactFilesAndFunctions": [
+      "app/src/components/dashboard/dashboard-navigation.tsx:ShellNavLink trusted navigation click boundary",
+      "app/src/lib/use-stage-4b-inbox.ts:visible-page polling schedule and abort refs",
+      "app/src/lib/use-stage-4b2-messaging.ts:visible-page polling schedule and abort refs",
+      "app/src/lib/phase-55-polling-diagnostic.ts:trace-only navigation window and event ledger"
+    ],
+    "journey": {
+      "id": "P5.5-H-5.1-002-dashboard-to-messages",
+      "linkedPlanJourneys": [
+        "J1",
+        "J2",
+        "J3"
+      ],
+      "environment": "local_desktop",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "startBoundary": "trusted_password_login_submit",
+      "pollingBoundary": "poll_start_and_end plus request body finish",
+      "navigationBoundary": "trusted_messages_navigation_click",
+      "routeCommitBoundary": "dashboard_messages_url_observed",
+      "endBoundary": "messaging_panel_visible_after_authenticated_navigation",
+      "requiredSubboundaries": [
+        "trusted_action",
+        "shell_bootstrap_request_start_and_body_finish",
+        "app_state_request_start_and_body_finish",
+        "poll_start_and_end",
+        "foreground_messages_request_body_finish",
+        "route_commit",
+        "target_ready",
+        "long_task_or_render_window"
+      ]
+    },
+    "matchedControls": [
+      "same synthetic password-authenticated account and local normal tenant fixture",
+      "same build and release identity for all nine traces",
+      "same Chromium headless desktop viewport, cold context, and service worker blocked",
+      "same network, local Supabase, route order, target selector, and request contract",
+      "same 30s/15s polling intervals, request gate, in-flight dedupe, and abort semantics outside the probe window"
+    ],
+    "safetyChecks": [
+      "tenant/session/role/capability and RLS identity remain unchanged",
+      "authenticated shell and full app-state reads remain status 200 with body finish",
+      "conversation data remains status 200 with body finish before or during the messages navigation",
+      "late-response and request-gate behavior remain active; no mutation path is exercised"
+    ],
+    "rollback": "Remove only the trace-only navigation-window policy/event hooks; restore current visible-page polling as the default.",
+    "repetitionContract": {
+      "cycles": 3,
+      "order": [
+        "A_before",
+        "B",
+        "A_after"
+      ],
+      "maxRepetitions": 5,
+      "countedAsOfficialSample": false
+    }
+  },
+  "buildIdentity": {
+    "status": "PASS",
+    "httpStatus": 200,
+    "apiStatus": "ok",
+    "release": null
+  },
+  "inputPreflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "authentication": "real_password_session_required",
+    "storePath": "normal_rls_api_path_required",
+    "fallbackStoreAllowed": false,
+    "credentialsAvailable": "<redacted>",
+    "app": {
+      "label": "local_app",
+      "status": "PASS",
+      "httpStatus": 200,
+      "targetOrigin": "http://127.0.0.1:3143",
+      "failureBoundary": null
+    },
+    "supabase": {
+      "label": "local_supabase",
+      "status": "PASS",
+      "httpStatus": 200,
+      "targetOrigin": "http://127.0.0.1:54321",
+      "failureBoundary": null
+    },
+    "blockers": []
+  },
+  "cycleSummary": {
+    "cycles": [
+      {
+        "cycle": 1,
+        "traceIds": [
+          "cycle-1-A_before",
+          "cycle-1-B",
+          "cycle-1-A_after"
+        ],
+        "observationValid": false,
+        "aBoundaryMs": 168.5,
+        "bBoundaryMs": 168,
+        "deltaBMinusAMs": -0.5,
+        "bNavigationWindowApplied": true,
+        "bCancellationObserved": true,
+        "direction": "B_FASTER"
+      },
+      {
+        "cycle": 2,
+        "traceIds": [
+          "cycle-2-A_before",
+          "cycle-2-B",
+          "cycle-2-A_after"
+        ],
+        "observationValid": false,
+        "aBoundaryMs": 165.5,
+        "bBoundaryMs": 173,
+        "deltaBMinusAMs": 7.5,
+        "bNavigationWindowApplied": true,
+        "bCancellationObserved": true,
+        "direction": "B_SLOWER"
+      },
+      {
+        "cycle": 3,
+        "traceIds": [
+          "cycle-3-A_before",
+          "cycle-3-B",
+          "cycle-3-A_after"
+        ],
+        "observationValid": false,
+        "aBoundaryMs": 213.5,
+        "bBoundaryMs": 135,
+        "deltaBMinusAMs": -78.5,
+        "bNavigationWindowApplied": true,
+        "bCancellationObserved": true,
+        "direction": "B_FASTER"
+      }
+    ],
+    "repeatable": false,
+    "conclusion": "INCONCLUSIVE",
+    "noCauseConfirmed": true,
+    "findingDispositionChanged": false,
+    "cancellationObservedInAllB": true
+  },
+  "sampleSummary": {
+    "attemptedTraces": 9,
+    "plannedTraces": 9,
+    "observationValidTraces": 0,
+    "observationInvalidTraces": 9,
+    "allNineAttempted": true,
+    "validTracesAreNotOfficialBaseline": true
+  },
+  "traces": [
+    {
+      "traceId": "cycle-1-A_before",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 1,
+      "position": "A_before",
+      "policy": "current",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789716760026,
+      "trustedActionAtMs": 7,
+      "trustedNavigationClickAtMs": 32688,
+      "routeCommitAtMs": 32863,
+      "initialTargetReadyAtMs": 3575,
+      "targetReadyAtMs": 32888,
+      "targetInteractivePaintAtMs": 32913,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 2267
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 2384,
+          "bodyFinishedAtMs": 2698,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 2675,
+          "bodyFinishedAtMs": 3099,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 32667,
+          "atPerformanceMs": 31688.2,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 32846,
+          "atPerformanceMs": 31867.5,
+          "surface": "inbox"
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 2342,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 32736,
+          "route": "/dashboard",
+          "source": "pushState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 12,
+        "apiRequestCount": 12,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 134,
+            "responseHeaderAtMs": 982,
+            "bodyFinishedAtMs": 2267,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2384,
+            "responseHeaderAtMs": 2650,
+            "bodyFinishedAtMs": 2698,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2675,
+            "responseHeaderAtMs": 3085,
+            "bodyFinishedAtMs": 3099,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2702,
+            "responseHeaderAtMs": 3191,
+            "bodyFinishedAtMs": 3193,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2702,
+            "responseHeaderAtMs": 3194,
+            "bodyFinishedAtMs": 3201,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 3129,
+            "responseHeaderAtMs": 3441,
+            "bodyFinishedAtMs": 3443,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 32670,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 32670,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 32814,
+            "responseHeaderAtMs": 33145,
+            "bodyFinishedAtMs": 33155,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 32858,
+            "responseHeaderAtMs": 33156,
+            "bodyFinishedAtMs": 33164,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 32859,
+            "responseHeaderAtMs": 33195,
+            "bodyFinishedAtMs": 33197,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 33120,
+            "responseHeaderAtMs": 33289,
+            "bodyFinishedAtMs": 33291,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 33120,
+        "responseHeaderAtMs": 33289,
+        "bodyFinishedAtMs": 33291,
+        "status": 200,
+        "failed": false
+      },
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 3129,
+        "responseHeaderAtMs": 3441,
+        "bodyFinishedAtMs": 3443,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "current",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 0,
+        "navigationWindowApplied": true,
+        "cancellationObserved": false,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 21,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 2702,
+            "bodyFinishedAtMs": 3193,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 2702,
+            "bodyFinishedAtMs": 3201,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 3129,
+            "bodyFinishedAtMs": 3443,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 32670,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 32670,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 32858,
+            "bodyFinishedAtMs": 33164,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 32859,
+            "bodyFinishedAtMs": 33197,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 33120,
+            "bodyFinishedAtMs": 33291,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 1,
+        "lcpAtMs": 1320,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 3568,
+        "navigationClickToTargetReadyMs": 200,
+        "routeCommitToTargetReadyMs": 25,
+        "navigationClickToForegroundBodyFinishMs": 603
+      }
+    },
+    {
+      "traceId": "cycle-1-B",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 1,
+      "position": "B",
+      "policy": "navigation_window_pause_cancel",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789716808428,
+      "trustedActionAtMs": 1,
+      "trustedNavigationClickAtMs": 31651,
+      "routeCommitAtMs": 31791,
+      "initialTargetReadyAtMs": 2184,
+      "targetReadyAtMs": 31819,
+      "targetInteractivePaintAtMs": 31844,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 886
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 1098,
+          "bodyFinishedAtMs": 1677,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 1649,
+          "bodyFinishedAtMs": 2160,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 31638,
+          "atPerformanceMs": 31097.7,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_navigation_window_started",
+          "atMs": 31691,
+          "atPerformanceMs": 31150.4,
+          "reason": "shell_navigation_click:messages",
+          "durationMs": 5000
+        },
+        {
+          "name": "phase55_poll_cancelled",
+          "atMs": 31691,
+          "atPerformanceMs": 31150.8,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 31745,
+          "atPerformanceMs": 31204.7,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_navigation_window_ended",
+          "atMs": 36706,
+          "atPerformanceMs": 36164.9
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 1045,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 31692,
+          "route": "/dashboard",
+          "source": "pushState"
+        },
+        {
+          "atMs": 32189,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 11,
+        "apiRequestCount": 11,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 110,
+            "responseHeaderAtMs": 542,
+            "bodyFinishedAtMs": 886,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1098,
+            "responseHeaderAtMs": 1614,
+            "bodyFinishedAtMs": 1677,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1649,
+            "responseHeaderAtMs": 2140,
+            "bodyFinishedAtMs": 2160,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1684,
+            "responseHeaderAtMs": 2297,
+            "bodyFinishedAtMs": 2299,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1684,
+            "responseHeaderAtMs": 2233,
+            "bodyFinishedAtMs": 2236,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2199,
+            "responseHeaderAtMs": 2484,
+            "bodyFinishedAtMs": 2486,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31640,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31641,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31740,
+            "responseHeaderAtMs": 32129,
+            "bodyFinishedAtMs": 32137,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31772,
+            "responseHeaderAtMs": 32122,
+            "bodyFinishedAtMs": 32126,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31772,
+            "responseHeaderAtMs": 32125,
+            "bodyFinishedAtMs": 32135,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": null,
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 2199,
+        "responseHeaderAtMs": 2484,
+        "bodyFinishedAtMs": 2486,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "navigation_window_pause_cancel",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 1,
+        "navigationWindowApplied": true,
+        "cancellationObserved": true,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 13,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 1684,
+            "bodyFinishedAtMs": 2299,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 1684,
+            "bodyFinishedAtMs": 2236,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 2199,
+            "bodyFinishedAtMs": 2486,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31640,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31641,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31772,
+            "bodyFinishedAtMs": 32126,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31772,
+            "bodyFinishedAtMs": 32135,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 2,
+        "lcpAtMs": 356,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 2183,
+        "navigationClickToTargetReadyMs": 168,
+        "routeCommitToTargetReadyMs": 28,
+        "navigationClickToForegroundBodyFinishMs": null
+      }
+    },
+    {
+      "traceId": "cycle-1-A_after",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 1,
+      "position": "A_after",
+      "policy": "current",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789716860503,
+      "trustedActionAtMs": 3,
+      "trustedNavigationClickAtMs": 31055,
+      "routeCommitAtMs": 31174,
+      "initialTargetReadyAtMs": 1957,
+      "targetReadyAtMs": 31192,
+      "targetInteractivePaintAtMs": 31230,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 657
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 765,
+          "bodyFinishedAtMs": 1076,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 1043,
+          "bodyFinishedAtMs": 1570,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 31029,
+          "atPerformanceMs": 30696.1,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 31165,
+          "atPerformanceMs": 30831.5,
+          "surface": "inbox"
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 740,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 31094,
+          "route": "/dashboard",
+          "source": "pushState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 12,
+        "apiRequestCount": 12,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 53,
+            "responseHeaderAtMs": 334,
+            "bodyFinishedAtMs": 657,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 765,
+            "responseHeaderAtMs": 1005,
+            "bodyFinishedAtMs": 1076,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1043,
+            "responseHeaderAtMs": 1557,
+            "bodyFinishedAtMs": 1570,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1080,
+            "responseHeaderAtMs": 1678,
+            "bodyFinishedAtMs": 1685,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1081,
+            "responseHeaderAtMs": 1677,
+            "bodyFinishedAtMs": 1680,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1590,
+            "responseHeaderAtMs": 1987,
+            "bodyFinishedAtMs": 1992,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31031,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31031,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31138,
+            "responseHeaderAtMs": 31548,
+            "bodyFinishedAtMs": 31554,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31167,
+            "responseHeaderAtMs": 31574,
+            "bodyFinishedAtMs": 31582,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31167,
+            "responseHeaderAtMs": 31569,
+            "bodyFinishedAtMs": 31574,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31592,
+            "responseHeaderAtMs": 31739,
+            "bodyFinishedAtMs": 31741,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 31592,
+        "responseHeaderAtMs": 31739,
+        "bodyFinishedAtMs": 31741,
+        "status": 200,
+        "failed": false
+      },
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 1590,
+        "responseHeaderAtMs": 1987,
+        "bodyFinishedAtMs": 1992,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "current",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 0,
+        "navigationWindowApplied": true,
+        "cancellationObserved": false,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 26,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 1080,
+            "bodyFinishedAtMs": 1685,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 1081,
+            "bodyFinishedAtMs": 1680,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 1590,
+            "bodyFinishedAtMs": 1992,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31031,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31031,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31167,
+            "bodyFinishedAtMs": 31582,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31167,
+            "bodyFinishedAtMs": 31574,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 31592,
+            "bodyFinishedAtMs": 31741,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 1,
+        "lcpAtMs": 360,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 1954,
+        "navigationClickToTargetReadyMs": 137,
+        "routeCommitToTargetReadyMs": 18,
+        "navigationClickToForegroundBodyFinishMs": 686
+      }
+    },
+    {
+      "traceId": "cycle-2-A_before",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 2,
+      "position": "A_before",
+      "policy": "current",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789716907162,
+      "trustedActionAtMs": 1,
+      "trustedNavigationClickAtMs": 30944,
+      "routeCommitAtMs": 31080,
+      "initialTargetReadyAtMs": 1840,
+      "targetReadyAtMs": 31096,
+      "targetInteractivePaintAtMs": 31123,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 597
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 696,
+          "bodyFinishedAtMs": 957,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 936,
+          "bodyFinishedAtMs": 1400,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 30928,
+          "atPerformanceMs": 30565.8,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 31066,
+          "atPerformanceMs": 30703.4,
+          "surface": "inbox"
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 662,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 30987,
+          "route": "/dashboard",
+          "source": "pushState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 12,
+        "apiRequestCount": 12,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 72,
+            "responseHeaderAtMs": 362,
+            "bodyFinishedAtMs": 597,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 696,
+            "responseHeaderAtMs": 911,
+            "bodyFinishedAtMs": 957,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 936,
+            "responseHeaderAtMs": 1371,
+            "bodyFinishedAtMs": 1400,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 964,
+            "responseHeaderAtMs": 1531,
+            "bodyFinishedAtMs": 1533,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 964,
+            "responseHeaderAtMs": 1522,
+            "bodyFinishedAtMs": 1532,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1433,
+            "responseHeaderAtMs": 1848,
+            "bodyFinishedAtMs": 1869,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30930,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30930,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31040,
+            "responseHeaderAtMs": 31377,
+            "bodyFinishedAtMs": 31383,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31073,
+            "responseHeaderAtMs": 31403,
+            "bodyFinishedAtMs": 31408,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31073,
+            "responseHeaderAtMs": 31365,
+            "bodyFinishedAtMs": 31373,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31441,
+            "responseHeaderAtMs": 31665,
+            "bodyFinishedAtMs": 31668,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 31441,
+        "responseHeaderAtMs": 31665,
+        "bodyFinishedAtMs": 31668,
+        "status": 200,
+        "failed": false
+      },
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 1433,
+        "responseHeaderAtMs": 1848,
+        "bodyFinishedAtMs": 1869,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "current",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 0,
+        "navigationWindowApplied": true,
+        "cancellationObserved": false,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 16,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 964,
+            "bodyFinishedAtMs": 1533,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 964,
+            "bodyFinishedAtMs": 1532,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 1433,
+            "bodyFinishedAtMs": 1869,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 30930,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 30930,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31073,
+            "bodyFinishedAtMs": 31408,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31073,
+            "bodyFinishedAtMs": 31373,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 31441,
+            "bodyFinishedAtMs": 31668,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 1,
+        "lcpAtMs": 248,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 1839,
+        "navigationClickToTargetReadyMs": 152,
+        "routeCommitToTargetReadyMs": 16,
+        "navigationClickToForegroundBodyFinishMs": 724
+      }
+    },
+    {
+      "traceId": "cycle-2-B",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 2,
+      "position": "B",
+      "policy": "navigation_window_pause_cancel",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789716953626,
+      "trustedActionAtMs": 1,
+      "trustedNavigationClickAtMs": 30955,
+      "routeCommitAtMs": 31096,
+      "initialTargetReadyAtMs": 1816,
+      "targetReadyAtMs": 31128,
+      "targetInteractivePaintAtMs": 31153,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 605
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 701,
+          "bodyFinishedAtMs": 955,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 934,
+          "bodyFinishedAtMs": 1338,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 30935,
+          "atPerformanceMs": 30568.1,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_navigation_window_started",
+          "atMs": 30990,
+          "atPerformanceMs": 30623.1,
+          "reason": "shell_navigation_click:messages",
+          "durationMs": 5000
+        },
+        {
+          "name": "phase55_poll_cancelled",
+          "atMs": 30991,
+          "atPerformanceMs": 30623.8,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 31048,
+          "atPerformanceMs": 30681.3,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_navigation_window_ended",
+          "atMs": 35998,
+          "atPerformanceMs": 35631
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 677,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 30992,
+          "route": "/dashboard",
+          "source": "pushState"
+        },
+        {
+          "atMs": 31597,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 11,
+        "apiRequestCount": 11,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 68,
+            "responseHeaderAtMs": 367,
+            "bodyFinishedAtMs": 605,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 701,
+            "responseHeaderAtMs": 914,
+            "bodyFinishedAtMs": 955,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 934,
+            "responseHeaderAtMs": 1323,
+            "bodyFinishedAtMs": 1338,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 959,
+            "responseHeaderAtMs": 1442,
+            "bodyFinishedAtMs": 1465,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 959,
+            "responseHeaderAtMs": 1399,
+            "bodyFinishedAtMs": 1401,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1364,
+            "responseHeaderAtMs": 1682,
+            "bodyFinishedAtMs": 1684,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30944,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30946,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31042,
+            "responseHeaderAtMs": 31545,
+            "bodyFinishedAtMs": 31550,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31087,
+            "responseHeaderAtMs": 31531,
+            "bodyFinishedAtMs": 31536,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31087,
+            "responseHeaderAtMs": 31517,
+            "bodyFinishedAtMs": 31526,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": null,
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 1364,
+        "responseHeaderAtMs": 1682,
+        "bodyFinishedAtMs": 1684,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "navigation_window_pause_cancel",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 1,
+        "navigationWindowApplied": true,
+        "cancellationObserved": true,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 20,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 959,
+            "bodyFinishedAtMs": 1465,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 959,
+            "bodyFinishedAtMs": 1401,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 1364,
+            "bodyFinishedAtMs": 1684,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 30944,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 30946,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31087,
+            "bodyFinishedAtMs": 31536,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31087,
+            "bodyFinishedAtMs": 31526,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 1,
+        "lcpAtMs": 248,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 1815,
+        "navigationClickToTargetReadyMs": 173,
+        "routeCommitToTargetReadyMs": 32,
+        "navigationClickToForegroundBodyFinishMs": null
+      }
+    },
+    {
+      "traceId": "cycle-2-A_after",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 2,
+      "position": "A_after",
+      "policy": "current",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789717005121,
+      "trustedActionAtMs": 5,
+      "trustedNavigationClickAtMs": 31222,
+      "routeCommitAtMs": 31387,
+      "initialTargetReadyAtMs": 2200,
+      "targetReadyAtMs": 31401,
+      "targetInteractivePaintAtMs": 31433,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 745
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 884,
+          "bodyFinishedAtMs": 1249,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 1194,
+          "bodyFinishedAtMs": 2130,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 31189,
+          "atPerformanceMs": 30748,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 31370,
+          "atPerformanceMs": 30929,
+          "surface": "inbox"
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 846,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 31300,
+          "route": "/dashboard",
+          "source": "pushState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 12,
+        "apiRequestCount": 12,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 96,
+            "responseHeaderAtMs": 441,
+            "bodyFinishedAtMs": 745,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 884,
+            "responseHeaderAtMs": 1170,
+            "bodyFinishedAtMs": 1249,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1194,
+            "responseHeaderAtMs": 2110,
+            "bodyFinishedAtMs": 2130,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1249,
+            "responseHeaderAtMs": 2243,
+            "bodyFinishedAtMs": 2246,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1249,
+            "responseHeaderAtMs": 2295,
+            "bodyFinishedAtMs": 2298,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2151,
+            "responseHeaderAtMs": 2947,
+            "bodyFinishedAtMs": 2950,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31191,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31191,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31345,
+            "responseHeaderAtMs": 31983,
+            "bodyFinishedAtMs": 31990,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31378,
+            "responseHeaderAtMs": 31895,
+            "bodyFinishedAtMs": 31907,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31379,
+            "responseHeaderAtMs": 31954,
+            "bodyFinishedAtMs": 31961,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 32158,
+            "responseHeaderAtMs": 32505,
+            "bodyFinishedAtMs": 32507,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 32158,
+        "responseHeaderAtMs": 32505,
+        "bodyFinishedAtMs": 32507,
+        "status": 200,
+        "failed": false
+      },
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 2151,
+        "responseHeaderAtMs": 2947,
+        "bodyFinishedAtMs": 2950,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "current",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 0,
+        "navigationWindowApplied": true,
+        "cancellationObserved": false,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 33,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 1249,
+            "bodyFinishedAtMs": 2246,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 1249,
+            "bodyFinishedAtMs": 2298,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 2151,
+            "bodyFinishedAtMs": 2950,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31191,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31191,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31378,
+            "bodyFinishedAtMs": 31907,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31379,
+            "bodyFinishedAtMs": 31961,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 32158,
+            "bodyFinishedAtMs": 32507,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 1,
+        "lcpAtMs": 344,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 2195,
+        "navigationClickToTargetReadyMs": 179,
+        "routeCommitToTargetReadyMs": 14,
+        "navigationClickToForegroundBodyFinishMs": 1285
+      }
+    },
+    {
+      "traceId": "cycle-3-A_before",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 3,
+      "position": "A_before",
+      "policy": "current",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789717051881,
+      "trustedActionAtMs": 1,
+      "trustedNavigationClickAtMs": 30986,
+      "routeCommitAtMs": 31130,
+      "initialTargetReadyAtMs": 1392,
+      "targetReadyAtMs": 31149,
+      "targetInteractivePaintAtMs": 31180,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 573
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 691,
+          "bodyFinishedAtMs": 997,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 974,
+          "bodyFinishedAtMs": 1332,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 30967,
+          "atPerformanceMs": 30639.8,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 31101,
+          "atPerformanceMs": 30774.3,
+          "surface": "inbox"
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 639,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 31028,
+          "route": "/dashboard",
+          "source": "pushState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 12,
+        "apiRequestCount": 12,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 62,
+            "responseHeaderAtMs": 330,
+            "bodyFinishedAtMs": 573,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 691,
+            "responseHeaderAtMs": 949,
+            "bodyFinishedAtMs": 997,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 974,
+            "responseHeaderAtMs": 1317,
+            "bodyFinishedAtMs": 1332,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1001,
+            "responseHeaderAtMs": 1430,
+            "bodyFinishedAtMs": 1432,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1002,
+            "responseHeaderAtMs": 1404,
+            "bodyFinishedAtMs": 1430,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1367,
+            "responseHeaderAtMs": 1591,
+            "bodyFinishedAtMs": 1593,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30970,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30971,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31080,
+            "responseHeaderAtMs": 31430,
+            "bodyFinishedAtMs": 31434,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31118,
+            "responseHeaderAtMs": 31425,
+            "bodyFinishedAtMs": 31430,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31119,
+            "responseHeaderAtMs": 31427,
+            "bodyFinishedAtMs": 31432,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31367,
+            "responseHeaderAtMs": 31526,
+            "bodyFinishedAtMs": 31531,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 31367,
+        "responseHeaderAtMs": 31526,
+        "bodyFinishedAtMs": 31531,
+        "status": 200,
+        "failed": false
+      },
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 1367,
+        "responseHeaderAtMs": 1591,
+        "bodyFinishedAtMs": 1593,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "current",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 0,
+        "navigationWindowApplied": true,
+        "cancellationObserved": false,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 19,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 1001,
+            "bodyFinishedAtMs": 1432,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 1002,
+            "bodyFinishedAtMs": 1430,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 1367,
+            "bodyFinishedAtMs": 1593,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 30970,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 30971,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31118,
+            "bodyFinishedAtMs": 31430,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31119,
+            "bodyFinishedAtMs": 31432,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 31367,
+            "bodyFinishedAtMs": 31531,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 1,
+        "lcpAtMs": 260,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 1391,
+        "navigationClickToTargetReadyMs": 163,
+        "routeCommitToTargetReadyMs": 19,
+        "navigationClickToForegroundBodyFinishMs": 545
+      }
+    },
+    {
+      "traceId": "cycle-3-B",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 3,
+      "position": "B",
+      "policy": "navigation_window_pause_cancel",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789717098439,
+      "trustedActionAtMs": 1,
+      "trustedNavigationClickAtMs": 30992,
+      "routeCommitAtMs": 31109,
+      "initialTargetReadyAtMs": 1874,
+      "targetReadyAtMs": 31127,
+      "targetInteractivePaintAtMs": 31151,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 643
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 740,
+          "bodyFinishedAtMs": 996,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 975,
+          "bodyFinishedAtMs": 1468,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 30967,
+          "atPerformanceMs": 30604.5,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_navigation_window_started",
+          "atMs": 31029,
+          "atPerformanceMs": 30666.7,
+          "reason": "shell_navigation_click:messages",
+          "durationMs": 5000
+        },
+        {
+          "name": "phase55_poll_cancelled",
+          "atMs": 31030,
+          "atPerformanceMs": 30667,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 31082,
+          "atPerformanceMs": 30719.6,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_navigation_window_ended",
+          "atMs": 36034,
+          "atPerformanceMs": 35671.3
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 710,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 31030,
+          "route": "/dashboard",
+          "source": "pushState"
+        },
+        {
+          "atMs": 31410,
+          "route": "/dashboard",
+          "source": "replaceState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 11,
+        "apiRequestCount": 11,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 58,
+            "responseHeaderAtMs": 363,
+            "bodyFinishedAtMs": 643,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 740,
+            "responseHeaderAtMs": 948,
+            "bodyFinishedAtMs": 996,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 975,
+            "responseHeaderAtMs": 1451,
+            "bodyFinishedAtMs": 1468,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1001,
+            "responseHeaderAtMs": 1546,
+            "bodyFinishedAtMs": 1564,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1001,
+            "responseHeaderAtMs": 1515,
+            "bodyFinishedAtMs": 1519,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1489,
+            "responseHeaderAtMs": 1757,
+            "bodyFinishedAtMs": 1759,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30968,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30968,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31077,
+            "responseHeaderAtMs": 31329,
+            "bodyFinishedAtMs": 31337,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31102,
+            "responseHeaderAtMs": 31358,
+            "bodyFinishedAtMs": 31361,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31103,
+            "responseHeaderAtMs": 31336,
+            "bodyFinishedAtMs": 31346,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": null,
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 1489,
+        "responseHeaderAtMs": 1757,
+        "bodyFinishedAtMs": 1759,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "navigation_window_pause_cancel",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 1,
+        "navigationWindowApplied": true,
+        "cancellationObserved": true,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 25,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 1001,
+            "bodyFinishedAtMs": 1564,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 1001,
+            "bodyFinishedAtMs": 1519,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 1489,
+            "bodyFinishedAtMs": 1759,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 30968,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 30968,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31102,
+            "bodyFinishedAtMs": 31361,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31103,
+            "bodyFinishedAtMs": 31346,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 1,
+        "lcpAtMs": 316,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 1873,
+        "navigationClickToTargetReadyMs": 135,
+        "routeCommitToTargetReadyMs": 18,
+        "navigationClickToForegroundBodyFinishMs": null
+      }
+    },
+    {
+      "traceId": "cycle-3-A_after",
+      "journeyId": "P5.5-H-5.1-002-dashboard-to-messages",
+      "cycle": 3,
+      "position": "A_after",
+      "policy": "current",
+      "environment": "local_desktop",
+      "cacheMode": "cold_context_service_workers_blocked",
+      "routeOrder": [
+        "/login?next=/dashboard",
+        "/dashboard",
+        "trusted shell navigation click",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "traceStartWallMs": 1789717149814,
+      "trustedActionAtMs": 1,
+      "trustedNavigationClickAtMs": 30924,
+      "routeCommitAtMs": 31169,
+      "initialTargetReadyAtMs": 1835,
+      "targetReadyAtMs": 31188,
+      "targetInteractivePaintAtMs": 31236,
+      "auth": {
+        "requestObserved": true,
+        "responseStatus": 200,
+        "bodyFinishedAtMs": 579
+      },
+      "reads": {
+        "shellBootstrap": {
+          "route": "/api/shell/bootstrap",
+          "requestStartedAtMs": 688,
+          "bodyFinishedAtMs": 925,
+          "status": 200
+        },
+        "appState": {
+          "route": "/api/app-state",
+          "requestStartedAtMs": 904,
+          "bodyFinishedAtMs": 1370,
+          "status": 200
+        }
+      },
+      "phase55Events": [
+        {
+          "name": "phase55_poll_started",
+          "atMs": 30898,
+          "atPerformanceMs": 30555.6,
+          "surface": "inbox"
+        },
+        {
+          "name": "phase55_poll_finished",
+          "atMs": 31126,
+          "atPerformanceMs": 30784.2,
+          "surface": "inbox"
+        }
+      ],
+      "routeEvents": [
+        {
+          "atMs": 664,
+          "route": "/dashboard",
+          "source": "replaceState"
+        },
+        {
+          "atMs": 31005,
+          "route": "/dashboard",
+          "source": "pushState"
+        }
+      ],
+      "requestCapture": {
+        "requestCount": 12,
+        "apiRequestCount": 12,
+        "bodyFinishTimedOut": true,
+        "requests": [
+          {
+            "route": "/api/auth/password-login",
+            "method": "POST",
+            "resourceType": "fetch",
+            "startedAtMs": 76,
+            "responseHeaderAtMs": 341,
+            "bodyFinishedAtMs": 579,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 688,
+            "responseHeaderAtMs": 878,
+            "bodyFinishedAtMs": 925,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/app-state",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 904,
+            "responseHeaderAtMs": 1353,
+            "bodyFinishedAtMs": 1370,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 928,
+            "responseHeaderAtMs": 1334,
+            "bodyFinishedAtMs": 1336,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 928,
+            "responseHeaderAtMs": 1408,
+            "bodyFinishedAtMs": 1411,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1386,
+            "responseHeaderAtMs": 1584,
+            "bodyFinishedAtMs": 1586,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30914,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 30914,
+            "responseHeaderAtMs": null,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/shell/bootstrap",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31097,
+            "responseHeaderAtMs": 31790,
+            "bodyFinishedAtMs": 31798,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31156,
+            "responseHeaderAtMs": 31738,
+            "bodyFinishedAtMs": 31740,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31156,
+            "responseHeaderAtMs": 31702,
+            "bodyFinishedAtMs": 31712,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 31388,
+            "responseHeaderAtMs": 31884,
+            "bodyFinishedAtMs": 31888,
+            "status": 200,
+            "failed": false
+          }
+        ]
+      },
+      "foregroundMessagesRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 31388,
+        "responseHeaderAtMs": 31884,
+        "bodyFinishedAtMs": 31888,
+        "status": 200,
+        "failed": false
+      },
+      "messagesDataReadyRequest": {
+        "route": "/api/conversations",
+        "method": "GET",
+        "resourceType": "fetch",
+        "startedAtMs": 1386,
+        "responseHeaderAtMs": 1584,
+        "bodyFinishedAtMs": 1586,
+        "status": 200,
+        "failed": false
+      },
+      "pollingIdleObserved": true,
+      "pollingExposure": {
+        "policy": "current",
+        "pollStartCount": 1,
+        "pollFinishCount": 1,
+        "pollCancelCount": 0,
+        "navigationWindowApplied": true,
+        "cancellationObserved": false,
+        "overlappingRequestCount": 0,
+        "overlapObserved": false,
+        "pollStartToNavigationClickMs": 26,
+        "pollingRequests": [
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 928,
+            "bodyFinishedAtMs": 1336,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 928,
+            "bodyFinishedAtMs": 1411,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 1386,
+            "bodyFinishedAtMs": 1586,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 30914,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 30914,
+            "bodyFinishedAtMs": null,
+            "status": null,
+            "failed": true
+          },
+          {
+            "route": "/api/alerts",
+            "method": "GET",
+            "startedAtMs": 31156,
+            "bodyFinishedAtMs": 31740,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/notifications",
+            "method": "GET",
+            "startedAtMs": 31156,
+            "bodyFinishedAtMs": 31712,
+            "status": 200,
+            "failed": false
+          },
+          {
+            "route": "/api/conversations",
+            "method": "GET",
+            "startedAtMs": 31388,
+            "bodyFinishedAtMs": 31888,
+            "status": 200,
+            "failed": false
+          }
+        ],
+        "overlappingRequests": []
+      },
+      "browserMetrics": {
+        "observersEnabled": true,
+        "longTaskCount": 1,
+        "lcpAtMs": 272,
+        "cls": 0,
+        "longTaskObserverUnavailable": false,
+        "lcpObserverUnavailable": false,
+        "clsObserverUnavailable": false
+      },
+      "errorClass": null,
+      "observationValidity": "INVALID",
+      "functionalOutcome": "SUCCESS",
+      "timingOutcome": "MEASURED",
+      "failures": [
+        "request_body_finish_timeout"
+      ],
+      "boundary": {
+        "trustedActionToInitialTargetReadyMs": 1834,
+        "navigationClickToTargetReadyMs": 264,
+        "routeCommitToTargetReadyMs": 19,
+        "navigationClickToForegroundBodyFinishMs": 964
+      }
+    }
+  ],
+  "blockers": [
+    "invalid_or_incomplete_candidate_trace"
+  ],
+  "findingDispositionChanges": [],
+  "deferredToLaterStages": [
+    "Exact layer attribution remains unresolved; no cause is confirmed by this candidate loop.",
+    "H-5.1-003 dashboard bundle/import/render and H-5.1-004 warm AI Chat remain separate candidates unless the active contract orders otherwise.",
+    "No Plan 2 remediation is authorized by this evidence."
+  ],
+  "constraints": [
+    "B is a reversible trace-only probe and is not an accepted runtime fix.",
+    "No official nine-scenario sample was started.",
+    "No data, API, auth, RLS, migration, dependency, secret, provider, channel, or production change was made.",
+    "A result is INCONCLUSIVE unless the measured direction repeats in all three matched cycles with valid observations.",
+    "Credentials, cookies, tokens, raw bodies, prompts, clinical content, and device serials are excluded.",
+    "Production remains NO-GO."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "sourceIdentityPass": true,
+    "prerequisitesParsed": true,
+    "checkpointHashChain": true,
+    "checkpointComplete": "BLOCKED",
+    "incompleteTracesRemainInvalid": true,
+    "findingManifestChanged": false,
+    "historicalEvidenceRewritten": false,
+    "runtimeFixAccepted": false,
+    "officialMeasurementStarted": false
+  },
+  "closure": {
+    "status": "BLOCKED",
+    "outcome": "CANDIDATE_LOOP_BLOCKED",
+    "phase4Closed": true,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeFixAccepted": false,
+    "nextAction": "Preserve this blocked run and repair only the declared local input or trace boundary before resuming."
+  },
+  "checkpointReconciliation": {
+    "status": "BLOCKED",
+    "runId": "aiya-performance-plan1-phase5-5-candidate-loop-v3-20260918T073104562Z-b5061681-fede-4e25-8a5c-a7cec35ca4ef",
+    "eventCount": 26,
+    "hashChainRead": true,
+    "lastEventType": "run.status"
+  }
+}

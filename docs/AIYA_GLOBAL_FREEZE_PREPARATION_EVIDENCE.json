@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "aiya-global-freeze-preparation-evidence-v1",
+  "evidenceId": "aiya-global-freeze-preparation-v1-20260924T170016Z",
+  "createdAtUtc": "2026-09-24T17:00:16Z",
+  "status": "PHASE_1_PREPARED_AWAITING_AUTHENTICATED_BROWSER_CAPTURE",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_ACTION_PLAN.md",
+  "authority": {
+    "plan1Status": "COMPLETE / DIAGNOSIS_BLOCKED",
+    "plan2EligibleFindings": 0,
+    "production": "NO-GO",
+    "findingDispositionsChanged": false
+  },
+  "repository": {
+    "root": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a",
+    "workingTreeWasAlreadyDirty": true,
+    "userChangesPreserved": true
+  },
+  "userReportedSymptom": {
+    "hostedRecordingProvided": true,
+    "desktopFreezeConfirmed": true,
+    "androidFreezeConfirmed": true,
+    "syntheticTestDataConfirmed": true,
+    "rootCauseEstablished": false
+  },
+  "liveReleaseObserved": {
+    "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+    "localHeadMatchesLiveCommit": false
+  },
+  "readOnlyHostSnapshot": {
+    "observedAtUtc": "2026-09-24T15:40:33Z",
+    "vcpu": 2,
+    "memoryTotalKb": 3911564,
+    "memoryAvailableKb": 3025512,
+    "swapConfigured": false,
+    "cpuPsiAvg10Percent": 0,
+    "memoryPsiAvg10Percent": 0,
+    "ioPsiAvg10Percent": 0,
+    "capturedDuringUserFreeze": false,
+    "interpretation": "single quiet snapshot; does not rule out transient pressure"
+  },
+  "preparationChecks": {
+    "nodeSyntax": "PASS",
+    "focusedTests": {
+      "command": "node --test scripts/performance-global-freeze-diagnostic.test.mjs",
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    "targetedEslint": {
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 0
+    },
+    "remoteHostBashSyntax": {
+      "status": "PASS",
+      "method": "strict SSH to siriusai.store; bash -n only; sampler not executed"
+    },
+    "gitDiffCheck": "PASS",
+    "typecheck": "NOT_RUN_NOT_APPLICABLE_TO_SCRIPT_AND_DOCUMENTATION_ONLY_PREPARATION",
+    "productionBuild": "NOT_RUN_NOT_APPLICABLE_TO_SCRIPT_AND_DOCUMENTATION_ONLY_PREPARATION"
+  },
+  "measurement": {
+    "captureRunIds": [],
+    "attemptCount": 0,
+    "validRecordCount": 0,
+    "browserTraceCaptured": false,
+    "hostSamplerExecuted": false,
+    "authenticatedSessionAvailableToAgent": false,
+    "freezeReproducedDuringInstrumentedCapture": null,
+    "phase1": "PREPARED_PENDING_USER_SIGN_IN_AND_CAPTURE",
+    "phase2": "BLOCKED_PENDING_PHASE1_EVIDENCE",
+    "phase3": "BLOCKED_PENDING_CAUSAL_ATTRIBUTION"
+  },
+  "readOnlyRemoteChecks": {
+    "liveReleaseIdentityRead": true,
+    "quietHostSnapshotRead": true,
+    "bashSyntaxCheckViaStrictSsh": true,
+    "remoteClockOffsetProbesExecuted": false,
+    "timeAlignedHostSamplerExecuted": false
+  },
+  "externalEffects": {
+    "remoteWrites": false,
+    "serviceChanges": false,
+    "databaseQueriesOrMutations": false,
+    "deploymentOrMigration": false,
+    "providerOrChannelCalls": false
+  },
+  "privacy": {
+    "passwordsTokensCookiesRawBodiesTypedValuesHealthDataPromptsDeviceSerialsCaptured": false,
+    "harImported": false,
+    "rawTraceImported": false,
+    "sanitizerDropsArbitraryEventArguments": true,
+    "observationInputIsFixedEnumsOnly": true
+  },
+  "sha256": {
+    "app/scripts/performance-global-freeze-diagnostic.mjs": "4F3ED3AD0949F8CA72B08D4AB89263803E231C5CF554D8AA3CACE022E17F67F7",
+    "app/scripts/performance-global-freeze-diagnostic.test.mjs": "5F874CE1FA7A48A54C889E56610B67DECECA5C55C4454E86DE090442AC28B170",
+    "app/scripts/lib/aiya-global-freeze-phase.mjs": "02374950FC4A7B47EA58F5C4BC0C177E90937A05C21561AA67C0126B30550F68",
+    "docs/AIYA_GLOBAL_FREEZE_ACTION_PLAN.md": "1249A712DA40BD68FF949BE7532641A4CDED74293315960FDA968D56AB1BABBA",
+    "docs/NEXT_PHASE_EXECUTION_PLAN.md": "ACC60F40118E73D86FE1F576BC470B383A153D00E780571C054D4A3CFAC53B1D",
+    "docs/RISK_REGISTER.md": "0CCC2996F47DF4321C2528D2A357E146B50A202E95D99C6F73FAF37A7F8D9A41",
+    "HANDOFF_FOR_NEXT_CODEX.md": "528EF3F624B65FFA3205E1AFDD2067508B627F3619ACAE207156DF035CB34156"
+  }
+}

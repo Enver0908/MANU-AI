@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppRequestError } from "./app-errors";
+import { recordPhase52ClientEvent } from "./phase-52-diagnostic";
 import type {
   ConversationDetailResponse,
   ConversationInboxItem,
@@ -24,6 +25,10 @@ import { fetchWithInflightDedupe } from "./phase-85-stage-4b-inbox-scheduler";
 import { mergeConversationDetailResponseIntoAppState } from "./phase-85-stage-4b2-state-merge";
 import { authenticatedMutationFetch } from "./phase-85-stage-5-shell-authenticated-mutation";
 import type { ManuAppState } from "./types";
+import {
+  isPhase55NavigationWindowActive,
+  recordPhase55ClientEvent,
+} from "./phase-55-polling-diagnostic";
 
 export type Stage4B2MessagingSnapshot = {
   list: ConversationListResponse | null;
@@ -115,6 +120,7 @@ export function useStage4B2Messaging({
   const detailInflightRef = useRef(new Map<string, Promise<ConversationDetailResponse>>());
   const markReadInflightRef = useRef(new Map<string, Promise<ConversationMutationResponse>>());
   const pollTimerRef = useRef<number | null>(null);
+  const pollActiveRef = useRef(false);
   const listAbortRef = useRef<AbortController | null>(null);
   const detailAbortRef = useRef<AbortController | null>(null);
   const paginationAbortRef = useRef<AbortController | null>(null);
@@ -249,8 +255,10 @@ export function useStage4B2Messaging({
   );
 
   const refreshList = useCallback(
-    async (options?: { resetBackoff?: boolean }) => {
+    async (options?: { resetBackoff?: boolean; reason?: string }) => {
       if (!enabled) return;
+      const reason = options?.reason ?? "manual";
+      recordPhase52ClientEvent("messaging_list_refresh_started", { reason });
       if (options?.resetBackoff) consecutiveErrorsRef.current = 0;
       setIsListRefreshing(true);
       try {
@@ -263,14 +271,17 @@ export function useStage4B2Messaging({
         setListError(error instanceof Error ? error.message : "conversation_list_refresh_failed");
       } finally {
         if (mountedRef.current) setIsListRefreshing(false);
+        recordPhase52ClientEvent("messaging_list_refresh_finished", { reason });
       }
     },
     [enabled, fetchListPage],
   );
 
   const refreshDetail = useCallback(
-    async (options?: { resetBackoff?: boolean; anchorMessageId?: string | null }) => {
+    async (options?: { resetBackoff?: boolean; anchorMessageId?: string | null; reason?: string }) => {
       if (!enabled || !conversationId) return;
+      const reason = options?.reason ?? "manual";
+      recordPhase52ClientEvent("messaging_detail_refresh_started", { reason });
       if (options?.resetBackoff) consecutiveErrorsRef.current = 0;
       setIsDetailRefreshing(true);
       try {
@@ -284,13 +295,14 @@ export function useStage4B2Messaging({
         throw error;
       } finally {
         if (mountedRef.current) setIsDetailRefreshing(false);
+        recordPhase52ClientEvent("messaging_detail_refresh_finished", { reason });
       }
     },
     [anchorMessageId, conversationId, enabled, fetchDetail],
   );
 
   const refreshAll = useCallback(
-    async (options?: { resetBackoff?: boolean; anchorMessageId?: string | null }) => {
+    async (options?: { resetBackoff?: boolean; anchorMessageId?: string | null; reason?: string }) => {
       await Promise.allSettled([
         refreshList(options),
         conversationId ? refreshDetail(options) : Promise.resolve(),
@@ -301,7 +313,11 @@ export function useStage4B2Messaging({
 
   const refreshAfterMutation = useCallback(
     async (options?: { anchorMessageId?: string | null }) => {
-      await refreshAll({ resetBackoff: true, anchorMessageId: options?.anchorMessageId });
+      await refreshAll({
+        resetBackoff: true,
+        anchorMessageId: options?.anchorMessageId,
+        reason: "mutation",
+      });
     },
     [refreshAll],
   );
@@ -378,7 +394,7 @@ export function useStage4B2Messaging({
   useEffect(() => {
     if (!enabled) return;
     const timeout = window.setTimeout(() => {
-      void refreshAll({ resetBackoff: true });
+      void refreshAll({ resetBackoff: true, reason: "mount_or_filter_change" });
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [enabled, refreshAll, filters.conversationStatus, filters.conversationQuery, conversationId, anchorMessageId]);
@@ -387,31 +403,60 @@ export function useStage4B2Messaging({
     if (!enabled) return;
     const schedule = () => {
       if (pollTimerRef.current != null) window.clearTimeout(pollTimerRef.current);
-      if (shouldPauseStage4B2MessagingPolling(document.visibilityState === "visible")) return;
+      if (
+        shouldPauseStage4B2MessagingPolling(document.visibilityState === "visible") ||
+        isPhase55NavigationWindowActive()
+      ) return;
       const delay = resolveStage4B2MessagingPollDelayMs(
         consecutiveErrorsRef.current,
         Boolean(conversationId),
       );
       pollTimerRef.current = window.setTimeout(() => {
-        void refreshAll().finally(schedule);
+        pollActiveRef.current = true;
+        recordPhase55ClientEvent("phase55_poll_started", {
+          surface: conversationId ? "messaging_detail" : "messaging_list",
+        });
+        void refreshAll({ reason: "poll" }).finally(() => {
+          pollActiveRef.current = false;
+          recordPhase55ClientEvent("phase55_poll_finished", {
+            surface: conversationId ? "messaging_detail" : "messaging_list",
+          });
+          schedule();
+        });
       }, delay);
     };
 
     const onVisibilityChange = () => {
-      if (document.visibilityState === "visible") void refreshAll();
+      if (document.visibilityState === "visible") void refreshAll({ reason: "visibility" });
       schedule();
     };
     const onFocus = () => {
-      void refreshAll({ resetBackoff: true });
+      void refreshAll({ resetBackoff: true, reason: "focus" });
+    };
+
+    const onPhase55NavigationWindowChange = () => {
+      if (isPhase55NavigationWindowActive()) {
+        if (pollTimerRef.current != null) window.clearTimeout(pollTimerRef.current);
+        if (pollActiveRef.current) {
+          listAbortRef.current?.abort();
+          detailAbortRef.current?.abort();
+          recordPhase55ClientEvent("phase55_poll_cancelled", {
+            surface: conversationId ? "messaging_detail" : "messaging_list",
+          });
+        }
+      }
+      schedule();
     };
 
     schedule();
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("focus", onFocus);
+    window.addEventListener("aiya-phase55-navigation-window-changed", onPhase55NavigationWindowChange);
     return () => {
       if (pollTimerRef.current != null) window.clearTimeout(pollTimerRef.current);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("aiya-phase55-navigation-window-changed", onPhase55NavigationWindowChange);
     };
   }, [conversationId, enabled, refreshAll]);
 

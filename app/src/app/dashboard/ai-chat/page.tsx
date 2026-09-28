@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { AiChatPageClient } from "@/components/ai-chat/ai-chat-page-client";
 import { DashboardGatedState } from "@/components/auth-states";
+import { DashboardRscAuthDiagnosticMarker } from "@/components/dashboard/authenticated-shell-boundary";
 import { deriveDashboardAccessGate, type DashboardAccessGate } from "@/lib/phase-83e3-app-shell";
 import { resolveDashboardAuth } from "@/lib/dashboard-server-auth";
 import { isAiChatUiEnabled } from "@/lib/phase-85-stage-4b-dashboard-routing";
@@ -18,9 +19,15 @@ export default async function AiChatRootPage() {
 
   if (auth.gate === "fallback") {
     return (
-      <Suspense fallback={null}>
-        <AiChatPageClient activeChatId={null} uiLanguage={normalizeLanguageCode(undefined)} canAccessAiChat />
-      </Suspense>
+      <>
+        <DashboardRscAuthDiagnosticMarker
+          scope="page"
+          timing={undefined}
+        />
+        <Suspense fallback={null}>
+          <AiChatPageClient activeChatId={null} uiLanguage={normalizeLanguageCode(undefined)} canAccessAiChat />
+        </Suspense>
+      </>
     );
   }
 
@@ -31,16 +38,30 @@ export default async function AiChatRootPage() {
   });
 
   if (gate !== "ok") {
-    return <DashboardGatedState gate={gate} />;
+    return (
+      <>
+        <DashboardRscAuthDiagnosticMarker
+          scope="page"
+          timing={auth.gate === "resolved" ? auth.authTiming : undefined}
+        />
+        <DashboardGatedState gate={gate} />
+      </>
+    );
   }
 
   return (
-    <Suspense fallback={null}>
-      <AiChatPageClient
-        activeChatId={null}
-        uiLanguage={auth.uiLanguage}
-        canAccessAiChat={auth.role !== "assistant" && auth.role !== "auditor"}
+    <>
+      <DashboardRscAuthDiagnosticMarker
+        scope="page"
+        timing={auth.gate === "resolved" ? auth.authTiming : undefined}
       />
-    </Suspense>
+      <Suspense fallback={null}>
+        <AiChatPageClient
+          activeChatId={null}
+          uiLanguage={auth.uiLanguage}
+          canAccessAiChat={auth.role !== "assistant" && auth.role !== "auditor"}
+        />
+      </Suspense>
+    </>
   );
 }

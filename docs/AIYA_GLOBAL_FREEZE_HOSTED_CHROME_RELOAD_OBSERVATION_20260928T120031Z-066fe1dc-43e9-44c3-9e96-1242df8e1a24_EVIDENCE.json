@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "aiya-global-freeze-browser-observation-v1",
+  "evidenceId": "aiya-global-freeze-hosted-chrome-reload-observation-20260928T120031Z-066fe1dc-43e9-44c3-9e96-1242df8e1a24",
+  "createdAtUtc": "2026-09-28T12:10:41.068Z",
+  "status": "INFORMATIVE_UNPAIRED_OBSERVATION",
+  "scope": "One authenticated production Dashboard reload; no typing or sidebar click was attempted.",
+  "origin": "https://aiyaworkspace.com",
+  "identity": {
+    "branch": "codex/production-readiness-stage-1",
+    "checkoutHead": "a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a",
+    "checkoutSourceFingerprint": null,
+    "lastRecordedHostedRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "independentlyVerifiedInThisCapture": false
+    }
+  },
+  "environment": {
+    "browser": "Chrome",
+    "dashboardSessionAuthenticated": true,
+    "chromeExtensionScriptsObserved": true,
+    "extensionSettingsChanged": false,
+    "localHostSample": false,
+    "databaseOrFormWrite": false
+  },
+  "reload": {
+    "startedAtUtc": "2026-09-28T12:00:39.913Z",
+    "tabReloadCallDurationMs": 4077,
+    "tabReloadCallCompletionContract": "not independently established; return time is close to DOMContentLoaded",
+    "navigationTimingMs": {
+      "responseStart": 1988.5,
+      "responseEnd": 1996.5,
+      "domInteractive": 3945.6,
+      "domContentLoadedEventEnd": 4011.6,
+      "loadEventEnd": 8053.5
+    },
+    "documentTransferSizeBytes": 8501,
+    "documentEncodedBodySizeBytes": 8201
+  },
+  "browserTrace": {
+    "format": "Chrome trace JSON stream",
+    "bytes": 33420445,
+    "eventCount": 146041,
+    "dataLossOccurred": false,
+    "sha256": "745e29bfed84d73ce55133992f9e0fcef67c53f62a7d6e952b72fdbcff45bfa6",
+    "rawTracePersistedToFile": false,
+    "rawTraceRetention": "held in the browser automation session through validation; no raw artifact or checkpoint was created",
+    "sameRendererMainThreadEventSpanMs": 30898.3,
+    "rendererMainThreadCount": 1,
+    "runTaskSlicesAtLeast50ms": 13,
+    "longestRunTaskMs": 1790,
+    "longestNestedSlice": {
+      "name": "ParseHTML",
+      "durationMs": 1789.8,
+      "sourceClass": "same-origin Dashboard document"
+    },
+    "evaluateScript": {
+      "chromeExtension": {
+        "eventCount": 45,
+        "totalDurationMs": 4873.1,
+        "maxSingleDurationMs": 1010.9
+      },
+      "sameOriginApp": {
+        "eventCount": 17,
+        "totalDurationMs": 645.8,
+        "maxSingleDurationMs": 530.9
+      }
+    }
+  },
+  "networkCapture": {
+    "networkDomainEnabledBeforeReload": true,
+    "eventCount": 163,
+    "cursorBeforeTrace": 41,
+    "firstReturnedSequence": 50,
+    "eventBufferTruncated": true,
+    "requestStartsObserved": 54,
+    "responsesObserved": 54,
+    "loadingFinishedObserved": 55,
+    "loadingFailedObserved": 0,
+    "fullyPairedRequests": 54,
+    "completedAppFetchesObserved": 14,
+    "observedAppFetchesAllStatus200": true,
+    "slowestObservedAppFetches": [
+      { "route": "/api/app-state", "durationMs": 2180.3, "status": 200 },
+      { "route": "/api/conversations", "durationMs": 1565.6, "status": 200 },
+      { "route": "/api/notifications", "durationMs": 1057.5, "status": 200 },
+      { "route": "/api/shell/bootstrap", "durationMs": 769.3, "status": 200 },
+      { "route": "/api/alerts", "durationMs": 578, "status": 200 }
+    ],
+    "completeness": "partial; the event buffer omitted its earliest sequence range, so totals and request ordering are not treated as complete"
+  },
+  "measurementAnomalyExcluded": {
+    "resourceTimingMaxFetchDurationMs": 45604.4,
+    "reason": "inconsistent with the bounded captured Network request set, whose slowest fully paired Fetch was 2180.3 ms; not used for attribution"
+  },
+  "crossBrowserCheck": {
+    "browser": "Edge",
+    "result": "redirected to the login page; no authenticated session was available",
+    "credentialsEntered": false,
+    "extensionFreeComparisonCompleted": false
+  },
+  "assessment": {
+    "slowReloadObservedOnce": true,
+    "reportedTypingOrClickFreezeReproduced": false,
+    "rootCauseEstablished": false,
+    "interpretation": "The reload was slow. Navigation timing shows about 2.0 s to first byte and 8.05 s to loadEventEnd. The trace contains substantial extension-script execution and a 1.79 s main-thread RunTask with ParseHTML. Captured app fetches also took up to 2.18 s. These layers coexist in this single unpaired run; none is established as the sole cause.",
+    "formalHostedPhase1": "unchanged: BLOCKED, 0/3 valid paired records, 5/5 attempts consumed; this observation is not counted because it has no aligned host sample and its Network event buffer is truncated"
+  },
+  "privacyAndSideEffects": {
+    "requestBodiesCaptured": false,
+    "headersOrCookiesCaptured": false,
+    "queryStringsOrResponseBodiesPersisted": false,
+    "pageTextOrHealthDataPersisted": false,
+    "formSubmitted": false,
+    "productionDataChanged": false,
+    "sourceFilesChanged": false,
+    "browserSettingsChanged": false
+  },
+  "nextAction": "Do not repeat the exhausted Phase 1 identity. The next discriminating check is one authenticated capture of the same Dashboard in a browser context with extension scripts absent, retaining complete Network events; the Edge profile needs a user-owned sign-in first. If the freeze remains there, use the same capture to separate document/API wait from renderer main-thread work."
+}

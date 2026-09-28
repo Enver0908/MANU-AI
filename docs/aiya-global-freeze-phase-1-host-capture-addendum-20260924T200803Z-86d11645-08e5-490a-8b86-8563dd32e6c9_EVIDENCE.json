@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "aiya-global-freeze-phase-1-host-capture-addendum-v1",
+  "evidenceId": "aiya-global-freeze-phase-1-host-capture-addendum-20260924T200803Z-86d11645-08e5-490a-8b86-8563dd32e6c9",
+  "createdAtUtc": "2026-09-24T20:08:03Z",
+  "status": "SUPPLEMENTAL",
+  "supplementsEvidenceId": "aiya-global-freeze-phase-1-20260924T195845623Z-6029109a-b6cb-46b3-8bc0-b355420234a5",
+  "checkpointRunId": "aiya-global-freeze-diagnostic-v1-20260924T195119517Z-61e8f694-e2e2-465f-9512-5737058fc0f6",
+  "sourceFingerprint": "3ff27d4cfac1e134d25ff59d261cc81a756b64f44e2de84e4bc77113a91a1f43",
+  "liveRelease": {
+    "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+  },
+  "hostCapture": {
+    "artifactName": "host-vitals.jsonl",
+    "artifactSha256": "d185d611b4d07da2e0bb539fb282234b1892b8c6394aeaab03238a8b39356cf9",
+    "sampleCount": 150,
+    "sampleStartUtc": "2026-09-24T19:51:48Z",
+    "sampleEndUtc": "2026-09-24T19:54:32Z",
+    "summary": {
+      "vcpu": 2,
+      "load1Peak": 0.12,
+      "hostCpuBusyPercentAverage": 5.37,
+      "hostCpuBusyPercentPeak": 13.57,
+      "memoryAvailableKbMin": 3016776,
+      "swapInPagesDelta": 0,
+      "swapOutPagesDelta": 0,
+      "appProcessFound": true,
+      "appProcessMissingCount": 0,
+      "cgroupNrThrottledDelta": 0,
+      "cgroupThrottledUsecDelta": 0,
+      "cgroupMemoryHighEventsDelta": 0,
+      "cgroupOomKillEventsDelta": 0,
+      "cpuPressurePeakAvg10": 0.36,
+      "memoryPressurePeakAvg10": 0,
+      "ioPressurePeakAvg10": 0
+    }
+  },
+  "clockSync": {
+    "probeCount": 3,
+    "roundTripMs": [64, 45, 47],
+    "offsetMs": -370,
+    "uncertaintyMs": 40,
+    "maximumAllowedUncertaintyMs": 500
+  },
+  "browserCapture": {
+    "status": "UNAVAILABLE",
+    "failureCode": "browser_trace_capture_unavailable",
+    "mouseDispatch": "TIMEOUT",
+    "accessibilityRead": "TIMEOUT",
+    "screenshot": "TIMEOUT",
+    "phoneFieldTyping": "NOT_REACHED",
+    "navigation": "NOT_TESTED",
+    "reload": "NOT_TESTED",
+    "formSubmitted": false
+  },
+  "primaryEvidenceCorrection": {
+    "path": "docs/aiya-global-freeze-phase-1-20260924T195845623Z-6029109a-b6cb-46b3-8bc0-b355420234a5_EVIDENCE.json",
+    "attemptHostSummarySampleCount": 150,
+    "attemptHostSampleCount": 0,
+    "attemptHostSamplesSha256": null,
+    "reason": "The original attempt summarizer read the host and browser trace files inside one try block. The absent trace stopped processing before the host sample count and hash were assigned, although the hash-chained host.capture.completed checkpoint retained the 150-sample summary. The host artifact was independently parsed and hashed for this addendum. The runner now reads and validates the two artifacts independently; a focused regression test covers the missing-trace case."
+  },
+  "verdict": {
+    "observationValidity": "INVALID_NO_BROWSER_TRACE",
+    "rootCause": "NOT_ESTABLISHED",
+    "hostSampleInterpretation": "No high host CPU, memory, swap, cgroup-throttling, OOM, memory-pressure, or IO-pressure signal was observed during this host window. Because there is no aligned browser trace or confirmed UI reproduction in this window, this does not rule out transient server, database, network, or browser causes."
+  },
+  "rawSamplesOrTraceEmbedded": false
+}

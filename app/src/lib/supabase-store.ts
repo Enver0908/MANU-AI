@@ -1681,6 +1681,99 @@ async function loadSupabaseClientOperationState(
   return scopedState satisfies ManuAppState;
 }
 
+async function loadSupabaseClientFoodRuleProfileNarrowState(
+  clientId: string,
+  context: AppTenantContext,
+) {
+  const supabase = requireSupabase();
+  const [clientResult, assignmentsResult, activeFormSchemasResult, formResponsesResult, clientFoodRuleProfilesResult] =
+    await Promise.all([
+      supabase.from("clients").select("*").eq("tenant_id", context.tenantId).eq("id", clientId).maybeSingle(),
+      supabase.from("client_assignments").select("client_id, dietitian_id").eq("tenant_id", context.tenantId),
+      supabase.from("client_form_schemas").select("*").eq("tenant_id", context.tenantId).eq("status", "published"),
+      supabase.from("client_form_responses").select("*").eq("tenant_id", context.tenantId).eq("client_id", clientId),
+      supabase
+        .from("client_food_rule_profiles")
+        .select("*")
+        .eq("tenant_id", context.tenantId)
+        .eq("client_id", clientId),
+    ]);
+
+  throwIfError(clientResult.error);
+  throwIfError(assignmentsResult.error);
+  throwIfError(activeFormSchemasResult.error);
+  throwIfError(formResponsesResult.error);
+  throwIfError(clientFoodRuleProfilesResult.error);
+
+  if (!clientResult.data) {
+    throw new AppDomainError(404, "client_not_found");
+  }
+
+  const scopedState = scopeSupabaseState(
+    {
+      tenant: { id: context.tenantId, name: "Food rule profile" },
+      dietitian: {
+        id: context.dietitianId,
+        tenantId: context.tenantId,
+        displayName: "",
+        timezone: "UTC",
+        uiLanguage: "tr",
+      },
+      voiceSamples: [],
+      voiceProfiles: [],
+      styleEditHistory: [],
+      clientFormSchemas: (activeFormSchemasResult.data || []).map(mapFormSchema),
+      clientFormResponses: (formResponsesResult.data || []).map(mapFormResponse),
+      dietitianFormSchemas: [],
+      dietitianFormResponses: [],
+      clientContextUpdates: [],
+      clientUpdateProposals: [],
+      clientFoodRuleProfiles: (clientFoodRuleProfilesResult.data || []).map(mapClientFoodRuleProfile),
+      clientMenuPlans: [],
+      clients: [mapClient(clientResult.data, [])],
+      conversations: [],
+      messages: [],
+      aiDecisions: [],
+      riskAssessments: [],
+      handoffCases: [],
+      notifications: [],
+      notificationReceipts: [],
+      conversationReadReceipts: [],
+      inboundQuarantines: [],
+      channelAccountBindings: [],
+      channelActorBindings: [],
+      channelEvents: [],
+      channelMessageRevisions: [],
+      humanControlSessions: [],
+      riskActivityEvents: [],
+      contextIntakeProposals: [],
+      channelDeliveries: [],
+      channelAdapterRollback: createDefaultChannelAdapterRollbackControls(),
+      dataRequests: [],
+      internalCopilotMessages: [],
+      internalCopilotToolCalls: [],
+      scopeRules: createPlaceholderScopeRules(),
+      scopeRuleChunks: [],
+      scopeGuardEvaluations: [],
+      permissionGraphEvaluations: [],
+      auditEvents: [],
+      processedSimulationKeys: [],
+      lastSimulation: null,
+      ...createEmptyStage4B3MediaCollections(),
+      ...createEmptyStage4B4VoiceCollections(),
+      ...createEmptyStage4CAiChatCollections(),
+    },
+    context,
+    assignmentsResult.data || [],
+  );
+
+  if (!scopedState.clients.some((client) => client.id === clientId)) {
+    throw new AppDomainError(404, "client_not_found");
+  }
+
+  return scopedState satisfies ManuAppState;
+}
+
 async function loadSupabaseHandoffOperationState(handoffId: string, context: AppTenantContext) {
   const supabase = requireSupabase();
 
@@ -3474,6 +3567,9 @@ export async function saveSupabaseFormResponse(
 }
 
 export async function loadSupabaseClientFoodRuleProfile(clientId: string, context = demoTenantContext()) {
+  if (process.env.AIYA_PERF_FOOD_RULE_PROFILE_READ_POLICY === "narrow") {
+    return loadSupabaseClientFoodRuleProfileNarrowState(clientId, context);
+  }
   return loadSupabaseClientOperationState(clientId, context);
 }
 

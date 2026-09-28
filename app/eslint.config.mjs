@@ -23,6 +23,8 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".next-fanout-baseline-*/**",
+    ".next-post-response-envelope-*/**",
     ".manu-runtime/**",
     "out/**",
     "build/**",

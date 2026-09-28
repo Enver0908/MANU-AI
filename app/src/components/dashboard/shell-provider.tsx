@@ -22,6 +22,7 @@ import {
   resolveShellDestination,
   sanitizeShellDestination,
   shellDestinationAcceptsClientId,
+  shouldUseClientOnlyDashboardNavigation,
   type DashboardSection,
 } from "@/lib/phase-85-stage-4b-dashboard-routing";
 import type {
@@ -75,6 +76,7 @@ import {
   SHELL_SESSION_LOGIN_HREF,
   type ShellServerSessionCheck,
 } from "@/lib/phase-85-stage-5-shell-session-policy";
+import { recordPhase52ClientEvent } from "@/lib/phase-52-diagnostic";
 
 export type ShellHeaderSlots = {
   title?: ReactNode;
@@ -234,12 +236,26 @@ export function ShellProvider({
   const shellDestination = resolveShellDestination(pathname, searchParams);
   const activeDestination = resolveActiveDestination(pathname, searchParams);
   const urlState = parseDashboardSearchParams(searchParams);
+  const previousDiagnosticStateRef = useRef<ShellProviderState | null>(null);
   const preferenceClientId = state.bootstrap?.preferences.activeClientId ?? null;
   const effectiveActiveClientId = resolveEffectiveShellActiveClientId({
     urlClientId: urlState.clientId,
     preferenceClientId,
   });
   const showActiveClientControl = shouldShowShellActiveClientControl(shellDestination);
+
+  useEffect(() => {
+    const previousState = previousDiagnosticStateRef.current;
+    previousDiagnosticStateRef.current = state;
+    recordPhase52ClientEvent("shell_context_state_committed", {
+      transition: previousState ? "update" : "mount",
+      runtime: state.runtime,
+      hasBootstrap: state.bootstrap !== null,
+      requestSequence: state.requestSequence,
+      updateWaiting: state.updateWaiting,
+      updateRequired: state.updateRequired,
+    });
+  }, [state]);
 
   if (!preferenceCoordinatorRef.current) {
     preferenceCoordinatorRef.current = new ShellPreferenceCoordinator({
@@ -252,7 +268,7 @@ export function ShellProvider({
 
   const runBootstrap = useCallback(
     async (reason: "mount" | "route" | "foreground" | "explicit"): Promise<ShellServerSessionCheck> => {
-      void reason;
+      recordPhase52ClientEvent("shell_bootstrap_started", { reason });
       if (mode === "fallback") {
         const sequence = sequenceRef.current + 1;
         sequenceRef.current = sequence;
@@ -267,8 +283,9 @@ export function ShellProvider({
                   displayName: fallbackDisplayName,
                   uiLanguage: fallbackUiLanguage,
                   aiChatEnabled: fallbackAiChatEnabled,
-                }),
+          }),
         });
+        recordPhase52ClientEvent("shell_bootstrap_completed", { status: "fallback" });
         return "active";
       }
 
@@ -288,6 +305,7 @@ export function ShellProvider({
         const nextBootstrap =
           shellDestination === "ai_chat" ? { ...bootstrap, activeClient: null } : bootstrap;
         dispatch({ type: "bootstrap_succeeded", sequence, bootstrap: nextBootstrap });
+        recordPhase52ClientEvent("shell_bootstrap_completed", { status: "success" });
         return "active";
       } catch (error: unknown) {
         if (controller.signal.aborted) return "failed";
@@ -315,6 +333,10 @@ export function ShellProvider({
         }
         bootstrapRetryRef.current = 0;
         const runtime = mapShellBootstrapHttpFailure({ status, errorCode, offline });
+        recordPhase52ClientEvent("shell_bootstrap_completed", {
+          status: "failed",
+          runtime,
+        });
         dispatch({
           type: "bootstrap_failed",
           sequence,
@@ -675,7 +697,7 @@ export function ShellProvider({
           });
           commitDashboardHref(href, "push");
           currentBrowserHrefRef.current = href;
-          router.push(href);
+          if (!shouldUseClientOnlyDashboardNavigation(pathname, href)) router.push(href);
           void preferenceCoordinatorRef.current?.update({ lastDestinationId: safe }).then((preferences) => {
             if (preferences) preferenceRevisionRef.current = preferences.revision;
           });
@@ -685,7 +707,7 @@ export function ShellProvider({
         case "href":
           commitDashboardHref(pending.href, "push");
           currentBrowserHrefRef.current = pending.href;
-          router.push(pending.href);
+          if (!shouldUseClientOnlyDashboardNavigation(pathname, pending.href)) router.push(pending.href);
           return;
         case "logout": {
           const form = document.createElement("form");
@@ -805,7 +827,7 @@ export function ShellProvider({
             commitDashboardHref(fallbackHref, "push");
             currentBrowserHrefRef.current = fallbackHref;
             try {
-              router.push(fallbackHref);
+              if (!shouldUseClientOnlyDashboardNavigation(pathname, fallbackHref)) router.push(fallbackHref);
             } catch {
               // Same-page query updates are already applied through history.
             }
@@ -837,7 +859,7 @@ export function ShellProvider({
           commitDashboardHref(nextHref, "push");
           currentBrowserHrefRef.current = nextHref;
           try {
-            router.push(nextHref);
+            if (!shouldUseClientOnlyDashboardNavigation(pathname, nextHref)) router.push(nextHref);
           } catch {
             // Same-page query updates are already applied through history.
           }

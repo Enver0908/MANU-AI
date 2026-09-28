@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "worktree-reconciliation-evidence-v1",
+  "runId": "worktree-reconciliation-20260918T163307Z",
+  "createdAt": "2026-09-18T16:33:07.582Z",
+  "status": "COMPLETE",
+  "outcome": "RECONCILED_AND_VALIDATED",
+  "scope": "Recover and reconcile the current repository source, evidence, tests, runtime diagnostics, checkpoints, and active documentation without changing historical measurement meaning or production boundaries.",
+  "workspace": {
+    "path": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "workingTree": "dirty_preserved",
+    "origin": "https://github.com/Enver0908/MANU-AI.git"
+  },
+  "source": {
+    "snapshotRef": "refs/codex/snapshots/3b1559641830feeaec7f71f65b6b5f59402979ab",
+    "snapshotCommit": "e52d7b48a234dbf5e83f6ff836cc7c7640b97e3d",
+    "snapshotParent": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "formerWorktree": "C:\\Users\\Dell\\.codex\\worktrees\\38c0\\MANU-AI",
+    "formerWorktreeStatus": "EMPTY_NON_GIT_DIRECTORY",
+    "otherHistoricalCopies": [
+      "C:\\Users\\Dell\\.codex\\worktrees\\43d7\\MANU-AI",
+      "C:\\Users\\Dell\\.codex\\worktrees\\605d\\MANU-AI"
+    ]
+  },
+  "preservation": {
+    "recoveryRoot": "C:\\Users\\Dell\\.codex\\recovery\\MANU-AI\\reconcile-20260918-193304-c8346cc7",
+    "preReconciliationManifest": "C:\\Users\\Dell\\.codex\\recovery\\MANU-AI\\reconcile-20260918-193304-c8346cc7\\pre-reconciliation-manifest.json",
+    "workingTreeDiff": "C:\\Users\\Dell\\.codex\\recovery\\MANU-AI\\reconcile-20260918-193304-c8346cc7\\working-tree.diff",
+    "statusFile": "C:\\Users\\Dell\\.codex\\recovery\\MANU-AI\\reconcile-20260918-193304-c8346cc7\\git-status.txt",
+    "capturedFileCount": 44,
+    "ignoredRuntimeDataModified": false
+  },
+  "recovery": {
+    "changedSnapshotPathCount": 125,
+    "recoveredPathCount": 123,
+    "excludedPathCount": 2,
+    "excludedPaths": [
+      "tmp/pdfs/cv_render/cv-1.png",
+      "tmp/pdfs/cv_render/cv-2.png"
+    ],
+    "recoveryRecord": "C:\\Users\\Dell\\.codex\\recovery\\MANU-AI\\reconcile-20260918-193304-c8346cc7\\snapshot-recovery-record.json",
+    "strategy": "snapshot_paths_recovered_after_external_preservation_and_common_parent_comparison"
+  },
+  "stageLedger": [
+    {
+      "stageId": "inventory",
+      "status": "COMPLETE",
+      "notes": "Current status, worktrees, source snapshot, and pre-reconciliation files were recorded."
+    },
+    {
+      "stageId": "common_parent_comparison",
+      "status": "COMPLETE",
+      "notes": "Snapshot commit and current HEAD share the declared parent; changed paths were compared before recovery."
+    },
+    {
+      "stageId": "content_recovery",
+      "status": "COMPLETE",
+      "notes": "123 snapshot paths were recovered; two unrelated temporary images were excluded."
+    },
+    {
+      "stageId": "active_authority_reconciliation",
+      "status": "COMPLETE",
+      "notes": "Active source references and the manifest pointer resolve to the current checkout; historical references remain dated history."
+    },
+    {
+      "stageId": "verification",
+      "status": "COMPLETE",
+      "notes": "Recovered tests, application tests, clinical-AI tests, typecheck, lint, build, JSON parsing, active-reference scan, redaction coverage, and final Git checks passed."
+    }
+  ],
+  "historicalIntegrity": {
+    "historicalMeasurementMeaningChanged": false,
+    "historicalEvidenceRewritten": false,
+    "plan2EligibilityChanged": false,
+    "productionDecisionChanged": false
+  },
+  "verification": {
+    "gitDiffCheck": "PASS_WITH_EXISTING_LINE_ENDING_WARNINGS",
+    "tests": {
+      "checkpoint": "11 passed",
+      "recoveredPhase4Phase5": "80 passed",
+      "application": "291 files passed; 1723 tests passed; 9 skipped",
+      "clinicalAi": "295 tests passed"
+    },
+    "typecheck": "PASS",
+    "lint": "PASS_0_ERRORS_79_WARNINGS",
+    "build": "PASS",
+    "redaction": "PASS_THROUGH_RECOVERED_TEST_COVERAGE",
+    "jsonParsing": "PASS_33_FILES",
+    "activeReferenceScan": "PASS_0_STALE_ACTIVE_MATCHES",
+    "recoveredPathPresence": "PASS_123_OF_123"
+  }
+}

@@ -1,0 +1,5502 @@
+{
+  "phase": "AIya Performance Plan 1 Phase 4 Android diagnostic cycle",
+  "schemaVersion": "aiya-performance-plan1-phase4-android-diagnostic-v1",
+  "generatedAt": "2026-09-15T23:16:53.956Z",
+  "runId": "aiya-performance-plan1-phase4-20260915T195604720Z-497a3200-ada3-445d-a2d0-059cb0886940",
+  "cycleId": "cycle-20260915T231653941Z-923cc126-b85f-4b81-adec-b7d3f8de6f0a",
+  "cycleNumber": 3,
+  "mode": "diagnostic_only",
+  "officialSamplesAdded": 0,
+  "environment": "android_chrome",
+  "repetitions": [
+    {
+      "repetition": 1,
+      "startedAt": "2026-09-15T23:17:02.410Z",
+      "finishedAt": "2026-09-15T23:21:29.854Z",
+      "error": null,
+      "trace": [
+        {
+          "at": "2026-09-15T23:17:11.275Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:17:11.301Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:17:11.329Z",
+          "event": "warm_action_started",
+          "scenarioId": "client_roster"
+        },
+        {
+          "at": "2026-09-15T23:17:11.329Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:17:11.329Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:17:11.329Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:17:11.329Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:11.474Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:17:11.480Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:11.902Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:11.910Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:17:11.910Z",
+          "event": "ready_wait_started",
+          "label": "client_roster_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:17:11.920Z",
+          "event": "ready_wait_completed",
+          "label": "client_roster_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:17:11.920Z",
+          "event": "warm_action_ready",
+          "scenarioId": "client_roster"
+        },
+        {
+          "at": "2026-09-15T23:17:16.989Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:17:17.008Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:17:17.032Z",
+          "event": "warm_action_started",
+          "scenarioId": "client_forms_workspace"
+        },
+        {
+          "at": "2026-09-15T23:17:17.032Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:17:17.032Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:17:17.032Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:17:17.032Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:17.131Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:17:17.136Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:18.125Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:18.140Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:17:18.166Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:18.210Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:17:18.212Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:19.471Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:19.511Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:20.960Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_personal_form\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:17:20.964Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:22.043Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:22.043Z",
+          "event": "ready_wait_started",
+          "label": "client_forms_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:17:23.308Z",
+          "event": "ready_wait_completed",
+          "label": "client_forms_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:17:23.308Z",
+          "event": "warm_action_ready",
+          "scenarioId": "client_forms_workspace"
+        },
+        {
+          "at": "2026-09-15T23:17:29.388Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:17:29.411Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:17:29.461Z",
+          "event": "warm_action_started",
+          "scenarioId": "nutrition_workspace"
+        },
+        {
+          "at": "2026-09-15T23:17:29.461Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:17:29.461Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:17:29.461Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:17:29.461Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:29.611Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:17:29.617Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:31.705Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:31.715Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:17:31.745Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:33.707Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:17:33.711Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:38.713Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:38.797Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:41.838Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_food_rules\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:17:41.841Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:45.224Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:17:45.224Z",
+          "event": "ready_wait_started",
+          "label": "nutrition_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:17:52.620Z",
+          "event": "ready_wait_completed",
+          "label": "nutrition_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:17:52.620Z",
+          "event": "warm_action_ready",
+          "scenarioId": "nutrition_workspace"
+        },
+        {
+          "at": "2026-09-15T23:18:01.745Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:18:01.780Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:18:01.824Z",
+          "event": "warm_action_started",
+          "scenarioId": "menu_workspace"
+        },
+        {
+          "at": "2026-09-15T23:18:01.824Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:18:01.824Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:18:01.824Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:18:01.824Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:01.956Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:18:01.960Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:07.691Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:07.713Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:18:15.837Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:15.927Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:18:15.931Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:29.889Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:29.984Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:37.907Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_menu\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:18:37.909Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:46.217Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:18:46.217Z",
+          "event": "ready_wait_started",
+          "label": "menu_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:19:03.559Z",
+          "event": "ready_wait_completed",
+          "label": "menu_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:19:03.559Z",
+          "event": "warm_action_ready",
+          "scenarioId": "menu_workspace"
+        },
+        {
+          "at": "2026-09-15T23:19:08.674Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:19:08.713Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:19:08.770Z",
+          "event": "warm_action_started",
+          "scenarioId": "messages"
+        },
+        {
+          "at": "2026-09-15T23:19:08.770Z",
+          "event": "destination_started",
+          "destination": "messages",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:19:08.770Z",
+          "event": "destination_layout_resolved",
+          "destination": "messages",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:19:08.770Z",
+          "event": "desktop_destination_click_started",
+          "destination": "messages"
+        },
+        {
+          "at": "2026-09-15T23:19:08.770Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:19:08.972Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=messages\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:19:08.977Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:19:19.259Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:19:19.280Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "messages",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:19:19.280Z",
+          "event": "ready_wait_started",
+          "label": "messages_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:19:29.744Z",
+          "event": "ready_wait_completed",
+          "label": "messages_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:19:29.744Z",
+          "event": "warm_action_ready",
+          "scenarioId": "messages"
+        },
+        {
+          "at": "2026-09-15T23:19:35.003Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:19:35.024Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:19:35.057Z",
+          "event": "warm_action_started",
+          "scenarioId": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:19:35.057Z",
+          "event": "destination_started",
+          "destination": "alerts",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:19:35.057Z",
+          "event": "destination_layout_resolved",
+          "destination": "alerts",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:19:35.057Z",
+          "event": "desktop_destination_click_started",
+          "destination": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:19:35.057Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:19:35.163Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=alerts\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:19:35.168Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:19:46.384Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:19:46.408Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "alerts",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:19:46.408Z",
+          "event": "ready_wait_started",
+          "label": "alerts_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:19:57.937Z",
+          "event": "ready_wait_completed",
+          "label": "alerts_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:19:57.937Z",
+          "event": "warm_action_ready",
+          "scenarioId": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:20:03.161Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:20:03.187Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:20:03.219Z",
+          "event": "warm_action_started",
+          "scenarioId": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:20:03.219Z",
+          "event": "destination_started",
+          "destination": "notifications",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:20:03.219Z",
+          "event": "destination_layout_resolved",
+          "destination": "notifications",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:20:03.219Z",
+          "event": "desktop_destination_click_started",
+          "destination": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:20:03.219Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:20:03.404Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-header-bell\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:20:03.409Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:20:15.286Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:20:15.293Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "notifications",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:20:15.293Z",
+          "event": "ready_wait_started",
+          "label": "notifications_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:20:15.300Z",
+          "event": "ready_wait_completed",
+          "label": "notifications_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:20:15.300Z",
+          "event": "warm_action_ready",
+          "scenarioId": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:20:27.731Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:20:27.740Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:20:27.758Z",
+          "event": "warm_action_started",
+          "scenarioId": "ai_chat"
+        },
+        {
+          "at": "2026-09-15T23:20:27.758Z",
+          "event": "destination_started",
+          "destination": "ai_chat",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:20:27.773Z",
+          "event": "destination_layout_resolved",
+          "destination": "ai_chat",
+          "compactAndroid": true
+        },
+        {
+          "at": "2026-09-15T23:20:27.773Z",
+          "event": "more_navigation_click_started"
+        },
+        {
+          "at": "2026-09-15T23:20:27.773Z",
+          "event": "actionable_wait_started",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:20:27.792Z",
+          "event": "actionable_target_found",
+          "label": "compact_more_navigation",
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard/more\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:20:27.794Z",
+          "event": "real_click_started",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:20:40.987Z",
+          "event": "actionable_click_completed",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:20:40.992Z",
+          "event": "more_navigation_click_completed",
+          "pathname": "/dashboard/more",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:20:40.993Z",
+          "event": "more_page_wait_started",
+          "timeoutMs": 15000
+        },
+        {
+          "at": "2026-09-15T23:20:55.002Z",
+          "event": "more_page_ready",
+          "pathname": "/dashboard/more",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": true,
+          "morePageVisible": true,
+          "aiChatItem": true,
+          "aiChatItemVisible": true,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:20:55.002Z",
+          "event": "more_ai_chat_click_started"
+        },
+        {
+          "at": "2026-09-15T23:20:55.002Z",
+          "event": "actionable_wait_started",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:20:55.021Z",
+          "event": "actionable_target_found",
+          "label": "compact_ai_chat_item",
+          "attempt": 1,
+          "selector": "[data-testid=\"more-item-ai_chat\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:20:55.026Z",
+          "event": "real_click_started",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:09.482Z",
+          "event": "actionable_click_completed",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:09.485Z",
+          "event": "more_ai_chat_click_completed",
+          "pathname": "/dashboard/ai-chat",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": true,
+          "morePageVisible": true,
+          "aiChatItem": true,
+          "aiChatItemVisible": true,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:21:09.485Z",
+          "event": "ready_wait_started",
+          "label": "ai_chat_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:21:24.764Z",
+          "event": "ready_wait_completed",
+          "label": "ai_chat_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:21:24.764Z",
+          "event": "warm_action_ready",
+          "scenarioId": "ai_chat"
+        }
+      ],
+      "round": {
+        "status": "CAPTURED",
+        "invalidReason": null,
+        "invalidScenarioId": null,
+        "samples": {
+          "post_login_dashboard": {
+            "scenarioId": "post_login_dashboard",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-post_login_dashboard-1789514231273",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": 200,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 2487,
+            "eventToNextPaintMs": 11,
+            "maxLongTaskMs": 0,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1732,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/app-state",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1659,
+                "bodyFinishedMs": 1836
+              },
+              {
+                "method": "POST",
+                "route": "/api/auth/password-login",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 681,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 397,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1655,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 593,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 594,
+                "bodyFinishedMs": 595
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/version",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 591,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/dashboard",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 586,
+                "bodyFinishedMs": 644
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "PASS",
+            "validityProblems": [],
+            "budgetProblems": []
+          },
+          "client_roster": {
+            "scenarioId": "client_roster",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-client_roster-1789514236989",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 610,
+            "eventToNextPaintMs": 55,
+            "maxLongTaskMs": 65,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 718,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 688,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 791,
+                "bodyFinishedMs": 792
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "PASS",
+            "validityProblems": [],
+            "budgetProblems": []
+          },
+          "client_forms_workspace": {
+            "scenarioId": "client_forms_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-client_forms_workspace-1789514249388",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 6294,
+            "eventToNextPaintMs": 1,
+            "maxLongTaskMs": 1084,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1288,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1206,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1287,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/forms",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1208,
+                "bodyFinishedMs": 1215
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1289,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1203,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1521,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2295,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 549,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:6294>1000",
+              "maxLongTask:1084>500"
+            ]
+          },
+          "nutrition_workspace": {
+            "scenarioId": "nutrition_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-nutrition_workspace-1789514281745",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 23190,
+            "eventToNextPaintMs": 25,
+            "maxLongTaskMs": 4039,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1991,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2918,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3581,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2923,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/food-rule-profile",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3605,
+                "bodyFinishedMs": 3611
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2956,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1991,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2919,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3580,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2008,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2923,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3604,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2478,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:23190>1000",
+              "maxLongTask:4039>500"
+            ]
+          },
+          "menu_workspace": {
+            "scenarioId": "menu_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-menu_workspace-1789514348674",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 61764,
+            "eventToNextPaintMs": 45,
+            "maxLongTaskMs": 8683,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 8144,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 7752,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 8482,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 7760,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/menu-plans",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 8516,
+                "bodyFinishedMs": 8534
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 7039,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 865,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 8146,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 7752,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 8480,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 8162,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 8164,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 7761,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 8513,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 7021,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:61764>1000",
+              "maxLongTask:8683>500"
+            ]
+          },
+          "messages": {
+            "scenarioId": "messages",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-messages-1789514375002",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 21008,
+            "eventToNextPaintMs": 37,
+            "maxLongTaskMs": 10388,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10513,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 416,
+                "bodyFinishedMs": 422
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10510,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 42,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10532,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:21008>1000",
+              "maxLongTask:10388>500"
+            ]
+          },
+          "alerts": {
+            "scenarioId": "alerts",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-alerts-1789514403161",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 22901,
+            "eventToNextPaintMs": 45,
+            "maxLongTaskMs": 11506,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 11599,
+                "bodyFinishedMs": 11601
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 11599,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 11612,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:22901>1000",
+              "maxLongTask:11506>500"
+            ]
+          },
+          "notifications": {
+            "scenarioId": "notifications",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-notifications-1789514427731",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 12106,
+            "eventToNextPaintMs": 42,
+            "maxLongTaskMs": 12267,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12357,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12356,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12356,
+                "bodyFinishedMs": 12359
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12368,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12368,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12371,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:12106>1000",
+              "maxLongTask:12267>500"
+            ]
+          },
+          "ai_chat": {
+            "scenarioId": "ai_chat",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-ai_chat-1789514489853",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 57017,
+            "eventToNextPaintMs": 42,
+            "maxLongTaskMs": 14872,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/ai-chat/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 821,
+                "bodyFinishedMs": 886
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 13672,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 13672,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1080,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 13691,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 408,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1083,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:57017>1000",
+              "maxLongTask:14872>500"
+            ]
+          }
+        }
+      },
+      "connectionAfter": {
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      }
+    },
+    {
+      "repetition": 2,
+      "startedAt": "2026-09-15T23:21:30.013Z",
+      "finishedAt": "2026-09-15T23:26:19.342Z",
+      "error": null,
+      "trace": [
+        {
+          "at": "2026-09-15T23:21:40.743Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:21:40.767Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:21:40.795Z",
+          "event": "warm_action_started",
+          "scenarioId": "client_roster"
+        },
+        {
+          "at": "2026-09-15T23:21:40.795Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:21:40.795Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:21:40.795Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:21:40.795Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:40.949Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:21:40.954Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:41.381Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:41.393Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:21:41.394Z",
+          "event": "ready_wait_started",
+          "label": "client_roster_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:21:41.425Z",
+          "event": "ready_wait_completed",
+          "label": "client_roster_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:21:41.425Z",
+          "event": "warm_action_ready",
+          "scenarioId": "client_roster"
+        },
+        {
+          "at": "2026-09-15T23:21:46.506Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:21:46.530Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:21:46.556Z",
+          "event": "warm_action_started",
+          "scenarioId": "client_forms_workspace"
+        },
+        {
+          "at": "2026-09-15T23:21:46.556Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:21:46.556Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:21:46.556Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:21:46.556Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:46.644Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:21:46.647Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:47.473Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:47.483Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:21:47.498Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:47.540Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:21:47.545Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:48.596Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:48.677Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:49.699Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_personal_form\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:21:49.702Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:50.543Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:50.543Z",
+          "event": "ready_wait_started",
+          "label": "client_forms_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:21:52.894Z",
+          "event": "ready_wait_completed",
+          "label": "client_forms_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:21:52.894Z",
+          "event": "warm_action_ready",
+          "scenarioId": "client_forms_workspace"
+        },
+        {
+          "at": "2026-09-15T23:21:57.995Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:21:58.026Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:21:58.066Z",
+          "event": "warm_action_started",
+          "scenarioId": "nutrition_workspace"
+        },
+        {
+          "at": "2026-09-15T23:21:58.066Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:21:58.066Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:21:58.067Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:21:58.067Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:58.206Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:21:58.209Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:59.960Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:21:59.969Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:21:59.992Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:01.664Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:22:01.669Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:05.791Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:05.889Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:07.711Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_food_rules\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:22:07.714Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:10.594Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:10.594Z",
+          "event": "ready_wait_started",
+          "label": "nutrition_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:22:19.955Z",
+          "event": "ready_wait_completed",
+          "label": "nutrition_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:22:19.955Z",
+          "event": "warm_action_ready",
+          "scenarioId": "nutrition_workspace"
+        },
+        {
+          "at": "2026-09-15T23:22:25.060Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:22:25.085Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:22:25.129Z",
+          "event": "warm_action_started",
+          "scenarioId": "menu_workspace"
+        },
+        {
+          "at": "2026-09-15T23:22:25.129Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:22:25.129Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:22:25.129Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:22:25.129Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:25.261Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:22:25.266Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:29.934Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:29.946Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:22:34.595Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:34.649Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:22:34.652Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:45.498Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:45.634Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:22:52.044Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_menu\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:22:52.047Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:23:00.153Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:23:00.153Z",
+          "event": "ready_wait_started",
+          "label": "menu_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:23:10.632Z",
+          "event": "ready_wait_completed",
+          "label": "menu_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:23:10.632Z",
+          "event": "warm_action_ready",
+          "scenarioId": "menu_workspace"
+        },
+        {
+          "at": "2026-09-15T23:23:23.730Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:23:23.774Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:23:23.831Z",
+          "event": "warm_action_started",
+          "scenarioId": "messages"
+        },
+        {
+          "at": "2026-09-15T23:23:23.831Z",
+          "event": "destination_started",
+          "destination": "messages",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:23:23.831Z",
+          "event": "destination_layout_resolved",
+          "destination": "messages",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:23:23.831Z",
+          "event": "desktop_destination_click_started",
+          "destination": "messages"
+        },
+        {
+          "at": "2026-09-15T23:23:23.831Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:23:24.039Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=messages\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:23:24.044Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:23:33.641Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:23:33.650Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "messages",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:23:33.650Z",
+          "event": "ready_wait_started",
+          "label": "messages_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:23:33.682Z",
+          "event": "ready_wait_completed",
+          "label": "messages_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:23:33.682Z",
+          "event": "warm_action_ready",
+          "scenarioId": "messages"
+        },
+        {
+          "at": "2026-09-15T23:23:53.085Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:23:53.099Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:23:53.118Z",
+          "event": "warm_action_started",
+          "scenarioId": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:23:53.118Z",
+          "event": "destination_started",
+          "destination": "alerts",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:23:53.118Z",
+          "event": "destination_layout_resolved",
+          "destination": "alerts",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:23:53.118Z",
+          "event": "desktop_destination_click_started",
+          "destination": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:23:53.118Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:23:53.212Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=alerts\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:23:53.217Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:24:03.910Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:24:03.926Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "alerts",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:24:03.926Z",
+          "event": "ready_wait_started",
+          "label": "alerts_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:24:03.976Z",
+          "event": "ready_wait_completed",
+          "label": "alerts_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:24:03.976Z",
+          "event": "warm_action_ready",
+          "scenarioId": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:24:20.137Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:24:20.163Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:24:20.199Z",
+          "event": "warm_action_started",
+          "scenarioId": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:24:20.199Z",
+          "event": "destination_started",
+          "destination": "notifications",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:24:20.199Z",
+          "event": "destination_layout_resolved",
+          "destination": "notifications",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:24:20.199Z",
+          "event": "desktop_destination_click_started",
+          "destination": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:24:20.199Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:24:20.418Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-header-bell\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:24:20.426Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:24:32.251Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:24:32.258Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "notifications",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:24:32.258Z",
+          "event": "ready_wait_started",
+          "label": "notifications_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:24:32.278Z",
+          "event": "ready_wait_completed",
+          "label": "notifications_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:24:32.278Z",
+          "event": "warm_action_ready",
+          "scenarioId": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:24:49.312Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:24:49.339Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:24:49.379Z",
+          "event": "warm_action_started",
+          "scenarioId": "ai_chat"
+        },
+        {
+          "at": "2026-09-15T23:24:49.379Z",
+          "event": "destination_started",
+          "destination": "ai_chat",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:24:49.387Z",
+          "event": "destination_layout_resolved",
+          "destination": "ai_chat",
+          "compactAndroid": true
+        },
+        {
+          "at": "2026-09-15T23:24:49.387Z",
+          "event": "more_navigation_click_started"
+        },
+        {
+          "at": "2026-09-15T23:24:49.387Z",
+          "event": "actionable_wait_started",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:24:49.448Z",
+          "event": "actionable_target_found",
+          "label": "compact_more_navigation",
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard/more\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:24:49.455Z",
+          "event": "real_click_started",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:25:02.663Z",
+          "event": "actionable_click_completed",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:25:02.669Z",
+          "event": "more_navigation_click_completed",
+          "pathname": "/dashboard/more",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:25:02.669Z",
+          "event": "more_page_wait_started",
+          "timeoutMs": 15000
+        },
+        {
+          "at": "2026-09-15T23:25:16.104Z",
+          "event": "more_page_ready",
+          "pathname": "/dashboard/more",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": true,
+          "morePageVisible": true,
+          "aiChatItem": true,
+          "aiChatItemVisible": true,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:25:16.104Z",
+          "event": "more_ai_chat_click_started"
+        },
+        {
+          "at": "2026-09-15T23:25:16.104Z",
+          "event": "actionable_wait_started",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:25:16.137Z",
+          "event": "actionable_target_found",
+          "label": "compact_ai_chat_item",
+          "attempt": 1,
+          "selector": "[data-testid=\"more-item-ai_chat\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:25:16.141Z",
+          "event": "real_click_started",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:25:30.459Z",
+          "event": "actionable_click_completed",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:25:30.463Z",
+          "event": "more_ai_chat_click_completed",
+          "pathname": "/dashboard/ai-chat",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": true,
+          "morePageVisible": true,
+          "aiChatItem": true,
+          "aiChatItemVisible": true,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:25:30.463Z",
+          "event": "ready_wait_started",
+          "label": "ai_chat_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:26:00.469Z",
+          "event": "ready_wait_failed",
+          "label": "ai_chat_ready_selector",
+          "error": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded."
+        },
+        {
+          "at": "2026-09-15T23:26:00.469Z",
+          "event": "warm_action_failed",
+          "scenarioId": "ai_chat",
+          "error": "ready_selector_timeout:[data-testid=\"ai-chat-workspace\"]:TimeoutError: locator.waitFor: Timeout 30000ms exceeded."
+        }
+      ],
+      "round": {
+        "status": "DISCARDED",
+        "invalidReason": "ready_selector_timeout:[data-testid=\"ai-chat-workspace\"]:TimeoutError: locator.waitFor: Timeout 30000ms exceeded.",
+        "invalidScenarioId": "ai_chat",
+        "samples": {
+          "post_login_dashboard": {
+            "scenarioId": "post_login_dashboard",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-post_login_dashboard-1789514500743",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": 200,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 3559,
+            "eventToNextPaintMs": 7,
+            "maxLongTaskMs": 71,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1336,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/app-state",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3096,
+                "bodyFinishedMs": 4301
+              },
+              {
+                "method": "POST",
+                "route": "/api/auth/password-login",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 779,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 351,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1334,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 487,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 589,
+                "bodyFinishedMs": 590
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/version",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 439,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/dashboard",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1514,
+                "bodyFinishedMs": 1604
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "loginToDashboardReadyP75Ms:3559>3000"
+            ]
+          },
+          "client_roster": {
+            "scenarioId": "client_roster",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-client_roster-1789514506506",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 649,
+            "eventToNextPaintMs": 58,
+            "maxLongTaskMs": 64,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 677,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 639,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 709,
+                "bodyFinishedMs": 711
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "PASS",
+            "validityProblems": [],
+            "budgetProblems": []
+          },
+          "client_forms_workspace": {
+            "scenarioId": "client_forms_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-client_forms_workspace-1789514517995",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 6355,
+            "eventToNextPaintMs": 2,
+            "maxLongTaskMs": 751,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 955,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 827,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 966,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/forms",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 789,
+                "bodyFinishedMs": 796
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 963,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 800,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 969,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1605,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 432,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:6355>1000",
+              "maxLongTask:751>500"
+            ]
+          },
+          "nutrition_workspace": {
+            "scenarioId": "nutrition_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-nutrition_workspace-1789514545060",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 21916,
+            "eventToNextPaintMs": 26,
+            "maxLongTaskMs": 3366,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 5830,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1786,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2912,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1793,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/food-rule-profile",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2929,
+                "bodyFinishedMs": 2937
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2909,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 5832,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1777,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2908,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1694,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1793,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2929,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2000,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:21916>1000",
+              "maxLongTask:3366>500"
+            ]
+          },
+          "menu_workspace": {
+            "scenarioId": "menu_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-menu_workspace-1789514603730",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 45531,
+            "eventToNextPaintMs": 30,
+            "maxLongTaskMs": 10287,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4686,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6265,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10382,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6273,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/menu-plans",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10425,
+                "bodyFinishedMs": 10448
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6346,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 458,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4685,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6264,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10380,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4687,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6269,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10425,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 5465,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:45531>1000",
+              "maxLongTask:10287>500"
+            ]
+          },
+          "messages": {
+            "scenarioId": "messages",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-messages-1789514633085",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 9887,
+            "eventToNextPaintMs": 34,
+            "maxLongTaskMs": 10448,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10542,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 598,
+                "bodyFinishedMs": 599
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10541,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 10561,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:9887>1000",
+              "maxLongTask:10448>500"
+            ]
+          },
+          "alerts": {
+            "scenarioId": "alerts",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-alerts-1789514660137",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 10870,
+            "eventToNextPaintMs": 37,
+            "maxLongTaskMs": 11016,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 11123,
+                "bodyFinishedMs": 11131
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 11123,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 20,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 11150,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:10870>1000",
+              "maxLongTask:11016>500"
+            ]
+          },
+          "notifications": {
+            "scenarioId": "notifications",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-notifications-1789514689312",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 12104,
+            "eventToNextPaintMs": 39,
+            "maxLongTaskMs": 11919,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12002,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 11995,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 11996,
+                "bodyFinishedMs": 12001
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12019,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 12020,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:12104>1000",
+              "maxLongTask:11919>500"
+            ]
+          },
+          "ai_chat": {
+            "scenarioId": "ai_chat",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-ai_chat-1789514779341",
+            "authenticated": true,
+            "error": "ready_selector_timeout:[data-testid=\"ai-chat-workspace\"]:TimeoutError: locator.waitFor: Timeout 30000ms exceeded.",
+            "loginResponseStatus": null,
+            "readySelectorMatched": false,
+            "targetUsable": false,
+            "trustedInteraction": false,
+            "taskReadyMs": null,
+            "eventToNextPaintMs": null,
+            "maxLongTaskMs": 16907,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/ai-chat/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 17004,
+                "bodyFinishedMs": 17006
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 13260,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 16290,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 13257,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 13276,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 13279,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 14470,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 16336,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "FAIL",
+            "functionalStatus": "FAIL",
+            "budgetStatus": "FAIL",
+            "validityProblems": [
+              "sample_error",
+              "required_ready_selector_missing",
+              "target_not_usable",
+              "task_ready_missing",
+              "event_to_next_paint_missing",
+              "trusted_interaction_missing"
+            ],
+            "budgetProblems": [
+              "maxLongTask:16907>500"
+            ]
+          }
+        }
+      },
+      "connectionAfter": {
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      }
+    },
+    {
+      "repetition": 3,
+      "startedAt": "2026-09-15T23:26:19.479Z",
+      "finishedAt": "2026-09-15T23:29:19.195Z",
+      "error": null,
+      "trace": [
+        {
+          "at": "2026-09-15T23:26:29.931Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:26:29.969Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:26:30.007Z",
+          "event": "warm_action_started",
+          "scenarioId": "client_roster"
+        },
+        {
+          "at": "2026-09-15T23:26:30.007Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:26:30.007Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:26:30.007Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:26:30.007Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:30.176Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:26:30.180Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:30.670Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:30.680Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:26:30.680Z",
+          "event": "ready_wait_started",
+          "label": "client_roster_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:26:30.714Z",
+          "event": "ready_wait_completed",
+          "label": "client_roster_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:26:30.714Z",
+          "event": "warm_action_ready",
+          "scenarioId": "client_roster"
+        },
+        {
+          "at": "2026-09-15T23:26:35.803Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:26:35.821Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:26:35.852Z",
+          "event": "warm_action_started",
+          "scenarioId": "client_forms_workspace"
+        },
+        {
+          "at": "2026-09-15T23:26:35.852Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:26:35.852Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:26:35.852Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:26:35.852Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:35.960Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:26:35.965Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:36.784Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:36.794Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:26:36.817Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:36.857Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:26:36.861Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:37.907Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:38.015Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:38.969Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_personal_form\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:26:38.972Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:39.756Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:39.756Z",
+          "event": "ready_wait_started",
+          "label": "client_forms_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:26:41.933Z",
+          "event": "ready_wait_completed",
+          "label": "client_forms_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:26:41.933Z",
+          "event": "warm_action_ready",
+          "scenarioId": "client_forms_workspace"
+        },
+        {
+          "at": "2026-09-15T23:26:47.008Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:26:47.037Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:26:47.077Z",
+          "event": "warm_action_started",
+          "scenarioId": "nutrition_workspace"
+        },
+        {
+          "at": "2026-09-15T23:26:47.077Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:26:47.077Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:26:47.077Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:26:47.077Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:47.230Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:26:47.235Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:48.785Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:48.792Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:26:48.808Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:50.120Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:26:50.125Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:53.413Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:53.489Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:55.529Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_food_rules\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:26:55.569Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:58.005Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:26:58.005Z",
+          "event": "ready_wait_started",
+          "label": "nutrition_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:27:00.372Z",
+          "event": "ready_wait_completed",
+          "label": "nutrition_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:27:00.372Z",
+          "event": "warm_action_ready",
+          "scenarioId": "nutrition_workspace"
+        },
+        {
+          "at": "2026-09-15T23:27:05.443Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:27:05.467Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:27:05.506Z",
+          "event": "warm_action_started",
+          "scenarioId": "menu_workspace"
+        },
+        {
+          "at": "2026-09-15T23:27:05.506Z",
+          "event": "destination_started",
+          "destination": "clients",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:27:05.506Z",
+          "event": "destination_layout_resolved",
+          "destination": "clients",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:27:05.506Z",
+          "event": "desktop_destination_click_started",
+          "destination": "clients"
+        },
+        {
+          "at": "2026-09-15T23:27:05.506Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:05.644Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=clients\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:27:05.652Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:08.822Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:08.837Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "clients",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:27:11.971Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:12.023Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"client-roster-item\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:27:12.028Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:19.237Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:19.279Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:23.404Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"tab-tab_menu\"]",
+          "index": 1
+        },
+        {
+          "at": "2026-09-15T23:27:23.409Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:27.849Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:27.849Z",
+          "event": "ready_wait_started",
+          "label": "menu_workspace_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:27:37.303Z",
+          "event": "ready_wait_completed",
+          "label": "menu_workspace_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:27:37.303Z",
+          "event": "warm_action_ready",
+          "scenarioId": "menu_workspace"
+        },
+        {
+          "at": "2026-09-15T23:27:42.410Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:27:42.445Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:27:42.495Z",
+          "event": "warm_action_started",
+          "scenarioId": "messages"
+        },
+        {
+          "at": "2026-09-15T23:27:42.495Z",
+          "event": "destination_started",
+          "destination": "messages",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:27:42.495Z",
+          "event": "destination_layout_resolved",
+          "destination": "messages",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:27:42.495Z",
+          "event": "desktop_destination_click_started",
+          "destination": "messages"
+        },
+        {
+          "at": "2026-09-15T23:27:42.495Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:42.667Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=messages\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:27:42.671Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:49.139Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:27:49.149Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "messages",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:27:49.149Z",
+          "event": "ready_wait_started",
+          "label": "messages_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:27:49.159Z",
+          "event": "ready_wait_completed",
+          "label": "messages_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:27:49.159Z",
+          "event": "warm_action_ready",
+          "scenarioId": "messages"
+        },
+        {
+          "at": "2026-09-15T23:28:07.981Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:28:08.000Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:28:08.026Z",
+          "event": "warm_action_started",
+          "scenarioId": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:28:08.026Z",
+          "event": "destination_started",
+          "destination": "alerts",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:28:08.026Z",
+          "event": "destination_layout_resolved",
+          "destination": "alerts",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:28:08.026Z",
+          "event": "desktop_destination_click_started",
+          "destination": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:28:08.026Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:08.120Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard?section=alerts\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:28:08.126Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:14.260Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:14.274Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "alerts",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:28:14.274Z",
+          "event": "ready_wait_started",
+          "label": "alerts_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:28:14.303Z",
+          "event": "ready_wait_completed",
+          "label": "alerts_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:28:14.303Z",
+          "event": "warm_action_ready",
+          "scenarioId": "alerts"
+        },
+        {
+          "at": "2026-09-15T23:28:25.507Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:28:25.529Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:28:25.561Z",
+          "event": "warm_action_started",
+          "scenarioId": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:28:25.561Z",
+          "event": "destination_started",
+          "destination": "notifications",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:28:25.561Z",
+          "event": "destination_layout_resolved",
+          "destination": "notifications",
+          "compactAndroid": false
+        },
+        {
+          "at": "2026-09-15T23:28:25.561Z",
+          "event": "desktop_destination_click_started",
+          "destination": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:28:25.561Z",
+          "event": "actionable_wait_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:25.802Z",
+          "event": "actionable_target_found",
+          "label": null,
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-header-bell\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:28:25.807Z",
+          "event": "real_click_started",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:32.186Z",
+          "event": "actionable_click_completed",
+          "label": null,
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:32.190Z",
+          "event": "desktop_destination_click_completed",
+          "destination": "notifications",
+          "pathname": "/dashboard",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:28:32.190Z",
+          "event": "ready_wait_started",
+          "label": "notifications_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:28:32.208Z",
+          "event": "ready_wait_completed",
+          "label": "notifications_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:28:32.208Z",
+          "event": "warm_action_ready",
+          "scenarioId": "notifications"
+        },
+        {
+          "at": "2026-09-15T23:28:43.681Z",
+          "event": "ready_wait_started",
+          "label": "authenticated_shell_before_warm_action",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:28:43.707Z",
+          "event": "ready_wait_completed",
+          "label": "authenticated_shell_before_warm_action"
+        },
+        {
+          "at": "2026-09-15T23:28:43.740Z",
+          "event": "warm_action_started",
+          "scenarioId": "ai_chat"
+        },
+        {
+          "at": "2026-09-15T23:28:43.740Z",
+          "event": "destination_started",
+          "destination": "ai_chat",
+          "androidCdp": true
+        },
+        {
+          "at": "2026-09-15T23:28:43.749Z",
+          "event": "destination_layout_resolved",
+          "destination": "ai_chat",
+          "compactAndroid": true
+        },
+        {
+          "at": "2026-09-15T23:28:43.749Z",
+          "event": "more_navigation_click_started"
+        },
+        {
+          "at": "2026-09-15T23:28:43.749Z",
+          "event": "actionable_wait_started",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:43.805Z",
+          "event": "actionable_target_found",
+          "label": "compact_more_navigation",
+          "attempt": 1,
+          "selector": "[data-testid=\"shell-compact-bottom-nav\"] a[href=\"/dashboard/more\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:28:43.810Z",
+          "event": "real_click_started",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:50.728Z",
+          "event": "actionable_click_completed",
+          "label": "compact_more_navigation",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:50.735Z",
+          "event": "more_navigation_click_completed",
+          "pathname": "/dashboard/more",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": false,
+          "morePageVisible": false,
+          "aiChatItem": false,
+          "aiChatItemVisible": false,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:28:50.735Z",
+          "event": "more_page_wait_started",
+          "timeoutMs": 15000
+        },
+        {
+          "at": "2026-09-15T23:28:57.918Z",
+          "event": "more_page_ready",
+          "pathname": "/dashboard/more",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": true,
+          "morePageVisible": true,
+          "aiChatItem": true,
+          "aiChatItemVisible": true,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:28:57.918Z",
+          "event": "more_ai_chat_click_started"
+        },
+        {
+          "at": "2026-09-15T23:28:57.918Z",
+          "event": "actionable_wait_started",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:28:57.958Z",
+          "event": "actionable_target_found",
+          "label": "compact_ai_chat_item",
+          "attempt": 1,
+          "selector": "[data-testid=\"more-item-ai_chat\"]",
+          "index": 0
+        },
+        {
+          "at": "2026-09-15T23:28:57.961Z",
+          "event": "real_click_started",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:29:05.634Z",
+          "event": "actionable_click_completed",
+          "label": "compact_ai_chat_item",
+          "attempt": 1
+        },
+        {
+          "at": "2026-09-15T23:29:05.637Z",
+          "event": "more_ai_chat_click_completed",
+          "pathname": "/dashboard/ai-chat",
+          "authenticatedShell": true,
+          "compactBottomNav": true,
+          "morePage": true,
+          "morePageVisible": true,
+          "aiChatItem": true,
+          "aiChatItemVisible": true,
+          "aiChatItemDisabled": false,
+          "navigationLocked": false
+        },
+        {
+          "at": "2026-09-15T23:29:05.637Z",
+          "event": "ready_wait_started",
+          "label": "ai_chat_ready_selector",
+          "timeoutMs": 30000
+        },
+        {
+          "at": "2026-09-15T23:29:14.075Z",
+          "event": "ready_wait_completed",
+          "label": "ai_chat_ready_selector"
+        },
+        {
+          "at": "2026-09-15T23:29:14.075Z",
+          "event": "warm_action_ready",
+          "scenarioId": "ai_chat"
+        }
+      ],
+      "round": {
+        "status": "CAPTURED",
+        "invalidReason": null,
+        "invalidScenarioId": null,
+        "samples": {
+          "post_login_dashboard": {
+            "scenarioId": "post_login_dashboard",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-post_login_dashboard-1789514789931",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": 200,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 3103,
+            "eventToNextPaintMs": 6,
+            "maxLongTaskMs": 51,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2537,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/app-state",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1681,
+                "bodyFinishedMs": 2518
+              },
+              {
+                "method": "POST",
+                "route": "/api/auth/password-login",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 649,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 730,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2527,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 571,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 473,
+                "bodyFinishedMs": 473
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/version",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 411,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/dashboard",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1117,
+                "bodyFinishedMs": 1210
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "loginToDashboardReadyP75Ms:3103>3000"
+            ]
+          },
+          "client_roster": {
+            "scenarioId": "client_roster",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-client_roster-1789514795802",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 732,
+            "eventToNextPaintMs": 76,
+            "maxLongTaskMs": 85,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 618,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 556,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 689,
+                "bodyFinishedMs": 693
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "PASS",
+            "validityProblems": [],
+            "budgetProblems": []
+          },
+          "client_forms_workspace": {
+            "scenarioId": "client_forms_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-client_forms_workspace-1789514807008",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 6100,
+            "eventToNextPaintMs": 2,
+            "maxLongTaskMs": 615,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 995,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 910,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 901,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/forms",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 899,
+                "bodyFinishedMs": 905
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 934,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 878,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 966,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 965,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 470,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:6100>1000",
+              "maxLongTask:615>500"
+            ]
+          },
+          "nutrition_workspace": {
+            "scenarioId": "nutrition_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-nutrition_workspace-1789514825443",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 13321,
+            "eventToNextPaintMs": 28,
+            "maxLongTaskMs": 2498,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1322,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1850,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2285,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1844,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/food-rule-profile",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2301,
+                "bodyFinishedMs": 2308
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2277,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1323,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1849,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2285,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1332,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1853,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 2300,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 1557,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:13321>1000",
+              "maxLongTask:2498>500"
+            ]
+          },
+          "menu_workspace": {
+            "scenarioId": "menu_workspace",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-menu_workspace-1789514862410",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 31820,
+            "eventToNextPaintMs": 33,
+            "maxLongTaskMs": 4745,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3170,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3944,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4585,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3949,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/clients/:id/menu-plans",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4607,
+                "bodyFinishedMs": 4619
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4864,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3170,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3944,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4584,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4606,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3183,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3947,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 4608,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 3561,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:31820>1000",
+              "maxLongTask:4745>500"
+            ]
+          },
+          "messages": {
+            "scenarioId": "messages",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-messages-1789514887981",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 6699,
+            "eventToNextPaintMs": 41,
+            "maxLongTaskMs": 6271,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6339,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 510,
+                "bodyFinishedMs": 521
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6338,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6354,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:6699>1000",
+              "maxLongTask:6271>500"
+            ]
+          },
+          "alerts": {
+            "scenarioId": "alerts",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-alerts-1789514905507",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 6293,
+            "eventToNextPaintMs": 28,
+            "maxLongTaskMs": 6109,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6176,
+                "bodyFinishedMs": 6181
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6175,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6203,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:6293>1000",
+              "maxLongTask:6109>500"
+            ]
+          },
+          "notifications": {
+            "scenarioId": "notifications",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-notifications-1789514923681",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 6670,
+            "eventToNextPaintMs": 31,
+            "maxLongTaskMs": 6294,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6439,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 429,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6437,
+                "bodyFinishedMs": 6443
+              },
+              {
+                "method": "POST",
+                "route": "/api/session/activity",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6459,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6458,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "PATCH",
+                "route": "/api/shell/preferences",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6459,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:6670>1000",
+              "maxLongTask:6294>500"
+            ]
+          },
+          "ai_chat": {
+            "scenarioId": "ai_chat",
+            "sampleId": "aiya-phase4-20260915T231651439Z-f05d4348-d658-4352-af67-140873990d53-ai_chat-1789514959195",
+            "authenticated": true,
+            "error": null,
+            "loginResponseStatus": null,
+            "readySelectorMatched": true,
+            "targetUsable": true,
+            "trustedInteraction": true,
+            "taskReadyMs": 30358,
+            "eventToNextPaintMs": 34,
+            "maxLongTaskMs": 7903,
+            "missingReads": [],
+            "failedRequestCount": 0,
+            "requests": [
+              {
+                "method": "GET",
+                "route": "/api/ai-chat/conversations",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 299,
+                "bodyFinishedMs": 299
+              },
+              {
+                "method": "GET",
+                "route": "/api/alerts",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6805,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/notifications",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6804,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 6822,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 427,
+                "bodyFinishedMs": null
+              },
+              {
+                "method": "GET",
+                "route": "/api/shell/bootstrap",
+                "status": 200,
+                "failure": null,
+                "timeout": false,
+                "headerReceivedMs": 403,
+                "bodyFinishedMs": null
+              }
+            ],
+            "validityStatus": "PASS",
+            "functionalStatus": "PASS",
+            "budgetStatus": "FAIL",
+            "validityProblems": [],
+            "budgetProblems": [
+              "warmNavigationReadyP75Ms:30358>1000",
+              "maxLongTask:7903>500"
+            ]
+          }
+        }
+      },
+      "connectionAfter": {
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      }
+    }
+  ],
+  "target": {
+    "status": "READY_FOR_CDP_CAPTURE",
+    "reason": null,
+    "model": "SM-S721B",
+    "androidVersion": "16",
+    "chromeVersionName": "152.0.7977.83",
+    "chromeLaunchStatus": "PASS",
+    "cdpForwardStatus": "PASS",
+    "pwaStatus": "READY_FOR_LAUNCH"
+  },
+  "launch": {
+    "status": "PASS",
+    "reason": null,
+    "launchStatus": "PASS",
+    "serialRecorded": false
+  },
+  "navigation": {
+    "status": "PASS",
+    "navigation": "existing_normal_chrome_target",
+    "reason": null
+  },
+  "connectionMonitoring": {
+    "status": "PASS",
+    "checkCount": 8,
+    "serialRecorded": false,
+    "checks": [
+      {
+        "checkpoint": "after_adb_authorization",
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      },
+      {
+        "checkpoint": "after_android_chrome_launch",
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      },
+      {
+        "checkpoint": "after_cdp_forward",
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      },
+      {
+        "checkpoint": "before_android_chrome_view_intent",
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      },
+      {
+        "checkpoint": "after_android_chrome_view_intent",
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      },
+      {
+        "checkpoint": "diagnostic_after_repetition_1",
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      },
+      {
+        "checkpoint": "diagnostic_after_repetition_2",
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      },
+      {
+        "checkpoint": "diagnostic_after_repetition_3",
+        "status": "PASS",
+        "connected": true,
+        "reason": null,
+        "deviceCount": 1,
+        "authorizedDeviceCount": 1,
+        "serialRecorded": false
+      }
+    ]
+  },
+  "result": {
+    "status": "BLOCKED",
+    "reason": "diagnostic_failures_captured",
+    "repeatedFailureSignatures": [
+      "ready_selector_timeout:[data-testid=\"ai-chat-workspace\"]:TimeoutError: locator.waitFor: Timeout 30000ms exceeded."
+    ]
+  }
+}

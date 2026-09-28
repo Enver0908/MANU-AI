@@ -1,0 +1,1547 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase4-4-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "4",
+  "stage": "4.4",
+  "stageId": "4.4",
+  "runId": "aiya-performance-plan1-phase4-4-local-v3-20260917T073613059Z-e2c3495a-ed74-4eb5-9982-f842efe3c1b8",
+  "generatedAt": "2026-09-17T07:39:42.885Z",
+  "status": "IN_PROGRESS",
+  "outcome": "LOCAL_CAPTURE_PROBE_COMPLETE",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Verify capture semantics with one authenticated local J1 observation before expansion.",
+    "executionMode": "targeted_capture_probe",
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": true,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true,
+    "countedAsOfficialSample": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.1 IDENTITY_LOCKED",
+      "4.2 REFERENCE_SEPARATED",
+      "4.3 GENERAL_DIAGNOSTIC_HARNESS_READY"
+    ],
+    "currentStage": "4.4",
+    "nextEligibleStage": "4.4"
+  },
+  "sourceIdentity": {
+    "worktreePath": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI",
+    "branchMode": "DETACHED_HEAD",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "",
+    "detachedHeadUpstream": "NOT_AVAILABLE_BECAUSE_HEAD_IS_DETACHED",
+    "remoteSymbolicHead": "refs/heads/codex/phase-29-baseline-checkpoint\tHEAD",
+    "remoteHeadSha": "00729e53cf6c8617e9655c03eb519e16214e8727",
+    "remoteProductionReadinessSha": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "modifiedTrackedCount": 15,
+    "untrackedCount": 38,
+    "dirtyTreePreserved": true,
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "a9d740c1629069249c0fd17245dc7ad4c04addcce5aa66f031c86ad80a944c73"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "40c0625b5d78c087c5c7d142c149bd91bc59ecd2e6187bf3bc4790baf040eecf"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "c065ad3a1a6c3c668e5b22d9185e57c9116a9fea9467f9572185d443754e861f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.test.mjs",
+        "sha256": "8456a46a84b85667ea816db594404b5f77af3d09a7847fdbe180fbcc909afb4e"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_3_EVIDENCE.json",
+        "sha256": "a1f1c809bb65fd0f58c26b05e54e3933bd8ee1a8e7cf71222c007aac3475db3e"
+      }
+    ],
+    "harnessSourceIdentity": [
+      {
+        "path": "app/package.json",
+        "sha256": "a9d740c1629069249c0fd17245dc7ad4c04addcce5aa66f031c86ad80a944c73"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4.mjs",
+        "sha256": "79172e2eb29da584cf76c6bef5c28aa64b50ab8e299c17b32e52621dec5f18a3"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "40c0625b5d78c087c5c7d142c149bd91bc59ecd2e6187bf3bc4790baf040eecf"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "c065ad3a1a6c3c668e5b22d9185e57c9116a9fea9467f9572185d443754e861f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.test.mjs",
+        "sha256": "8456a46a84b85667ea816db594404b5f77af3d09a7847fdbe180fbcc909afb4e"
+      }
+    ],
+    "localConfigurationIdentity": {
+      "sourceKinds": [
+        "main_checkout_app_env_local"
+      ],
+      "availableKeys": [
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "MANU_DEV_FALLBACK_STORE"
+      ],
+      "credentialSource": "<redacted>",
+      "phase3FixtureReady": true
+    },
+    "referenceIdentity": {
+      "snapshotPath": ".manu-runtime/phase4-3/reference-snapshot-20260916T194917770Z",
+      "manifestPath": ".manu-runtime/phase4-3/reference-snapshot-20260916T194917770Z-manifest.json",
+      "currentSourceFingerprint": "798b1342267015f302107e8ac50920290d4322e2bda98a1763a9a14af53d00a6",
+      "referenceSourceFingerprint": "20c1cb2675b16ed068f5c330d98eb1fb4ab002848a19eb2f5581e7f23e99799e",
+      "currentFileCount": 2176,
+      "referenceFileCount": 2176,
+      "mismatchCount": null,
+      "unrelatedMismatchCount": null
+    }
+  },
+  "parentRunReferences": [
+    "aiya-performance-plan1-phase4-4-local-20260916T232938491Z-c7e89cae-3ff5-4595-ac8f-ed5c3ff9923d"
+  ],
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-phase4-4-local-v3",
+    "checkpointSchemaVersion": "aiya-performance-plan1-phase4-4-local-v3",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "storePath": "normal_rls_api_path_required",
+    "journeyIds": [
+      "J1",
+      "J2",
+      "J3"
+    ],
+    "normalRepetitions": 3,
+    "diagnosticRepetitions": 3,
+    "executionMode": "targeted_capture_probe",
+    "plannedUnitKeys": [
+      "probe:normal:J1:r1"
+    ],
+    "secondActionDelayMs": 2000,
+    "serverControl": "managed_same_port_per_mode",
+    "localConfigurationIdentity": {
+      "sourceKinds": [
+        "main_checkout_app_env_local"
+      ],
+      "availableKeys": [
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "MANU_DEV_FALLBACK_STORE"
+      ],
+      "credentialSource": "<redacted>",
+      "phase3FixtureReady": true
+    },
+    "parentRunReferences": [
+      "aiya-performance-plan1-phase4-4-local-20260916T232938491Z-c7e89cae-3ff5-4595-ac8f-ed5c3ff9923d"
+    ],
+    "supersedesRunId": null,
+    "countedAsOfficialSample": false
+  },
+  "stageLedger": [
+    {
+      "stageId": "4.4.1",
+      "name": "Local normal fixture and authenticated path preflight",
+      "prerequisites": [
+        "4.3 COMPLETE"
+      ],
+      "status": "PASS"
+    },
+    {
+      "stageId": "4.4.2",
+      "name": "Targeted capture verification and one local J1 observation",
+      "prerequisites": [
+        "4.4.1 PASS"
+      ],
+      "status": "PASS"
+    },
+    {
+      "stageId": "4.4.3",
+      "name": "Scoped local observations after trustworthy capture",
+      "prerequisites": [
+        "4.4.2 PASS"
+      ],
+      "status": "NOT_STARTED"
+    },
+    {
+      "stageId": "4.4.4",
+      "name": "Trace integrity and failure-boundary reconciliation",
+      "prerequisites": [
+        "4.4.3 COMPLETE"
+      ],
+      "status": "NOT_STARTED"
+    }
+  ],
+  "captureChecks": {
+    "status": "PASS",
+    "failures": [],
+    "checks": {
+      "timerAnchoredToTrustedClick": true,
+      "visibleSelectors": true,
+      "navigationAwayIsRepresentable": true,
+      "slowResponseObservationBounded": true,
+      "genuineTargetFailureIsObservable": true
+    }
+  },
+  "stageScheduler": {
+    "4.4.1": "PASS",
+    "4.4.2": "PASS",
+    "4.4.3": "NOT_STARTED",
+    "4.4.4": "NOT_STARTED",
+    "summaries": {
+      "probe": {
+        "status": "COMPLETE",
+        "plannedCount": 1,
+        "attemptedCount": 1,
+        "validCount": 1,
+        "observationValidCount": 1,
+        "observationInvalidCount": 0,
+        "invalidCount": 0,
+        "remainingCount": 0,
+        "attemptedKeys": {},
+        "acceptedKeys": {},
+        "validKeys": {},
+        "observationValidKeys": {},
+        "invalidKeys": {},
+        "observationInvalidKeys": {},
+        "remainingKeys": {}
+      },
+      "normal": {
+        "status": "IN_PROGRESS",
+        "plannedCount": 9,
+        "attemptedCount": 0,
+        "validCount": 0,
+        "observationValidCount": 0,
+        "observationInvalidCount": 0,
+        "invalidCount": 0,
+        "remainingCount": 9,
+        "attemptedKeys": {},
+        "acceptedKeys": {},
+        "validKeys": {},
+        "observationValidKeys": {},
+        "invalidKeys": {},
+        "observationInvalidKeys": {},
+        "remainingKeys": {}
+      },
+      "diagnostic": {
+        "status": "IN_PROGRESS",
+        "plannedCount": 9,
+        "attemptedCount": 0,
+        "validCount": 0,
+        "observationValidCount": 0,
+        "observationInvalidCount": 0,
+        "invalidCount": 0,
+        "remainingCount": 9,
+        "attemptedKeys": {},
+        "acceptedKeys": {},
+        "validKeys": {},
+        "observationValidKeys": {},
+        "invalidKeys": {},
+        "observationInvalidKeys": {},
+        "remainingKeys": {}
+      }
+    }
+  },
+  "inputPreflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "authentication": "real_password_session_required",
+    "storePath": "normal_rls_api_path_required",
+    "fallbackStoreAllowed": false,
+    "credentialsAvailable": "<redacted>",
+    "app": {
+      "label": "local_app",
+      "status": "PASS",
+      "httpStatus": 200,
+      "targetOrigin": "http://127.0.0.1:3136",
+      "failureBoundary": null
+    },
+    "supabase": {
+      "label": "local_supabase",
+      "status": "PASS",
+      "httpStatus": 200,
+      "targetOrigin": "http://127.0.0.1:54321",
+      "failureBoundary": null
+    },
+    "blockers": [],
+    "runtime": {
+      "configuration": {
+        "sourceKinds": [
+          "main_checkout_app_env_local"
+        ],
+        "activeEnvFilePresent": false,
+        "mainCheckoutEnvFilePresent": true,
+        "availableKeys": [
+          "NEXT_PUBLIC_APP_URL",
+          "NEXT_PUBLIC_SUPABASE_URL",
+          "MANU_DEV_FALLBACK_STORE"
+        ],
+        "credentialSource": "<redacted>",
+        "credentialsAvailable": "<redacted>",
+        "phase3FixtureReady": true,
+        "sourceFiles": [
+          {
+            "source": "main_checkout_app_env_local",
+            "present": true,
+            "keys": [
+              "MANU_DEV_FALLBACK_STORE",
+              "NEXT_PUBLIC_APP_URL",
+              "NEXT_PUBLIC_SUPABASE_URL"
+            ]
+          }
+        ]
+      },
+      "localSupabase": {
+        "status": "PASS",
+        "apiUrl": "/",
+        "urlIsLocal": true,
+        "credentialsPresent": "<redacted>",
+        "reason": null
+      },
+      "serverControl": "managed_same_port_per_mode",
+      "managedServerMode": "normal"
+    }
+  },
+  "sampleSummary": {
+    "attemptedSamples": 1,
+    "plannedSamples": 1,
+    "validSamples": 1,
+    "invalidSamples": 0,
+    "observationValidSamples": 1,
+    "observationInvalidSamples": 0,
+    "byMode": {
+      "normal": {
+        "attemptedSamples": 1,
+        "validSamples": 1,
+        "observationValidSamples": 1,
+        "plannedSamples": 1
+      },
+      "diagnostic": {
+        "attemptedSamples": 0,
+        "validSamples": 0,
+        "observationValidSamples": 0,
+        "plannedSamples": 0
+      }
+    },
+    "validSamplesAreNotOfficialBaseline": true,
+    "commonValidTraceThresholdFor4_7": 3
+  },
+  "samples": [
+    {
+      "unitKey": "probe:normal:J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "scope": "targeted_capture_probe",
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "PASS",
+        "timing": {
+          "sessionStartedAtWallMs": 1789630740398,
+          "loginPageResponseStatus": 200,
+          "loginPageReadyAtMs": 98,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": 3593,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": null
+      },
+      "trace": {
+        "schemaVersion": "aiya-performance-plan1-phase4-diagnostic-v3",
+        "journeyId": "J1",
+        "mode": "normal",
+        "secondActionDelayMs": 2000,
+        "autoRetryMissingClick": false,
+        "startedAtWallMs": 1789630746395,
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 46,
+            "trustedEventAtMs": 128,
+            "routeCommittedAtMs": 129,
+            "requiredRequestStartAtMs": 2349,
+            "responseHeaderAtMs": 2883,
+            "responseBodyFinishedAtMs": 2888,
+            "parseRenderCompletedAtMs": 3042,
+            "readyStateAtMs": 3015,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "startedAtMs": 2349,
+                "responseHeaderAtMs": 2883,
+                "bodyFinishedAtMs": 2888,
+                "status": 200,
+                "failed": false
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 4323,
+            "dispatchAtMs": 4335,
+            "trustedEventAtMs": 4438,
+            "routeCommittedAtMs": 4439,
+            "requiredRequestStartAtMs": 4453,
+            "responseHeaderAtMs": 5288,
+            "responseBodyFinishedAtMs": 5308,
+            "parseRenderCompletedAtMs": 5745,
+            "readyStateAtMs": 5696,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 4453,
+                "responseHeaderAtMs": 5288,
+                "bodyFinishedAtMs": 5308,
+                "status": 200,
+                "failed": false
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "secondActionAnchor": {
+          "status": "RESOLVED",
+          "actionId": "first",
+          "stepLabel": "select_forms",
+          "trustedEventAtMs": 2323
+        },
+        "functionalOutcome": "SUCCESS",
+        "observationValidity": "VALID",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "timing": {
+          "actionId": "second",
+          "plannedActionAtMs": 4323,
+          "dispatchAtMs": 4335,
+          "trustedEventAtMs": 4438,
+          "routeCommittedAtMs": 4439,
+          "requiredRequestStartAtMs": 4453,
+          "responseHeaderAtMs": 5288,
+          "responseBodyFinishedAtMs": 5308,
+          "parseRenderCompletedAtMs": 5745,
+          "readyStateAtMs": 5696,
+          "secondActionAccepted": true,
+          "clickAttemptCount": 1,
+          "failureClass": null,
+          "requiredRequestTimings": [
+            {
+              "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+              "method": "GET",
+              "startedAtMs": 4453,
+              "responseHeaderAtMs": 5288,
+              "bodyFinishedAtMs": 5308,
+              "status": 200,
+              "failed": false
+            }
+          ],
+          "functionalOutcome": "SUCCESS",
+          "targetReadyStatus": "READY",
+          "targetUnmounted": null
+        },
+        "events": [
+          {
+            "type": "action.planned",
+            "actionId": "first",
+            "atMs": 0,
+            "action": "open_client_workspace_and_forms"
+          },
+          {
+            "type": "action.dispatch",
+            "actionId": "first",
+            "atMs": 46,
+            "label": "select_clients"
+          },
+          {
+            "type": "trusted.event",
+            "actionId": "first",
+            "atMs": 128,
+            "targetTestId": null,
+            "route": "/dashboard?section=clients"
+          },
+          {
+            "type": "route.committed",
+            "actionId": "first",
+            "atMs": 129,
+            "route": "/dashboard?section=clients",
+            "source": "pushState"
+          },
+          {
+            "type": "action.planned",
+            "actionId": "second",
+            "atMs": 4323,
+            "action": "select_nutrition",
+            "anchorAtMs": 2323
+          },
+          {
+            "type": "ready.state",
+            "actionId": "first",
+            "atMs": 3015
+          },
+          {
+            "type": "parse.render.completed",
+            "actionId": "first",
+            "atMs": 3042
+          },
+          {
+            "type": "action.dispatch",
+            "actionId": "second",
+            "atMs": 4335,
+            "label": "select_nutrition"
+          },
+          {
+            "type": "second.action.accepted",
+            "actionId": "second",
+            "atMs": 4547,
+            "label": "select_nutrition"
+          },
+          {
+            "type": "trusted.event",
+            "actionId": "second",
+            "atMs": 4438,
+            "targetTestId": "tab-tab_food_rules",
+            "route": null
+          },
+          {
+            "type": "route.committed",
+            "actionId": "second",
+            "atMs": 4439,
+            "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+            "source": "pushState"
+          },
+          {
+            "type": "ready.state",
+            "actionId": "second",
+            "atMs": 5696
+          },
+          {
+            "type": "parse.render.completed",
+            "actionId": "second",
+            "atMs": 5745
+          },
+          {
+            "type": "required.request.start",
+            "actionId": "first",
+            "atMs": 2349
+          },
+          {
+            "type": "required.response.header",
+            "actionId": "first",
+            "atMs": 2883
+          },
+          {
+            "type": "required.response.body.finished",
+            "actionId": "first",
+            "atMs": 2888
+          },
+          {
+            "type": "required.request.start",
+            "actionId": "second",
+            "atMs": 4453
+          },
+          {
+            "type": "required.response.header",
+            "actionId": "second",
+            "atMs": 5288
+          },
+          {
+            "type": "required.response.body.finished",
+            "actionId": "second",
+            "atMs": 5308
+          }
+        ],
+        "requiredRequests": [
+          {
+            "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 2349,
+            "requiredFor": [
+              "first"
+            ],
+            "status": 200,
+            "responseHeaderAtMs": 2883,
+            "bodyFinishedAtMs": 2888,
+            "failed": false
+          },
+          {
+            "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 4453,
+            "requiredFor": [
+              "second"
+            ],
+            "status": 200,
+            "responseHeaderAtMs": 5288,
+            "bodyFinishedAtMs": 5308,
+            "failed": false
+          }
+        ],
+        "failures": [],
+        "browserObservers": "off",
+        "status": "COMPLETE",
+        "expectedRoute": {
+          "pathname": "/dashboard",
+          "query": {
+            "section": "clients",
+            "clientId": "present",
+            "clientTask": "nutrition"
+          }
+        },
+        "validation": {
+          "status": "PASS",
+          "failures": [],
+          "completenessStatus": "COMPLETE",
+          "missingTimingFields": []
+        },
+        "requestTracking": {
+          "bodyFinishTimedOut": true
+        },
+        "measurement": {
+          "unitKey": "probe:normal:J1:r1",
+          "mode": "normal",
+          "fixtureId": "local-normal",
+          "repetition": 1,
+          "scope": "targeted_capture_probe",
+          "countedAsOfficialSample": false,
+          "authSessionTiming": {
+            "sessionStartedAtWallMs": 1789630740398,
+            "loginPageResponseStatus": 200,
+            "loginPageReadyAtMs": 98,
+            "passwordLoginRequestStartAtMs": "<redacted>",
+            "passwordLoginResponseHeaderAtMs": "<redacted>",
+            "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+            "authenticatedShellReadyAtMs": 3593,
+            "passwordLoginStatus": "<redacted>",
+            "status": "PASS"
+          },
+          "startRouteTiming": {
+            "navigationStartedAtMs": 0,
+            "authenticatedShellReadyAtMs": 2402
+          },
+          "requestSummary": {
+            "requestCount": 20,
+            "apiRequestCount": 20,
+            "documentRequestCount": 0,
+            "requests": [
+              {
+                "route": "/api/shell/bootstrap",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 0,
+                "responseHeaderAtMs": 1038,
+                "bodyFinishedAtMs": 1055,
+                "status": 200,
+                "bodySizeBytes": 1813,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/alerts",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 7,
+                "responseHeaderAtMs": 1209,
+                "bodyFinishedAtMs": 1229,
+                "status": 200,
+                "bodySizeBytes": 159,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/notifications",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 8,
+                "responseHeaderAtMs": 1551,
+                "bodyFinishedAtMs": 1563,
+                "status": 200,
+                "bodySizeBytes": 770,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/conversations",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 424,
+                "responseHeaderAtMs": 1219,
+                "bodyFinishedAtMs": 1233,
+                "status": 200,
+                "bodySizeBytes": 1448,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/shell/preferences",
+                "method": "PATCH",
+                "resourceType": "fetch",
+                "startedAtMs": 556,
+                "responseHeaderAtMs": 1564,
+                "bodyFinishedAtMs": 1578,
+                "status": 200,
+                "bodySizeBytes": 236,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 1617,
+                "responseHeaderAtMs": 2220,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true
+              },
+              {
+                "route": "/api/shell/bootstrap",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 1621,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true
+              },
+              {
+                "route": "/api/alerts",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 1623,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true
+              },
+              {
+                "route": "/api/notifications",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 1624,
+                "responseHeaderAtMs": 2096,
+                "bodyFinishedAtMs": 2110,
+                "status": 200,
+                "bodySizeBytes": 770,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 2199,
+                "responseHeaderAtMs": 2732,
+                "bodyFinishedAtMs": 2748,
+                "status": 200,
+                "bodySizeBytes": 557,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/shell/bootstrap",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 2200,
+                "responseHeaderAtMs": 2864,
+                "bodyFinishedAtMs": 2880,
+                "status": 200,
+                "bodySizeBytes": 1813,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/alerts",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 2221,
+                "responseHeaderAtMs": 2789,
+                "bodyFinishedAtMs": 2875,
+                "status": 200,
+                "bodySizeBytes": 159,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/notifications",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 2221,
+                "responseHeaderAtMs": 2783,
+                "bodyFinishedAtMs": 2874,
+                "status": 200,
+                "bodySizeBytes": 770,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 4303,
+                "responseHeaderAtMs": 5137,
+                "bodyFinishedAtMs": 5164,
+                "status": 200,
+                "bodySizeBytes": 1148,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/shell/bootstrap",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 4303,
+                "responseHeaderAtMs": 5163,
+                "bodyFinishedAtMs": 5188,
+                "status": 200,
+                "bodySizeBytes": 1813,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/alerts",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 4328,
+                "responseHeaderAtMs": 5141,
+                "bodyFinishedAtMs": 5164,
+                "status": 200,
+                "bodySizeBytes": 159,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/notifications",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 4328,
+                "responseHeaderAtMs": 5028,
+                "bodyFinishedAtMs": 5043,
+                "status": 200,
+                "bodySizeBytes": 770,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/conversations",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 30363,
+                "responseHeaderAtMs": 30597,
+                "bodyFinishedAtMs": 30617,
+                "status": 200,
+                "bodySizeBytes": 1448,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/alerts",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 34308,
+                "responseHeaderAtMs": 34491,
+                "bodyFinishedAtMs": 34509,
+                "status": 200,
+                "bodySizeBytes": 159,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              },
+              {
+                "route": "/api/notifications",
+                "method": "GET",
+                "resourceType": "fetch",
+                "startedAtMs": 34308,
+                "responseHeaderAtMs": 34491,
+                "bodyFinishedAtMs": 34509,
+                "status": 200,
+                "bodySizeBytes": 770,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false
+              }
+            ],
+            "overlappingRequests": [
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 159,
+                "overlapEndAtMs": 1207
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 160,
+                "overlapEndAtMs": 1207
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/conversations",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 576,
+                "overlapEndAtMs": 1207
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 708,
+                "overlapEndAtMs": 1207
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 160,
+                "overlapEndAtMs": 1381
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/conversations",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 576,
+                "overlapEndAtMs": 1381
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 708,
+                "overlapEndAtMs": 1381
+              },
+              {
+                "leftRoute": "/api/notifications",
+                "leftMethod": "GET",
+                "rightRoute": "/api/conversations",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 576,
+                "overlapEndAtMs": 1385
+              },
+              {
+                "leftRoute": "/api/notifications",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 708,
+                "overlapEndAtMs": 1715
+              },
+              {
+                "leftRoute": "/api/conversations",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 708,
+                "overlapEndAtMs": 1385
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 1773,
+                "overlapEndAtMs": 2372
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 1775,
+                "overlapEndAtMs": 2372
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 1776,
+                "overlapEndAtMs": 2262
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2351,
+                "overlapEndAtMs": 2372
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2352,
+                "overlapEndAtMs": 2372
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 1775,
+                "overlapEndAtMs": 35766
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 1776,
+                "overlapEndAtMs": 2262
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2351,
+                "overlapEndAtMs": 2900
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2352,
+                "overlapEndAtMs": 3032
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 3027
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 3026
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4455,
+                "overlapEndAtMs": 5316
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4455,
+                "overlapEndAtMs": 5340
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5316
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5195
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/conversations",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 30515,
+                "overlapEndAtMs": 30769
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 34460,
+                "overlapEndAtMs": 34661
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 34460,
+                "overlapEndAtMs": 34661
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 1776,
+                "overlapEndAtMs": 2262
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2351,
+                "overlapEndAtMs": 2900
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2352,
+                "overlapEndAtMs": 3032
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 3027
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 3026
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4455,
+                "overlapEndAtMs": 5316
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4455,
+                "overlapEndAtMs": 5340
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5316
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5195
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/conversations",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 30515,
+                "overlapEndAtMs": 30769
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 34460,
+                "overlapEndAtMs": 34661
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 34460,
+                "overlapEndAtMs": 34661
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2352,
+                "overlapEndAtMs": 2900
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 2900
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 2900
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 3027
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 3026
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2373,
+                "overlapEndAtMs": 3026
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4455,
+                "overlapEndAtMs": 5316
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5316
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5195
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5316
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5195
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4480,
+                "overlapEndAtMs": 5195
+              },
+              {
+                "leftRoute": "/api/alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/notifications",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 34460,
+                "overlapEndAtMs": 34661
+              }
+            ],
+            "overlapCount": 53,
+            "serverTimingResponseCount": 0,
+            "bodySizeAvailableCount": 17,
+            "bodyFinishTimedOut": true
+          },
+          "serverStoreTiming": {
+            "expected": "off",
+            "serverEnvironmentPatch": {
+              "AIYA_PERF_DIAGNOSTIC": "0"
+            },
+            "observedResponseCount": 0,
+            "metrics": []
+          },
+          "browserParseRenderTiming": {
+            "first": {
+              "actionId": "first",
+              "plannedActionAtMs": 0,
+              "dispatchAtMs": 46,
+              "trustedEventAtMs": 128,
+              "routeCommittedAtMs": 129,
+              "requiredRequestStartAtMs": 2349,
+              "responseHeaderAtMs": 2883,
+              "responseBodyFinishedAtMs": 2888,
+              "parseRenderCompletedAtMs": 3042,
+              "readyStateAtMs": 3015,
+              "secondActionAccepted": null,
+              "clickAttemptCount": 3,
+              "failureClass": null,
+              "requiredRequestTimings": [
+                {
+                  "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                  "method": "GET",
+                  "startedAtMs": 2349,
+                  "responseHeaderAtMs": 2883,
+                  "bodyFinishedAtMs": 2888,
+                  "status": 200,
+                  "failed": false
+                }
+              ],
+              "functionalOutcome": "SUCCESS",
+              "targetReadyStatus": "READY",
+              "targetUnmounted": null
+            },
+            "second": {
+              "actionId": "second",
+              "plannedActionAtMs": 4323,
+              "dispatchAtMs": 4335,
+              "trustedEventAtMs": 4438,
+              "routeCommittedAtMs": 4439,
+              "requiredRequestStartAtMs": 4453,
+              "responseHeaderAtMs": 5288,
+              "responseBodyFinishedAtMs": 5308,
+              "parseRenderCompletedAtMs": 5745,
+              "readyStateAtMs": 5696,
+              "secondActionAccepted": true,
+              "clickAttemptCount": 1,
+              "failureClass": null,
+              "requiredRequestTimings": [
+                {
+                  "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                  "method": "GET",
+                  "startedAtMs": 4453,
+                  "responseHeaderAtMs": 5288,
+                  "bodyFinishedAtMs": 5308,
+                  "status": 200,
+                  "failed": false
+                }
+              ],
+              "functionalOutcome": "SUCCESS",
+              "targetReadyStatus": "READY",
+              "targetUnmounted": null
+            }
+          },
+          "phase44TraceValidation": {
+            "status": "PASS",
+            "failures": [],
+            "completenessStatus": "COMPLETE",
+            "missingTimingFields": [],
+            "toleratedMissingTimingFields": []
+          },
+          "longTasks": {
+            "observersEnabled": false,
+            "longTaskCount": 0,
+            "lcpAtMs": null,
+            "cls": 0,
+            "longTaskObserverUnavailable": false,
+            "lcpObserverUnavailable": false,
+            "clsObserverUnavailable": false
+          },
+          "requiredReads": [
+            {
+              "actionId": "first",
+              "pattern": "/api/clients/:clientId/forms",
+              "count": 1,
+              "records": [
+                {
+                  "route": "/api/clients/00000000-0000-4000-8000-000000005000/forms",
+                  "method": "GET",
+                  "status": 200,
+                  "responseHeaderAtMs": 2883,
+                  "bodyFinishedAtMs": 2888,
+                  "failed": false
+                }
+              ],
+              "valid": true
+            },
+            {
+              "actionId": "second",
+              "pattern": "/api/clients/:clientId/food-rule-profile",
+              "count": 1,
+              "records": [
+                {
+                  "route": "/api/clients/00000000-0000-4000-8000-000000005000/food-rule-profile",
+                  "method": "GET",
+                  "status": 200,
+                  "responseHeaderAtMs": 5288,
+                  "bodyFinishedAtMs": 5308,
+                  "failed": false
+                }
+              ],
+              "valid": true
+            }
+          ],
+          "expectedRouteMatched": true,
+          "expectedMutationRequests": [
+            {
+              "route": "/api/shell/preferences",
+              "method": "PATCH",
+              "resourceType": "fetch",
+              "startedAtMs": 708,
+              "responseHeaderAtMs": 1716,
+              "bodyFinishedAtMs": 1730,
+              "status": 200,
+              "bodySizeBytes": 236,
+              "bodySizeSource": "playwright-body-length",
+              "serverTiming": [],
+              "failed": false
+            }
+          ],
+          "mutationRequests": [],
+          "failureBoundary": {
+            "phase": "none",
+            "actionId": null,
+            "reason": null
+          },
+          "observationValidity": "VALID",
+          "functionalOutcome": "SUCCESS",
+          "firstActionOutcome": "SUCCESS",
+          "secondActionOutcome": "SUCCESS",
+          "performanceOutcome": "NOT_EVALUABLE",
+          "performanceBoundary": {
+            "name": "second_action_dispatch_to_ready",
+            "durationMs": 1361
+          },
+          "validSample": true
+        }
+      },
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "countedAsOfficialSample": false
+    }
+  ],
+  "blockers": [],
+  "deferredToLaterStages": [
+    "Phase 4.5 hosted comparison remains out of scope.",
+    "Phase 4.6 Android and installed-PWA comparison remains out of scope.",
+    "No root cause is claimed from diagnostic traces until Phase 4.7 closure criteria are met."
+  ],
+  "constraints": [
+    "No official nine-scenario baseline was started.",
+    "No small fixture run was started because Phase 4.3 did not identify data volume as a candidate variable.",
+    "No runtime change is accepted as a Plan 1 fix.",
+    "Production remains NO-GO.",
+    "No credentials, cookies, tokens, raw bodies, prompts, clinical data, or device serials are recorded."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "officialMeasurementStarted": false,
+    "historicalPhase4EvidenceRewritten": false,
+    "checkpointIdentitySeparateFromPhase4_3": true,
+    "incompleteSamplesRemainInvalid": true,
+    "observedFailuresRemainNonSamples": true
+  },
+  "closure": {
+    "status": "IN_PROGRESS",
+    "outcome": "LOCAL_CAPTURE_PROBE_COMPLETE",
+    "phase4Closed": false,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": true,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "nextAction": "Review the J1 capture trace; expand to three normal observations per J1-J3 only after the capture boundary remains trustworthy."
+  }
+}

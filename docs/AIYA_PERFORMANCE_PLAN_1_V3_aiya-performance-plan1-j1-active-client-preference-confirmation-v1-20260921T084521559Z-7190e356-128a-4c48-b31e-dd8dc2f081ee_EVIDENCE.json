@@ -1,0 +1,1623 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-single-variable-confirmation",
+  "stageId": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1",
+  "runId": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1-20260921T084521559Z-7190e356-128a-4c48-b31e-dd8dc2f081ee",
+  "generatedAt": "2026-09-21T08:51:28.628Z",
+  "status": "COMPLETE",
+  "outcome": "J1_SINGLE_VARIABLE_CONFIRMATION_RECORDED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Trace-only local desktop J1 A-B-A confirmation of the active-client preference/navigation race candidate.",
+    "officialMeasurementStarted": false,
+    "diagnosticExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "controlVariant": "await_active_client_preference",
+    "groupOrder": [
+      "A1",
+      "B",
+      "A2"
+    ],
+    "repetitionsPerGroup": 3,
+    "countedAsOfficialSample": false,
+    "externalOperations": []
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "currentStage": "aiya-performance-plan1-j1-active-client-preference-confirmation-v1"
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 185,
+    "statusHash": "2cd04db7c3be96e3a405bce5d3c427d9b053ce0590465dbc76e0371797622d78",
+    "diffCheck": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "shellDirtyRegistrationPolicy": "stable",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "b7c9877d00c51131fd8305c2715772f5028a417c1028d8a25d6c001444bc6aa0"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "937a52e3b430a2bc77052f8fd67f9dfb5d08db32d32f0bff2e377371c669c3af"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-active-client-preference-confirmation.mjs",
+        "sha256": "8060fe2a03f0eec1b4af0f1c658180698f8bb76a361aa90ac96ff8db5f05a7bf"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts",
+        "sha256": "b9bd90ccb60695ea01f63bdb416a1f55500c666293c6bb6004b554d2f179580c"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "1accddd158ba47a4e1c352a9f0371d92d05866ab0b0ebff861feddd5b2f96648"
+      }
+    ]
+  },
+  "parentEvidenceReferences": [
+    "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T080123439Z-c4d87d92-ce1e-4439-8103-77ec287524b9_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json"
+  ],
+  "measurementIdentity": {
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "storePath": "normal_rls_api_path_required",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "journeyId": "J1",
+    "secondActionDelayMs": 2000,
+    "serverControl": "one_managed_normal_server",
+    "officialMeasurement": false,
+    "groups": [
+      {
+        "id": "A1",
+        "controlVariant": null,
+        "repetitions": 3
+      },
+      {
+        "id": "B",
+        "controlVariant": "await_active_client_preference",
+        "repetitions": 3
+      },
+      {
+        "id": "A2",
+        "controlVariant": null,
+        "repetitions": 3
+      }
+    ]
+  },
+  "sampleSummary": {
+    "attempted": 9,
+    "planned": 9,
+    "validSamples": 6,
+    "observationValid": 9,
+    "officialBaselineSamples": 0,
+    "byGroup": [
+      {
+        "group": "A1",
+        "controlVariant": null,
+        "attempted": 3,
+        "planned": 3,
+        "validSample": 1,
+        "observationValid": 3,
+        "functionalSuccess": 1,
+        "summaryRouteAfterFormsCount": 2,
+        "formsAbortCount": 0,
+        "preferenceGatePassed": 0,
+        "secondActionTailMs": [
+          897,
+          379,
+          276
+        ]
+      },
+      {
+        "group": "B",
+        "controlVariant": "await_active_client_preference",
+        "attempted": 3,
+        "planned": 3,
+        "validSample": 2,
+        "observationValid": 3,
+        "functionalSuccess": 2,
+        "summaryRouteAfterFormsCount": 1,
+        "formsAbortCount": 0,
+        "preferenceGatePassed": 3,
+        "secondActionTailMs": [
+          372,
+          380,
+          376
+        ]
+      },
+      {
+        "group": "A2",
+        "controlVariant": null,
+        "attempted": 3,
+        "planned": 3,
+        "validSample": 3,
+        "observationValid": 3,
+        "functionalSuccess": 3,
+        "summaryRouteAfterFormsCount": 0,
+        "formsAbortCount": 0,
+        "preferenceGatePassed": 0,
+        "secondActionTailMs": [
+          360,
+          437,
+          399
+        ]
+      }
+    ]
+  },
+  "results": [
+    {
+      "unitKey": "A1:J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "required_read",
+        "actionId": "first",
+        "reason": "required_read_incomplete_or_non_2xx",
+        "pattern": "/api/clients/:clientId/forms"
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 18,
+            "trustedEventAtMs": 89,
+            "routeCommittedAtMs": 91,
+            "requiredRequestStartAtMs": 1388,
+            "responseHeaderAtMs": 2331,
+            "responseBodyFinishedAtMs": 2334,
+            "parseRenderCompletedAtMs": 2716,
+            "readyStateAtMs": 2687,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 1388,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "method": "GET",
+                "startedAtMs": 2024,
+                "responseHeaderAtMs": 2331,
+                "bodyFinishedAtMs": 2334,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3367,
+            "dispatchAtMs": 3373,
+            "trustedEventAtMs": 3406,
+            "routeCommittedAtMs": 3407,
+            "requiredRequestStartAtMs": 3426,
+            "responseHeaderAtMs": 3755,
+            "responseBodyFinishedAtMs": 3757,
+            "parseRenderCompletedAtMs": 4316,
+            "readyStateAtMs": 4303,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 3426,
+                "responseHeaderAtMs": 3755,
+                "bodyFinishedAtMs": 3757,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 91,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1064,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1211,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1369,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1714,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1984,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3407,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3813,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 89,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1046,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1367,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3406,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1369,
+          "summaryRouteAfterForms": true
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 897
+      }
+    },
+    {
+      "unitKey": "A1:J1:r2",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 2,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "required_read",
+        "actionId": "first",
+        "reason": "required_read_incomplete_or_non_2xx",
+        "pattern": "/api/clients/:clientId/forms"
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 5,
+            "trustedEventAtMs": 54,
+            "routeCommittedAtMs": 59,
+            "requiredRequestStartAtMs": 769,
+            "responseHeaderAtMs": 1795,
+            "responseBodyFinishedAtMs": 1796,
+            "parseRenderCompletedAtMs": 1904,
+            "readyStateAtMs": 1890,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 769,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "method": "GET",
+                "startedAtMs": 1466,
+                "responseHeaderAtMs": 1795,
+                "bodyFinishedAtMs": 1796,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 2745,
+            "dispatchAtMs": 2746,
+            "trustedEventAtMs": 2777,
+            "routeCommittedAtMs": 2777,
+            "requiredRequestStartAtMs": 2797,
+            "responseHeaderAtMs": 2998,
+            "responseBodyFinishedAtMs": 2999,
+            "parseRenderCompletedAtMs": 3171,
+            "readyStateAtMs": 3156,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 2797,
+                "responseHeaderAtMs": 2998,
+                "bodyFinishedAtMs": 2999,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 59,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 613,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 624,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 746,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1199,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1413,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2777,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3072,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 54,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 274,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 745,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 2777,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 746,
+          "summaryRouteAfterForms": true
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 379
+      }
+    },
+    {
+      "unitKey": "A1:J1:r3",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 3,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 7,
+            "trustedEventAtMs": 61,
+            "routeCommittedAtMs": 62,
+            "requiredRequestStartAtMs": 1470,
+            "responseHeaderAtMs": 1805,
+            "responseBodyFinishedAtMs": 1806,
+            "parseRenderCompletedAtMs": 1996,
+            "readyStateAtMs": 1962,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 1470,
+                "responseHeaderAtMs": 1805,
+                "bodyFinishedAtMs": 1806,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3444,
+            "dispatchAtMs": 3448,
+            "trustedEventAtMs": 3469,
+            "routeCommittedAtMs": 3470,
+            "requiredRequestStartAtMs": 3491,
+            "responseHeaderAtMs": 3667,
+            "responseBodyFinishedAtMs": 3667,
+            "parseRenderCompletedAtMs": 3766,
+            "readyStateAtMs": 3745,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 3491,
+                "responseHeaderAtMs": 3667,
+                "bodyFinishedAtMs": 3667,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 62,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1174,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1258,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1445,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1873,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3470,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3735,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 61,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1021,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1444,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3469,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1445,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 276
+      }
+    },
+    {
+      "unitKey": "B:J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "group": "B",
+      "controlVariant": "await_active_client_preference",
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": {
+        "variant": "await_active_client_preference",
+        "status": "PASSED",
+        "armedAtMs": 1010,
+        "completedAtMs": 1392,
+        "responseStatus": 200,
+        "responseBodyFinishedAtMs": 1391,
+        "settledAtMs": 1392
+      },
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 9,
+            "trustedEventAtMs": 63,
+            "routeCommittedAtMs": 70,
+            "requiredRequestStartAtMs": 1477,
+            "responseHeaderAtMs": 2032,
+            "responseBodyFinishedAtMs": 2034,
+            "parseRenderCompletedAtMs": 2162,
+            "readyStateAtMs": 2134,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 1477,
+                "responseHeaderAtMs": 2032,
+                "bodyFinishedAtMs": 2034,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3446,
+            "dispatchAtMs": 3453,
+            "trustedEventAtMs": 3486,
+            "routeCommittedAtMs": 3486,
+            "requiredRequestStartAtMs": 3499,
+            "responseHeaderAtMs": 3716,
+            "responseBodyFinishedAtMs": 3717,
+            "parseRenderCompletedAtMs": 3880,
+            "readyStateAtMs": 3858,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 3499,
+                "responseHeaderAtMs": 3716,
+                "bodyFinishedAtMs": 3717,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 70,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1180,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1299,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1447,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2122,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3486,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3790,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 63,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1044,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1446,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3486,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1447,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 372
+      }
+    },
+    {
+      "unitKey": "B:J1:r2",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 2,
+      "group": "B",
+      "controlVariant": "await_active_client_preference",
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": {
+        "variant": "await_active_client_preference",
+        "status": "PASSED",
+        "armedAtMs": 969,
+        "completedAtMs": 1377,
+        "responseStatus": 200,
+        "responseBodyFinishedAtMs": 1376,
+        "settledAtMs": 1377
+      },
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 7,
+            "trustedEventAtMs": 67,
+            "routeCommittedAtMs": 68,
+            "requiredRequestStartAtMs": 1455,
+            "responseHeaderAtMs": 1944,
+            "responseBodyFinishedAtMs": 1944,
+            "parseRenderCompletedAtMs": 2135,
+            "readyStateAtMs": 2122,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 1455,
+                "responseHeaderAtMs": 1944,
+                "bodyFinishedAtMs": 1944,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3432,
+            "dispatchAtMs": 3432,
+            "trustedEventAtMs": 3456,
+            "routeCommittedAtMs": 3457,
+            "requiredRequestStartAtMs": 3474,
+            "responseHeaderAtMs": 3693,
+            "responseBodyFinishedAtMs": 3694,
+            "parseRenderCompletedAtMs": 3868,
+            "readyStateAtMs": 3836,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 3474,
+                "responseHeaderAtMs": 3693,
+                "bodyFinishedAtMs": 3694,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 68,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1089,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1286,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1434,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2092,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3457,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3756,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 67,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 995,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1432,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3456,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1434,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 380
+      }
+    },
+    {
+      "unitKey": "B:J1:r3",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 3,
+      "group": "B",
+      "controlVariant": "await_active_client_preference",
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "required_read",
+        "actionId": "first",
+        "reason": "required_read_incomplete_or_non_2xx",
+        "pattern": "/api/clients/:clientId/forms"
+      },
+      "control": {
+        "variant": "await_active_client_preference",
+        "status": "PASSED",
+        "armedAtMs": 1054,
+        "completedAtMs": 2071,
+        "responseStatus": 200,
+        "responseBodyFinishedAtMs": 2065,
+        "settledAtMs": 2071
+      },
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 8,
+            "trustedEventAtMs": 72,
+            "routeCommittedAtMs": 73,
+            "requiredRequestStartAtMs": 2148,
+            "responseHeaderAtMs": 2845,
+            "responseBodyFinishedAtMs": 2846,
+            "parseRenderCompletedAtMs": 2993,
+            "readyStateAtMs": 2961,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 2148,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "method": "GET",
+                "startedAtMs": 2639,
+                "responseHeaderAtMs": 2845,
+                "bodyFinishedAtMs": 2846,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 4120,
+            "dispatchAtMs": 4135,
+            "trustedEventAtMs": 4165,
+            "routeCommittedAtMs": 4165,
+            "requiredRequestStartAtMs": 4182,
+            "responseHeaderAtMs": 4398,
+            "responseBodyFinishedAtMs": 4400,
+            "parseRenderCompletedAtMs": 4577,
+            "readyStateAtMs": 4541,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 4182,
+                "responseHeaderAtMs": 4398,
+                "bodyFinishedAtMs": 4400,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 73,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1284,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1608,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2122,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2195,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2619,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4165,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4492,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 72,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1096,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 2120,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 4165,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 2122,
+          "summaryRouteAfterForms": true
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 376
+      }
+    },
+    {
+      "unitKey": "A2:J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 4,
+            "trustedEventAtMs": 68,
+            "routeCommittedAtMs": 69,
+            "requiredRequestStartAtMs": 1374,
+            "responseHeaderAtMs": 1766,
+            "responseBodyFinishedAtMs": 1766,
+            "parseRenderCompletedAtMs": 1954,
+            "readyStateAtMs": 1917,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 1374,
+                "responseHeaderAtMs": 1766,
+                "bodyFinishedAtMs": 1766,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3354,
+            "dispatchAtMs": 3354,
+            "trustedEventAtMs": 3379,
+            "routeCommittedAtMs": 3379,
+            "requiredRequestStartAtMs": 3390,
+            "responseHeaderAtMs": 3566,
+            "responseBodyFinishedAtMs": 3567,
+            "parseRenderCompletedAtMs": 3771,
+            "readyStateAtMs": 3739,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 3390,
+                "responseHeaderAtMs": 3566,
+                "bodyFinishedAtMs": 3567,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 69,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 963,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1210,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1354,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1849,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3379,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3648,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 68,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1050,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1354,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3379,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1354,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 360
+      }
+    },
+    {
+      "unitKey": "A2:J1:r2",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 2,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 4,
+            "trustedEventAtMs": 59,
+            "routeCommittedAtMs": 60,
+            "requiredRequestStartAtMs": 1480,
+            "responseHeaderAtMs": 1837,
+            "responseBodyFinishedAtMs": 1838,
+            "parseRenderCompletedAtMs": 2009,
+            "readyStateAtMs": 1996,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 1480,
+                "responseHeaderAtMs": 1837,
+                "bodyFinishedAtMs": 1838,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3455,
+            "dispatchAtMs": 3457,
+            "trustedEventAtMs": 3481,
+            "routeCommittedAtMs": 3481,
+            "requiredRequestStartAtMs": 3497,
+            "responseHeaderAtMs": 3788,
+            "responseBodyFinishedAtMs": 3789,
+            "parseRenderCompletedAtMs": 3943,
+            "readyStateAtMs": 3918,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 3497,
+                "responseHeaderAtMs": 3788,
+                "bodyFinishedAtMs": 3789,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 60,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1184,
+              "route": "/dashboard?section=clients",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 1338,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1455,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1917,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3481,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3870,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 59,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 1034,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1455,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3481,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1455,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 437
+      }
+    },
+    {
+      "unitKey": "A2:J1:r3",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 3,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "control": null,
+      "trace": {
+        "status": "COMPLETE",
+        "failures": [],
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 8,
+            "trustedEventAtMs": 68,
+            "routeCommittedAtMs": 69,
+            "requiredRequestStartAtMs": 1961,
+            "responseHeaderAtMs": 2240,
+            "responseBodyFinishedAtMs": 2241,
+            "parseRenderCompletedAtMs": 2381,
+            "readyStateAtMs": 2366,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 1961,
+                "responseHeaderAtMs": 2240,
+                "bodyFinishedAtMs": 2241,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3938,
+            "dispatchAtMs": 3938,
+            "trustedEventAtMs": 3966,
+            "routeCommittedAtMs": 3967,
+            "requiredRequestStartAtMs": 3991,
+            "responseHeaderAtMs": 4234,
+            "responseBodyFinishedAtMs": 4234,
+            "parseRenderCompletedAtMs": 4380,
+            "readyStateAtMs": 4365,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "method": "GET",
+                "startedAtMs": 3991,
+                "responseHeaderAtMs": 4234,
+                "bodyFinishedAtMs": 4234,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          }
+        },
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 69,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 929,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1042,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1537,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1939,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 2307,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            },
+            {
+              "atMs": 3967,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 4322,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "replaceState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 68,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 570,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1938,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3966,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "routeAfterForms": {
+          "formsRouteAtMs": 1939,
+          "summaryRouteAfterForms": false
+        },
+        "lifecycleEvents": [],
+        "secondActionTailMs": 399
+      }
+    }
+  ],
+  "blockers": [],
+  "interpretation": {
+    "status": "UNINTERPRETED_PENDING_REVIEW",
+    "rootCauseConfirmed": false,
+    "runtimeFixAccepted": false,
+    "productionGo": false,
+    "requiredForConfirmation": [
+      "three matched valid A1-B-A2 cycles",
+      "same route/request/fixture/browser inputs outside the one B gate",
+      "direct correlation of summary transition and Forms lifecycle, if reproduced",
+      "separate functional and speed results"
+    ]
+  },
+  "explicitNonClaims": [
+    "This trace-only A-B-A run is not the official nine-scenario baseline.",
+    "The active-client preference gate is a harness control, not a product change.",
+    "A route transition correlation does not alone prove the global freeze thesis or auth as the root cause.",
+    "No finding disposition, Plan 2 eligibility, or production decision changes here.",
+    "Production remains NO-GO."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "J1_SINGLE_VARIABLE_CONFIRMATION_RECORDED",
+    "runtimeFixAccepted": false,
+    "plan2Eligible": false,
+    "nextAction": "Review the three A-B-A groups together with the prior route/lifecycle correlation before any code change."
+  }
+}

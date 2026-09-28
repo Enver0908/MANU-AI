@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-auth-ownership-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-auth-chain-ownership-ab-a",
+  "runId": "aiya-performance-plan1-shared-runtime-auth-ownership-ab-a-20260920T150730Z-c86defe0-6be6-46e9-bd56-a5560d140fa1",
+  "generatedAt": "2026-09-20T15:07:30Z",
+  "status": "COMPLETE",
+  "outcome": "AUTH_SESSION_ACTIVITY_ASSERT_REMOVAL_NO_REPEATABLE_SPEED_IMPROVEMENT_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Local authenticated desktop diagnosis of the repeated session-activity RPC inside the shared auth chain.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "fixture": "local-normal synthetic owner with real password session and normal RLS/API path",
+    "journeyBoundary": "J1 selected from each run's valid normal observations; three diagnostic repetitions per variant"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "hypothesis": {
+    "statement": "The session-activity assertion executed inside every normal authenticated API request is a shared auth-chain cost that contributes to the two-second interaction freeze.",
+    "target": "app/src/lib/auth-context.ts:resolveAccountTenantContext",
+    "baselineA": "Calls without recordSessionActivity execute assertShellSessionActivity through the p85_stage_5_record_session_activity_v3 RPC.",
+    "variableB": "Calls without recordSessionActivity skip that assertion and use the already verified session id; the explicit /api/session/activity endpoint remains the touch owner.",
+    "heldConstant": [
+      "getUser",
+      "tenant_memberships lookup",
+      "dietitians lookup",
+      "getSession and session claim verification",
+      "entitlement checks",
+      "rate limits",
+      "store/RLS reads",
+      "request fan-out",
+      "RSC navigation",
+      "React shell and Aiya tree",
+      "browser journey and second-action timing"
+    ]
+  },
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "runner": {
+      "path": "app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs",
+      "sha256": "db111633bdf170c744c980d8ad791ade17b72357f2c6857d0a650528c700dfc2",
+      "diagnosticBuildTimeoutMs": 600000,
+      "changePurpose": "measurement infrastructure deadline only"
+    },
+    "authContextVariants": {
+      "A1": "606e3dbe7f3be9e01110a825464e96f253f65e342fdb76902e687dca98b9f05c",
+      "B": "56597f124a58869e9550611b39970b402074acabeed76aeb3fac565e75d06df1",
+      "A2": "606e3dbe7f3be9e01110a825464e96f253f65e342fdb76902e687dca98b9f05c"
+    },
+    "checkoutAfterA2": {
+      "authContextSha256": "606e3dbe7f3be9e01110a825464e96f253f65e342fdb76902e687dca98b9f05c",
+      "temporaryBChangeRemoved": true
+    }
+  },
+  "sourceRuns": {
+    "A1": {
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T142853964Z-171b5cfb-9497-4421-acb5-36aeb0158edc",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T142853964Z-171b5cfb-9497-4421-acb5-36aeb0158edc_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "c9da2aa19140f64806b3dfe06d31fe7d43021362448f1c72920860888acd15d8",
+      "status": "COMPLETE",
+      "observationSummary": "12/12 observation-valid; selected J1 diagnostic 3/3 valid and successful",
+      "sampler": "PASS; 615 samples; zero errors; zero lock-wait samples"
+    },
+    "B": {
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T144441118Z-8f1b5a3e-b42c-436d-9bbc-ca94554134e9",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T144441118Z-8f1b5a3e-b42c-436d-9bbc-ca94554134e9_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "3fad319b38369419066793b75743e2584fedb4f51c63fb2a4a42f9a54b685520",
+      "status": "COMPLETE",
+      "observationSummary": "11/12 observation-valid; selected J1 diagnostic 3/3 valid and successful",
+      "sampler": "PASS; 651 samples; zero errors; zero lock-wait samples"
+    },
+    "A2": {
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T145545318Z-44f3e608-58b2-4330-92c8-4dd8620828fb",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T145545318Z-44f3e608-58b2-4330-92c8-4dd8620828fb_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "c7bd22934c791e1531c4373e729824209d39882f86dceecd31a55f080917e094",
+      "status": "COMPLETE",
+      "observationSummary": "12/12 observation-valid; selected J1 diagnostic 3/3 valid and successful",
+      "sampler": "PARTIAL; 675 samples; one sample error; zero lock-wait samples"
+    }
+  },
+  "selectedJ1DiagnosticMetrics": {
+    "A1": [
+      { "unitKey": "diagnostic:J1:r1", "tailMs": 1147, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 142.61, "sessionActivityMs": 14.24, "reactCommitCount": 1932, "reactActualDurationMs": 5725.7, "longTaskCount": 0, "validSample": true, "functionalOutcome": "SUCCESS" },
+      { "unitKey": "diagnostic:J1:r2", "tailMs": 524, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 292.6, "sessionActivityMs": 26.65, "reactCommitCount": 1836, "reactActualDurationMs": 5309, "longTaskCount": 1, "validSample": true, "functionalOutcome": "SUCCESS" },
+      { "unitKey": "diagnostic:J1:r3", "tailMs": 660, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 149.49, "sessionActivityMs": 7.25, "reactCommitCount": 1938, "reactActualDurationMs": 5601.6, "longTaskCount": 0, "validSample": true, "functionalOutcome": "SUCCESS" }
+    ],
+    "B": [
+      { "unitKey": "diagnostic:J1:r1", "tailMs": 1196, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 168.69, "sessionActivityMs": 0.01, "reactCommitCount": 1810, "reactActualDurationMs": 6237.4, "longTaskCount": 1, "validSample": true, "functionalOutcome": "SUCCESS" },
+      { "unitKey": "diagnostic:J1:r2", "tailMs": 1395, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 188.41, "sessionActivityMs": 0, "reactCommitCount": 1781, "reactActualDurationMs": 6647.6, "longTaskCount": 1, "validSample": true, "functionalOutcome": "SUCCESS" },
+      { "unitKey": "diagnostic:J1:r3", "tailMs": 1234, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 284.43, "sessionActivityMs": 0, "reactCommitCount": 1849, "reactActualDurationMs": 6241.6, "longTaskCount": 0, "validSample": true, "functionalOutcome": "SUCCESS" }
+    ],
+    "A2": [
+      { "unitKey": "diagnostic:J1:r1", "tailMs": 622, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 209.49, "sessionActivityMs": 19.45, "reactCommitCount": 2025, "reactActualDurationMs": 5408, "longTaskCount": 0, "validSample": true, "functionalOutcome": "SUCCESS" },
+      { "unitKey": "diagnostic:J1:r2", "tailMs": 1534, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 212.73, "sessionActivityMs": 8.98, "reactCommitCount": 1853, "reactActualDurationMs": 6179.6, "longTaskCount": 8, "validSample": true, "functionalOutcome": "SUCCESS" },
+      { "unitKey": "diagnostic:J1:r3", "tailMs": 552, "totalRequests": 53, "apiRequests": 24, "rscRequests": 26, "authTotalMs": 184.91, "sessionActivityMs": 11.02, "reactCommitCount": 2017, "reactActualDurationMs": 5408.1, "longTaskCount": 0, "validSample": true, "functionalOutcome": "SUCCESS" }
+    ]
+  },
+  "measuredEffect": {
+    "sessionActivityRpcBoundary": "B reduced the contained session-activity timing to approximately zero in all three selected J1 repetitions.",
+    "requestFanout": "A1/B/A2 each recorded 53 total requests, 24 API requests, and 26 RSC requests in all three selected J1 diagnostic repetitions.",
+    "secondActionTail": "A1 1147/524/660 ms; B 1196/1395/1234 ms; A2 622/1534/552 ms.",
+    "authTotal": "A1 142.61/292.60/149.49 ms; B 168.69/188.41/284.43 ms; A2 209.49/212.73/184.91 ms.",
+    "reactCommit": "Commit counts and actual durations remained variable; B did not produce a stable lower interaction tail or commit cost.",
+    "direction": "The targeted RPC cost was removed, but the user-visible second-action speed did not improve in a repeatable A-B-A direction."
+  },
+  "validity": {
+    "A1": { "observationValid": "12/12", "selectedJ1DiagnosticValidAndSuccessful": "3/3" },
+    "B": { "observationValid": "11/12", "selectedJ1DiagnosticValidAndSuccessful": "3/3" },
+    "A2": { "observationValid": "12/12", "selectedJ1DiagnosticValidAndSuccessful": "3/3" },
+    "functionalOutcome": "All selected J1 diagnostic observations completed the required reads and second action successfully.",
+    "scope": "This is diagnostic evidence and is not an official nine-scenario acceptance run."
+  },
+  "sampler": {
+    "A1": { "status": "PASS", "sampleCount": 615, "sampleErrorCount": 0, "lockWaitSampleCount": 0, "blockedActivitySampleCount": 0 },
+    "B": { "status": "PASS", "sampleCount": 651, "sampleErrorCount": 0, "lockWaitSampleCount": 0, "blockedActivitySampleCount": 0 },
+    "A2": { "status": "PARTIAL", "sampleCount": 675, "sampleErrorCount": 1, "lockWaitSampleCount": 0, "blockedActivitySampleCount": 0 },
+    "interpretation": "Sampler output is bounded observation only; the A2 sample error prevents any global lock-absence claim."
+  },
+  "behaviorAndSafety": {
+    "BSelectedJourney": "Real authenticated session, normal RLS/API path, required reads 2xx/body-finished, second action accepted, and functional success 3/3.",
+    "explicitActivityOwner": "The /api/session/activity endpoint remained the explicit touch path during B.",
+    "safetyBoundary": "No tenant, role, mutation, migration, production, provider, billing, worker, or real health-data path was used or changed.",
+    "runtimeStateAfterA2": "Baseline auth assertion path restored; B change is absent from checkout."
+  },
+  "conclusion": {
+    "candidateStatus": "AUTH_SESSION_ACTIVITY_ASSERT_COST_MEASURED_SPEED_INCONCLUSIVE",
+    "rootCauseConfirmed": false,
+    "contributingFactorConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO"
+  },
+  "explicitNonClaims": [
+    "Removing the assertion in B is not an approved production fix.",
+    "The measured session-activity span is not proof that this RPC caused the global freeze.",
+    "The diagnostic run does not reopen Plan 1 closure or authorize Plan 2.",
+    "The sampler does not prove absence of database lock contention outside the observed windows."
+  ],
+  "redaction": {
+    "status": "PASS_BY_CONTRACT",
+    "rawBodiesIncluded": false,
+    "credentialsIncluded": false,
+    "cookiesIncluded": false,
+    "tokensIncluded": false,
+    "healthDataIncluded": false,
+    "deviceSerialIncluded": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "AUTH_SESSION_ACTIVITY_ASSERT_REMOVAL_NO_REPEATABLE_SPEED_IMPROVEMENT_GLOBAL_FREEZE_UNRESOLVED",
+    "runtimeState": "A2 baseline restored; only the measurement runner deadline extension and this evidence record remain from this continuation.",
+    "nextAction": "Keep the auth/session chain in the shared freeze hypothesis, but move diagnosis to a different separately authorized boundary; do not accept or deploy the B behavior."
+  }
+}

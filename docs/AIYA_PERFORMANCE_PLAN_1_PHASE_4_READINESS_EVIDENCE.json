@@ -1,0 +1,985 @@
+{
+  "phase": "AIya Performance Plan 1 Phase 4 Readiness",
+  "schemaVersion": "aiya-performance-plan1-phase4-readiness-v1",
+  "runId": "aiya-phase4-readiness-20260915T195619250Z",
+  "generatedAt": "2026-09-15T19:56:19.250Z",
+  "status": "COMPLETE",
+  "outcome": "READY_FOR_PHASE4_BASELINE",
+  "productionDecision": "NO-GO",
+  "executionMode": "readiness_only",
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "upstreamHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "worktreeStatus": "## codex/production-readiness-stage-1...origin/codex/production-readiness-stage-1 [ahead 2]\n M HANDOFF_FOR_NEXT_CODEX.md\n M app/package.json\n M app/src/lib/phase-85-stage-5-shell-migration-contract.test.ts\n M codex.md\n M docs/AIYA_PERFORMANCE_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md\n M docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json\n M docs/NEXT_PHASE_EXECUTION_PLAN.md\n M docs/PHASE_85_STAGE_5_RLS_ZERO_SKIP_REPORT.json\n M docs/RISK_REGISTER.md\n?? app/scripts/lib/performance-plan-1-phase-4-contract.mjs\n?? app/scripts/performance-plan-1-phase-4-readiness.mjs\n?? app/scripts/performance-plan-1-phase-4-readiness.test.mjs\n?? app/scripts/performance-plan-1-phase-4.mjs\n?? app/scripts/performance-plan-1-phase-4.test.mjs\n?? app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_20260914T110411293Z.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_20260915T065807211Z.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T111650824Z-51ccd021-0f1d-42ff-b170-66bc776f6aa6.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T130141721Z-6aa263db-c0ff-4192-9333-c20d769f4692.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T152837443Z-cca235f7-4e4b-42bc-af94-9d8a114c4be5.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T182349286Z-0928a3cc-541a-45e2-8600-1c15474e3edf.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE_HISTORY_aiya-performance-plan1-phase4-20260915T184019327Z-ee0a835a-32f7-4d28-bb37-070f1fab357c.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_ACTION_PLAN.md\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260914T184904329Z.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260915T065820441Z.json\n?? docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_READINESS_EVIDENCE_HISTORY_20260915T070452682Z.json\n?? docs/PHASE_EXECUTION_RESUME_ACTION_PLAN.md\n?? docs/PHASE_EXECUTION_RESUME_EVIDENCE.json\n?? tmp/\n?? tools/phase-execution/",
+    "diffCheck": "PASS"
+  },
+  "measurementIdentity": {
+    "files": [
+      {
+        "path": "app/scripts/measure-aiya-performance-phase-2.mjs",
+        "exists": true,
+        "sha256": "302db74fcefd9bf035b8281032dcd5f4feb018050a1cddc788c8cca1bc79d29a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4.mjs",
+        "exists": true,
+        "sha256": "4a95842838cacaf58fff2fcf8643e40cdeac366448b1cb7656e58c6f83349d81"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4.test.mjs",
+        "exists": true,
+        "sha256": "297b36509b5be415b530a4d05567a6e27cc1c1b270509f6b315640336d1edb33"
+      },
+      {
+        "path": "app/scripts/lib/performance-plan-1-phase-4-contract.mjs",
+        "exists": true,
+        "sha256": "dc404f8580e2f911208834e13a6d2614628a2034dd2f6ffcbfd71089e65e0a66"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-readiness.mjs",
+        "exists": true,
+        "sha256": "326fbfd0ed65192b514eff3f0e7480c91523ed5ebc057b5281c0c9df4982b21d"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-readiness.test.mjs",
+        "exists": true,
+        "sha256": "9cf1252af1ce927241c3f9264ee63f3fcb6cc823387e0622583635ed929aa4c1"
+      },
+      {
+        "path": "app/package.json",
+        "exists": true,
+        "sha256": "c7c122533d3f76b4eeb5b6099206865289bba27bfeb43da7736024892c474168"
+      },
+      {
+        "path": "app/package-lock.json",
+        "exists": true,
+        "sha256": "49d81fae945590d3cfc4463d311ab70b280a3bd1462fa550ed869f190c6a9cfd"
+      },
+      {
+        "path": "app/next.config.ts",
+        "exists": true,
+        "sha256": "f266abfaeb05456c950c89767db39f9e2f83655085c41d86a99c43eb0ec4ae20"
+      },
+      {
+        "path": "app/public/sw.js",
+        "exists": true,
+        "sha256": "c0850d9ec5f6fa20264c1f7e284df2829513a7abc0f4c88c85755e2a1c1237ea"
+      },
+      {
+        "path": "app/public/manifest.webmanifest",
+        "exists": true,
+        "sha256": "d7a55bac6334a3bb51448256e80c9962465819ec00bf8c00bc8c2222f5906230"
+      },
+      {
+        "path": "app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql",
+        "exists": true,
+        "sha256": "39ba6522d8dd2b54388c628cb6e67a57380bcb9bfb5a66474332398907f17cab"
+      }
+    ],
+    "sourceFingerprint": "0af06c206ec179557a20714ae2e495cac9a5a50a78aed5901211d538b0b78d98",
+    "fixture": {
+      "phase3EvidenceFixtureHash": "6bedeba5628b8ea3677dae464143f01d59a2dc0f51e1353dd52767827c642819",
+      "phase3EvidenceHead": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+      "fixtureReady": true,
+      "authenticatedSessionReady": true
+    },
+    "buildArtifact": {
+      "path": "app/.next/BUILD_ID",
+      "exists": true,
+      "sha256": "5589bc3392f9f67cb9867167af3c621d612cd7d6c109c1b4ad3648af75710fab",
+      "buildId": "hs-a2b1e0908b29-ea9021bd6c91"
+    }
+  },
+  "authority": {
+    "files": [
+      {
+        "path": "codex.md",
+        "exists": true
+      },
+      {
+        "path": "app/AGENTS.md",
+        "exists": true
+      },
+      {
+        "path": "HANDOFF_FOR_NEXT_CODEX.md",
+        "exists": true
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_ACTION_PLAN.md",
+        "exists": true
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "exists": true
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+        "exists": true
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+        "exists": true
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+        "exists": true
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+        "exists": true
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+        "exists": true
+      },
+      {
+        "path": "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+        "exists": true
+      },
+      {
+        "path": "docs/RISK_REGISTER.md",
+        "exists": true
+      }
+    ],
+    "status": "PASS",
+    "missing": []
+  },
+  "findingMatrix": {
+    "status": "PASS",
+    "manifestVersion": 1,
+    "ids": [
+      "PERF-F2-001",
+      "PERF-F2-002",
+      "PERF-F2-003",
+      "PERF-F12-001",
+      "PERF-F12-002"
+    ],
+    "findings": [
+      {
+        "id": "PERF-F2-001",
+        "severity": "high",
+        "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+        "historicalClassification": "static_risk",
+        "reproductionScenarios": [
+          "post_login_dashboard",
+          "client_roster",
+          "client_forms_workspace",
+          "nutrition_workspace",
+          "menu_workspace"
+        ],
+        "closureEvidence": "Three or more matching valid samples/traces tie broad app-state hydration to the missed task budget and identify the exact loader/consumer path.",
+        "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+      },
+      {
+        "id": "PERF-F2-002",
+        "severity": "medium",
+        "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+        "historicalClassification": "static_risk",
+        "reproductionScenarios": [
+          "post_login_dashboard",
+          "client_roster",
+          "messages",
+          "ai_chat"
+        ],
+        "closureEvidence": "Three or more matching valid samples/traces show background refresh overlap and a repeatable task-ready or interaction delta without losing required freshness behavior.",
+        "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+      },
+      {
+        "id": "PERF-F2-003",
+        "severity": "medium",
+        "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+        "historicalClassification": "static_bundle_render_risk",
+        "reproductionScenarios": [
+          "post_login_dashboard",
+          "client_roster",
+          "client_forms_workspace",
+          "nutrition_workspace",
+          "menu_workspace",
+          "ai_chat"
+        ],
+        "closureEvidence": "Three or more matching valid traces identify a heavy bundle/panel/render path and its contribution to the missed interaction or readiness budget.",
+        "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+      },
+      {
+        "id": "PERF-F12-001",
+        "severity": "high",
+        "phase1Status": "MEASUREMENT_GAP_CONFIRMED",
+        "historicalClassification": "measurement_gate_gap",
+        "reproductionScenarios": [
+          "ai_chat"
+        ],
+        "closureEvidence": "The measurement gap is resolved only when valid authenticated AI Chat samples have 2xx conversation-list reads and the required workspace selector; a 401 remains an auth/store failure.",
+        "plan2Eligibility": "Measurement-gap closure alone does not authorize a runtime speed fix."
+      },
+      {
+        "id": "PERF-F12-002",
+        "severity": "high",
+        "phase1Status": "MEASURED_CANDIDATE_PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+        "historicalClassification": "warm_journey_candidate",
+        "reproductionScenarios": [
+          "ai_chat"
+        ],
+        "closureEvidence": "At least three valid authenticated samples/traces identify whether the failure is auth, store, network, parse, render, or polling related and map it to exact files/functions.",
+        "plan2Eligibility": "Only after exact affected files/functions and causal evidence are recorded."
+      }
+    ],
+    "failures": []
+  },
+  "phase2Prerequisite": {
+    "present": true,
+    "status": "COMPLETE",
+    "outcome": "HARNESS_READY_WITH_NEGATIVE_CONTROLS",
+    "harnessReady": true,
+    "phase2Identity": "3e0da4508b52b91946798ce424bf3437f085e63b"
+  },
+  "phase3Prerequisite": {
+    "present": true,
+    "status": "COMPLETE",
+    "outcome": "SYNTHETIC_AUTH_STORE_READY",
+    "fixtureHash": "6bedeba5628b8ea3677dae464143f01d59a2dc0f51e1353dd52767827c642819",
+    "localApiUrl": "http://127.0.0.1:54321/",
+    "fixtureReady": true,
+    "authenticatedSessionReady": true,
+    "phase3Identity": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a"
+  },
+  "canonicalPhase4": {
+    "runId": "aiya-performance-plan1-phase4-20260915T190010135Z-8a3e9d92-83df-4c0d-8604-41c17109a31e",
+    "status": "BLOCKED",
+    "outcome": "PERFORMANCE_BLOCKED",
+    "preserved": true
+  },
+  "environmentMatrix": {
+    "localDesktop": {
+      "environment": "local_desktop",
+      "status": "PASS",
+      "baselineStatus": "NOT_RUN",
+      "reason": null
+    },
+    "ownerPcHosted": {
+      "environment": "owner_pc_hosted",
+      "status": "PASS",
+      "baselineStatus": "NOT_RUN",
+      "reason": null
+    },
+    "androidChrome": {
+      "environment": "android_chrome",
+      "status": "PASS",
+      "baselineStatus": "NOT_RUN",
+      "reason": null
+    },
+    "installedAndroidPwa": {
+      "environment": "installed_android_pwa",
+      "status": "PASS",
+      "baselineStatus": "NOT_RUN",
+      "reason": null
+    }
+  },
+  "stageLedger": [
+    {
+      "stageId": "H1",
+      "name": "Requirements, finding, and identity contract lock",
+      "status": "COMPLETE",
+      "performedActions": [
+        "Recorded authority documents and the locked five-finding matrix",
+        "Recorded Git identity and source/artifact/fixture/migration hashes",
+        "Recorded the four-environment and validity contracts",
+        "Recorded production, secret, provider, channel, and runtime exclusions"
+      ],
+      "verificationResults": {
+        "authority": {
+          "files": [
+            {
+              "path": "codex.md",
+              "exists": true
+            },
+            {
+              "path": "app/AGENTS.md",
+              "exists": true
+            },
+            {
+              "path": "HANDOFF_FOR_NEXT_CODEX.md",
+              "exists": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_ACTION_PLAN.md",
+              "exists": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+              "exists": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_EVIDENCE.json",
+              "exists": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json",
+              "exists": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_2_EVIDENCE.json",
+              "exists": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+              "exists": true
+            },
+            {
+              "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+              "exists": true
+            },
+            {
+              "path": "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+              "exists": true
+            },
+            {
+              "path": "docs/RISK_REGISTER.md",
+              "exists": true
+            }
+          ],
+          "status": "PASS",
+          "missing": []
+        },
+        "findings": {
+          "status": "PASS",
+          "manifestVersion": 1,
+          "ids": [
+            "PERF-F2-001",
+            "PERF-F2-002",
+            "PERF-F2-003",
+            "PERF-F12-001",
+            "PERF-F12-002"
+          ],
+          "findings": [
+            {
+              "id": "PERF-F2-001",
+              "severity": "high",
+              "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+              "historicalClassification": "static_risk",
+              "reproductionScenarios": [
+                "post_login_dashboard",
+                "client_roster",
+                "client_forms_workspace",
+                "nutrition_workspace",
+                "menu_workspace"
+              ],
+              "closureEvidence": "Three or more matching valid samples/traces tie broad app-state hydration to the missed task budget and identify the exact loader/consumer path.",
+              "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+            },
+            {
+              "id": "PERF-F2-002",
+              "severity": "medium",
+              "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+              "historicalClassification": "static_risk",
+              "reproductionScenarios": [
+                "post_login_dashboard",
+                "client_roster",
+                "messages",
+                "ai_chat"
+              ],
+              "closureEvidence": "Three or more matching valid samples/traces show background refresh overlap and a repeatable task-ready or interaction delta without losing required freshness behavior.",
+              "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+            },
+            {
+              "id": "PERF-F2-003",
+              "severity": "medium",
+              "phase1Status": "PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+              "historicalClassification": "static_bundle_render_risk",
+              "reproductionScenarios": [
+                "post_login_dashboard",
+                "client_roster",
+                "client_forms_workspace",
+                "nutrition_workspace",
+                "menu_workspace",
+                "ai_chat"
+              ],
+              "closureEvidence": "Three or more matching valid traces identify a heavy bundle/panel/render path and its contribution to the missed interaction or readiness budget.",
+              "plan2Eligibility": "Only when CAUSE_CONFIRMED or a measured contributing factor is recorded."
+            },
+            {
+              "id": "PERF-F12-001",
+              "severity": "high",
+              "phase1Status": "MEASUREMENT_GAP_CONFIRMED",
+              "historicalClassification": "measurement_gate_gap",
+              "reproductionScenarios": [
+                "ai_chat"
+              ],
+              "closureEvidence": "The measurement gap is resolved only when valid authenticated AI Chat samples have 2xx conversation-list reads and the required workspace selector; a 401 remains an auth/store failure.",
+              "plan2Eligibility": "Measurement-gap closure alone does not authorize a runtime speed fix."
+            },
+            {
+              "id": "PERF-F12-002",
+              "severity": "high",
+              "phase1Status": "MEASURED_CANDIDATE_PENDING_VALID_AUTHENTICATED_REPRODUCTION",
+              "historicalClassification": "warm_journey_candidate",
+              "reproductionScenarios": [
+                "ai_chat"
+              ],
+              "closureEvidence": "At least three valid authenticated samples/traces identify whether the failure is auth, store, network, parse, render, or polling related and map it to exact files/functions.",
+              "plan2Eligibility": "Only after exact affected files/functions and causal evidence are recorded."
+            }
+          ],
+          "failures": []
+        },
+        "phase2": {
+          "present": true,
+          "status": "COMPLETE",
+          "outcome": "HARNESS_READY_WITH_NEGATIVE_CONTROLS",
+          "harnessReady": true,
+          "phase2Identity": "3e0da4508b52b91946798ce424bf3437f085e63b"
+        },
+        "phase3": {
+          "present": true,
+          "status": "COMPLETE",
+          "outcome": "SYNTHETIC_AUTH_STORE_READY",
+          "fixtureHash": "6bedeba5628b8ea3677dae464143f01d59a2dc0f51e1353dd52767827c642819",
+          "localApiUrl": "http://127.0.0.1:54321/",
+          "fixtureReady": true,
+          "authenticatedSessionReady": true,
+          "phase3Identity": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a"
+        },
+        "phase4CanonicalRun": {
+          "runId": "aiya-performance-plan1-phase4-20260915T190010135Z-8a3e9d92-83df-4c0d-8604-41c17109a31e",
+          "status": "BLOCKED",
+          "outcome": "PERFORMANCE_BLOCKED"
+        }
+      },
+      "outputEvidence": [
+        "authority",
+        "findings",
+        "measurementIdentity",
+        "stageLedger"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "H2",
+      "name": "Measurement harness reliability and negative controls",
+      "status": "COMPLETE",
+      "prerequisiteEvidence": [
+        "H1"
+      ],
+      "performedActions": [
+        "Applied trusted interaction, request-body, mutation, sample-error, percentile, retry, stale, and redaction gates",
+        "Ran syntax and Phase 4 contract tests without recording command output"
+      ],
+      "verificationResults": {
+        "tests": [
+          {
+            "command": "C:\\Program Files\\nodejs\\node.exe --check scripts/performance-plan-1-phase-4.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "outputRecorded": false
+          },
+          {
+            "command": "C:\\Program Files\\nodejs\\node.exe --check scripts/performance-plan-1-phase-4-readiness.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "outputRecorded": false
+          },
+          {
+            "command": "C:\\Program Files\\nodejs\\node.exe --test scripts/performance-plan-1-phase-4.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "outputRecorded": false
+          },
+          {
+            "command": "C:\\Program Files\\nodejs\\node.exe --test scripts/performance-plan-1-phase-4-readiness.test.mjs",
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "outputRecorded": false
+          }
+        ]
+      },
+      "outputEvidence": [
+        "tests",
+        "harnessContract"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "H3",
+      "name": "Local, hosted, Android Chrome, and installed PWA readiness",
+      "status": "COMPLETE",
+      "prerequisiteEvidence": [
+        "H1",
+        "H2"
+      ],
+      "performedActions": [
+        "Checked local Supabase URL and Docker status without reset or seed",
+        "Built the local standalone app with local Supabase values in a child process",
+        "Loaded hosted.env, checked hosted release health, and completed real password-login plus shell-bootstrap preflight without recording credentials",
+        "Checked one authorized physical ADB device, launched Chrome through an explicit Android intent, verified the physical CDP connection, discovered and launched the existing WebAPK, verified standalone/service-worker/online PWA state, and monitored the connection at each gate without emulation or installation"
+      ],
+      "verificationResults": {
+        "local": {
+          "target": {
+            "status": "PASS",
+            "apiUrl": "http://127.0.0.1:54321/",
+            "urlIsLocal": true,
+            "anonKeyPresent": true,
+            "serviceRoleKeyPresent": true,
+            "credentialsRecorded": false,
+            "databaseReset": false,
+            "remoteMigration": false
+          },
+          "docker": {
+            "status": "PASS",
+            "serverVersionPresent": true,
+            "outputRecorded": false
+          },
+          "build": {
+            "status": "PASS",
+            "exitCode": 0,
+            "timedOut": false,
+            "outputRecorded": false
+          }
+        },
+        "hosted": {
+          "input": {
+            "baseUrlProvided": true,
+            "emailProvided": true,
+            "passwordProvided": true,
+            "target": "https://65-21-52-249.sslip.io",
+            "status": "READY",
+            "reason": null
+          },
+          "health": {
+            "id": "configured_hosted",
+            "endpoint": "https://65-21-52-249.sslip.io/api/health/release",
+            "status": "PASS",
+            "httpStatus": 200,
+            "apiStatus": "ok",
+            "releaseId": "hs-a2b1e0908b29-ea9021bd6c91",
+            "commit": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+            "migrationFingerprint": "ea9021bd6c91bf9127930803eb0462234f156a284c1df3861351369dfb0b5c18",
+            "compatibilityVersion": "0.0.0+a2b1e09"
+          },
+          "authentication": {
+            "status": "PASS",
+            "reason": null,
+            "input": {
+              "status": "READY",
+              "source": "hosted_env_file",
+              "fileSource": "repo_runtime_file",
+              "filePresent": true,
+              "filePath": ".manu-runtime/performance-phase4/hosted.env",
+              "requiredKeys": {
+                "AIYA_PHASE4_HOSTED_BASE_URL": true,
+                "AIYA_PHASE4_HOSTED_EMAIL": true,
+                "AIYA_PHASE4_HOSTED_PASSWORD": true
+              },
+              "inputPresence": {
+                "AIYA_PHASE4_HOSTED_BASE_URL": true,
+                "AIYA_PHASE4_HOSTED_EMAIL": true,
+                "AIYA_PHASE4_HOSTED_PASSWORD": true
+              },
+              "baseUrl": "https://65-21-52-249.sslip.io/"
+            },
+            "health": {
+              "endpoint": "https://65-21-52-249.sslip.io/api/health/release",
+              "status": 200,
+              "apiStatus": "ok",
+              "releaseId": "hs-a2b1e0908b29-ea9021bd6c91",
+              "commit": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+              "migrationFingerprint": "ea9021bd6c91bf9127930803eb0462234f156a284c1df3861351369dfb0b5c18",
+              "compatibilityVersion": "0.0.0+a2b1e09"
+            },
+            "login": {
+              "status": 200,
+              "authenticated": true,
+              "workspaceOpened": true,
+              "shellVisible": true,
+              "loginVisible": false
+            },
+            "requiredRead": {
+              "route": "/api/shell/bootstrap",
+              "status": "PASS",
+              "httpStatus": 200,
+              "bodyFinished": true
+            }
+          }
+        },
+        "android": {
+          "device": {
+            "status": "READY_FOR_CDP_CAPTURE",
+            "reason": null,
+            "deviceCount": 1,
+            "authorizedDeviceCount": 1,
+            "unauthorizedDeviceCount": 0,
+            "offlineDeviceCount": 0,
+            "serialRecorded": false,
+            "model": "SM-S721B",
+            "androidVersion": "16",
+            "chromeVersionName": "152.0.7977.83",
+            "chromeLaunchStatus": "PASS",
+            "cdpForwardStatus": "PASS",
+            "pwa": {
+              "status": "READY_FOR_LAUNCH",
+              "reason": null,
+              "candidateCount": 1,
+              "packageName": "org.chromium.webapk.a7748b3f7b57f800f_v2",
+              "candidates": [
+                "org.chromium.webapk.a7748b3f7b57f800f_v2"
+              ],
+              "selection": "single_installed_webapk",
+              "launchActivity": "org.chromium.webapk.a7748b3f7b57f800f_v2/org.chromium.webapk.shell_apk.h2o.H2OOpaqueMainActivity",
+              "launchActivityStatus": "PASS"
+            },
+            "connectionMonitoring": {
+              "status": "PASS",
+              "checkCount": 3,
+              "serialRecorded": false,
+              "checks": [
+                {
+                  "checkpoint": "after_adb_authorization",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "after_android_chrome_launch",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "after_cdp_forward",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                }
+              ]
+            }
+          },
+          "cdp": {
+            "status": "PASS",
+            "expectedOrigin": "https://65-21-52-249.sslip.io",
+            "cdpConnection": "PASS",
+            "hostedChromeTarget": "PASS",
+            "chromeNavigation": "android_explicit_view_intent",
+            "chromeNavigationEvidence": null,
+            "chromeLaunch": {
+              "status": "PASS",
+              "reason": null,
+              "launchStatus": "PASS",
+              "serialRecorded": false
+            },
+            "chromePollCount": 1,
+            "installedPwaTarget": "PASS",
+            "pwaLaunch": {
+              "status": "PASS",
+              "reason": null,
+              "packageFound": true,
+              "packageLaunchStatus": "PASS",
+              "launchActivityStatus": "PASS",
+              "serialRecorded": false
+            },
+            "pwaPollCount": 2,
+            "targetCount": 2,
+            "reason": null,
+            "connectionMonitoring": {
+              "status": "PASS",
+              "checkCount": 14,
+              "serialRecorded": false,
+              "checks": [
+                {
+                  "checkpoint": "after_adb_authorization",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "after_android_chrome_launch",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "after_cdp_forward",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "readiness:before_cdp_connect",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "readiness:after_cdp_connect",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "before_android_chrome_view_intent",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "after_android_chrome_view_intent",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "readiness:chrome_target_poll_1",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "readiness:after_android_chrome_target",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "before_independent_pwa_launch",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "after_independent_pwa_launch",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "readiness:pwa_target_poll_1",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "readiness:pwa_target_poll_2",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                },
+                {
+                  "checkpoint": "readiness:after_installed_pwa_target",
+                  "status": "PASS",
+                  "connected": true,
+                  "reason": null,
+                  "deviceCount": 1,
+                  "authorizedDeviceCount": 1,
+                  "serialRecorded": false
+                }
+              ]
+            }
+          }
+        },
+        "health": [
+          {
+            "id": "customer_live",
+            "endpoint": "https://aiyaworkspace.com/api/health/release",
+            "status": "PASS",
+            "httpStatus": 200,
+            "apiStatus": "ok",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+            "compatibilityVersion": "0.0.0+1c97560"
+          },
+          {
+            "id": "admin_live",
+            "endpoint": "https://admin.aiyaworkspace.com/api/health/release",
+            "status": "PASS",
+            "httpStatus": 200,
+            "apiStatus": "ok",
+            "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+            "commit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+            "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+            "compatibilityVersion": "0.0.0+1c97560"
+          },
+          {
+            "id": "test_vps",
+            "endpoint": "https://65-21-52-249.sslip.io/api/health/release",
+            "status": "PASS",
+            "httpStatus": 200,
+            "apiStatus": "ok",
+            "releaseId": "hs-a2b1e0908b29-ea9021bd6c91",
+            "commit": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+            "migrationFingerprint": "ea9021bd6c91bf9127930803eb0462234f156a284c1df3861351369dfb0b5c18",
+            "compatibilityVersion": "0.0.0+a2b1e09"
+          }
+        ]
+      },
+      "outputEvidence": [
+        "environmentMatrix",
+        "releaseHealth",
+        "deviceIdentity"
+      ],
+      "blockingReason": null
+    },
+    {
+      "stageId": "H4",
+      "name": "Short readiness rehearsal before Phase 4 baseline",
+      "status": "COMPLETE",
+      "prerequisiteEvidence": [
+        "H1",
+        "H2",
+        "H3"
+      ],
+      "performedActions": [
+        "Verified that the baseline command contains the readiness gate and can start only after all four target gates pass",
+        "Verified that hosted/local inputs and measurement identity are rechecked before the local server starts",
+        "Kept the 20-sample Phase 4 baseline itself unstarted"
+      ],
+      "verificationResults": {
+        "baselineStarted": false,
+        "measurementStartBinding": {
+          "status": "PASS",
+          "sourcePath": "app/scripts/performance-plan-1-phase-4.mjs",
+          "requiredMarkers": {
+            "readinessCommandGate": true,
+            "readinessEvidencePath": true,
+            "measurementStartPassGate": true,
+            "hostedInputStability": true,
+            "localInputStability": true,
+            "identityRecheck": true,
+            "readinessBuildReuse": true,
+            "serverAfterGate": true
+          },
+          "failures": []
+        },
+        "measurementMode": "readiness_only",
+        "nextAction": "Run Phase 4 from stage 4.1 with the locked 20-sample contract"
+      },
+      "outputEvidence": [
+        "rehearsal",
+        "closure"
+      ],
+      "blockingReason": null
+    }
+  ],
+  "tests": [
+    {
+      "command": "C:\\Program Files\\nodejs\\node.exe --check scripts/performance-plan-1-phase-4.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "outputRecorded": false
+    },
+    {
+      "command": "C:\\Program Files\\nodejs\\node.exe --check scripts/performance-plan-1-phase-4-readiness.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "outputRecorded": false
+    },
+    {
+      "command": "C:\\Program Files\\nodejs\\node.exe --test scripts/performance-plan-1-phase-4.test.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "outputRecorded": false
+    },
+    {
+      "command": "C:\\Program Files\\nodejs\\node.exe --test scripts/performance-plan-1-phase-4-readiness.test.mjs",
+      "status": "PASS",
+      "exitCode": 0,
+      "timedOut": false,
+      "outputRecorded": false
+    }
+  ],
+  "constraints": {
+    "baselineStarted": false,
+    "measurementStartGate": "REQUIRED_BEFORE_BASELINE_STAGE_4_1",
+    "baselineLauncherBinding": "PASS",
+    "runtimeChange": "NOT_EXECUTED",
+    "productionDeploy": "NOT_EXECUTED",
+    "remoteMigration": "NOT_EXECUTED",
+    "schemaMigrationFile": "app/supabase/migrations/20260911070000_phase_85_stage_5_session_activity_race_fix.sql",
+    "schemaMigrationAppliedByReadiness": false,
+    "hostedAccountCreation": "NOT_EXECUTED",
+    "hostedFixtureSeed": "NOT_EXECUTED",
+    "fallbackStore": "DISABLED",
+    "demoCookie": "NOT_USED",
+    "providerEgress": "NOT_EXECUTED",
+    "channelTraffic": "NOT_EXECUTED",
+    "billing": "NOT_EXECUTED",
+    "rawPayloadBody": "NOT_RECORDED",
+    "credentials": "<redacted>",
+    "deviceSerial": "NOT_RECORDED"
+  },
+  "blockers": [],
+  "nextEligibleAction": "Run npm run audit:performance:plan1:phase4 from stage 4.1; do not start Plan 1 Phase 5.",
+  "evidenceIntegrity": {
+    "redaction": {
+      "status": true,
+      "forbiddenValuesFound": []
+    },
+    "diffCheck": "PASS",
+    "status": "PASS"
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "READY_FOR_PHASE4_BASELINE",
+    "blockers": [],
+    "orderedStages": {
+      "status": "PASS",
+      "failures": []
+    },
+    "testsPass": true,
+    "evidenceIntegrityPass": true
+  }
+}

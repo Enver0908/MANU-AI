@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "aiya-global-freeze-trace-transfer-preflight-v1",
+  "evidenceId": "aiya-global-freeze-trace-transfer-preflight-20260927T214247Z-8f5ac140-9912-405a-a88e-9aad6d980506",
+  "createdAtUtc": "2026-09-27T21:42:47Z",
+  "status": "BLOCKED",
+  "outcome": "BLOCKED_LOCAL_TRACE_FILE_TRANSFER",
+  "purpose": "Verify Chrome trace streaming and host-window overlap without opening another Phase 1 attempt.",
+  "relatedPhase1Evidence": {
+    "evidenceId": "aiya-global-freeze-phase-1-20260927T203028151Z-ba4f64ee-de8c-4661-8142-d4f4d9df4637",
+    "attemptBudgetUsed": 5,
+    "attemptBudgetMaximum": 5,
+    "validPairedRecordCount": 0,
+    "newPhase1RunOpened": false
+  },
+  "identity": {
+    "sourceFingerprint": "313412677093b58cfbd61401ed7ece7b048d537d8a9d570a2a67bccf6e583310",
+    "liveReleaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "liveCommitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25"
+  },
+  "browserTrace": {
+    "transport": "Chrome DevTools Protocol Tracing with ReturnAsStream",
+    "categories": [
+      "devtools.timeline",
+      "blink.user_timing"
+    ],
+    "screenshotsEnabled": false,
+    "resourceContentsEnabled": false,
+    "startEpochMs": 1790544691014,
+    "endEpochMs": 1790544810842,
+    "durationMs": 119828,
+    "tracingCompleteReceived": true,
+    "traceFormat": "json",
+    "dataLossOccurred": false,
+    "streamReadToEof": true,
+    "streamReadChunkCount": 7,
+    "rawTraceCharacterCount": 5718331,
+    "rawTraceUtf8Sha256": "3C84A26433C77C8F115C2020275171BBD6FA48EFFE013D40DDA4D40DD0FB504A",
+    "rawTracePersistedLocally": false,
+    "localDownloadAttempt": {
+      "method": "temporary page Blob plus download anchor",
+      "result": "Runtime.evaluate timed out after 10 seconds",
+      "expectedDownloadFileExists": false
+    },
+    "sanitizerImport": "NOT_RUN",
+    "sanitizedArtifactSha256": null
+  },
+  "hostPreflight": {
+    "checkpointRunId": null,
+    "sampleCount": 100,
+    "sampleStartUtc": "2026-09-27T21:31:11Z",
+    "sampleEndUtc": "2026-09-27T21:33:00Z",
+    "samplesPersisted": false,
+    "samplesSha256": null,
+    "vcpu": 2,
+    "load1Peak": 0.18,
+    "hostCpuBusyPercentAverage": 6.28,
+    "hostCpuBusyPercentPeak": 23.5,
+    "memoryAvailableKbMin": 3022444,
+    "swapInPagesDelta": 0,
+    "swapOutPagesDelta": 0,
+    "applicationProcessFound": true,
+    "applicationProcessMissingCount": 0,
+    "cgroupNrThrottledDelta": 0,
+    "cgroupThrottledUsecDelta": 0,
+    "cgroupMemoryHighEventsDelta": 0,
+    "cgroupOomKillEventsDelta": 0,
+    "cpuPressurePeakAvg10": 0.36,
+    "memoryPressurePeakAvg10": 0,
+    "ioPressurePeakAvg10": 0,
+    "postCaptureClockProbe": {
+      "offsetMsRemoteMinusLocal": -141,
+      "uncertaintyMs": 27,
+      "probeCount": 3,
+      "roundTripMs": [
+        52,
+        48,
+        48
+      ]
+    },
+    "estimatedTraceStartInHostClockUtc": "2026-09-27T21:31:30.873Z",
+    "estimatedTraceEndInHostClockUtc": "2026-09-27T21:33:30.701Z",
+    "estimatedOverlapSeconds": 89.127,
+    "estimatedHostSamplesDuringTrace": 90,
+    "overlapIsFormalPhase1Evidence": false
+  },
+  "interactionAndSafety": {
+    "applicationInteractionsPerformedDuringTrace": false,
+    "formFieldInputPerformed": false,
+    "formSubmitted": false,
+    "productionWrite": false,
+    "runtimeSourceChanged": false,
+    "environmentOrSecretChanged": false,
+    "deploymentOrMigrationPerformed": false,
+    "rawTraceOrHostRowsEmbedded": false,
+    "rawTraceMemoryCleared": true,
+    "temporaryPageStateRecovery": "One browser API reload returned; route remained /dashboard?section=clients. Post-reload JavaScript state could not be verified through CDP or Playwright.",
+    "reloadRecoveryIsApplicationPerformanceEvidence": false
+  },
+  "conclusion": {
+    "traceCaptureAndCdpStreamRead": "PASS",
+    "estimatedMinimumHostOverlap": "PASS",
+    "localTraceFileTransfer": "FAIL",
+    "sanitizedTraceAndFormalPairValidity": "UNAVAILABLE",
+    "rootCauseAttribution": "NONE",
+    "nextGate": "Do not open a Phase 1 run until a local trace-file transfer path completes and the file passes the existing sanitizer. The v1 identity remains capped at five attempts; any new phase identity must be versioned without rewriting the five historical attempts."
+  }
+}

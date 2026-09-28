@@ -1,0 +1,3102 @@
+{
+  "schemaVersion": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-post-response-commit-envelope-ab-a",
+  "stageId": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1",
+  "runId": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T080928983Z-<uuid>",
+  "generatedAt": "2026-09-22T08:20:08.373Z",
+  "status": "COMPLETE",
+  "outcome": "POST_RESPONSE_COMMIT_ENVELOPE_VALIDITY_OPEN_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Current-source local diagnostic A1 legacy -> B stable -> A2 legacy comparison with the established J1 fan-out and Forms lifecycle control gates.",
+    "analysisOnly": false,
+    "browserRerunStarted": true,
+    "applicationRuntimeChanged": false,
+    "processScopedDiagnosticVariable": "shell_dirty_registration_policy",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "fixture": "local-normal synthetic owner",
+    "targetJourney": "J1",
+    "diagnosticBuildDistDirPolicy": "run_scoped_variant_specific_separate_dist_dir"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "hypothesis": {
+    "id": "post_response_state_commit_ownership",
+    "variableId": "shell_dirty_registration_policy",
+    "A1": "legacy registration dependency",
+    "B": "stable saveRef dependency",
+    "A2": "legacy registration dependency",
+    "heldConstant": [
+      "J1 journey and synthetic fixture",
+      "diagnostic browser instrumentation",
+      "auth/RLS/store path",
+      "predeclared request fan-out envelope",
+      "exact required-read validity gate",
+      "exact Forms lifecycle gate",
+      "local Supabase target"
+    ]
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 242,
+    "statusHash": "4bac5eeec4d21993592821d9c88f5136650935c537398685b75668c92bde6629",
+    "diffCheck": "PASS",
+    "variableId": "shell_dirty_registration_policy",
+    "variantPolicies": [
+      {
+        "id": "A1",
+        "policy": "legacy"
+      },
+      {
+        "id": "B",
+        "policy": "stable"
+      },
+      {
+        "id": "A2",
+        "policy": "legacy"
+      }
+    ],
+    "configurationIdentity": {
+      "sourceKinds": [
+        "active_worktree_app_env_local"
+      ],
+      "availableKeys": [
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "MANU_DEV_FALLBACK_STORE"
+      ],
+      "credentialSource": "<redacted>",
+      "phase3FixtureReady": true
+    },
+    "sourceFiles": [
+      {
+        "path": "app/src/lib/use-shell-dirty-registration.ts",
+        "sha256": "3b657c1e6cd2f1b235d49499edebd03c8f47a6c0154406e29acf708ce2ea7304"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-dirty-registry.ts",
+        "sha256": "b75f03b1c9ca82e43930439ee1854624f9978e0543faf15ff5f3afe320f23358"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "sha256": "1c32842cc7a83d6572b2fba93cc1f6031355a7bbe73f2e24a0d3832d1a9d9ebb"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "13293d7124f02c8aa57167a4ecb33861eee0340ee2a0584b9927d2f674a2b047"
+      },
+      {
+        "path": "app/src/lib/performance-diagnostic.ts",
+        "sha256": "e1dc3c40a9452765f9cf7207744468a2ae61b7acabad982a70d71a8a0da6e864"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-fanout-envelope-baseline.mjs",
+        "sha256": "413e3a30f37cb45880a3cd1d9beed076c40a6551bbc1bdd2ab10f5566fa06004"
+      },
+      {
+        "path": "app/scripts/lib/diagnostic-db-lock-sampler.mjs",
+        "sha256": "70a6888a083291f90664e87bee5745295bdd2cf184058af7c8344d2b64e40387"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-post-response-commit-envelope-ab-a.mjs",
+        "sha256": "606aa7e1f663870acb1cf0150946f79e187f4f475b744af372a462d25dffceaa"
+      },
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "sha256": "7289ff20f373ee01a6ec8257c53a1cfe12e2f74c2856cdb721398358ce8976a7"
+      }
+    ]
+  },
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1",
+    "checkpointSchemaVersion": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "journeyId": "J1",
+    "repetitionsPerVariant": 3,
+    "secondActionDelayMs": 2000,
+    "variants": [
+      {
+        "id": "A1",
+        "policy": "legacy"
+      },
+      {
+        "id": "B",
+        "policy": "stable"
+      },
+      {
+        "id": "A2",
+        "policy": "legacy"
+      }
+    ],
+    "fanoutEnvelope": {
+      "totalRequests": {
+        "min": 53,
+        "max": 56
+      },
+      "apiRequests": {
+        "min": 24,
+        "max": 27
+      },
+      "documentRequests": {
+        "exact": 3
+      },
+      "rscRequests": {
+        "exact": 26
+      },
+      "apiRouteCounts": {
+        "/api/auth/password-login": "<redacted>",
+        "/api/shell/bootstrap": {
+          "min": 7,
+          "max": 9
+        },
+        "/api/session/activity": {
+          "exact": 2
+        },
+        "/api/shell/version": {
+          "exact": 2
+        },
+        "/api/app-state": {
+          "exact": 2
+        },
+        "/api/alerts": {
+          "min": 2,
+          "max": 3
+        },
+        "/api/notifications": {
+          "min": 2,
+          "max": 3
+        },
+        "/api/conversations": {
+          "min": 2,
+          "max": 3
+        },
+        "/api/shell/preferences": {
+          "exact": 1
+        },
+        "/api/clients/:clientId": {
+          "min": 1,
+          "max": 2
+        },
+        "/api/clients/:clientId/forms": {
+          "exact": 1
+        },
+        "/api/clients/:clientId/food-rule-profile": {
+          "exact": 1
+        }
+      }
+    },
+    "lifecycleGate": "one_forms_setup_start_success_and_zero_forms_abort",
+    "countedAsOfficialSample": false
+  },
+  "runReferences": {
+    "sourceMeasurementRunId": "aiya-performance-plan1-j1-post-response-commit-envelope-ab-a-v1-20260922T080928983Z-<uuid>",
+    "variantBuilds": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "status": "PASS",
+        "reason": "diagnostic_build_artifact_missing",
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true,
+        "distDir": ".next-post-response-envelope-563c-b267-494b-9ef9-026481cb0636-a1"
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "status": "PASS",
+        "reason": "diagnostic_build_artifact_missing",
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true,
+        "distDir": ".next-post-response-envelope-563c-b267-494b-9ef9-026481cb0636-b"
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "status": "PASS",
+        "reason": "diagnostic_build_artifact_missing",
+        "exitCode": 0,
+        "timedOut": false,
+        "errorCode": null,
+        "artifactPresent": true,
+        "distDir": ".next-post-response-envelope-563c-b267-494b-9ef9-026481cb0636-a2"
+      }
+    ],
+    "checkpoint": {
+      "status": "COMPLETE",
+      "eventCount": 37,
+      "lastSequence": 37,
+      "lastEventType": "run.status",
+      "hashChainRead": true
+    }
+  },
+  "selectedJ1DiagnosticMetrics": {
+    "A1": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 1,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 2,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "repetition": 3,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      }
+    ],
+    "B": [
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 1,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "stable"
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 2,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "stable"
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "repetition": 3,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "stable"
+      }
+    ],
+    "A2": [
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 1,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 2,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "repetition": 3,
+        "validSample": false,
+        "observationValidity": "INVALID",
+        "functionalOutcome": "INCOMPLETE",
+        "eligible": false,
+        "fanout": {
+          "totalRequests": 0,
+          "apiRequests": 0,
+          "documentRequests": 0,
+          "rscRequests": 0,
+          "apiRouteCounts": {},
+          "status": "FAIL",
+          "failures": [
+            "total_request_count_outside_envelope",
+            "api_request_count_outside_envelope",
+            "document_request_count_outside_envelope",
+            "rsc_request_count_outside_envelope",
+            "route_count_outside_envelope:/api/auth/password-login",
+            "route_count_outside_envelope:/api/shell/bootstrap",
+            "route_count_outside_envelope:/api/session/activity",
+            "route_count_outside_envelope:/api/shell/version",
+            "route_count_outside_envelope:/api/app-state",
+            "route_count_outside_envelope:/api/alerts",
+            "route_count_outside_envelope:/api/notifications",
+            "route_count_outside_envelope:/api/conversations",
+            "route_count_outside_envelope:/api/shell/preferences",
+            "route_count_outside_envelope:/api/clients/:clientId",
+            "route_count_outside_envelope:/api/clients/:clientId/forms",
+            "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+          ],
+          "unexpectedRoutes": []
+        },
+        "requiredReads": {
+          "forms": {
+            "actionId": "first",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          },
+          "nutrition": {
+            "actionId": "second",
+            "pattern": "",
+            "count": 0,
+            "recordCount": 0,
+            "valid": false,
+            "completedRecordCount": 0,
+            "exactOneCompleted": false
+          }
+        },
+        "formsLifecycle": {
+          "status": "FAIL",
+          "failures": [
+            "forms_effect_setup_not_exactly_one",
+            "forms_load_start_not_exactly_one",
+            "forms_load_success_not_exactly_one"
+          ],
+          "summary": {
+            "effectSetup": 0,
+            "effectCleanup": 0,
+            "loadStarted": 0,
+            "loadSucceeded": 0,
+            "loadAborted": 0
+          }
+        },
+        "failureBoundary": {
+          "phase": "harness",
+          "actionId": null,
+          "reason": "measurement_unit_exception"
+        },
+        "trustedToReadyMs": null,
+        "dispatchToReadyMs": null,
+        "requestCount": 0,
+        "apiRequestCount": 0,
+        "documentRequestCount": 0,
+        "rscRequestCount": 0,
+        "shellProviderCommits": null,
+        "dashboardShellCommits": null,
+        "authenticatedShellCommits": null,
+        "aiyaStateProviderCommits": null,
+        "dashboardContentCommits": null,
+        "totalReactCommitEvents": 0,
+        "phase52EventCount": 0,
+        "contextCommitEvents": 0,
+        "policyMarker": "legacy"
+      }
+    ]
+  },
+  "measuredEffect": {
+    "validity": {
+      "A1": {
+        "attempted": "3/3",
+        "eligible": "0/3",
+        "observationValid": "0/3",
+        "fanoutEnvelopePass": "0/3",
+        "formsLifecyclePass": "0/3"
+      },
+      "B": {
+        "attempted": "3/3",
+        "eligible": "0/3",
+        "observationValid": "0/3",
+        "fanoutEnvelopePass": "0/3",
+        "formsLifecyclePass": "0/3"
+      },
+      "A2": {
+        "attempted": "3/3",
+        "eligible": "0/3",
+        "observationValid": "0/3",
+        "fanoutEnvelopePass": "0/3",
+        "formsLifecyclePass": "0/3"
+      }
+    },
+    "rows": {
+      "A1": [
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 1,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 2,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A1",
+          "policy": "legacy",
+          "repetition": 3,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        }
+      ],
+      "B": [
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 1,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "stable"
+        },
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 2,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "stable"
+        },
+        {
+          "variantId": "B",
+          "policy": "stable",
+          "repetition": 3,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "stable"
+        }
+      ],
+      "A2": [
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 1,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 2,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        },
+        {
+          "variantId": "A2",
+          "policy": "legacy",
+          "repetition": 3,
+          "validSample": false,
+          "observationValidity": "INVALID",
+          "functionalOutcome": "INCOMPLETE",
+          "eligible": false,
+          "fanout": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "requiredReads": {
+            "forms": {
+              "actionId": "first",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            },
+            "nutrition": {
+              "actionId": "second",
+              "pattern": "",
+              "count": 0,
+              "recordCount": 0,
+              "valid": false,
+              "completedRecordCount": 0,
+              "exactOneCompleted": false
+            }
+          },
+          "formsLifecycle": {
+            "status": "FAIL",
+            "failures": [
+              "forms_effect_setup_not_exactly_one",
+              "forms_load_start_not_exactly_one",
+              "forms_load_success_not_exactly_one"
+            ],
+            "summary": {
+              "effectSetup": 0,
+              "effectCleanup": 0,
+              "loadStarted": 0,
+              "loadSucceeded": 0,
+              "loadAborted": 0
+            }
+          },
+          "failureBoundary": {
+            "phase": "harness",
+            "actionId": null,
+            "reason": "measurement_unit_exception"
+          },
+          "trustedToReadyMs": null,
+          "dispatchToReadyMs": null,
+          "requestCount": 0,
+          "apiRequestCount": 0,
+          "documentRequestCount": 0,
+          "rscRequestCount": 0,
+          "shellProviderCommits": null,
+          "dashboardShellCommits": null,
+          "authenticatedShellCommits": null,
+          "aiyaStateProviderCommits": null,
+          "dashboardContentCommits": null,
+          "totalReactCommitEvents": 0,
+          "phase52EventCount": 0,
+          "contextCommitEvents": 0,
+          "policyMarker": "legacy"
+        }
+      ]
+    },
+    "requestFanout": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "allEligible": false,
+          "exactMatch": false,
+          "a1": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "b": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "a2": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          }
+        },
+        {
+          "repetition": 2,
+          "allEligible": false,
+          "exactMatch": false,
+          "a1": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "b": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "a2": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          }
+        },
+        {
+          "repetition": 3,
+          "allEligible": false,
+          "exactMatch": false,
+          "a1": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "b": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          },
+          "a2": {
+            "totalRequests": 0,
+            "apiRequests": 0,
+            "documentRequests": 0,
+            "rscRequests": 0,
+            "apiRouteCounts": {},
+            "status": "FAIL",
+            "failures": [
+              "total_request_count_outside_envelope",
+              "api_request_count_outside_envelope",
+              "document_request_count_outside_envelope",
+              "rsc_request_count_outside_envelope",
+              "route_count_outside_envelope:/api/auth/password-login",
+              "route_count_outside_envelope:/api/shell/bootstrap",
+              "route_count_outside_envelope:/api/session/activity",
+              "route_count_outside_envelope:/api/shell/version",
+              "route_count_outside_envelope:/api/app-state",
+              "route_count_outside_envelope:/api/alerts",
+              "route_count_outside_envelope:/api/notifications",
+              "route_count_outside_envelope:/api/conversations",
+              "route_count_outside_envelope:/api/shell/preferences",
+              "route_count_outside_envelope:/api/clients/:clientId",
+              "route_count_outside_envelope:/api/clients/:clientId/forms",
+              "route_count_outside_envelope:/api/clients/:clientId/food-rule-profile"
+            ],
+            "unexpectedRoutes": []
+          }
+        }
+      ],
+      "matchedAcrossEligibleRows": false,
+      "matchedRowCount": 0
+    },
+    "candidateGate": {
+      "BEligible": false,
+      "matchedFanoutInvariant": false,
+      "strictThreeVariantGate": false
+    },
+    "commitOwnership": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allEligible": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 2,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allEligible": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 3,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allEligible": false,
+          "bLowerThanBoth": false
+        }
+      ],
+      "repeatableReductionAcrossStrictRows": false,
+      "reductionRowCount": 0
+    },
+    "speed": {
+      "comparisons": [
+        {
+          "repetition": 1,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allEligible": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 2,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allEligible": false,
+          "bLowerThanBoth": false
+        },
+        {
+          "repetition": 3,
+          "a1": null,
+          "b": null,
+          "a2": null,
+          "allEligible": false,
+          "bLowerThanBoth": false
+        }
+      ],
+      "repeatableImprovementAcrossStrictRows": false,
+      "improvementRowCount": 0
+    },
+    "dbSampler": [
+      {
+        "variantId": "A1",
+        "policy": "legacy",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 30,
+        "commandAttempts": {
+          "psql": 30,
+          "docker": 30
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 30
+        },
+        "intervalMs": 50,
+        "sampleCount": 30,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxLockWaitCount": 0,
+        "maxBlockedActivityCount": 0,
+        "maxBlockerCount": 0,
+        "queryDurationMs": {
+          "min": 355,
+          "max": 902
+        },
+        "samples": [
+          {
+            "atMs": 1790064811789,
+            "queryDurationMs": 429,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064812255,
+            "queryDurationMs": 410,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064812845,
+            "queryDurationMs": 546,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064813484,
+            "queryDurationMs": 629,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064814039,
+            "queryDurationMs": 505,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064814575,
+            "queryDurationMs": 492,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064814979,
+            "queryDurationMs": 355,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064815369,
+            "queryDurationMs": 371,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064815853,
+            "queryDurationMs": 442,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064816274,
+            "queryDurationMs": 381,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064816855,
+            "queryDurationMs": 525,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064817571,
+            "queryDurationMs": 686,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064818214,
+            "queryDurationMs": 593,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064818906,
+            "queryDurationMs": 659,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064819655,
+            "queryDurationMs": 701,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064820244,
+            "queryDurationMs": 566,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064820891,
+            "queryDurationMs": 608,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064821348,
+            "queryDurationMs": 404,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064821965,
+            "queryDurationMs": 578,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064822683,
+            "queryDurationMs": 685,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064823343,
+            "queryDurationMs": 612,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064823984,
+            "queryDurationMs": 617,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064824839,
+            "queryDurationMs": 810,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064825483,
+            "queryDurationMs": 582,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064826049,
+            "queryDurationMs": 553,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064826742,
+            "queryDurationMs": 671,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064827666,
+            "queryDurationMs": 902,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064828333,
+            "queryDurationMs": 632,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064828894,
+            "queryDurationMs": 535,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064829650,
+            "queryDurationMs": 718,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      },
+      {
+        "variantId": "B",
+        "policy": "stable",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 29,
+        "commandAttempts": {
+          "psql": 29,
+          "docker": 29
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 29
+        },
+        "intervalMs": 50,
+        "sampleCount": 29,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxLockWaitCount": 0,
+        "maxBlockedActivityCount": 0,
+        "maxBlockerCount": 0,
+        "queryDurationMs": {
+          "min": 354,
+          "max": 824
+        },
+        "samples": [
+          {
+            "atMs": 1790064991237,
+            "queryDurationMs": 381,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064991849,
+            "queryDurationMs": 556,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064992277,
+            "queryDurationMs": 425,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064992968,
+            "queryDurationMs": 636,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064993382,
+            "queryDurationMs": 396,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064993783,
+            "queryDurationMs": 361,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064994286,
+            "queryDurationMs": 451,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064994806,
+            "queryDurationMs": 477,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064995328,
+            "queryDurationMs": 480,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064995928,
+            "queryDurationMs": 568,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064996572,
+            "queryDurationMs": 611,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064997200,
+            "queryDurationMs": 605,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064997706,
+            "queryDurationMs": 506,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064998383,
+            "queryDurationMs": 635,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064998790,
+            "queryDurationMs": 384,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064999196,
+            "queryDurationMs": 354,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790064999664,
+            "queryDurationMs": 424,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065000299,
+            "queryDurationMs": 610,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065001157,
+            "queryDurationMs": 824,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065001708,
+            "queryDurationMs": 513,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065002241,
+            "queryDurationMs": 499,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065003020,
+            "queryDurationMs": 726,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065003433,
+            "queryDurationMs": 398,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065003911,
+            "queryDurationMs": 431,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065004425,
+            "queryDurationMs": 463,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065005208,
+            "queryDurationMs": 737,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065006004,
+            "queryDurationMs": 795,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065006669,
+            "queryDurationMs": 641,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065007318,
+            "queryDurationMs": 609,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      },
+      {
+        "variantId": "A2",
+        "policy": "legacy",
+        "status": "PASS",
+        "unavailableReason": null,
+        "sampleErrorCount": 0,
+        "lastSampleErrorReason": null,
+        "fallbackCount": 29,
+        "commandAttempts": {
+          "psql": 29,
+          "docker": 29
+        },
+        "commandSuccesses": {
+          "psql": 0,
+          "docker": 29
+        },
+        "intervalMs": 50,
+        "sampleCount": 29,
+        "lockWaitSampleCount": 1,
+        "blockedActivitySampleCount": 1,
+        "maxLockWaitCount": 1,
+        "maxBlockedActivityCount": 1,
+        "maxBlockerCount": 1,
+        "queryDurationMs": {
+          "min": 355,
+          "max": 973
+        },
+        "samples": [
+          {
+            "atMs": 1790065189939,
+            "queryDurationMs": 355,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065190841,
+            "queryDurationMs": 844,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065191487,
+            "queryDurationMs": 613,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065192130,
+            "queryDurationMs": 598,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065192546,
+            "queryDurationMs": 416,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065193029,
+            "queryDurationMs": 436,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065193469,
+            "queryDurationMs": 393,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065194243,
+            "queryDurationMs": 735,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065194986,
+            "queryDurationMs": 709,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065195633,
+            "queryDurationMs": 647,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065196224,
+            "queryDurationMs": 559,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065196618,
+            "queryDurationMs": 355,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065197152,
+            "queryDurationMs": 501,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065197608,
+            "queryDurationMs": 409,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065198048,
+            "queryDurationMs": 399,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065198485,
+            "queryDurationMs": 430,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065198953,
+            "queryDurationMs": 468,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065199453,
+            "queryDurationMs": 459,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065200182,
+            "queryDurationMs": 728,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065201100,
+            "queryDurationMs": 896,
+            "activeCount": 2,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065202117,
+            "queryDurationMs": 973,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065203017,
+            "queryDurationMs": 872,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065203645,
+            "queryDurationMs": 579,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065204419,
+            "queryDurationMs": 756,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065205194,
+            "queryDurationMs": 733,
+            "activeCount": 3,
+            "lockWaitCount": 1,
+            "blockedActivityCount": 1,
+            "maxBlockerCount": 1
+          },
+          {
+            "atMs": 1790065206113,
+            "queryDurationMs": 911,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065206760,
+            "queryDurationMs": 613,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065207277,
+            "queryDurationMs": 498,
+            "activeCount": 3,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          },
+          {
+            "atMs": 1790065207876,
+            "queryDurationMs": 589,
+            "activeCount": 1,
+            "lockWaitCount": 0,
+            "blockedActivityCount": 0,
+            "maxBlockerCount": 0
+          }
+        ]
+      }
+    ]
+  },
+  "validity": {
+    "A1": "0/3",
+    "B": "0/3",
+    "A2": "0/3",
+    "fanoutInvariantRows": 0,
+    "officialSample": false,
+    "noRetryPromotion": true,
+    "causalThreeValidRecordGate": "NOT_MET_FOR_ENVELOPE_CONTROLLED_J1"
+  },
+  "conclusion": "POST_RESPONSE_COMMIT_ENVELOPE_VALIDITY_OPEN_GLOBAL_FREEZE_UNRESOLVED",
+  "explicitNonClaims": [
+    "A commit-count reversal under the strict envelope gate is a contributing-boundary observation, not proof of the global freeze root cause.",
+    "The official nine-scenario acceptance contract is not exercised by this run.",
+    "Invalid or failed required-read, fan-out, or Forms lifecycle repetitions are retained and excluded; no retry is promoted.",
+    "No production runtime fix, Plan 2 finding, migration, deployment, or production decision changed.",
+    "DB sampler results are bounded local observations and do not prove lock absence outside these windows."
+  ],
+  "redaction": {
+    "rawBodiesRecorded": false,
+    "credentialsRecorded": "<redacted>",
+    "rawClientIdentifiersRecorded": false,
+    "policy": "sanitizeFanoutBaselineEvidence"
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "POST_RESPONSE_COMMIT_ENVELOPE_VALIDITY_OPEN_GLOBAL_FREEZE_UNRESOLVED",
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "runtimeFixAccepted": false,
+    "plan2EntryAuthorized": false,
+    "productionDecision": "NO-GO"
+  }
+}

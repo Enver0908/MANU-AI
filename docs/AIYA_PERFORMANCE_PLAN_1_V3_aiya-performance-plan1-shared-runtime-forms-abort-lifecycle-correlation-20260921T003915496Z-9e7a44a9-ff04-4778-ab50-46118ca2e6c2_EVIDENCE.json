@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-forms-abort-lifecycle-correlation-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-forms-abort-lifecycle-correlation",
+  "stageId": "aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation",
+  "runId": "aiya-performance-plan1-shared-runtime-forms-abort-lifecycle-correlation-20260921T003915496Z-9e7a44a9-ff04-4778-ab50-46118ca2e6c2",
+  "generatedAt": "2026-09-21T00:39:15.496Z",
+  "status": "COMPLETE",
+  "outcome": "STAGE6_FORMS_ABORT_CORRELATED_TO_EFFECT_CLEANUP_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Correlate the first client-workspace Forms request failure with the Stage 6 hook lifecycle while keeping the shared-runtime measurement outside official acceptance.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "diagnosticInstrumentationEnabledOnlyWhenPhase55TraceEnabled": true,
+    "shellDirtyRegistrationPolicy": "stable",
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "healthDataUsed": false,
+    "liveProviderTraffic": false,
+    "fixture": "local-normal synthetic owner with a real local password session and normal RLS/API path",
+    "localSupabaseOrigin": "http://127.0.0.1:54321"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "parentRunReferences": [
+    "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T235153625Z-fe3584b4-607f-4513-af93-55cce60144cc",
+    "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T001812103Z-92ab01f4-7c6e-476c-8de3-00f5c3562e38",
+    "aiya-performance-plan1-shared-runtime-dirty-registration-validity-recheck-20260920T213200Z-47b48402-c132-4a97-a121-8339aeec8666"
+  ],
+  "sourceRuns": {
+    "priorFailureReasonRun": {
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T235153625Z-fe3584b4-607f-4513-af93-55cce60144cc",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T235153625Z-fe3584b4-607f-4513-af93-55cce60144cc_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "1A67E4566BDA632E9E1CECBFBF878958377A6A8AA3E70622F6A790C113720D74",
+      "status": "COMPLETE",
+      "observation": "Normal J1 retained an earlier failed Forms attempt in all 3 repetitions; each failure reason was net::ERR_ABORTED and each later attempt completed with 200."
+    },
+    "lifecycleRun": {
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T001812103Z-92ab01f4-7c6e-476c-8de3-00f5c3562e38",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260921T001812103Z-92ab01f4-7c6e-476c-8de3-00f5c3562e38_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "DC5EF27612AB83B8B6E875584EC429F1056EBC513711959B265F18437C98B6FD",
+      "status": "COMPLETE",
+      "runnerOutcome": "SHARED_RUNTIME_DIAGNOSTIC_RECORDED",
+      "sourceIdentity": {
+        "branch": "codex/production-readiness-stage-1",
+        "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+        "statusLineCount": 179,
+        "statusHash": "f3f1eaee46505be2720e27a9242e25b462b7e90827bc420d7bdef82c78dea72e",
+        "diffCheck": "PASS"
+      },
+      "measurementIdentity": {
+        "fixtureId": "local-normal",
+        "journeys": ["J1", "J2", "J3"],
+        "normalRepetitions": 3,
+        "diagnosticRepetitions": 3,
+        "secondActionDelayMs": 2000,
+        "shellDirtyRegistrationPolicy": "stable",
+        "countedAsOfficialSample": false
+      },
+      "sampleSummary": {
+        "attempted": 12,
+        "observationValid": 12,
+        "normal": 9,
+        "diagnostic": 3,
+        "officialBaselineSamples": 0
+      }
+    }
+  },
+  "diagnosticInstrumentation": {
+    "runtimeFiles": [
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "1ACCDDD158BA47A4E1C352A9F0371D92D05866AB0B0EBFF861FEDDD5B2F96648",
+        "scope": "Trace-only lifecycle events around effect setup/cleanup, AbortController cancellation, load start, success, and failure."
+      },
+      {
+        "path": "app/src/lib/phase-55-polling-diagnostic.ts",
+        "sha256": "1CE5AFE093328570CE1D4ED96F3E1765212F442BEFEE621CE5FAC40C2A112EFB",
+        "scope": "Existing trace event sink; default runtime records no event when the trace flag is off."
+      }
+    ],
+    "eventNames": [
+      "stage6_workspace_effect_setup",
+      "stage6_workspace_effect_cleanup",
+      "stage6_workspace_load_abort_previous",
+      "stage6_workspace_load_started",
+      "stage6_workspace_load_aborted",
+      "stage6_workspace_load_succeeded",
+      "stage6_workspace_load_failed"
+    ],
+    "sensitiveFieldsExcluded": true
+  },
+  "observations": {
+    "currentLifecycleRunNormalJ1": {
+      "repetitions": 3,
+      "validSample": "3/3",
+      "functionalSuccess": "3/3",
+      "firstFormsAttemptAbort": "0/3",
+      "interpretation": "The first Forms attempt was successful in all three current normal repetitions; this contrasts with the prior failure-reason run and demonstrates run-to-run variability."
+    },
+    "currentLifecycleRunDiagnosticJ1": [
+      {
+        "repetition": 1,
+        "validSample": false,
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "formsAttempts": [
+          {"sequence": 2, "status": null, "failed": true, "failureReason": "net::ERR_ABORTED"},
+          {"sequence": 4, "status": null, "failed": true, "failureReason": "net::ERR_ABORTED"}
+        ],
+        "lifecycleCorrelation": {
+          "firstFormsRequestStartedAfterLoadStartMs": 36,
+          "formsEffectCleanupAfterFirstRequestStartMs": 321,
+          "formsLoadAbortedAfterCleanupMs": 7,
+          "interpretation": "The first Forms load was cancelled by the hook lifecycle; the later Forms sequence was also cancelled before a completed read."
+        },
+        "formsRscRequest": {"status": 200, "failed": true, "failureReason": "net::ERR_ABORTED"}
+      },
+      {
+        "repetition": 2,
+        "validSample": false,
+        "observationValidity": "VALID",
+        "functionalOutcome": "INCOMPLETE",
+        "formsAttempts": [
+          {"sequence": 2, "status": null, "failed": true, "failureReason": "net::ERR_ABORTED"},
+          {"sequence": 4, "status": 200, "failed": false, "failureReason": null}
+        ],
+        "lifecycleCorrelation": {
+          "firstFormsRequestStartedAfterLoadStartMs": 13,
+          "formsEffectCleanupAfterFirstRequestStartMs": 601,
+          "formsLoadAbortedAfterCleanupMs": 10,
+          "secondFormsRequestStartedAfterSecondLoadStartMs": 15,
+          "interpretation": "The first Forms fetch was aborted after effect cleanup; the later sequence completed, but retry promotion is forbidden."
+        },
+        "formsRscRequest": {"status": 200, "failed": true, "failureReason": "net::ERR_ABORTED"}
+      },
+      {
+        "repetition": 3,
+        "validSample": true,
+        "observationValidity": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "formsAttempts": [
+          {"sequence": 2, "status": 200, "failed": false, "failureReason": null}
+        ],
+        "lifecycleCorrelation": {
+          "firstFormsRequestStartedAfterLoadStartMs": 27,
+          "formsLoadSucceededAfterFirstRequestStartMs": 891,
+          "formsEffectCleanupAfterFirstRequestStartMs": 2010,
+          "interpretation": "The Forms read completed before its later cleanup; the same lifecycle mechanism remains observable, but it did not abort this repetition."
+        },
+        "formsRscRequest": {"status": 200, "failed": true, "failureReason": "net::ERR_ABORTED"}
+      }
+    ],
+    "aggregate": {
+      "previousRunNormalJ1FirstFormsAbort": "3/3",
+      "currentRunNormalJ1FirstFormsAbort": "0/3",
+      "currentRunDiagnosticJ1FirstFormsAbort": "2/3",
+      "currentRunDiagnosticJ1FormsEffectCleanupObserved": "3/3",
+      "currentRunDiagnosticJ1FormsLoadAbortedAfterCleanup": "2/3",
+      "currentRunDiagnosticJ1FormsRscAbort": "3/3",
+      "conclusion": "The hook effect cleanup -> AbortController boundary is a repeatable contributing mechanism in the two current abort cases, but the occurrence rate is not stable enough for an exact root-cause claim or A-B-A acceptance."
+    }
+  },
+  "dbSampler": {
+    "status": "PASS",
+    "sampleCount": 507,
+    "sampleErrorCount": 0,
+    "lockWaitSampleCount": 0,
+    "blockedActivitySampleCount": 0,
+    "fallbackCount": 507,
+    "queryDurationMs": {"min": 401, "max": 2059},
+    "interpretation": "Bounded current-run sampler result only; it does not establish absence of all database contention."
+  },
+  "codeReferences": [
+    {
+      "path": "app/src/lib/use-stage-6-client-workspace.ts",
+      "lines": "82-92, 109-153, 161-173",
+      "relevance": "The hook aborts the previous controller at load start and aborts the active controller during effect cleanup."
+    },
+    {
+      "path": "app/src/components/dashboard-app.tsx",
+      "lines": "574-580",
+      "relevance": "Client task navigation requests the Forms href through the shared shell navigation path."
+    },
+    {
+      "path": "app/src/components/dashboard/shell-provider.tsx",
+      "lines": "706-710, 921-930",
+      "relevance": "Href navigation commits browser history and calls router.push, creating the RSC transition adjacent to the workspace fetch."
+    }
+  ],
+  "interpretation": {
+    "confirmed": [
+      "The browser failure class is net::ERR_ABORTED for the failed Forms attempts; it is not a server 4xx/5xx result.",
+      "In the current diagnostic J1, Forms effect cleanup is followed by the hook's own load_aborted event in both aborted repetitions.",
+      "The Forms RSC request also reports net::ERR_ABORTED in all three current diagnostic J1 repetitions, so the boundary is adjacent to navigation/component lifecycle work."
+    ],
+    "strongCandidate": "A client-task route transition or related state oscillation remounts or re-runs useStage6ClientWorkspace; its cleanup calls AbortController.abort(), cancelling the in-flight Forms fetch and causing a later reload.",
+    "notYetProven": [
+      "Whether the cleanup is caused by an RSC remount, committed URL synchronization, shell bootstrap/active-client updates, or another state transition.",
+      "That this local Forms lifecycle explains the general panel-wide freeze.",
+      "That reducing this cancellation would improve second-action speed or eliminate the global freeze."
+    ]
+  },
+  "validityContract": {
+    "observationValidity": "VALID means the lifecycle and request failure boundary were observed completely; it does not mean functional success.",
+    "validSample": "true requires all required reads to complete successfully; a later retry does not promote an earlier failed Forms attempt.",
+    "performanceResult": "NOT_EVALUABLE for this lifecycle continuation; no official baseline or causal speed claim was started."
+  },
+  "correctionOf": {
+    "priorEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-dirty-registration-validity-recheck-20260920T213200Z-47b48402-c132-4a97-a121-8339aeec8666_EVIDENCE.json",
+    "correction": "This continuation explains the failure class behind the prior failed Forms attempt; it does not reclassify the prior validity result or promote the retry."
+  },
+  "explicitNonClaims": [
+    "No product fix was accepted.",
+    "Trace-only lifecycle instrumentation is not a runtime optimization and is not enabled by default.",
+    "The current normal 3/3 success result does not erase the prior 3/3 abort result; the variation itself is evidence against a stable frequency claim.",
+    "The current diagnostic J1 2/3 abort result is not an official nine-scenario acceptance run.",
+    "No database-lock absence claim is made from the bounded sampler.",
+    "Plan 1 closure remains COMPLETE / DIAGNOSIS_BLOCKED; Plan 2 remains unauthorized; production remains NO-GO."
+  ],
+  "redaction": {
+    "status": "PASS",
+    "rawPayloadsIncluded": false,
+    "scope": "Bounded synthetic route outcomes, lifecycle event names, relative timing, failure classes, hashes, and validity metadata only; no credentials, tokens, cookies, raw bodies, prompts, or health data."
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "STAGE6_FORMS_ABORT_CORRELATED_TO_EFFECT_CLEANUP_GLOBAL_FREEZE_UNRESOLVED",
+    "acceptedProductionFix": false,
+    "performanceProblemSolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "nextDiagnosticBoundary": "Add sanitized route/history transition capture to the same diagnostic J1 and determine what changes clientTask from forms back to summary before the cleanup; then run one reversible single-variable confirmation with that route transition isolated."
+  }
+}

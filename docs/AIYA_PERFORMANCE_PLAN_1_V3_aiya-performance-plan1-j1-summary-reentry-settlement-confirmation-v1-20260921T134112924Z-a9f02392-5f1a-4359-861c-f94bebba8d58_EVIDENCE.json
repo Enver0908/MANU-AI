@@ -1,0 +1,1173 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-j1-summary-reentry-settlement-confirmation-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "j1-summary-reentry-settlement-confirmation",
+  "stageId": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1",
+  "runId": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1-20260921T134112924Z-a9f02392-5f1a-4359-861c-f94bebba8d58",
+  "generatedAt": "2026-09-21T13:46:31.954Z",
+  "status": "COMPLETE",
+  "outcome": "SUMMARY_REENTRY_BOUNDARY_CONFIRMATION_INCONCLUSIVE",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Trace-only local desktop J1 A-B-A confirmation of the late initial-summary navigation candidate.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "controlVariant": "await_initial_summary_navigation",
+    "groupOrder": [
+      "A1",
+      "B",
+      "A2"
+    ],
+    "repetitionsPerGroup": 3,
+    "countedAsOfficialSample": false,
+    "externalOperations": []
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "currentStage": "aiya-performance-plan1-j1-summary-reentry-settlement-confirmation-v1"
+  },
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 201,
+    "statusHash": "9df31cd3a97306df23c8aec31d1acc305623cf85d5404656f3fd62b0f7b19dd5",
+    "diffCheck": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "shellDirtyRegistrationPolicy": "legacy",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-summary-reentry-settlement-confirmation.mjs",
+        "sha256": "cc6ca966957612b67b5c8901870957228bb5e7e9af1b9e8d9ed1a372716c688d"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-6-client-selection.ts",
+        "sha256": "bddee297bd789a87f1f7a3228f04362b1acd019982a2d6bb8f15dcf0c9cb463b"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "17c4b7cb55ec267dd2c708a462924cd294e9f0d8e4309e370cc71ed68915417c"
+      }
+    ]
+  },
+  "parentEvidenceReferences": [
+    "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-stage6-trigger-isolation-analysis-20260921T131935Z-e026a6cf-2f81-4bdd-82c2-c0dfefb19c31_EVIDENCE.json",
+    "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-active-client-preference-route-correlation-20260921T085203Z-862ac27d-4543-486f-b1eb-f7d6f6fbce9a_EVIDENCE.json"
+  ],
+  "measurementIdentity": {
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "storePath": "normal_rls_api_path_required",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "journeyId": "J1",
+    "mode": "diagnostic",
+    "secondActionDelayMs": 2000,
+    "serverControl": "one_managed_diagnostic_server",
+    "officialMeasurement": false,
+    "groups": [
+      {
+        "id": "A1",
+        "controlVariant": null,
+        "repetitions": 3
+      },
+      {
+        "id": "B",
+        "controlVariant": "await_initial_summary_navigation",
+        "repetitions": 3
+      },
+      {
+        "id": "A2",
+        "controlVariant": null,
+        "repetitions": 3
+      }
+    ]
+  },
+  "sampleSummary": {
+    "attempted": 9,
+    "planned": 9,
+    "observationValid": 9,
+    "validFunctional": 9,
+    "officialBaselineSamples": 0,
+    "byGroup": [
+      {
+        "group": "A1",
+        "controlVariant": null,
+        "attempted": 3,
+        "planned": 3,
+        "observationValid": 3,
+        "validFunctional": 3,
+        "functionalSuccess": 3,
+        "summaryRouteAfterForms": 0,
+        "formsRequestAbort": 0,
+        "formsLifecycleAbort": 0,
+        "controlPassed": 0,
+        "secondActionTailMs": [
+          397,
+          538,
+          515
+        ]
+      },
+      {
+        "group": "B",
+        "controlVariant": "await_initial_summary_navigation",
+        "attempted": 3,
+        "planned": 3,
+        "observationValid": 3,
+        "validFunctional": 3,
+        "functionalSuccess": 3,
+        "summaryRouteAfterForms": 0,
+        "formsRequestAbort": 0,
+        "formsLifecycleAbort": 0,
+        "controlPassed": 3,
+        "secondActionTailMs": [
+          527,
+          582,
+          423
+        ]
+      },
+      {
+        "group": "A2",
+        "controlVariant": null,
+        "attempted": 3,
+        "planned": 3,
+        "observationValid": 3,
+        "validFunctional": 3,
+        "functionalSuccess": 3,
+        "summaryRouteAfterForms": 0,
+        "formsRequestAbort": 0,
+        "formsLifecycleAbort": 0,
+        "controlPassed": 0,
+        "secondActionTailMs": [
+          521,
+          535,
+          478
+        ]
+      }
+    ]
+  },
+  "comparison": {
+    "baselineSummaryReentry": "0/6 A1+A2 samples",
+    "baselineFormsRequestAbort": "0/6 A1+A2 samples",
+    "controlSummaryReentry": "0/3 B samples",
+    "controlFormsRequestAbort": "0/3 B samples",
+    "controlFormsLifecycleAbort": "0/3 B samples",
+    "speedResult": "SECOND_ACTION_TAIL_CAPTURED_NOT_EVALUABLE_FOR_PERFORMANCE_ACCEPTANCE"
+  },
+  "results": [
+    {
+      "unitKey": "A1:J1:r1",
+      "repetition": 1,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 1585,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_aborted",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": null,
+      "secondActionTailMs": 397
+    },
+    {
+      "unitKey": "A1:J1:r2",
+      "repetition": 2,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 1385,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": null,
+      "secondActionTailMs": 538
+    },
+    {
+      "unitKey": "A1:J1:r3",
+      "repetition": 3,
+      "group": "A1",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 1421,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_aborted",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": null,
+      "secondActionTailMs": 515
+    },
+    {
+      "unitKey": "B:J1:r1",
+      "repetition": 1,
+      "group": "B",
+      "controlVariant": "await_initial_summary_navigation",
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 2755,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": {
+        "variant": "await_initial_summary_navigation",
+        "status": "PASSED",
+        "armedAtMs": 991,
+        "requestStartedAtMs": 1852,
+        "responseStatus": null,
+        "responseBodyFinishedAtMs": null,
+        "settledAtMs": 2647,
+        "settlementKind": "request_failed"
+      },
+      "secondActionTailMs": 527
+    },
+    {
+      "unitKey": "B:J1:r2",
+      "repetition": 2,
+      "group": "B",
+      "controlVariant": "await_initial_summary_navigation",
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 2183,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": {
+        "variant": "await_initial_summary_navigation",
+        "status": "PASSED",
+        "armedAtMs": 976,
+        "requestStartedAtMs": 1505,
+        "responseStatus": null,
+        "responseBodyFinishedAtMs": null,
+        "settledAtMs": 2081,
+        "settlementKind": "request_failed"
+      },
+      "secondActionTailMs": 582
+    },
+    {
+      "unitKey": "B:J1:r3",
+      "repetition": 3,
+      "group": "B",
+      "controlVariant": "await_initial_summary_navigation",
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 1809,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": {
+        "variant": "await_initial_summary_navigation",
+        "status": "PASSED",
+        "armedAtMs": 521,
+        "requestStartedAtMs": 1259,
+        "responseStatus": null,
+        "responseBodyFinishedAtMs": null,
+        "settledAtMs": 1766,
+        "settlementKind": "request_failed"
+      },
+      "secondActionTailMs": 423
+    },
+    {
+      "unitKey": "A2:J1:r1",
+      "repetition": 1,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 1485,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_aborted",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": null,
+      "secondActionTailMs": 521
+    },
+    {
+      "unitKey": "A2:J1:r2",
+      "repetition": 2,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 2118,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_aborted",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": null,
+      "secondActionTailMs": 535
+    },
+    {
+      "unitKey": "A2:J1:r3",
+      "repetition": 3,
+      "group": "A2",
+      "controlVariant": null,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "routeAfterForms": {
+        "formsRouteAtMs": 868,
+        "summaryRouteAfterForms": false,
+        "summaryRouteAfterFormsAtMs": null
+      },
+      "formsRequestCount": 1,
+      "formsRequestAbort": false,
+      "formsLifecycleAbort": false,
+      "lifecycleEvents": [
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 0
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "summary",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "forms",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_load_aborted",
+          "domain": "summary",
+          "sequence": 1
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_cleanup",
+          "domain": "forms",
+          "sequence": 2
+        },
+        {
+          "name": "stage6_workspace_effect_setup",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_abort_previous",
+          "domain": "nutrition",
+          "sequence": null
+        },
+        {
+          "name": "stage6_workspace_load_started",
+          "domain": "nutrition",
+          "sequence": 3
+        },
+        {
+          "name": "stage6_workspace_load_succeeded",
+          "domain": "nutrition",
+          "sequence": 3
+        }
+      ],
+      "summarySettlementControl": null,
+      "secondActionTailMs": 478
+    }
+  ],
+  "blockers": [],
+  "interpretation": {
+    "singleVariable": "B waits for initial client-selection summary navigation request settlement before Forms click",
+    "rootCauseConfirmed": false,
+    "candidateBoundaryReproduced": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "functionalResult": "Report per-group observation and functional validity separately from speed.",
+    "speedResult": "Second-action tails are captured, but this diagnostic run is not a performance acceptance run."
+  },
+  "explicitNonClaims": [
+    "This trace-only A-B-A confirmation is outside the official nine-scenario baseline.",
+    "The B settlement gate is a harness control, not a product change or accepted fix.",
+    "A reproduced route boundary does not prove the global freeze thesis or auth as the root cause.",
+    "No finding disposition, Plan 2 eligibility, or production decision changes here.",
+    "No external provider, WhatsApp, billing, production worker, migration, deploy, or real health-data path was used."
+  ],
+  "redaction": {
+    "status": "PASS",
+    "rawIdentifiersIncluded": false,
+    "rawBodiesIncluded": false,
+    "credentialsIncluded": "<redacted>",
+    "healthDataIncluded": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "SUMMARY_REENTRY_BOUNDARY_CONFIRMATION_INCONCLUSIVE",
+    "runtimeFixAccepted": false,
+    "plan2Eligible": false,
+    "nextAction": "Preserve the A-B-A result and do not repeat the same gate automatically; global diagnosis remains blocked.",
+    "productionDecision": "NO-GO"
+  }
+}

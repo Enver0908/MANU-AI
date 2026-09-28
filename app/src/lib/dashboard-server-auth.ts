@@ -19,7 +19,17 @@ export type DashboardAuthState =
       displayName: string;
       role: string;
       uiLanguage: SupportedLanguageCode;
+      authTiming?: DashboardAuthTiming;
     };
+
+export type DashboardAuthTiming = {
+  getUserMs?: number;
+  membershipMs?: number;
+  customerSessionFactsMs?: number;
+  dietitianMs?: number;
+  entitlementMs?: number;
+  totalMs?: number;
+};
 
 /**
  * Shared server-side dashboard auth resolution. Extracted verbatim from
@@ -32,6 +42,10 @@ export async function resolveDashboardAuth(): Promise<DashboardAuthState> {
     return { gate: "fallback" };
   }
 
+  const diagnosticEnabled = process.env.AIYA_PERF_DIAGNOSTIC === "1";
+  const authStartedAt = performance.now();
+  const authTiming: DashboardAuthTiming | undefined = diagnosticEnabled ? {} : undefined;
+
   const cookieStore = await cookies();
   const supabase = createSupabaseServerReadOnlyClient({
     getAll: () => cookieStore.getAll(),
@@ -41,14 +55,17 @@ export async function resolveDashboardAuth(): Promise<DashboardAuthState> {
     return { gate: "fallback" };
   }
 
+  const getUserStartedAt = performance.now();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (authTiming) authTiming.getUserMs = performance.now() - getUserStartedAt;
 
   if (!user) {
     redirect("/login?next=/dashboard");
   }
 
+  const membershipStartedAt = performance.now();
   const { data: membership } = await supabase
     .from("tenant_memberships")
     .select("tenant_id, role")
@@ -56,9 +73,14 @@ export async function resolveDashboardAuth(): Promise<DashboardAuthState> {
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
+  if (authTiming) authTiming.membershipMs = performance.now() - membershipStartedAt;
 
   if (!membership) {
+    const customerSessionFactsStartedAt = performance.now();
     const facts = await resolveCustomerSessionFacts(supabase);
+    if (authTiming) {
+      authTiming.customerSessionFactsMs = performance.now() - customerSessionFactsStartedAt;
+    }
     const authRedirect = deriveCustomerAuthRedirect(facts);
     if (authRedirect === "/onboarding") {
       redirect("/onboarding");
@@ -75,20 +97,27 @@ export async function resolveDashboardAuth(): Promise<DashboardAuthState> {
       displayName: user.email || "Dietitian",
       role: "member",
       uiLanguage: normalizeLanguageCode(undefined),
+      ...(authTiming
+        ? { authTiming: { ...authTiming, totalMs: performance.now() - authStartedAt } }
+        : {}),
     };
   }
 
+  const dietitianStartedAt = performance.now();
   const { data: dietitian } = await supabase
     .from("dietitians")
     .select("id, display_name, ui_language")
     .eq("tenant_id", membership.tenant_id)
     .eq("auth_user_id", user.id)
     .maybeSingle();
+  if (authTiming) authTiming.dietitianMs = performance.now() - dietitianStartedAt;
 
   const admin = getSupabaseAdminClient();
+  const entitlementStartedAt = performance.now();
   const entitlement = admin
     ? await loadTenantEntitlementByTenantId(admin, membership.tenant_id)
     : null;
+  if (authTiming) authTiming.entitlementMs = performance.now() - entitlementStartedAt;
 
   return {
     gate: "resolved",
@@ -98,5 +127,8 @@ export async function resolveDashboardAuth(): Promise<DashboardAuthState> {
     displayName: dietitian?.display_name || user.email || "Dietitian",
     role: membership.role || "member",
     uiLanguage: normalizeLanguageCode(dietitian?.ui_language),
+    ...(authTiming
+      ? { authTiming: { ...authTiming, totalMs: performance.now() - authStartedAt } }
+      : {}),
   };
 }

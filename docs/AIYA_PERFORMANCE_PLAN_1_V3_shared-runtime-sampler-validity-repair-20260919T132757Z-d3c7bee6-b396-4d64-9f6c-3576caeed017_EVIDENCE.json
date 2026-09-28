@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-sampler-validity-repair-v1",
+  "planRevision": "plan1-final-v3",
+  "stage": "shared-runtime-sampler-and-validity-repair",
+  "evidenceId": "shared-runtime-sampler-validity-repair-20260919T132757Z-d3c7bee6-b396-4d64-9f6c-3576caeed017",
+  "generatedAt": "2026-09-19T13:27:57.284Z",
+  "status": "COMPLETE",
+  "outcome": "SAMPLER_REPAIRED_AND_JOURNEY_VALIDITY_STABLE_GLOBAL_FREEZE_UNRESOLVED",
+  "sourceIdentity": {
+    "cwd": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "diffCheck": "PASS",
+    "workingTreeStatusLineCountAtRun": 148,
+    "diagnosticRunId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T131930315Z-d3c7bee6-b396-4d64-9f6c-3576caeed017",
+    "diagnosticEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T131930315Z-d3c7bee6-b396-4d64-9f6c-3576caeed017_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+    "diagnosticEvidenceSha256": "14370b4c8a51fa641aa925e551797624d1484611c5e8ae34a67f8820cdff2919",
+    "sourceFiles": [
+      {
+        "path": "app/scripts/lib/diagnostic-db-lock-sampler.mjs",
+        "sha256": "70a6888a083291f90664e87bee5745295bdd2cf184058af7c8344d2b64e40387"
+      },
+      {
+        "path": "app/scripts/lib/diagnostic-db-lock-sampler.test.mjs",
+        "sha256": "df4f530d56ac0160d85fa263ede2bc78fd0ab6c3a76cf499bf3f7c1068f58b9a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "6d0ee241cae001b362733cd4f4c6ba70f367fcb00bf6700910f9e80f049c8fa3"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs",
+        "sha256": "4820edc42e6d0ad1364cbdc7ccbdc0b0fc7d8198d7d5c5ceb76a212552ad74af"
+      }
+    ]
+  },
+  "checkpoint": {
+    "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260919T131930315Z-d3c7bee6-b396-4d64-9f6c-3576caeed017",
+    "status": "COMPLETE",
+    "eventCount": 47,
+    "normalRepetitions": 3,
+    "diagnosticRepetitions": 3,
+    "countedAsOfficialSample": false
+  },
+  "changes": [
+    {
+      "path": "app/scripts/lib/diagnostic-db-lock-sampler.mjs",
+      "change": "Use the configured Docker transport when host psql is unavailable, allow retry after transient sample failures, await an in-flight sample on stop, require complete aggregate fields, and expose sample-error/command metadata without raw process output."
+    },
+    {
+      "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+      "change": "Wait until the fixed second-action wall-clock target is reached instead of relying on one setTimeout calculation, preserving strict timing-order validation."
+    },
+    {
+      "path": "app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs",
+      "change": "Select only observation-valid, functionally successful validSample records and pause DB sampling around the synchronous diagnostic artifact build."
+    }
+  ],
+  "observation": {
+    "normalObservationCount": 9,
+    "diagnosticObservationCount": 3,
+    "observationValidCount": 12,
+    "validSampleCount": 9,
+    "normalFunctionalSuccessCount": 6,
+    "diagnosticFunctionalSuccessCount": 3,
+    "j1ValidSuccessfulCount": 6,
+    "j1PlannedBeforeDispatchCount": 0,
+    "j2PlannedBeforeDispatchCount": 0,
+    "j3ExcludedCount": 3,
+    "j3ExclusionReason": "first_target_abandoned_after_navigation",
+    "candidateSelection": {
+      "status": "PASS",
+      "journeyId": "J1",
+      "observedTailMs": 501,
+      "eligibleJourneys": ["J1", "J2"]
+    }
+  },
+  "dbLockObservation": {
+    "status": "PASS",
+    "sampleCount": 756,
+    "sampleErrorCount": 0,
+    "lockWaitSampleCount": 0,
+    "blockedActivitySampleCount": 0,
+    "maxLockWaitCount": 0,
+    "maxBlockedActivityCount": 0,
+    "maxBlockerCount": 0,
+    "queryDurationMs": {
+      "min": 229,
+      "max": 1173
+    },
+    "transport": "configured Docker container",
+    "scopeLimit": "These 756 successful aggregate observations do not prove absence of session-row contention outside the observed windows."
+  },
+  "verification": {
+    "targetedTests": [
+      {
+        "command": "npm.cmd run test:performance-plan1:shared-runtime",
+        "status": "PASS",
+        "tests": 10,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "command": "npm.cmd run test:performance-plan1-phase4-diagnostic",
+        "status": "PASS",
+        "tests": 9,
+        "failed": 0,
+        "skipped": 0
+      }
+    ],
+    "typecheck": "PASS",
+    "lint": {
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 79
+    },
+    "build": "PASS",
+    "redactionCheck": {
+      "status": "PASS",
+      "forbiddenValueCount": 0
+    }
+  },
+  "disposition": {
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "globalFreezeResolved": false,
+    "productionDecision": "NO-GO",
+    "explicitNonClaims": [
+      "The sampler repair establishes usable local aggregate observations, not a root cause.",
+      "The journey-selection and timing changes improve measurement validity; they are not product runtime remediation.",
+      "The retained inbox request-fanout candidate, auth/session chain, RSC/bootstrap work, and React commit causality remain unresolved as a single global explanation.",
+      "The official nine-scenario x 20-valid-sample / 28-attempt acceptance contract is unchanged."
+    ]
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "SAMPLER_REPAIRED_AND_JOURNEY_VALIDITY_STABLE_GLOBAL_FREEZE_UNRESOLVED",
+    "nextAction": "Use the stable selected J1 trace and working DB aggregate sampler for one separately authorized explicit request-coalescing or auth-chain ownership A-B-A experiment; do not combine variables."
+  }
+}

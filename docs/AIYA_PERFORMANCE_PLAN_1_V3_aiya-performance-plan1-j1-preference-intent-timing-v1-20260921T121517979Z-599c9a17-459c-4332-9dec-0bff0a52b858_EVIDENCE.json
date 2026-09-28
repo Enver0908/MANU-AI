@@ -1,0 +1,538 @@
+{
+  "evidenceId": "aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121517979Z-599c9a17-459c-4332-9dec-0bff0a52b858",
+  "generatedAt": "2026-09-21T12:18:43.029Z",
+  "planRevision": "plan1-final-v3",
+  "stage": "shared-runtime-j1-preference-intent-timing",
+  "status": "COMPLETE",
+  "outcome": "PREFERENCE_INTENT_TIMING_CAPTURE_RECORDED",
+  "runId": "aiya-performance-plan1-j1-preference-intent-timing-v1-20260921T121517979Z-599c9a17-459c-4332-9dec-0bff0a52b858",
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "statusLineCount": 189,
+    "statusHash": "188282865f0e2ba9c4c90f487ee8e12d833d086cac30c1a67da3f9074a76c385",
+    "diffCheck": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "localSupabaseHost": "127.0.0.1:54321",
+    "shellDirtyRegistrationPolicy": "legacy",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "bf6eb9045c43ec7426152c93fcf695e70cdbe91df49a2ad85ae3afa1117665b6"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "730aca9aa34b68651ab82aadef196145248b22d025c6053f713bcb768340d43a"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-j1-preference-intent-timing.mjs",
+        "sha256": "01f834f51ec5f982c1d92a126ab8830a3d6e9370d327690415c2ca1fe372bbc7"
+      },
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "943cfb531d2760a39942a63d4d4e65fd68451e2c3c1a5f6103843109779eaa17"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts",
+        "sha256": "b9bd90ccb60695ea01f63bdb416a1f55500c666293c6bb6004b554d2f179580c"
+      },
+      {
+        "path": "app/src/lib/use-stage-6-client-workspace.ts",
+        "sha256": "1accddd158ba47a4e1c352a9f0371d92d05866ab0b0ebff861feddd5b2f96648"
+      }
+    ]
+  },
+  "checkpoint": {
+    "phaseId": "aiya-performance-plan1-j1-preference-intent-timing-v1",
+    "schemaVersion": "aiya-performance-plan1-j1-preference-intent-timing-v1",
+    "officialMeasurement": false,
+    "countedAsOfficialSample": false,
+    "localSupabase": "127.0.0.1:54321"
+  },
+  "preflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "authentication": "real_password_session_required",
+    "storePath": "normal_rls_api_path_required",
+    "fallbackStoreAllowed": false,
+    "targetOrigin": "http://127.0.0.1:3153",
+    "localSupabase": {
+      "status": "PASS",
+      "targetHost": "127.0.0.1:54321",
+      "urlIsLocal": true,
+      "credentialsPresent": {
+        "anonKey": true,
+        "serviceRoleKey": true
+      }
+    },
+    "credentialsAvailable": {
+      "email": true,
+      "password": true
+    },
+    "blockers": []
+  },
+  "summary": {
+    "attempted": 3,
+    "observationValid": 3,
+    "validFunctionalSamples": 3,
+    "functionalSuccess": 3,
+    "preferencePatchCount": 3,
+    "intentClassCounts": {
+      "active_client": 3
+    },
+    "eventsWithRouteTransitionBeforePreferenceSettled": 1,
+    "eventsWithStage6CleanupBeforePreferenceSettled": 0,
+    "eventsWithFormsAbortAfterPreferenceRequest": 0,
+    "traceVariant": "preference_intent_timing_and_completion"
+  },
+  "samples": [
+    {
+      "unitKey": "J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "trace": {
+        "traceVariant": "preference_intent_timing_and_completion",
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 72,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 832,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1415,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3537,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 70,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 369,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1414,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3536,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "preferenceIntentTiming": {
+          "traceVariant": "preference_intent_timing_and_completion",
+          "requestCount": 1,
+          "bodyFinishTimedOut": false,
+          "events": [
+            {
+              "sequence": 1,
+              "bodyShape": "object",
+              "intentKeys": [
+                "activeClientId"
+              ],
+              "intentClass": "active_client",
+              "requestStartedAtMs": 384,
+              "responseHeaderAtMs": 825,
+              "bodyFinishedAtMs": 828,
+              "settledAtMs": 831,
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "routeAtRequestStart": "/dashboard?section=clients",
+              "routeAtResponseHeader": "/dashboard?section=clients",
+              "routeAtBodyFinished": "/dashboard?section=clients",
+              "routeAtSettled": "/dashboard?section=clients",
+              "correlationWindowEndAtMs": 2831,
+              "routeTransitionsAfterStart": [
+                {
+                  "atMs": 832,
+                  "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                },
+                {
+                  "atMs": 1415,
+                  "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                }
+              ],
+              "lifecycleEventsAfterStart": [],
+              "formsRequestsAfterStart": [
+                {
+                  "startedAtMs": 1435,
+                  "responseHeaderAtMs": 1910,
+                  "bodyFinishedAtMs": 1921,
+                  "status": 200,
+                  "failed": false,
+                  "failureReason": null
+                }
+              ],
+              "temporalRelations": {
+                "routeTransitionBeforePreferenceSettled": false,
+                "cleanupBeforePreferenceSettled": false,
+                "formsAbortAfterPreferenceRequest": false
+              }
+            }
+          ]
+        },
+        "lifecycleEvents": [],
+        "formsRequests": [
+          {
+            "startedAtMs": 1435,
+            "responseHeaderAtMs": 1910,
+            "bodyFinishedAtMs": 1921,
+            "status": 200,
+            "failed": false,
+            "failureReason": null
+          }
+        ],
+        "firstAction": {
+          "functionalOutcome": "SUCCESS",
+          "requiredRequestStartAtMs": 1435,
+          "responseHeaderAtMs": 1910,
+          "responseBodyFinishedAtMs": 1921
+        }
+      }
+    },
+    {
+      "unitKey": "J1:r2",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 2,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "trace": {
+        "traceVariant": "preference_intent_timing_and_completion",
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 96,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1343,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1696,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3780,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 95,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 588,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1695,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3779,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "preferenceIntentTiming": {
+          "traceVariant": "preference_intent_timing_and_completion",
+          "requestCount": 1,
+          "bodyFinishTimedOut": false,
+          "events": [
+            {
+              "sequence": 1,
+              "bodyShape": "object",
+              "intentKeys": [
+                "activeClientId"
+              ],
+              "intentClass": "active_client",
+              "requestStartedAtMs": 600,
+              "responseHeaderAtMs": 1334,
+              "bodyFinishedAtMs": 1338,
+              "settledAtMs": 1343,
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "routeAtRequestStart": "/dashboard?section=clients",
+              "routeAtResponseHeader": "/dashboard?section=clients",
+              "routeAtBodyFinished": "/dashboard?section=clients",
+              "routeAtSettled": "/dashboard?section=clients",
+              "correlationWindowEndAtMs": 3343,
+              "routeTransitionsAfterStart": [
+                {
+                  "atMs": 1343,
+                  "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                },
+                {
+                  "atMs": 1696,
+                  "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                }
+              ],
+              "lifecycleEventsAfterStart": [],
+              "formsRequestsAfterStart": [
+                {
+                  "startedAtMs": 1717,
+                  "responseHeaderAtMs": 2261,
+                  "bodyFinishedAtMs": 2268,
+                  "status": 200,
+                  "failed": false,
+                  "failureReason": null
+                }
+              ],
+              "temporalRelations": {
+                "routeTransitionBeforePreferenceSettled": true,
+                "cleanupBeforePreferenceSettled": false,
+                "formsAbortAfterPreferenceRequest": false
+              }
+            }
+          ]
+        },
+        "lifecycleEvents": [],
+        "formsRequests": [
+          {
+            "startedAtMs": 1717,
+            "responseHeaderAtMs": 2261,
+            "bodyFinishedAtMs": 2268,
+            "status": 200,
+            "failed": false,
+            "failureReason": null
+          }
+        ],
+        "firstAction": {
+          "functionalOutcome": "SUCCESS",
+          "requiredRequestStartAtMs": 1717,
+          "responseHeaderAtMs": 2261,
+          "responseBodyFinishedAtMs": 2268
+        }
+      }
+    },
+    {
+      "unitKey": "J1:r3",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 3,
+      "status": "VALID",
+      "validSample": true,
+      "observationValidity": "VALID",
+      "functionalOutcome": "SUCCESS",
+      "failureBoundary": {
+        "phase": "none",
+        "actionId": null,
+        "reason": null
+      },
+      "trace": {
+        "traceVariant": "preference_intent_timing_and_completion",
+        "routeHistory": {
+          "events": [
+            {
+              "atMs": 86,
+              "route": "/dashboard?section=clients",
+              "source": "pushState"
+            },
+            {
+              "atMs": 749,
+              "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 1345,
+              "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            },
+            {
+              "atMs": 3449,
+              "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+              "source": "pushState"
+            }
+          ],
+          "trustedEvents": [
+            {
+              "atMs": 85,
+              "testId": null,
+              "href": "/dashboard?section=clients"
+            },
+            {
+              "atMs": 343,
+              "testId": "client-roster-item",
+              "href": null
+            },
+            {
+              "atMs": 1344,
+              "testId": "tab-tab_personal_form",
+              "href": null
+            },
+            {
+              "atMs": 3448,
+              "testId": "tab-tab_food_rules",
+              "href": null
+            }
+          ]
+        },
+        "preferenceIntentTiming": {
+          "traceVariant": "preference_intent_timing_and_completion",
+          "requestCount": 1,
+          "bodyFinishTimedOut": false,
+          "events": [
+            {
+              "sequence": 1,
+              "bodyShape": "object",
+              "intentKeys": [
+                "activeClientId"
+              ],
+              "intentClass": "active_client",
+              "requestStartedAtMs": 354,
+              "responseHeaderAtMs": 741,
+              "bodyFinishedAtMs": 743,
+              "settledAtMs": 745,
+              "status": 200,
+              "failed": false,
+              "failureReason": null,
+              "routeAtRequestStart": "/dashboard?section=clients",
+              "routeAtResponseHeader": "/dashboard?section=clients",
+              "routeAtBodyFinished": "/dashboard?section=clients",
+              "routeAtSettled": "/dashboard?section=clients",
+              "correlationWindowEndAtMs": 2745,
+              "routeTransitionsAfterStart": [
+                {
+                  "atMs": 749,
+                  "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                },
+                {
+                  "atMs": 1345,
+                  "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+                  "source": "pushState"
+                }
+              ],
+              "lifecycleEventsAfterStart": [],
+              "formsRequestsAfterStart": [
+                {
+                  "startedAtMs": 1367,
+                  "responseHeaderAtMs": 1758,
+                  "bodyFinishedAtMs": 1764,
+                  "status": 200,
+                  "failed": false,
+                  "failureReason": null
+                }
+              ],
+              "temporalRelations": {
+                "routeTransitionBeforePreferenceSettled": false,
+                "cleanupBeforePreferenceSettled": false,
+                "formsAbortAfterPreferenceRequest": false
+              }
+            }
+          ]
+        },
+        "lifecycleEvents": [],
+        "formsRequests": [
+          {
+            "startedAtMs": 1367,
+            "responseHeaderAtMs": 1758,
+            "bodyFinishedAtMs": 1764,
+            "status": 200,
+            "failed": false,
+            "failureReason": null
+          }
+        ],
+        "firstAction": {
+          "functionalOutcome": "SUCCESS",
+          "requiredRequestStartAtMs": 1367,
+          "responseHeaderAtMs": 1758,
+          "responseBodyFinishedAtMs": 1764
+        }
+      }
+    }
+  ],
+  "findings": {
+    "candidateSurface": [
+      "app/src/components/dashboard-app.tsx:selectClient/openClientTask",
+      "app/src/lib/phase-85-stage-6-client-selection.ts:persistActiveClient",
+      "app/src/components/dashboard/shell-provider.tsx:commitDashboardHref",
+      "app/src/lib/phase-85-stage-5-shell-preference-coordinator.ts:update",
+      "app/src/lib/use-stage-6-client-workspace.ts:cleanup/load_aborted"
+    ],
+    "candidateNarrowed": false,
+    "rootCauseConfirmed": false,
+    "globalFreezeResolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO"
+  },
+  "explicitNonClaims": [
+    "This trace-only capture is outside the official nine-scenario baseline.",
+    "The trace records intent keys only; preference values and raw request bodies are excluded.",
+    "Observed temporal correlation is not causal proof or runtime-fix acceptance.",
+    "No external provider, WhatsApp, billing, production worker, migration, deploy, or real health-data path was used."
+  ],
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "PREFERENCE_INTENT_TIMING_CAPTURE_RECORDED",
+    "runtimeFixAccepted": false,
+    "plan2Eligible": false,
+    "nextAction": "Classify whether one sanitized preference intent and transition ordering repeats across valid J1 traces before any new control or code change."
+  }
+}

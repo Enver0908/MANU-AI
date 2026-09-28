@@ -1,0 +1,870 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase5-3-layer-attribution-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "5",
+  "stage": "5.3",
+  "stageId": "5.3",
+  "runId": "aiya-performance-plan1-phase5-3-layer-attribution-v3-20260917T190703732Z-380aeab1-c2ff-4dd5-a42c-54988706de3b",
+  "generatedAt": "2026-09-17T16:18:37.291Z",
+  "status": "COMPLETE",
+  "outcome": "LAYER_ATTRIBUTION_INCONCLUSIVE",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Attribute the existing Phase 5.2 effect across measured timing layers without creating a new sample.",
+    "environment": "local_desktop",
+    "analysisOnly": true,
+    "inputExperimentReused": true,
+    "newMeasurementStarted": false,
+    "officialMeasurementStarted": false,
+    "newCausalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true,
+    "countedAsOfficialSample": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.7 COMPLETE / DIAGNOSIS_BLOCKED",
+      "5.1 COMPLETE / HYPOTHESES_PRE_REGISTERED",
+      "5.2 COMPLETE / REPEATABLE_PROVISIONAL_EFFECT"
+    ],
+    "currentStage": "5.3",
+    "nextEligibleStage": "5.4"
+  },
+  "sourceIdentity": {
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branchMode": "DETACHED_HEAD",
+    "branch": "",
+    "statusLineCount": 85,
+    "statusHash": "2cb80cb6508183f3383fcf01f7d3e33b0152dcc019685f2e914227f5c06c2378",
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/src/components/dashboard-app.tsx",
+        "sha256": "e06da5b1457b102cb86a689fcb9d996bdfbeb6dfc4a3e4dbd71a6b23b2971634"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "1a89fe6dfcf3a0ee926012c1b7efba6d52eb586606ff991a09f6cd1ebaf6ad9d"
+      },
+      {
+        "path": "app/src/lib/use-aiya-state.ts",
+        "sha256": "3bee61e1b91de703a6b1ce9016d4c4d92b46366447bea8a350949894878c1d27"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "4424179730f0b88231e9b4cac04c04457b32fb600596d79ae8a99291b752d458"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-2-experiment.mjs",
+        "sha256": "2647ef3d2105a4067a96a71187182017738443f08c15402621b112c15d59c91d"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-2-experiment.test.mjs",
+        "sha256": "31aefc3c9bc090109b8e297dd4c4b553e2fa46883144c808d949bafb343918db"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "40c0625b5d78c087c5c7d142c149bd91bc59ecd2e6187bf3bc4790baf040eecf"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "b70ccd7abd892c81589f8ff4c1d195cff03a35784bcc97ba9f9b470dc11becb4"
+      },
+      {
+        "path": "app/package.json",
+        "sha256": "a9d740c1629069249c0fd17245dc7ad4c04addcce5aa66f031c86ad80a944c73"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+        "sha256": "c4eb5488d9e34f36ec4c9c31f8c59d05ffd6d449f9c8b373cb164b8cc5c0c215"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+        "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-3-layer-attribution.mjs",
+        "sha256": "40e9b837774eff8d65ab1670b25279d757cd3c15153dd015122b09039fd92ce6"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-5-3-layer-attribution.test.mjs",
+        "sha256": "9f4d043566291b9413b9716eb55f7323fe12d6b6b77d72d8f1cc3b7ecc36773f"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057_PHASE_5_2_SINGLE_VARIABLE_EVIDENCE.json",
+        "sha256": "a6be5b17d3cc37ca43640b8f0c33e5945e056dc448f099cb4069fc8b70be927f"
+      }
+    ]
+  },
+  "inputExperiment": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057_PHASE_5_2_SINGLE_VARIABLE_EVIDENCE.json",
+    "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+    "status": "COMPLETE",
+    "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+    "sha256": "a6be5b17d3cc37ca43640b8f0c33e5945e056dc448f099cb4069fc8b70be927f",
+    "sampleSummary": {
+      "attemptedTraces": 9,
+      "plannedTraces": 9,
+      "observationValidTraces": 9,
+      "observationInvalidTraces": 0,
+      "allNineAttempted": true,
+      "validTracesAreNotOfficialBaseline": true
+    },
+    "checkpointReconciliation": {
+      "status": "COMPLETE",
+      "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+      "eventCount": 27,
+      "hashChainRead": true,
+      "lastEventType": "run.status"
+    },
+    "sourceIdentity": {
+      "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+      "branchMode": "DETACHED_HEAD",
+      "branch": "",
+      "statusLineCount": 81,
+      "statusHash": "ff8cd4cc6d4e8ffd593851739ca962974684047a94dbcd855733bf51312f6b33",
+      "diffCheck": "PASS",
+      "sourceFiles": [
+        {
+          "path": "app/src/components/dashboard-app.tsx",
+          "sha256": "e06da5b1457b102cb86a689fcb9d996bdfbeb6dfc4a3e4dbd71a6b23b2971634"
+        },
+        {
+          "path": "app/src/components/dashboard/shell-provider.tsx",
+          "sha256": "1a89fe6dfcf3a0ee926012c1b7efba6d52eb586606ff991a09f6cd1ebaf6ad9d"
+        },
+        {
+          "path": "app/src/lib/use-aiya-state.ts",
+          "sha256": "3bee61e1b91de703a6b1ce9016d4c4d92b46366447bea8a350949894878c1d27"
+        },
+        {
+          "path": "app/src/lib/phase-52-diagnostic.ts",
+          "sha256": "4424179730f0b88231e9b4cac04c04457b32fb600596d79ae8a99291b752d458"
+        },
+        {
+          "path": "app/scripts/performance-plan-1-phase-5-2-experiment.mjs",
+          "sha256": "5dc78764075c662b0cb50f1076c75a83fc8746f5e32d29cd412f44418a758703"
+        },
+        {
+          "path": "app/scripts/performance-plan-1-phase-5-2-experiment.test.mjs",
+          "sha256": "3997fa08d69de981ad8388da896c9584a57e5ad3bde180180e0ef1c2f89405e9"
+        },
+        {
+          "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+          "sha256": "40c0625b5d78c087c5c7d142c149bd91bc59ecd2e6187bf3bc4790baf040eecf"
+        },
+        {
+          "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+          "sha256": "b70ccd7abd892c81589f8ff4c1d195cff03a35784bcc97ba9f9b470dc11becb4"
+        },
+        {
+          "path": "app/package.json",
+          "sha256": "a9d740c1629069249c0fd17245dc7ad4c04addcce5aa66f031c86ad80a944c73"
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+          "sha256": "4388df3600affa486792f9453f8ade009737ef0efd312fa2deb1a83b63fac11b"
+        },
+        {
+          "path": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-phase5-1-hypothesis-ordering-v3-20260917T131152166Z-9ddcc5f6-1e16-4ced-83e0-8d028cf17d6f_PHASE_5_1_HYPOTHESIS_EVIDENCE.json",
+          "sha256": "70a46b1d9d2e6589e87e594b01bdb9f73255ad2d130bc758bf0b862bcad9237b"
+        }
+      ]
+    }
+  },
+  "prerequisite": {
+    "status": "PASS",
+    "failures": [],
+    "inputEvidence": {
+      "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+      "status": "COMPLETE",
+      "outcome": "REPEATABLE_PROVISIONAL_EFFECT",
+      "sha256": "a6be5b17d3cc37ca43640b8f0c33e5945e056dc448f099cb4069fc8b70be927f",
+      "checkpointReconciliation": {
+        "status": "COMPLETE",
+        "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+        "eventCount": 27,
+        "hashChainRead": true,
+        "lastEventType": "run.status"
+      }
+    }
+  },
+  "attribution": {
+    "status": "INCONCLUSIVE",
+    "code": "NO_CAUSE_CONFIRMED",
+    "causeConfirmed": false,
+    "findingDispositionChanged": false,
+    "explanation": "The traces identify repeatable co-moving server/store and downstream hydration signals, but no layer was independently isolated enough for a cause claim."
+  },
+  "observations": {
+    "attempted": 9,
+    "valid": 9,
+    "invalid": 0,
+    "cycles": [
+      {
+        "cycle": 1,
+        "observationValid": true,
+        "traceCount": 3
+      },
+      {
+        "cycle": 2,
+        "observationValid": true,
+        "traceCount": 3
+      },
+      {
+        "cycle": 3,
+        "observationValid": true,
+        "traceCount": 3
+      }
+    ]
+  },
+  "metricDefinitions": [
+    {
+      "id": "route_commit_to_target_ready_ms",
+      "label": "route commit to target ready",
+      "layer": "react_render_layout_paint"
+    },
+    {
+      "id": "route_commit_to_hydration_start_ms",
+      "label": "route commit to hydration start",
+      "layer": "server_store_fanout"
+    },
+    {
+      "id": "hydration_start_to_complete_ms",
+      "label": "hydration start to complete",
+      "layer": "react_render_layout_paint"
+    },
+    {
+      "id": "hydration_complete_to_target_ready_ms",
+      "label": "hydration complete to target ready",
+      "layer": "react_render_layout_paint"
+    },
+    {
+      "id": "target_ready_to_interactive_paint_ms",
+      "label": "target ready to interactive paint",
+      "layer": "react_render_layout_paint"
+    },
+    {
+      "id": "shell_request_to_header_ms",
+      "label": "shell bootstrap request to header",
+      "layer": "server_store_fanout"
+    },
+    {
+      "id": "shell_header_to_body_ms",
+      "label": "shell bootstrap header to body",
+      "layer": "response_body_finish"
+    },
+    {
+      "id": "app_state_request_to_header_ms",
+      "label": "app-state request to header",
+      "layer": "server_store_fanout"
+    },
+    {
+      "id": "app_state_header_to_body_ms",
+      "label": "app-state header to body",
+      "layer": "response_body_finish"
+    },
+    {
+      "id": "app_state_request_to_body_ms",
+      "label": "app-state request to body",
+      "layer": "server_store_fanout"
+    },
+    {
+      "id": "app_state_server_auth_ms",
+      "label": "app-state Server-Timing auth",
+      "layer": "auth_session"
+    },
+    {
+      "id": "app_state_server_store_ms",
+      "label": "app-state Server-Timing store",
+      "layer": "server_store_fanout"
+    },
+    {
+      "id": "app_state_server_json_ms",
+      "label": "app-state Server-Timing json",
+      "layer": "json_parse"
+    },
+    {
+      "id": "app_state_server_route_ms",
+      "label": "app-state Server-Timing route",
+      "layer": "server_store_fanout"
+    },
+    {
+      "id": "app_state_start_after_shell_body_ms",
+      "label": "app-state start after shell body",
+      "layer": "server_store_fanout"
+    },
+    {
+      "id": "app_state_start_after_hydration_trigger_ms",
+      "label": "app-state start after hydration trigger",
+      "layer": "server_store_fanout"
+    }
+  ],
+  "matchedComparisons": [
+    {
+      "cycle": 1,
+      "observationValid": true,
+      "A": {
+        "traceIds": [
+          "cycle-1-A_before",
+          "cycle-1-A_after"
+        ],
+        "metrics": {
+          "route_commit_to_target_ready_ms": 1242.5,
+          "route_commit_to_hydration_start_ms": 450.5,
+          "hydration_start_to_complete_ms": 539,
+          "hydration_complete_to_target_ready_ms": 253,
+          "target_ready_to_interactive_paint_ms": 8,
+          "shell_request_to_header_ms": 406,
+          "shell_header_to_body_ms": 56,
+          "app_state_request_to_header_ms": 525,
+          "app_state_header_to_body_ms": 31.5,
+          "app_state_request_to_body_ms": 556.5,
+          "app_state_server_auth_ms": 259.625,
+          "app_state_server_store_ms": 258.985,
+          "app_state_server_json_ms": 1.94,
+          "app_state_server_route_ms": 520.545,
+          "app_state_start_after_shell_body_ms": 18,
+          "app_state_start_after_hydration_trigger_ms": 0
+        }
+      },
+      "B": {
+        "traceIds": [
+          "cycle-1-B"
+        ],
+        "metrics": {
+          "route_commit_to_target_ready_ms": 1271,
+          "route_commit_to_hydration_start_ms": 339,
+          "hydration_start_to_complete_ms": 584,
+          "hydration_complete_to_target_ready_ms": 348,
+          "target_ready_to_interactive_paint_ms": 11,
+          "shell_request_to_header_ms": 302,
+          "shell_header_to_body_ms": 47,
+          "app_state_request_to_header_ms": 576,
+          "app_state_header_to_body_ms": 15,
+          "app_state_request_to_body_ms": 591,
+          "app_state_server_auth_ms": 215.48,
+          "app_state_server_store_ms": 347.94,
+          "app_state_server_json_ms": 2.29,
+          "app_state_server_route_ms": 565.71,
+          "app_state_start_after_shell_body_ms": 14,
+          "app_state_start_after_hydration_trigger_ms": 0
+        }
+      },
+      "deltasBMinusA": {
+        "route_commit_to_target_ready_ms": 28.5,
+        "route_commit_to_hydration_start_ms": -111.5,
+        "hydration_start_to_complete_ms": 45,
+        "hydration_complete_to_target_ready_ms": 95,
+        "target_ready_to_interactive_paint_ms": 3,
+        "shell_request_to_header_ms": -104,
+        "shell_header_to_body_ms": -9,
+        "app_state_request_to_header_ms": 51,
+        "app_state_header_to_body_ms": -16.5,
+        "app_state_request_to_body_ms": 34.5,
+        "app_state_server_auth_ms": -44.145,
+        "app_state_server_store_ms": 88.955,
+        "app_state_server_json_ms": 0.35,
+        "app_state_server_route_ms": 45.165,
+        "app_state_start_after_shell_body_ms": -4,
+        "app_state_start_after_hydration_trigger_ms": 0
+      },
+      "directions": {
+        "route_commit_to_target_ready_ms": "B_HIGHER",
+        "route_commit_to_hydration_start_ms": "B_LOWER",
+        "hydration_start_to_complete_ms": "B_HIGHER",
+        "hydration_complete_to_target_ready_ms": "B_HIGHER",
+        "target_ready_to_interactive_paint_ms": "B_HIGHER",
+        "shell_request_to_header_ms": "B_LOWER",
+        "shell_header_to_body_ms": "B_LOWER",
+        "app_state_request_to_header_ms": "B_HIGHER",
+        "app_state_header_to_body_ms": "B_LOWER",
+        "app_state_request_to_body_ms": "B_HIGHER",
+        "app_state_server_auth_ms": "B_LOWER",
+        "app_state_server_store_ms": "B_HIGHER",
+        "app_state_server_json_ms": "B_HIGHER",
+        "app_state_server_route_ms": "B_HIGHER",
+        "app_state_start_after_shell_body_ms": "B_LOWER",
+        "app_state_start_after_hydration_trigger_ms": "EQUAL"
+      }
+    },
+    {
+      "cycle": 2,
+      "observationValid": true,
+      "A": {
+        "traceIds": [
+          "cycle-2-A_before",
+          "cycle-2-A_after"
+        ],
+        "metrics": {
+          "route_commit_to_target_ready_ms": 864.5,
+          "route_commit_to_hydration_start_ms": 217.5,
+          "hydration_start_to_complete_ms": 414,
+          "hydration_complete_to_target_ready_ms": 233,
+          "target_ready_to_interactive_paint_ms": 18,
+          "shell_request_to_header_ms": 188,
+          "shell_header_to_body_ms": 36,
+          "app_state_request_to_header_ms": 402,
+          "app_state_header_to_body_ms": 19.5,
+          "app_state_request_to_body_ms": 421.5,
+          "app_state_server_auth_ms": 176.125,
+          "app_state_server_store_ms": 220.955,
+          "app_state_server_json_ms": 1.56,
+          "app_state_server_route_ms": 398.64,
+          "app_state_start_after_shell_body_ms": 11.5,
+          "app_state_start_after_hydration_trigger_ms": 0
+        }
+      },
+      "B": {
+        "traceIds": [
+          "cycle-2-B"
+        ],
+        "metrics": {
+          "route_commit_to_target_ready_ms": 1157,
+          "route_commit_to_hydration_start_ms": 228,
+          "hydration_start_to_complete_ms": 514,
+          "hydration_complete_to_target_ready_ms": 415,
+          "target_ready_to_interactive_paint_ms": 20,
+          "shell_request_to_header_ms": 200,
+          "shell_header_to_body_ms": 45,
+          "app_state_request_to_header_ms": 499,
+          "app_state_header_to_body_ms": 19,
+          "app_state_request_to_body_ms": 518,
+          "app_state_server_auth_ms": 204.06,
+          "app_state_server_store_ms": 290.24,
+          "app_state_server_json_ms": 1.69,
+          "app_state_server_route_ms": 495.99,
+          "app_state_start_after_shell_body_ms": 12,
+          "app_state_start_after_hydration_trigger_ms": 0
+        }
+      },
+      "deltasBMinusA": {
+        "route_commit_to_target_ready_ms": 292.5,
+        "route_commit_to_hydration_start_ms": 10.5,
+        "hydration_start_to_complete_ms": 100,
+        "hydration_complete_to_target_ready_ms": 182,
+        "target_ready_to_interactive_paint_ms": 2,
+        "shell_request_to_header_ms": 12,
+        "shell_header_to_body_ms": 9,
+        "app_state_request_to_header_ms": 97,
+        "app_state_header_to_body_ms": -0.5,
+        "app_state_request_to_body_ms": 96.5,
+        "app_state_server_auth_ms": 27.935,
+        "app_state_server_store_ms": 69.285,
+        "app_state_server_json_ms": 0.13,
+        "app_state_server_route_ms": 97.35,
+        "app_state_start_after_shell_body_ms": 0.5,
+        "app_state_start_after_hydration_trigger_ms": 0
+      },
+      "directions": {
+        "route_commit_to_target_ready_ms": "B_HIGHER",
+        "route_commit_to_hydration_start_ms": "B_HIGHER",
+        "hydration_start_to_complete_ms": "B_HIGHER",
+        "hydration_complete_to_target_ready_ms": "B_HIGHER",
+        "target_ready_to_interactive_paint_ms": "B_HIGHER",
+        "shell_request_to_header_ms": "B_HIGHER",
+        "shell_header_to_body_ms": "B_HIGHER",
+        "app_state_request_to_header_ms": "B_HIGHER",
+        "app_state_header_to_body_ms": "B_LOWER",
+        "app_state_request_to_body_ms": "B_HIGHER",
+        "app_state_server_auth_ms": "B_HIGHER",
+        "app_state_server_store_ms": "B_HIGHER",
+        "app_state_server_json_ms": "B_HIGHER",
+        "app_state_server_route_ms": "B_HIGHER",
+        "app_state_start_after_shell_body_ms": "B_HIGHER",
+        "app_state_start_after_hydration_trigger_ms": "EQUAL"
+      }
+    },
+    {
+      "cycle": 3,
+      "observationValid": true,
+      "A": {
+        "traceIds": [
+          "cycle-3-A_before",
+          "cycle-3-A_after"
+        ],
+        "metrics": {
+          "route_commit_to_target_ready_ms": 1177,
+          "route_commit_to_hydration_start_ms": 259.5,
+          "hydration_start_to_complete_ms": 465,
+          "hydration_complete_to_target_ready_ms": 452.5,
+          "target_ready_to_interactive_paint_ms": 8.5,
+          "shell_request_to_header_ms": 221,
+          "shell_header_to_body_ms": 52.5,
+          "app_state_request_to_header_ms": 440.5,
+          "app_state_header_to_body_ms": 29.5,
+          "app_state_request_to_body_ms": 470,
+          "app_state_server_auth_ms": 193.555,
+          "app_state_server_store_ms": 233.845,
+          "app_state_server_json_ms": 1.865,
+          "app_state_server_route_ms": 429.265,
+          "app_state_start_after_shell_body_ms": 15.5,
+          "app_state_start_after_hydration_trigger_ms": 0.5
+        }
+      },
+      "B": {
+        "traceIds": [
+          "cycle-3-B"
+        ],
+        "metrics": {
+          "route_commit_to_target_ready_ms": 1266,
+          "route_commit_to_hydration_start_ms": 269,
+          "hydration_start_to_complete_ms": 517,
+          "hydration_complete_to_target_ready_ms": 480,
+          "target_ready_to_interactive_paint_ms": 18,
+          "shell_request_to_header_ms": 232,
+          "shell_header_to_body_ms": 46,
+          "app_state_request_to_header_ms": 507,
+          "app_state_header_to_body_ms": 15,
+          "app_state_request_to_body_ms": 522,
+          "app_state_server_auth_ms": 219.82,
+          "app_state_server_store_ms": 279.32,
+          "app_state_server_json_ms": 4.53,
+          "app_state_server_route_ms": 503.66,
+          "app_state_start_after_shell_body_ms": 16,
+          "app_state_start_after_hydration_trigger_ms": 1
+        }
+      },
+      "deltasBMinusA": {
+        "route_commit_to_target_ready_ms": 89,
+        "route_commit_to_hydration_start_ms": 9.5,
+        "hydration_start_to_complete_ms": 52,
+        "hydration_complete_to_target_ready_ms": 27.5,
+        "target_ready_to_interactive_paint_ms": 9.5,
+        "shell_request_to_header_ms": 11,
+        "shell_header_to_body_ms": -6.5,
+        "app_state_request_to_header_ms": 66.5,
+        "app_state_header_to_body_ms": -14.5,
+        "app_state_request_to_body_ms": 52,
+        "app_state_server_auth_ms": 26.265,
+        "app_state_server_store_ms": 45.475,
+        "app_state_server_json_ms": 2.665,
+        "app_state_server_route_ms": 74.395,
+        "app_state_start_after_shell_body_ms": 0.5,
+        "app_state_start_after_hydration_trigger_ms": 0.5
+      },
+      "directions": {
+        "route_commit_to_target_ready_ms": "B_HIGHER",
+        "route_commit_to_hydration_start_ms": "B_HIGHER",
+        "hydration_start_to_complete_ms": "B_HIGHER",
+        "hydration_complete_to_target_ready_ms": "B_HIGHER",
+        "target_ready_to_interactive_paint_ms": "B_HIGHER",
+        "shell_request_to_header_ms": "B_HIGHER",
+        "shell_header_to_body_ms": "B_LOWER",
+        "app_state_request_to_header_ms": "B_HIGHER",
+        "app_state_header_to_body_ms": "B_LOWER",
+        "app_state_request_to_body_ms": "B_HIGHER",
+        "app_state_server_auth_ms": "B_HIGHER",
+        "app_state_server_store_ms": "B_HIGHER",
+        "app_state_server_json_ms": "B_HIGHER",
+        "app_state_server_route_ms": "B_HIGHER",
+        "app_state_start_after_shell_body_ms": "B_HIGHER",
+        "app_state_start_after_hydration_trigger_ms": "B_HIGHER"
+      }
+    }
+  ],
+  "layerAssessments": [
+    {
+      "layerId": "dns_tls_ttfb",
+      "status": "NOT_EXERCISED",
+      "basis": "The matched run used a local loopback origin; external DNS/TLS was outside this input.",
+      "metricIds": []
+    },
+    {
+      "layerId": "auth_session",
+      "status": "OBSERVED_NOT_SEPARATED",
+      "basis": "Authenticated Server-Timing auth labels were present, but auth was not independently varied.",
+      "metricIds": [
+        "app_state_server_auth_ms"
+      ],
+      "repeatability": {
+        "metricId": "app_state_server_auth_ms",
+        "directions": [
+          "B_LOWER",
+          "B_HIGHER",
+          "B_HIGHER"
+        ],
+        "repeats": false
+      }
+    },
+    {
+      "layerId": "capability_rls",
+      "status": "CONTROL_HELD",
+      "basis": "The same synthetic owner and local normal tenant path were retained; no permission variable was changed.",
+      "metricIds": []
+    },
+    {
+      "layerId": "server_store_fanout",
+      "status": "PROVISIONAL_COVARIATION",
+      "basis": "App-state Server-Timing store and route labels covary with B in all matched cycles, but labels are not pure database or store time and no server variable was isolated.",
+      "metricIds": [
+        "app_state_server_store_ms",
+        "app_state_server_route_ms",
+        "app_state_request_to_body_ms"
+      ],
+      "repeatability": {
+        "appStateStore": {
+          "metricId": "app_state_server_store_ms",
+          "directions": [
+            "B_HIGHER",
+            "B_HIGHER",
+            "B_HIGHER"
+          ],
+          "repeats": true
+        },
+        "appStateRoute": {
+          "metricId": "app_state_server_route_ms",
+          "directions": [
+            "B_HIGHER",
+            "B_HIGHER",
+            "B_HIGHER"
+          ],
+          "repeats": true
+        },
+        "appStateTotal": {
+          "metricId": "app_state_request_to_body_ms",
+          "directions": [
+            "B_HIGHER",
+            "B_HIGHER",
+            "B_HIGHER"
+          ],
+          "repeats": true
+        }
+      }
+    },
+    {
+      "layerId": "response_body_finish",
+      "status": "NOT_DOMINANT_SIGNAL",
+      "basis": "Required bodies finished with HTTP 200; header-to-body tails were small relative to app-state server timing and do not establish a body-transfer cause.",
+      "metricIds": [
+        "shell_header_to_body_ms",
+        "app_state_header_to_body_ms"
+      ],
+      "repeatability": {
+        "bodyTail": {
+          "metricId": "app_state_header_to_body_ms",
+          "directions": [
+            "B_LOWER",
+            "B_LOWER",
+            "B_LOWER"
+          ],
+          "repeats": true
+        }
+      }
+    },
+    {
+      "layerId": "json_parse",
+      "status": "SMALL_COVARIATION_NOT_DOMINANT",
+      "basis": "Server-Timing json values were present but remained small; no client parse boundary was independently isolated.",
+      "metricIds": [
+        "app_state_server_json_ms"
+      ],
+      "repeatability": {
+        "json": {
+          "metricId": "app_state_server_json_ms",
+          "directions": [
+            "B_HIGHER",
+            "B_HIGHER",
+            "B_HIGHER"
+          ],
+          "repeats": true
+        }
+      }
+    },
+    {
+      "layerId": "react_render_layout_paint",
+      "status": "PROVISIONAL_DOWNSTREAM_COVARIATION",
+      "basis": "Zero long tasks were observed; hydration duration and the post-hydration target-ready tail are higher in B across cycles, but no render-commit marker prevents exact client attribution.",
+      "metricIds": [
+        "hydration_start_to_complete_ms",
+        "hydration_complete_to_target_ready_ms",
+        "target_ready_to_interactive_paint_ms"
+      ],
+      "repeatability": {
+        "hydration": {
+          "metricId": "hydration_start_to_complete_ms",
+          "directions": [
+            "B_HIGHER",
+            "B_HIGHER",
+            "B_HIGHER"
+          ],
+          "repeats": true
+        },
+        "targetTail": {
+          "metricId": "hydration_complete_to_target_ready_ms",
+          "directions": [
+            "B_HIGHER",
+            "B_HIGHER",
+            "B_HIGHER"
+          ],
+          "repeats": true
+        }
+      }
+    },
+    {
+      "layerId": "polling_mount",
+      "status": "PRESENT_UNSEPARATED",
+      "basis": "Background request overlap was retained by the input capture, but no polling policy variable was tested in 5.2.",
+      "metricIds": []
+    },
+    {
+      "layerId": "service_worker",
+      "status": "NOT_EXERCISED",
+      "basis": "The 5.2 contract blocked service workers in cold browser contexts; this does not attribute a production PWA path.",
+      "metricIds": []
+    },
+    {
+      "layerId": "release_identity",
+      "status": "CONTROL_HELD",
+      "basis": "All nine traces reused one build control and one source identity; no release variable was changed.",
+      "metricIds": []
+    },
+    {
+      "layerId": "read_start_order",
+      "status": "NOT_ATTRIBUTED",
+      "basis": "The route-to-hydration-start boundary does not repeat a single B direction, so the gate's scheduling boundary is not independently attributed.",
+      "metricIds": [
+        "route_commit_to_hydration_start_ms",
+        "app_state_start_after_shell_body_ms",
+        "app_state_start_after_hydration_trigger_ms"
+      ],
+      "repeatability": {
+        "routeToHydration": {
+          "metricId": "route_commit_to_hydration_start_ms",
+          "directions": [
+            "B_LOWER",
+            "B_HIGHER",
+            "B_HIGHER"
+          ],
+          "repeats": false
+        }
+      }
+    },
+    {
+      "layerId": "capture_completeness",
+      "status": "ANCILLARY_TIMEOUT_RETAINED",
+      "basis": "Required shell/app-state bodies were retained, while the unrelated-request body-finish drain reached its bounded deadline and remains a separate limitation.",
+      "metricIds": []
+    }
+  ],
+  "provisionalSignals": [
+    {
+      "signalId": "S5.3-001",
+      "layerId": "server_store_fanout",
+      "status": "PROVISIONAL_COVARIATION",
+      "metricIds": [
+        "app_state_server_store_ms",
+        "app_state_server_route_ms"
+      ],
+      "directions": {
+        "store": [
+          "B_HIGHER",
+          "B_HIGHER",
+          "B_HIGHER"
+        ],
+        "route": [
+          "B_HIGHER",
+          "B_HIGHER",
+          "B_HIGHER"
+        ]
+      },
+      "interpretation": "B's app-state server timing is higher in each matched cycle and moves with the target-ready delta, but the Server-Timing labels are composite and no server/store variable was isolated."
+    },
+    {
+      "signalId": "S5.3-002",
+      "layerId": "react_render_layout_paint",
+      "status": "PROVISIONAL_DOWNSTREAM_COVARIATION",
+      "metricIds": [
+        "hydration_start_to_complete_ms",
+        "hydration_complete_to_target_ready_ms"
+      ],
+      "directions": {
+        "hydration": [
+          "B_HIGHER",
+          "B_HIGHER",
+          "B_HIGHER"
+        ],
+        "targetTail": [
+          "B_HIGHER",
+          "B_HIGHER",
+          "B_HIGHER"
+        ]
+      },
+      "interpretation": "B's hydration and post-hydration readiness intervals are higher in every cycle, but zero observed long tasks and the absence of a render-commit marker prevent exact client attribution."
+    },
+    {
+      "signalId": "S5.3-003",
+      "layerId": "read_start_order",
+      "status": "NOT_ATTRIBUTED",
+      "metricIds": [
+        "route_commit_to_hydration_start_ms",
+        "app_state_start_after_hydration_trigger_ms"
+      ],
+      "directions": {
+        "routeToHydration": [
+          "B_LOWER",
+          "B_HIGHER",
+          "B_HIGHER"
+        ],
+        "appStateAfterTrigger": [
+          "EQUAL",
+          "EQUAL",
+          "B_HIGHER"
+        ]
+      },
+      "interpretation": "The measured scheduling boundary does not show a consistent B delay; the repeatable overall effect cannot be assigned to the policy gate itself from these traces."
+    }
+  ],
+  "blockers": [],
+  "findingDispositionChanges": [],
+  "deferredToLaterStages": [
+    "5.4 applicable safety and behavior checks are required before any fix proposal.",
+    "5.3 did not exercise DNS/TLS, service-worker, hosted/device, or AI Chat-specific paths.",
+    "Plan 2 remains locked until a finding reaches the required causal disposition."
+  ],
+  "constraints": [
+    "This stage reuses Phase 5.2 traces and starts no new measurement.",
+    "Server-Timing labels are not treated as pure auth, database, or store time without contained-work evidence.",
+    "A repeatable co-variation is not a root-cause confirmation.",
+    "No official nine-scenario sample was started.",
+    "Credentials, cookies, tokens, raw bodies, prompts, clinical content, and device serials are excluded.",
+    "Production remains NO-GO."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "sourceIdentityPass": true,
+    "inputEvidenceParsed": true,
+    "inputEvidenceIntegrityPass": true,
+    "inputCheckpointHashChain": true,
+    "newMeasurementStarted": false,
+    "officialMeasurementStarted": false,
+    "newCausalExperimentStarted": false,
+    "historicalEvidenceRewritten": false,
+    "runtimeFixAccepted": false,
+    "findingManifestChanged": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "LAYER_ATTRIBUTION_INCONCLUSIVE",
+    "phase4Closed": true,
+    "plan1Closed": false,
+    "newMeasurementStarted": false,
+    "newCausalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "nextAction": "Proceed to 5.4 applicable safety and behavior checks; do not accept a fix from this attribution alone."
+  },
+  "checkpointReconciliation": {
+    "status": "COMPLETE",
+    "source": "phase5-2-input-checkpoint-read-only",
+    "runId": "aiya-performance-plan1-phase5-2-single-variable-experiment-v3-20260917T134123969Z-21e8c635-0129-4a48-aca8-45831367a057",
+    "eventCount": 27,
+    "hashChainRead": true,
+    "lastEventType": "run.status",
+    "newCheckpointCreated": false
+  }
+}

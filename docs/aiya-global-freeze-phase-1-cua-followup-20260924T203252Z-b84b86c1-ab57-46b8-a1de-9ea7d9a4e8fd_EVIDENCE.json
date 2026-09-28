@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "aiya-global-freeze-phase-1-cua-followup-evidence-v1",
+  "evidenceId": "aiya-global-freeze-phase-1-cua-followup-20260924T203252Z-b84b86c1-ab57-46b8-a1de-9ea7d9a4e8fd",
+  "createdAtUtc": "2026-09-24T20:34:40Z",
+  "status": "INVALID_FOR_PHASE_1",
+  "classification": "BROWSER_CONTROL_CHANNEL_TIMEOUT",
+  "livePage": {
+    "origin": "https://aiyaworkspace.com",
+    "path": "/dashboard?section=clients",
+    "authenticatedDashboardObserved": true,
+    "releaseIdentity": "not_reverified_for_this_followup"
+  },
+  "actions": [
+    {
+      "sequence": 1,
+      "action": "Fill the client phone field with synthetic numeric test input; do not submit",
+      "callerElapsedMs": 1651,
+      "postconditionReadback": "unavailable_after_later_control_timeouts",
+      "payloadRetained": false,
+      "formSubmitted": false
+    },
+    {
+      "sequence": 2,
+      "delayAfterPreviousActionMs": 2000,
+      "action": "Click the visible Formlar left-navigation link",
+      "result": "timeout_waiting_for_CDP_Input.dispatchMouseEvent",
+      "reportedWaitMs": 1492,
+      "navigationResult": "not_verified"
+    },
+    {
+      "sequence": 3,
+      "action": "Read the page DOM after the click attempt",
+      "result": "timeout_waiting_for_CDP_Emulation.setFocusEmulationEnabled",
+      "reportedWaitMs": 3000
+    },
+    {
+      "sequence": 4,
+      "action": "Request one page reload and wait for DOMContentLoaded",
+      "result": "timeout_waiting_for_CDP_Emulation.setFocusEmulationEnabled",
+      "reportedWaitMs": 10000,
+      "reloadExecutionAndCompletion": "unknown"
+    },
+    {
+      "sequence": 5,
+      "action": "Read captured warning and error log metadata",
+      "result": "timeout_waiting_for_CDP_Emulation.setFocusEmulationEnabled",
+      "reportedWaitMs": 10000
+    }
+  ],
+  "postAttemptBrowserInventory": {
+    "tabStillListed": true,
+    "path": "/dashboard?section=clients",
+    "visiblePageState": "not_readable",
+    "syntheticDraftCleared": "not_verified"
+  },
+  "pageEvaluationProbe": {
+    "documentReadyState": "complete",
+    "windowPerformanceType": "undefined",
+    "interpretation": "The evaluator did not expose the Performance API. This may be a page-evaluation capability limitation and is not evidence that production code removes or disables it."
+  },
+  "localCodeInspection": {
+    "scope": "Current dirty working tree only; these hashes do not identify the hosted bundle.",
+    "sourceHashesSha256": {
+      "app/src/components/dashboard/clients-panel.tsx": "06C1025C6369901255D04FF07A1240A3C46B82971431C8CACBB15EB82DD1CC0D",
+      "app/src/components/dashboard/shell-provider.tsx": "3ACF13226CB9C6201DBA51357F5F719EEF077AA1CD0A3E6A20B98719C4F24735",
+      "app/src/lib/use-shell-dirty-registration.ts": "486BC337FAB9D21AE36A8C3296380ACFF5C3DCEC4767FB54471529D7AF9FD998",
+      "app/src/lib/phase-52-diagnostic.ts": "13293D7124F02C8AA57167A4ECB33861EEE0340EE2A0584B9927D2F674A2B047",
+      "app/src/lib/performance-diagnostic.ts": "E1DC3C40A9452765F9CF7207744468A2AE61B7ACABAD982A70D71A8A0DA6E864"
+    },
+    "relevantBehavior": [
+      "ClientsPanel derives dirty state from a non-empty newClientPhone value and passes edits to the DashboardApp React state setter.",
+      "The create-client save action requires a non-empty name, so a phone-only draft is not saveable.",
+      "Shell navigation checks canNavigateAway and opens the dirty-navigation dialog when the draft is dirty; that dialog offers Stay and Discard for a phone-only draft.",
+      "This expected guard can explain a navigation that does not immediately change route after editing the phone field, but does not explain slow typing or slow reload. The live dialog was not verified because the navigation click was not confirmed as dispatched."
+    ]
+  },
+  "phaseOneValidity": {
+    "validPairedRecord": false,
+    "freezeObserved": "not_evaluated",
+    "keyboardResponsiveness": "not_evaluated",
+    "navigationResponsiveness": "not_evaluated",
+    "reloadLatency": "not_evaluated",
+    "browserTraceSha256": null,
+    "hostSampleSha256": null,
+    "pairedCheckpointId": null,
+    "existingValidRecordCountRemains": 0,
+    "phaseRunnerCheckpointChanged": false
+  },
+  "conclusion": "The browser-control API timed out before the page's response to the navigation, reload, and log-read actions could be observed. The 1651 ms fill call duration includes automation overhead and has no verified paint or input-event boundary. This follow-up neither confirms nor excludes a production UI freeze, and cannot attribute cause to browser, network, server, auth, store, or database. No form was submitted and no client was created.",
+  "sensitiveDataCheck": {
+    "realPhoneNumberRecorded": false,
+    "credentialsOrTokensRecorded": false,
+    "healthDataOrRawPromptRecorded": false,
+    "consoleTextOrPageBodyRecorded": false
+  }
+}

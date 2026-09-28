@@ -34,6 +34,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       fallbackDisplayName={auth.gate === "resolved" ? auth.displayName : undefined}
       fallbackUiLanguage={auth.gate === "resolved" ? auth.uiLanguage : undefined}
       fallbackAiChatEnabled={fallbackMode && isAiChatUiEnabled()}
+      dashboardAuthTiming={auth.gate === "resolved" ? auth.authTiming : undefined}
     >
       {children}
     </AuthenticatedShellBoundary>

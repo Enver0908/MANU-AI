@@ -1,0 +1,358 @@
+{
+  "schemaVersion": "aiya-performance-plan1-phase4-3-evidence-v1",
+  "planRevision": "plan1-final-v2",
+  "phase": "4",
+  "stage": "4.3",
+  "stageId": "4.3",
+  "runId": "aiya-performance-plan1-phase4-3-20260916T194917770Z-harness-contract",
+  "generatedAt": "2026-09-16T19:49:17.770Z",
+  "status": "COMPLETE",
+  "outcome": "GENERAL_DIAGNOSTIC_HARNESS_READY",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Prepare a separate general interaction diagnosis harness for the broad desktop web slowness and freeze complaint under the locked current/reference identities.",
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true,
+    "countedAsOfficialSample": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v2",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": ["4.1 IDENTITY_LOCKED", "4.2 REFERENCE_SEPARATED"],
+    "nextEligibleStage": "4.4"
+  },
+  "sourceIdentity": {
+    "worktreePath": "C:/Users/Dell/.codex/worktrees/38c0/MANU-AI",
+    "branchMode": "DETACHED_HEAD",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "sameHeadAttachedBranch": "codex/production-readiness-stage-1",
+    "sameHeadAttachedBranchAheadCount": 2,
+    "remoteProductionReadinessSha": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "detachedHeadUpstream": "NOT_AVAILABLE_BECAUSE_HEAD_IS_DETACHED",
+    "dirtyTreePreserved": true,
+    "inventoryBeforeEvidenceWrite": {
+      "modifiedTrackedCount": 15,
+      "untrackedCount": 34
+    },
+    "inventoryAfterEvidenceWrite": {
+      "modifiedTrackedCount": 15,
+      "untrackedCount": 35,
+      "newPhase4_3Files": [
+        "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "app/scripts/performance-plan-1-phase-4-3-diagnostic.test.mjs",
+        "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_3_EVIDENCE.json"
+      ]
+    },
+    "diffCheckBeforeEvidenceWrite": "PASS"
+  },
+  "harnessIdentity": {
+    "scriptPath": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+    "testPath": "app/scripts/performance-plan-1-phase-4-3-diagnostic.test.mjs",
+    "checkpointPhaseId": "aiya-performance-plan1-phase4-diagnostic",
+    "checkpointSchemaVersion": "aiya-performance-plan1-phase4-diagnostic-v1",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "orderedDescriptor": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs:PHASE_4_3_PHASE_DEFINITION",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "8331dcae1f8b8d7965432378c4b20a2bee56681482588f2e0700536cf057752e"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "7e18525c61c74a7256b2eca9982daf0c817e0619e31ebf0f7022e764c5a583bb"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.test.mjs",
+        "sha256": "cd0a417bcb4674aea1d3aaa566ee8babba8a7d5aac86e8288f9a3c7c5bc7996a"
+      }
+    ]
+  },
+  "phaseDefinition": {
+    "phaseId": "aiya-performance-plan1-phase4-diagnostic",
+    "phaseSchemaVersion": "aiya-performance-plan1-phase4-diagnostic-v1",
+    "stageLedger": [
+      {
+        "stageId": "4.3.1",
+        "name": "Descriptor and journey contract",
+        "status": "COMPLETE",
+        "verified": [
+          "ordered phase definition passes shared phase-runner validation",
+          "J1, J2, and J3 are explicitly described",
+          "fixed second-action delay is 2000ms",
+          "missing-click auto-retry is disabled"
+        ]
+      },
+      {
+        "stageId": "4.3.2",
+        "name": "Normal and diagnostic mode separation",
+        "status": "COMPLETE",
+        "verified": [
+          "normal profiler, browser observers, and Server-Timing are off",
+          "diagnostic profiler, browser observers, and Server-Timing are on",
+          "mode environment patches are distinct",
+          "diagnostic mode is not silently applied to normal mode"
+        ]
+      },
+      {
+        "stageId": "4.3.3",
+        "name": "Trace fields and checkpoint binding",
+        "status": "COMPLETE",
+        "verified": [
+          "shared checkpoint store integration is contract-tested",
+          "timing fields cover planned, dispatch, trusted event, route, request, response, parse/render, ready, and second-action acceptance",
+          "request records retain status and header/body-finish boundaries without raw bodies",
+          "failed or incomplete traces remain explicit and cannot become official samples"
+        ]
+      }
+    ]
+  },
+  "profilerModes": {
+    "normal": {
+      "id": "normal",
+      "profiler": "off",
+      "browserObservers": "off",
+      "serverTiming": "off",
+      "serverEnvironmentPatch": {
+        "AIYA_PERF_DIAGNOSTIC": "0"
+      }
+    },
+    "diagnostic": {
+      "id": "diagnostic",
+      "profiler": "on",
+      "browserObservers": "on",
+      "serverTiming": "on",
+      "serverEnvironmentPatch": {
+        "AIYA_PERF_DIAGNOSTIC": "1"
+      }
+    }
+  },
+  "requiredTimingFields": [
+    "plannedActionAtMs",
+    "dispatchAtMs",
+    "trustedEventAtMs",
+    "routeCommittedAtMs",
+    "requiredRequestStartAtMs",
+    "responseHeaderAtMs",
+    "responseBodyFinishedAtMs",
+    "parseRenderCompletedAtMs",
+    "readyStateAtMs",
+    "secondActionAccepted"
+  ],
+  "journeys": [
+    {
+      "journeyId": "J1",
+      "title": "client_workspace_forms_then_nutrition",
+      "startRoute": "/dashboard",
+      "firstAction": "open_client_workspace_and_forms",
+      "secondAction": "select_nutrition",
+      "secondActionDelayMs": 2000,
+      "expectedRoute": {
+        "pathname": "/dashboard",
+        "query": {
+          "section": "clients",
+          "clientId": "present",
+          "clientTask": "nutrition"
+        }
+      },
+      "readySelectors": [
+        "[data-testid=\"client-form-panel\"]",
+        "[data-testid=\"active-nutrition-plan-panel\"]"
+      ],
+      "requiredReads": [
+        "/api/clients/:clientId/forms",
+        "/api/clients/:clientId/food-rule-profile"
+      ],
+      "autoRetryMissingClick": false
+    },
+    {
+      "journeyId": "J2",
+      "title": "dashboard_clients_then_messages",
+      "startRoute": "/dashboard",
+      "firstAction": "select_clients",
+      "secondAction": "select_messages",
+      "secondActionDelayMs": 2000,
+      "expectedRoute": {
+        "pathname": "/dashboard",
+        "query": {
+          "section": "messages"
+        }
+      },
+      "readySelectors": [
+        "[data-testid=\"client-roster\"]",
+        "[data-testid=\"messaging-panel\"]"
+      ],
+      "requiredReads": [
+        "/api/conversations",
+        "/api/conversations/:conversationId/messages"
+      ],
+      "autoRetryMissingClick": false
+    },
+    {
+      "journeyId": "J3",
+      "title": "dashboard_more_then_dashboard",
+      "startRoute": "/dashboard",
+      "firstAction": "select_more",
+      "secondAction": "return_to_dashboard",
+      "secondActionDelayMs": 2000,
+      "expectedRoute": {
+        "pathname": "/dashboard",
+        "query": {}
+      },
+      "readySelectors": [
+        "[data-testid=\"more-page\"]",
+        "[data-testid=\"overview-work-areas\"]"
+      ],
+      "requiredReads": [],
+      "autoRetryMissingClick": false
+    }
+  ],
+  "referenceSeparation": {
+    "snapshotPath": ".manu-runtime/phase4-3/reference-snapshot-20260916T194917770Z",
+    "manifestPath": ".manu-runtime/phase4-3/reference-snapshot-20260916T194917770Z-manifest.json",
+    "snapshotCreatedForPhase4_3": true,
+    "comparisonScopeExcludes": [
+      ".git/**",
+      ".manu-runtime/**",
+      "node_modules/**",
+      "app/node_modules/**",
+      ".next/**",
+      "app/.next/**",
+      "out/**",
+      "app/out/**",
+      "build/**",
+      "app/build/**",
+      "tmp/**",
+      ".env*",
+      "**/*.pem",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_2_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_3_EVIDENCE.json"
+    ],
+    "currentFileCount": 2176,
+    "referenceFileCount": 2176,
+    "currentOnlyCount": 0,
+    "referenceOnlyCount": 0,
+    "mismatchCount": 3,
+    "unrelatedMismatchCount": 0,
+    "mismatchesAreExactlyLockedExperimentFiles": true,
+    "currentSourceFingerprint": "798b1342267015f302107e8ac50920290d4322e2bda98a1763a9a14af53d00a6",
+    "referenceSourceFingerprint": "20c1cb2675b16ed068f5c330d98eb1fb4ab002848a19eb2f5581e7f23e99799e",
+    "experimentFiles": [
+      "app/src/components/dashboard-app.tsx",
+      "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+      "app/src/lib/use-aiya-state.ts"
+    ]
+  },
+  "inheritedEvidenceKeptSeparate": [
+    "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_1_EVIDENCE.json",
+    "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_2_EVIDENCE.json",
+    "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+    "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+  ],
+  "targetedVerification": {
+    "measurementStartedByTests": false,
+    "tests": [
+      {
+        "command": "node --test app/scripts/performance-plan-1-phase-4-3-diagnostic.test.mjs",
+        "status": "PASS",
+        "passed": 7,
+        "failed": 0
+      },
+      {
+        "command": "npm run audit:performance:plan1:phase4:diagnostic",
+        "status": "PASS",
+        "result": "descriptor emitted; stages 4.3.1, 4.3.2, and 4.3.3 verified PASS; officialMeasurementStarted=false"
+      },
+      {
+        "command": "node --check app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "status": "PASS"
+      },
+      {
+        "command": "node --check app/scripts/performance-plan-1-phase-4-3-diagnostic.test.mjs",
+        "status": "PASS"
+      },
+      {
+        "command": "JSON parse and package.json parse",
+        "status": "PASS"
+      },
+      {
+        "command": "reference snapshot comparison and git diff --check",
+        "status": "PASS"
+      }
+    ],
+    "notRunByDesign": [
+      "Phase 4.3 --run diagnostic session",
+      "official nine-scenario baseline",
+      "local authenticated Phase 4.4 repetition set",
+      "hosted, Android, or installed-PWA measurement"
+    ]
+  },
+  "blockers": [],
+  "deferredToLaterStages": [
+    "Phase 4.4 must run three normal and three diagnostic repetitions per journey with the existing local authenticated synthetic account.",
+    "A missing hosted.env remains a historical hosted-input test gap and is not a Phase 4.3 harness blocker.",
+    "No trace from this stage may be presented as a root cause until the Phase 4 contract obtains at least three matching valid records."
+  ],
+  "constraints": [
+    "No official nine-scenario baseline or diagnostic journey was started in 4.3.",
+    "No runtime change is accepted as a Plan 1 fix.",
+    "Production remains NO-GO.",
+    "No credentials, cookies, tokens, raw bodies, prompts, clinical data, or device serials are recorded."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "referenceSnapshotIgnored": true,
+    "comparisonScopeStable": true,
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": false,
+    "historicalPhase4EvidenceRewritten": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "GENERAL_DIAGNOSTIC_HARNESS_READY",
+    "nextEligibleStage": "4.4",
+    "phase4Closed": false,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": false,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false
+  },
+  "documentReconciliation": {
+    "updated": [
+      "docs/AIYA_PERFORMANCE_ACTION_PLAN.md",
+      "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+      "docs/NEXT_PHASE_EXECUTION_PLAN.md",
+      "docs/RISK_REGISTER.md",
+      "HANDOFF_FOR_NEXT_CODEX.md",
+      "app/package.json"
+    ],
+    "newEvidence": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_3_EVIDENCE.json",
+    "preserved": [
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_1_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_2_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_EVIDENCE.json",
+      "docs/AIYA_PERFORMANCE_PLAN_1_FINDING_MANIFEST.json"
+    ],
+    "historicalPhase4EvidenceRewritten": false
+  },
+  "postWriteVerification": {
+    "status": "PASS",
+    "gitDiffCheck": "PASS",
+    "jsonParse": "PASS",
+    "redaction": "PASS",
+    "referenceComparison": "PASS",
+    "runtimeTests": "NOT_RUN_BY_DESIGN",
+    "gitStatus": {
+      "modifiedTrackedCount": 15,
+      "untrackedCount": 35,
+      "dirtyInputsPreserved": true
+    },
+    "nextAction": "Phase 4.4 local authenticated reproduction"
+  }
+}

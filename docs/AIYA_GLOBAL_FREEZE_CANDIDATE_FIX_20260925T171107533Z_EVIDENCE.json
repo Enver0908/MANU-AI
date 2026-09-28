@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "aiya-global-freeze-candidate-fix-evidence-v1",
+  "evidenceId": "aiya-global-freeze-candidate-fix-v1-20260925T171107533Z-ef17ec2f",
+  "createdAtUtc": "2026-09-25T17:11:07.533Z",
+  "status": "CANDIDATE_IMPLEMENTED_BUILD_VALIDATED_LOCAL_AUTH_SMOKE_BLOCKED",
+  "authority": {
+    "userAuthorizedCandidateImplementation": true,
+    "separateFromPlan1": true,
+    "plan1Status": "COMPLETE / DIAGNOSIS_BLOCKED",
+    "plan1FindingDispositionChanged": false,
+    "productionStatus": "NO-GO"
+  },
+  "liveBaseline": {
+    "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+    "recheckedDuringThisTask": true
+  },
+  "candidate": {
+    "worktreePath": "C:\\Users\\Dell\\.codex\\worktrees\\aiya-freeze-candidate\\MANU-AI",
+    "baseCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "branchState": "detached",
+    "changedTrackedFiles": [
+      "app/src/components/dashboard/shell-provider.tsx",
+      "app/src/lib/phase-85-stage-4b-dashboard-routing.test.ts",
+      "app/src/lib/phase-85-stage-4b-dashboard-routing.ts",
+      "app/src/lib/use-dashboard-url.ts",
+      "app/src/lib/use-shell-dirty-registration.ts"
+    ],
+    "addedTestFiles": ["app/src/lib/use-shell-dirty-registration.test.ts"],
+    "packageLockChanged": false,
+    "sourceSha256": {
+      "app/src/lib/use-shell-dirty-registration.ts": "A81B0B2348C2512834DDF53BF8BBF7CDDA73D7B9B3196A5CBD4CC2DED779C4F2",
+      "app/src/lib/use-shell-dirty-registration.test.ts": "7D6825242C9FAD003114A681946FCB92D0CF024BF3279301779634C475950AAD",
+      "app/src/lib/phase-85-stage-4b-dashboard-routing.ts": "0C93C22E9E65F19972BB68969D8DA2A3E1763B7BC248938FE423BB3478DD5C39",
+      "app/src/lib/phase-85-stage-4b-dashboard-routing.test.ts": "23B938C5419423368F438A09134ACE2F198BAEE1EA1E11655C6599B6EC995404",
+      "app/src/lib/use-dashboard-url.ts": "81868ABF76181AC92DDE5F71713486B3435049D075093E05906471749475D1BC",
+      "app/src/components/dashboard/shell-provider.tsx": "93B885A3F0481B709A671443098CDA5362693DD6AEF5686DC171C101B0575C80"
+    }
+  },
+  "changes": [
+    {
+      "id": "shared-dirty-registration-callback-churn",
+      "files": [
+        "app/src/lib/use-shell-dirty-registration.ts",
+        "app/src/lib/use-shell-dirty-registration.test.ts"
+      ],
+      "behavior": "Registry effects now depend on callback presence, not callback function identity; refs keep the latest save/discard/focus callbacks available."
+    },
+    {
+      "id": "duplicate-same-dashboard-navigation",
+      "files": [
+        "app/src/lib/phase-85-stage-4b-dashboard-routing.ts",
+        "app/src/lib/phase-85-stage-4b-dashboard-routing.test.ts",
+        "app/src/lib/use-dashboard-url.ts",
+        "app/src/components/dashboard/shell-provider.tsx"
+      ],
+      "behavior": "Same-/dashboard query changes use the existing native-history synchronizer once; cross-route navigation still uses the App Router."
+    }
+  ],
+  "verification": {
+    "dependencyInstall": {
+      "status": "PASS",
+      "command": "npm ci --no-audit --no-fund",
+      "packageLockChanged": false
+    },
+    "focusedTests": {
+      "status": "PASS",
+      "files": 2,
+      "passed": 25,
+      "failed": 0,
+      "runnerWarning": "Vite config-loader compatibility advisory; tests completed successfully."
+    },
+    "productionTypecheck": "PASS",
+    "eslint": {
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 74,
+      "warningsOnChangedFiles": 0
+    },
+    "nextProductionBuild": {
+      "status": "PASS",
+      "staticPagesGenerated": 79,
+      "environment": "Process-only loopback Supabase URL and non-secret placeholder keys; the candidate did not load the checkout env file and no secret values were used or recorded.",
+      "warning": "Next.js reported a custom Cache-Control header for /_next/static/:path*; build completed successfully."
+    },
+    "localAuthenticatedBrowserSmoke": {
+      "status": "NOT_RUN_ENVIRONMENT_BLOCKED",
+      "reasons": ["Docker daemon unavailable", "127.0.0.1:54321 unreachable"],
+      "realAuthOrRlsVerified": false,
+      "formSubmitted": false
+    },
+    "livePerformanceCapture": "NOT_RUN",
+    "officialAcceptanceMatrix": "NOT_RUN"
+  },
+  "checkpoint": {
+    "phaseId": "aiya-global-freeze-candidate-fix-v1",
+    "runId": "aiya-global-freeze-candidate-fix-v1-20260925T171107533Z-ef17ec2f-0416-4f23-af09-1669bf16d0d9",
+    "status": "COMPLETE",
+    "eventCount": 5,
+    "identityFingerprint": "44f1594ae8c462da495b9a0c2b2998d7d21a2cee40043241007658a911a1cd64",
+    "lastEventSha256": "a123024b6d725391c267b23a51115e28ecde5e0f3e54c8d5990af503a9b861cd",
+    "directory": ".manu-runtime/phase-execution/aiya-global-freeze-candidate-fix-v1/aiya-global-freeze-candidate-fix-v1-20260925T171107533Z-ef17ec2f-0416-4f23-af09-1669bf16d0d9"
+  },
+  "conclusions": {
+    "globalFreezeObservedOnCandidate": "NOT_EVALUATED",
+    "globalFreezeResolved": false,
+    "causalRootCauseConfirmed": false,
+    "hostedReleaseChanged": false,
+    "databaseOrMigrationChanged": false,
+    "commitCreated": false,
+    "deploymentPerformed": false
+  },
+  "nextAction": "Obtain explicit approval before starting local Docker/Supabase because first startup may apply local migrations. Commit and deployment each require separate explicit approval; deployment additionally requires the exact artifact identity, health checks, and rollback target."
+}

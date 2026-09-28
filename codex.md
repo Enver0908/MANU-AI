@@ -76,5 +76,13 @@ These guidelines are working if: fewer unnecessary changes in diffs, fewer rewri
 
 -Don’t fight errors! Whenever you encounter the same error twice, research the web and find 3-5 possible ways to fix it. Then choose the most efficient solution and implement it
 
+## 7. Resumable phase execution
+
+- Long-running phases must use `tools/phase-execution/checkpoint-store.mjs` and an ordered phase descriptor. Commit one durable event at every verified work-unit boundary; do not keep recoverable progress only in process memory or a final evidence file.
+- A checkpoint may reuse work only when the phase schema, source, fixture, migration, dependency, artifact, and harness identities match. Changed identity blocks silent merge; never reset, delete, or overwrite the previous run.
+- A measurement round is atomic only when every required scenario in that round is complete and valid. Interrupted attempts remain in the configured attempt budget. Preparation, stale, skipped, simulated, and blocked results are never official PASS samples.
+- Pause requests must be safe-boundary requests. External side effects require a receipt or explicit reconciliation before retry. Credentials, cookies, tokens, raw bodies, clinical data, and device serials must not enter checkpoint or evidence files.
+- Historical phases are not retrofitted automatically. New phases must adopt the shared descriptor/template and add focused interruption, identity-mismatch, lock, redaction, and recovery tests.
+
 
 

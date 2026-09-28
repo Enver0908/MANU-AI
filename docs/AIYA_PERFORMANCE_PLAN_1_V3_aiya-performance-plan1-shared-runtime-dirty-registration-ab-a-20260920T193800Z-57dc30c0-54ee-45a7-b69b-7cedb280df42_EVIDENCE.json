@@ -1,0 +1,418 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-shared-runtime-dirty-registration-ab-a-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "diagnostic-continuation",
+  "stage": "shared-runtime-dirty-registration-ab-a",
+  "stageId": "aiya-performance-plan1-shared-runtime-dirty-registration-ab-a-20260920T193800Z-57dc30c0-54ee-45a7-b69b-7cedb280df42",
+  "runId": "aiya-performance-plan1-shared-runtime-dirty-registration-ab-a-20260920T193800Z-57dc30c0-54ee-45a7-b69b-7cedb280df42",
+  "generatedAt": "2026-09-20T19:38:00Z",
+  "status": "COMPLETE",
+  "outcome": "DIRTY_REGISTRATION_COMMIT_STORM_REDUCTION_OBSERVED_VALIDITY_GAP_GLOBAL_FREEZE_UNRESOLVED",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Local authenticated desktop A-B-A diagnosis of the shell dirty-registration effect boundary and its relationship to broad React commits around the two-second second-action boundary.",
+    "officialMeasurementStarted": false,
+    "causalExperimentStarted": true,
+    "runtimeChangeAcceptedAsFix": false,
+    "runtimeCandidateKeptInCheckout": true,
+    "candidateActivation": "Process-scoped stable policy only; normal runtime default remains legacy when the environment variable is absent.",
+    "countedAsOfficialSample": false,
+    "externalOperations": [],
+    "healthDataUsed": false,
+    "liveProviderTraffic": false,
+    "fixture": "local-normal synthetic owner with real local password session and normal RLS/API path",
+    "journeyBoundary": "J1 selected from each run's diagnostic observations; three diagnostic repetitions per variant",
+    "localSupabaseOrigin": "http://127.0.0.1:54321"
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "parentClosure": "Phase 5.7 COMPLETE / DIAGNOSIS_BLOCKED",
+    "historicalContentUsedAsInstruction": false,
+    "plan2EntryAuthorized": false
+  },
+  "hypothesis": {
+    "id": "shared-runtime-shell-dirty-registration-rerender-loop",
+    "statement": "The first effect in useShellDirtyRegistration depends on each caller's inline onSave function; parent renders therefore re-run register, the registry emits synchronously, ShellProvider updates dirtySnapshot, and the shared shell can enter a repeated commit loop.",
+    "candidateVariable": "NEXT_PUBLIC_AIYA_PERF_SHELL_DIRTY_REGISTRATION_POLICY",
+    "AValue": "legacy",
+    "BValue": "stable",
+    "AImplementation": "The registration effect includes input.onSave function identity in its dependency list.",
+    "BImplementation": "The registration effect uses the stable saveRef object instead of input.onSave function identity; the normal runtime default is unchanged.",
+    "heldConstant": [
+      "branch and HEAD",
+      "authenticated fixture and credentials",
+      "local Supabase target",
+      "J1 journey, three diagnostic repetitions, and 2000 ms second-action delay",
+      "auth, route, client, React, build, and runner source files",
+      "normal RLS/API path",
+      "same profiler and Phase 52 event instrumentation"
+    ]
+  },
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "invariantSourceHashesEqualAcrossRuns": true,
+    "candidateFiles": [
+      {
+        "path": "app/src/lib/use-shell-dirty-registration.ts",
+        "sha256": "3b657c1e6cd2f1b235d49499edebd03c8f47a6c0154406e29acf708ce2ea7304"
+      },
+      {
+        "path": "app/src/components/dashboard/authenticated-shell-boundary.tsx",
+        "sha256": "0cfb3f5e5c6933184f7639a070134ccc14d81538fd3c15bf4db89742dc478a8c"
+      },
+      {
+        "path": "app/src/components/dashboard/shell-provider.tsx",
+        "sha256": "683977a994b83efbb1459b72e12b081bfe37a74dc9a60535f262735339b4a5d1"
+      },
+      {
+        "path": "app/src/lib/use-aiya-state.ts",
+        "sha256": "40880cd6438c5310dd96c0ca4c3835e76a037910a0c2ed3e7dd63e69d91b9769"
+      },
+      {
+        "path": "app/src/lib/phase-52-diagnostic.ts",
+        "sha256": "13293d7124f02c8aa57167a4ecb33861eee0340ee2a0584b9927d2f674a2b047"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-shared-runtime-diagnostic.mjs",
+        "sha256": "349385873ba34bb115d8b469ec4158fcaf52743762bd77acb5eb35075915f2ac"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "bc364bcc530a311abe53503c0bbd31f966ca2b1e0bf391c03c0ccfa5f2e725db"
+      }
+    ],
+    "checkoutStateAfterA2": "legacy default; no stable process environment persisted"
+  },
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+    "checkpointSchemaVersion": "aiya-performance-plan1-shared-runtime-diagnostic-v3",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "journeyId": "J1",
+    "normalRepetitionsPerVariant": 3,
+    "diagnosticRepetitionsPerVariant": 3,
+    "secondActionDelayMs": 2000,
+    "profilerIds": [
+      "authenticated-shell",
+      "shell-provider",
+      "aiya-state-provider",
+      "dashboard-shell",
+      "dashboard-content"
+    ],
+    "countedAsOfficialSample": false
+  },
+  "runReferences": {
+    "A1": {
+      "policy": "legacy",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T190937852Z-abce8af0-cc97-4959-9766-6e3d0fed32ed",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T190937852Z-abce8af0-cc97-4959-9766-6e3d0fed32ed_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "DD4F88AB029B4082B1D996B65CFDFDA6690F35CB075ABB4C953EC0EA7321F46C",
+      "status": "COMPLETE",
+      "runnerAggregateObservationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3",
+      "sampler": {
+        "status": "PASS",
+        "sampleCount": 769,
+        "sampleErrorCount": 0,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxBlockerCount": 0
+      }
+    },
+    "B": {
+      "policy": "stable",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T191755892Z-a4f44a32-41a4-4644-9670-cb8720197b62",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T191755892Z-a4f44a32-41a4-4644-9670-cb8720197b62_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "9C47E88599AF781DDE181AA88B5E3C4BA52B8055FB6D7010808DD74EFEC9AE79",
+      "status": "COMPLETE",
+      "runnerAggregateObservationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "2/3",
+      "explicitValidityReconciliation": "The aggregate sampleSummary reports 12/12 observationValid, but diagnostic J1 repetition 1 is status INVALID, validSample false, and failed at the required forms read. The explicit observation record is authoritative for causal counting.",
+      "sampler": {
+        "status": "PASS",
+        "sampleCount": 804,
+        "sampleErrorCount": 0,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxBlockerCount": 0
+      }
+    },
+    "A2": {
+      "policy": "legacy",
+      "runId": "aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T192740772Z-0263538b-baee-4e08-8668-eed92fd2cd6d",
+      "evidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-shared-runtime-diagnostic-v3-20260920T192740772Z-0263538b-baee-4e08-8668-eed92fd2cd6d_SHARED_RUNTIME_DIAGNOSTIC_EVIDENCE.json",
+      "evidenceSha256": "962252C6744BA03F4F75BE04532BC8F1DBBEB6DF3CC44D73D63C471391D52C4A",
+      "status": "COMPLETE",
+      "runnerAggregateObservationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3",
+      "sampler": {
+        "status": "PASS",
+        "sampleCount": 743,
+        "sampleErrorCount": 0,
+        "lockWaitSampleCount": 0,
+        "blockedActivitySampleCount": 0,
+        "maxBlockerCount": 0
+      }
+    }
+  },
+  "selectedJ1DiagnosticMetrics": {
+    "A1": [
+      {
+        "repetition": 1,
+        "validSample": true,
+        "functionalOutcome": "SUCCESS",
+        "dispatchToReadyMs": 596,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 2270,
+        "dashboardShellCommits": 2269,
+        "authenticatedShellCommits": 2270,
+        "aiyaStateProviderCommits": 19,
+        "dashboardContentCommits": 19,
+        "phase52EventCount": 6880,
+        "policyMarker": "legacy"
+      },
+      {
+        "repetition": 2,
+        "validSample": true,
+        "functionalOutcome": "SUCCESS",
+        "dispatchToReadyMs": 483,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 2187,
+        "dashboardShellCommits": 2186,
+        "authenticatedShellCommits": 2187,
+        "aiyaStateProviderCommits": 18,
+        "dashboardContentCommits": 18,
+        "phase52EventCount": 6627,
+        "policyMarker": "legacy"
+      },
+      {
+        "repetition": 3,
+        "validSample": true,
+        "functionalOutcome": "SUCCESS",
+        "dispatchToReadyMs": 637,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 2216,
+        "dashboardShellCommits": 2215,
+        "authenticatedShellCommits": 2216,
+        "aiyaStateProviderCommits": 19,
+        "dashboardContentCommits": 19,
+        "phase52EventCount": 6718,
+        "policyMarker": "legacy"
+      }
+    ],
+    "B": [
+      {
+        "repetition": 1,
+        "validSample": false,
+        "status": "INVALID",
+        "functionalOutcome": "FAILURE",
+        "failureBoundary": {
+          "phase": "required_read",
+          "actionId": "first",
+          "reason": "required_read_incomplete_or_non_2xx",
+          "pattern": "/api/clients/:clientId/forms"
+        },
+        "dispatchToReadyMs": 383,
+        "requestCount": 57,
+        "apiRequestCount": 28,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 37,
+        "dashboardShellCommits": 36,
+        "authenticatedShellCommits": 37,
+        "aiyaStateProviderCommits": 28,
+        "dashboardContentCommits": 28,
+        "phase52EventCount": 201,
+        "policyMarker": "stable"
+      },
+      {
+        "repetition": 2,
+        "validSample": true,
+        "status": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "dispatchToReadyMs": 404,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 34,
+        "dashboardShellCommits": 33,
+        "authenticatedShellCommits": 34,
+        "aiyaStateProviderCommits": 26,
+        "dashboardContentCommits": 26,
+        "phase52EventCount": 186,
+        "policyMarker": "stable"
+      },
+      {
+        "repetition": 3,
+        "validSample": true,
+        "status": "VALID",
+        "functionalOutcome": "SUCCESS",
+        "dispatchToReadyMs": 922,
+        "requestCount": 56,
+        "apiRequestCount": 27,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 37,
+        "dashboardShellCommits": 36,
+        "authenticatedShellCommits": 37,
+        "aiyaStateProviderCommits": 28,
+        "dashboardContentCommits": 28,
+        "phase52EventCount": 203,
+        "policyMarker": "stable"
+      }
+    ],
+    "A2": [
+      {
+        "repetition": 1,
+        "validSample": true,
+        "functionalOutcome": "SUCCESS",
+        "dispatchToReadyMs": 507,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 2082,
+        "dashboardShellCommits": 2081,
+        "authenticatedShellCommits": 2082,
+        "aiyaStateProviderCommits": 18,
+        "dashboardContentCommits": 18,
+        "phase52EventCount": 6312,
+        "policyMarker": "legacy"
+      },
+      {
+        "repetition": 2,
+        "validSample": true,
+        "functionalOutcome": "SUCCESS",
+        "dispatchToReadyMs": 582,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 2081,
+        "dashboardShellCommits": 2080,
+        "authenticatedShellCommits": 2081,
+        "aiyaStateProviderCommits": 18,
+        "dashboardContentCommits": 18,
+        "phase52EventCount": 6309,
+        "policyMarker": "legacy"
+      },
+      {
+        "repetition": 3,
+        "validSample": true,
+        "functionalOutcome": "SUCCESS",
+        "dispatchToReadyMs": 488,
+        "requestCount": 53,
+        "apiRequestCount": 24,
+        "documentRequestCount": 3,
+        "shellProviderCommits": 1892,
+        "dashboardShellCommits": 1891,
+        "authenticatedShellCommits": 1892,
+        "aiyaStateProviderCommits": 18,
+        "dashboardContentCommits": 18,
+        "phase52EventCount": 5744,
+        "policyMarker": "legacy"
+      }
+    ]
+  },
+  "measuredEffect": {
+    "commitOwnership": {
+      "status": "REPEATABLE_LARGE_REDUCTION_OBSERVED",
+      "shellProviderCommitsA1": [2270, 2187, 2216],
+      "shellProviderCommitsB": [37, 34, 37],
+      "shellProviderCommitsA2": [2082, 2081, 1892],
+      "dashboardShellCommitsA1": [2269, 2186, 2215],
+      "dashboardShellCommitsB": [36, 33, 36],
+      "dashboardShellCommitsA2": [2081, 2080, 1891],
+      "interpretation": "The legacy-to-stable-to-legacy pattern repeatedly removes the observed shell-provider and dashboard-shell commit storm while the policy is stable, then restores it under legacy. This is strong evidence of a contributing client-side render-loop mechanism, but B has only two valid successful J1 repetitions and therefore does not meet the three-valid-record rule for exact root-cause confirmation."
+    },
+    "diagnosticEventVolume": {
+      "legacyA1": [6880, 6627, 6718],
+      "stableB": [201, 186, 203],
+      "legacyA2": [6312, 6309, 5744],
+      "interpretation": "The event-volume reversal matches the profiler reversal and is not explained by a changed source hash or a changed policy marker."
+    },
+    "requestFanout": {
+      "status": "NOT_INVARIANT_IN_INVALID_OR_NOISY_B_RECORDS; BASELINE_AND_A2_INVARIANT",
+      "A1": "53 total / 24 API / 3 document in all three valid repetitions",
+      "B": "57/28/3 in invalid repetition 1, 53/24/3 in valid repetition 2, 56/27/3 in valid repetition 3",
+      "A2": "53 total / 24 API / 3 document in all three valid repetitions",
+      "interpretation": "The accepted legacy traces preserve the 53/24/3 fan-out. The stable run has a required-read failure and noisy fan-out in two repetitions, so the candidate does not prove that request multiplication was removed."
+    },
+    "secondAction": {
+      "dispatchToReadyMsA1": [596, 483, 637],
+      "dispatchToReadyMsB": [383, 404, 922],
+      "dispatchToReadyMsA2": [507, 582, 488],
+      "direction": "NO_REPEATABLE_SPEED_IMPROVEMENT",
+      "interpretation": "Commit ownership changes sharply, but the user-visible second-action timing does not improve repeatably; the stable run includes a 922 ms valid repetition and A2 returns to 488-582 ms."
+    },
+    "contextOwnership": {
+      "status": "CONTEXT_EVENTS_DO_NOT_ACCOUNT_FOR_THE_COMMIT_STORM",
+      "interpretation": "The existing context-state markers remain sparse relative to the thousands of shell-provider commits; the dominant observed boundary is repeated shell subtree commit work, not a proportional number of provider state transitions."
+    }
+  },
+  "validity": {
+    "A1": {
+      "runnerAggregateObservationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3"
+    },
+    "B": {
+      "runnerAggregateObservationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "2/3",
+      "status": "BLOCKED_FOR_EXACT_CAUSAL_COUNT",
+      "reason": "Diagnostic J1 repetition 1 failed the required forms read despite observationValidity being recorded as VALID; this is a validity-contract inconsistency and is not counted as a successful causal sample."
+    },
+    "A2": {
+      "runnerAggregateObservationValid": "12/12",
+      "selectedJ1DiagnosticValidAndSuccessful": "3/3"
+    },
+    "functionalOutcome": "A1 and A2 selected J1 observations succeeded. B selected J1 repetition 1 failed the required first read; B repetitions 2 and 3 succeeded.",
+    "performanceOutcome": "The runner marks the individual trace performance boundary NOT_EVALUABLE by its official acceptance contract; this evidence reports raw diagnostic timings and commit ownership without converting them into official samples.",
+    "samplerInterpretation": "All three samplers completed with zero sampler errors and zero observed lock-wait samples; this does not prove database lock absence outside the sampling windows."
+  },
+  "conclusion": {
+    "candidateStatus": "SHELL_DIRTY_REGISTRATION_STABLE_POLICY_REDUCES_COMMIT_STORM_WITH_VALIDITY_GAP",
+    "commitStormReductionObserved": true,
+    "contributingMechanismLikely": true,
+    "exactRootCauseConfirmed": false,
+    "globalSharedRuntimeCauseConfirmed": false,
+    "globalFreezeRootCauseConfirmed": false,
+    "requestFanoutCauseResolved": false,
+    "performanceProblemSolved": false,
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "productionDecision": "NO-GO",
+    "nextDiagnosticBoundary": "Treat the dirty-registration loop as a high-confidence contributing mechanism requiring a validity-repair or repeat confirmation, then separately localize the remaining request fan-out and server/RSC cost."
+  },
+  "explicitNonClaims": [
+    "The stable policy is not an approved production fix and is not enabled by default.",
+    "The observed commit reduction does not prove that auth/tenant resolution or request fan-out is irrelevant; those costs remain present in the same traces.",
+    "The B validity inconsistency prevents exact root-cause confirmation under the three-valid-record rule.",
+    "The second-action speed result is not a repeatable improvement and the performance problem remains unresolved.",
+    "Zero observed database lock waits in these samplers does not establish global lock absence.",
+    "This diagnostic continuation is not an official nine-scenario acceptance run and does not reopen Plan 1 closure or authorize Plan 2."
+  ],
+  "redaction": {
+    "status": "PASS",
+    "scope": "This record contains hashes, run identifiers, synthetic route metrics, bounded timing summaries, and profiler counts only; no credentials, tokens, cookies, raw response bodies, raw prompts, or health data are included.",
+    "rawPayloadsIncluded": false
+  },
+  "closure": {
+    "status": "COMPLETE",
+    "outcome": "DIRTY_REGISTRATION_COMMIT_STORM_REDUCTION_OBSERVED_VALIDITY_GAP_GLOBAL_FREEZE_UNRESOLVED",
+    "runtimeState": "A2 legacy baseline completed; stable was process-scoped only. The candidate remains gated and unaccepted in the dirty checkout.",
+    "acceptedProductionFix": false,
+    "performanceProblemSolved": false,
+    "remainingWork": [
+      "Reconcile the B required-read validity inconsistency before using this candidate for exact causal closure.",
+      "Keep the dirty-registration result as a high-confidence contributing mechanism, not as the sole global root cause.",
+      "Continue with separately bounded request fan-out and auth/RSC cost localization under the same non-production contract.",
+      "Keep Plan 1 closure, Plan 2 eligibility, and production NO-GO unchanged."
+    ],
+    "nextAction": "Reconcile this evidence into the handoff, next-phase plan, risk register, and finding manifest, then define the smallest validity-repair or confirmation run before any implementation change."
+  }
+}

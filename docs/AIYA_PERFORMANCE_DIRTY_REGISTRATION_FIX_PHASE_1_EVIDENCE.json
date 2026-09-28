@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "aiya-performance-dirty-registration-fix-phase-1-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": 1,
+  "phaseName": "default-stable-dirty-registration-and-measurement-readiness",
+  "runId": "aiya-performance-dirty-registration-fix-phase-1-20260922",
+  "generatedAt": "2026-09-22",
+  "status": "COMPLETE",
+  "productionDecision": "NO-GO",
+  "officialPlan1Status": "COMPLETE / DIAGNOSIS_BLOCKED",
+  "scope": {
+    "runtimeChange": "Default dirty registration now uses stable callback refs unless the explicit policy is exactly legacy.",
+    "testChange": "Added focused lifecycle, callback freshness, and optional-capability tests.",
+    "measurementChange": "Persisted request-summary wall origin; align browser performance timestamps to trace time only when paired clocks are sufficiently close.",
+    "runnerChange": "Added a separate stable-default, three-unit J1 diagnostic runner; legacy fan-out behavior remains unchanged.",
+    "measurementStarted": false,
+    "buildStarted": false,
+    "databaseMutationStarted": false,
+    "officialSampleCount": 0
+  },
+  "sourceIdentity": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a",
+    "worktreeWasAlreadyDirty": true,
+    "userChangesPreserved": true,
+    "files": [
+      { "path": "app/src/lib/use-shell-dirty-registration.ts", "sha256": "486BC337FAB9D21AE36A8C3296380ACFF5C3DCEC4767FB54471529D7AF9FD998" },
+      { "path": "app/src/lib/use-shell-dirty-registration.test.ts", "sha256": "52CA5AD4CA20A66068E632E0CB362EA424390EC92BC19D76EC84174C4CFA48D8" },
+      { "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs", "sha256": "A25A530846BF1C28A870AC135710FFDA83EAE41FDF51DE6387A5EDDE8D31F189" },
+      { "path": "app/scripts/performance-plan-1-shared-runtime-auth-fanout-commit-overlap.mjs", "sha256": "7E6ECD4CCBD35574C68F75F30394BA701368EFF1BA25708EB73AAD3A7D7EAF12" },
+      { "path": "app/scripts/performance-plan-1-shared-runtime-auth-fanout-commit-overlap.test.mjs", "sha256": "B380464BDAD369EEC273055B41A6782C78973CAE2AFB0F86AA26D22C75D16D96" },
+      { "path": "app/scripts/performance-plan-1-j1-second-action-timeline-analysis.mjs", "sha256": "E2A9F3C4FA2B1054C61A99D5258FC8B3B0483A5AE83063A3AEA60DCE99389917" },
+      { "path": "app/scripts/performance-plan-1-j1-second-action-timeline-analysis.test.mjs", "sha256": "A9FBB28C04D74121E5E257DDBB203FF50258880FBEAE429F716AB89FC4F8996C" },
+      { "path": "app/scripts/performance-plan-1-j1-fanout-envelope-baseline.mjs", "sha256": "7ACF04BCB6F85D25167B689B1572073FDB3A7EB877E6564D2940654EAD170043" },
+      { "path": "app/scripts/performance-plan-1-j1-dirty-registration-verification.mjs", "sha256": "3157B1B4899D70AE3938E77BF1D4AD13C0CE90C84AE30E9EABF194B51EED966E" },
+      { "path": "app/scripts/performance-plan-1-j1-dirty-registration-verification.test.mjs", "sha256": "5B6A7277068BA114971F4FA18EC779421C839051A30F54A9E8EB9AF34B4590EB" }
+    ],
+    "diffCheck": "PASS"
+  },
+  "verification": {
+    "vitest": { "files": 3, "passed": 13, "failed": 0 },
+    "nodeTest": { "files": 2, "passed": 8, "failed": 0 },
+    "typecheck": "PASS",
+    "focusedLint": { "errors": 0, "warnings": 1, "warning": "Existing unused hashText at app/scripts/performance-plan-1-shared-runtime-auth-fanout-commit-overlap.mjs:61" },
+    "nodeSyntaxChecks": "PASS",
+    "gitDiffCheck": "PASS",
+    "environment": {
+      "checkpointStatusBeforePhase2": "NO_EXISTING_RUN",
+      "credentialValuesRecorded": false,
+      "localSupabaseTarget": "127.0.0.1:54321"
+    },
+      "testRunnerCorrection": "A mixed Vitest/node:test invocation was rejected by the mismatched runner; both test families passed when invoked separately with their native runners."
+  },
+  "preflightBeforePhase2": {
+    "localSupabase": "PASS",
+    "target": "127.0.0.1:54321",
+    "syntheticFixtureReady": true,
+    "syntheticCredentialPresence": { "email": true, "password": true },
+    "credentialValuesRecorded": false,
+    "candidatePortsFree": [3167, 3168, 3169, 3170],
+    "existingPhaseRuns": 0,
+    "buildPolicyValueIsEmpty": true
+  },
+  "measurementClockCorrection": {
+    "previousClaimDisposition": "WITHDRAWN_PENDING_ALIGNED_REANALYSIS",
+    "claim": "The earlier statement that no long task overlapped the second-click interval is not supported because browser performance.now timestamps were compared to trace-relative action timestamps without a clock offset.",
+    "newMethod": "Require at least two paired wall/performance samples with spread at most 5 ms; otherwise emit unavailable/uncertain and do not state that no task overlapped.",
+    "historicalEvidenceChanged": false
+  },
+  "limitations": [
+    "No build, browser measurement, smoke, or database mutation has run in this phase.",
+    "The default policy change is not yet validated in a runtime capture.",
+    "No speed conclusion or causal root cause is established.",
+    "Plan 2 eligibility and official finding dispositions are unchanged."
+  ],
+  "redaction": {
+    "status": "PASS",
+    "credentials": false,
+    "cookiesOrTokens": false,
+    "requestBodies": false,
+    "healthData": false,
+    "rawClientIdentifiers": false
+  },
+  "nextAction": "Run Phase 2 once: one run-scoped diagnostic build, exactly three planned local real-auth J1 attempts at the existing 2,000 ms second-action timing, then the one-mutation dirty-navigation smoke only if all three samples meet eligibility."
+}

@@ -1,0 +1,108 @@
+{
+  "evidenceId": "aiya-performance-plan1-j1-preference-intent-abort-matched-analysis-20260921T124727Z-9c4e2b71-6a8d-4f53-b102-7e9c3d5a8f24",
+  "generatedAt": "2026-09-21T12:47:27.205Z",
+  "planRevision": "plan1-final-v3",
+  "stage": "shared-runtime-j1-preference-intent-abort-matched-analysis",
+  "status": "COMPLETE",
+  "outcome": "MATCHED_CAPTURE_VALID_ABORT_NOT_REPRODUCED",
+  "sourceIdentity": {
+    "cwd": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "head": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "branch": "codex/production-readiness-stage-1",
+    "measurementRunId": "aiya-performance-plan1-j1-preference-intent-abort-matched-v1-20260921T124313022Z-ccf40f62-de85-4c5f-8b1b-2fec306e04b3",
+    "measurementEvidencePath": "docs/AIYA_PERFORMANCE_PLAN_1_V3_aiya-performance-plan1-j1-preference-intent-abort-matched-v1-20260921T124313022Z-ccf40f-8b1b-2fec306e04b3_EVIDENCE.json",
+    "measurementEvidenceSha256": "7A8221FA03912A76EA7D16D0DAB0DBBFCE05BADF0432149AA5B0F2A224381C1D",
+    "measurementRunnerPath": "app/scripts/performance-plan-1-j1-preference-intent-abort-matched.mjs",
+    "measurementRunnerSha256": "b9c5570f8fa33484d00d8bbb2423f121c69316e03ca6a971cbd98cae4d34d7f0",
+    "traceVariant": "preference_intent_timing_and_completion",
+    "executionMode": "diagnostic",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "officialMeasurement": false,
+    "localSupabase": "127.0.0.1:54321"
+  },
+  "matchedCaptureContract": {
+    "sameSamplePreferenceTimingAndLifecycle": true,
+    "diagnosticMode": true,
+    "repetitions": 3,
+    "runtimeBehaviorChanged": false,
+    "officialBaselinePromotion": false,
+    "noRetryPromotion": true,
+    "capturedOnlyAllowlistedPreferenceIntent": true,
+    "rawPreferenceValuesRecorded": false,
+    "rawPreferenceBodiesRecorded": false
+  },
+  "observations": {
+    "attempted": 3,
+    "observationValid": "3/3",
+    "validFunctionalSamples": "3/3",
+    "functionalSuccess": "3/3",
+    "preferencePatchCount": 3,
+    "intentClassCounts": {
+      "active_client": 3,
+      "last_destination": 0,
+      "active_client_and_last_destination": 0,
+      "unclassified": 0
+    },
+    "preferenceHttp200BodySettled": "3/3",
+    "routeTransitionAtOrBeforePreferenceSettled": "1/3",
+    "stage6CleanupBeforePreferenceSettled": "0/3",
+    "stage6CleanupAfterPreferenceSettled": "3/3",
+    "firstCleanupAfterSettledDeltaMs": [
+      39,
+      24,
+      53
+    ],
+    "formsRequiredRequestHttp200": "3/3",
+    "formsAbortAfterPreferenceRequest": "0/3"
+  },
+  "sampleTiming": [
+    {
+      "unitKey": "diagnostic:J1:r1",
+      "preferenceIntent": "active_client",
+      "preferenceSettledAtMs": 773,
+      "firstStage6CleanupAtMs": 812,
+      "cleanupAfterSettledDeltaMs": 39,
+      "formsOutcome": "completed_200_no_abort"
+    },
+    {
+      "unitKey": "diagnostic:J1:r2",
+      "preferenceIntent": "active_client",
+      "preferenceSettledAtMs": 780,
+      "firstStage6CleanupAtMs": 804,
+      "cleanupAfterSettledDeltaMs": 24,
+      "formsOutcome": "completed_200_no_abort"
+    },
+    {
+      "unitKey": "diagnostic:J1:r3",
+      "preferenceIntent": "active_client",
+      "preferenceSettledAtMs": 1253,
+      "firstStage6CleanupAtMs": 1306,
+      "cleanupAfterSettledDeltaMs": 53,
+      "formsOutcome": "completed_200_no_abort"
+    }
+  ],
+  "interpretation": {
+    "captureBoundary": "The same diagnostic J1 trace captured allowlisted preference intent timing, Stage 6 cleanup lifecycle, and Forms request completion for all three valid samples.",
+    "abortReproduction": "The historical abort-producing boundary was not reproduced in this three-sample diagnostic run; all required Forms requests completed with HTTP 200.",
+    "normalOrdering": "All three samples retained preference settlement before the first Stage 6 cleanup, with a 24-53 ms gap.",
+    "causalAssessment": "The run confirms measurement coverage, not a preference-to-abort cause. A non-abort diagnostic run cannot disprove the historical abort mechanism or establish that the global freeze is resolved.",
+    "candidateNarrowedFurther": false,
+    "globalFreezeResolved": false
+  },
+  "closure": {
+    "findingDispositionChanged": false,
+    "plan2EntryAuthorized": false,
+    "runtimeFixAccepted": false,
+    "runtimeInstrumentationDefaultEnabled": false,
+    "productionDecision": "NO-GO",
+    "nextAction": "Do not repeat the same preference-only or matched run without a new trigger hypothesis. The next eligible diagnostic is to isolate a reproducible route/state transition that produces the historical Forms abort, then use the same matched trace contract only under separate authorization."
+  },
+  "redaction": {
+    "rawPreferenceValues": false,
+    "rawRequestBodies": false,
+    "rawRequestUrls": false,
+    "credentials": false,
+    "healthData": false
+  }
+}
