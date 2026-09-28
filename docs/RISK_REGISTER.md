@@ -367,8 +367,8 @@ that the reported symptom is real in the user's hosted/device context; it does
 not identify browser, network, Next.js process, auth/session, store, or database
 as the cause. The local 2026-09-22/23 J1 non-reproductions are not contradictory
 because they used a different local build and environment. The hosted release
-is commit `1c9756046b01cb1bd224fb601ec9094a7f471606`, while local HEAD is
-`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a`. A quiet host snapshot outside a
+is commit `1c9756046b01cb1bd224fb601ec9094a7f471606`, while verified local
+HEAD is `a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`. A quiet host snapshot outside a
 freeze showed no pressure and cannot rule out transient load. The planned
 captures were attempted on 2026-09-24 and closed as `BLOCKED` under R-P5-037;
 resume only when the documented Chrome trace/control harness blocker is cleared.
@@ -404,6 +404,17 @@ inspection predicts a Stay/Discard dirty-draft dialog for a phone-only client
 draft; that could explain deferred navigation only if rendered and cannot
 explain typing or reload delay. No form was submitted; root cause and risk
 disposition remain unchanged.
+
+R-P5-038: The 2026-09-28 wait-state continuation is opened to identify what is
+waiting during the visible hosted stall, because prior hosted attempts did not
+persist an aligned browser trace and supplemental navigation-only observations
+cannot attribute cause. Phase 1 preserves the dirty main checkout and records
+the new action plan before any new capture. Correct current local HEAD is
+`a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`; the older
+`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a` value in historical/older text is
+not a valid Git object. Status: open, measurement-preparation. This does not
+change root-cause status, Plan 2 eligibility, runtime-fix acceptance, or
+production `NO-GO`.
 
 R-P5-011: The 2026-09-19 shared-runtime A-B-A continuation confirmed one
 repeatable contributing boundary. Passing the full `DashboardUrlState` object

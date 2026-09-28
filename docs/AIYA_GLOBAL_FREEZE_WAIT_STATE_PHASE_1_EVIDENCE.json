@@ -1,0 +1,67 @@
+{
+  "id": "aiya-global-freeze-wait-state-phase1-20260928T173404Z",
+  "createdAtLocal": "2026-09-28T17:34:04+03:00",
+  "status": "COMPLETE",
+  "phase": "Phase 1 - Preserve, Clean, And Record This Plan",
+  "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+  "branch": "codex/production-readiness-stage-1",
+  "verifiedStartingHead": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+  "remoteBranchHead": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+  "preservationArchive": "C:\\Users\\Dell\\AppData\\Local\\MANU-AI\\reconciliation\\aiya-worktree-preserve-20260928T173404",
+  "preservationCommit": "f7c29592",
+  "preservationCommitMessage": "chore: preserve current MANU-AI diagnostic work",
+  "preservationCounts": {
+    "trackedModified": 44,
+    "untrackedIncluded": 231,
+    "untrackedExcluded": 1374,
+    "excludedGeneratedNextDirty": 1372,
+    "excludedPersonalTmpPdf": 2,
+    "stagedAndCommitted": 275
+  },
+  "excludedPaths": [
+    "app/.next-dirty-*",
+    "tmp/pdfs/cv_render/*.png"
+  ],
+  "identityCorrection": {
+    "correctHead": "a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a",
+    "invalidHeadRecordedInSomeHistoricalOrActiveText": "a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a",
+    "invalidHeadGitObjectExists": false,
+    "policy": "Historical immutable evidence is not rewritten. Active handoff/planning text is corrected to the verified HEAD."
+  },
+  "scopeBoundaries": {
+    "runtimeCodeChangedByPhase1AfterPreservation": false,
+    "productionChanged": false,
+    "databaseChanged": false,
+    "secretsChanged": false,
+    "dependenciesChanged": false,
+    "pushOrPrCreated": false,
+    "generatedBuildOutputCommitted": false,
+    "personalTmpFilesCommitted": false
+  },
+  "closureChecks": {
+    "jsonParse": "PASS",
+    "gitDiffCheck": "PASS",
+    "gitStatusBeforeDocumentationCommit": [
+      "M HANDOFF_FOR_NEXT_CODEX.md",
+      "M app/.gitignore",
+      "M docs/AIYA_GLOBAL_FREEZE_ACTION_PLAN.md",
+      "M docs/NEXT_PHASE_EXECUTION_PLAN.md",
+      "M docs/RISK_REGISTER.md",
+      "?? docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+      "?? docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_1_EVIDENCE.json"
+    ],
+    "remainingUntrackedBeforeDocumentationCommit": [
+      "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+      "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_1_EVIDENCE.json"
+    ],
+    "postCommitStatusCheckRequired": false,
+    "postCommitStatus": "CLEAN",
+    "postCommitDiffCheck": "PASS",
+    "postCommitJsonParse": "PASS",
+    "ignoredArtifactVerification": [
+      "app/.gitignore: /.next-dirty-*/",
+      ".git/info/exclude: tmp/pdfs/cv_render/*.png"
+    ]
+  },
+  "nextPhase": "Phase 2 - prove the wait-state capture pipeline before hosted diagnosis"
+}

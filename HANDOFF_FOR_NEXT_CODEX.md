@@ -1,5 +1,37 @@
 # Handoff For Next Codex
 
+## Current Active Continuation - Wait-State Capture - 2026-09-28
+
+Active plan:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md`.
+
+The user asked to capture what is waiting at the moment of the hosted global UI
+stall. Phase 1 of that plan is currently being applied: preserve the dirty main
+checkout, exclude generated/personal local artifacts, add the plan/evidence to
+the tree, and reconcile active handoff text before any new runtime diagnosis.
+
+Verified main checkout: `C:\Users\Dell\OneDrive\Masaüstü\MANU-AI`, branch
+`codex/production-readiness-stage-1`, correct starting HEAD
+`a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`. The older value
+`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a` appears in some historical/older
+active text but is not a valid Git object. Do not use it as source identity.
+Historical immutable JSON evidence is not rewritten.
+
+Local preservation commit:
+`f7c29592 chore: preserve current MANU-AI diagnostic work`. This commit is a
+loss-prevention checkpoint only; it is not a verdict that the preserved changes
+are correct, complete, or performance-valid. The external preservation archive
+is
+`C:\Users\Dell\AppData\Local\MANU-AI\reconciliation\aiya-worktree-preserve-20260928T173404`.
+
+Do not repeat J1, the previous A-B-A experiments, the official acceptance
+matrix, or the old navigation-only supplemental observations. After Phase 1 is
+fully closed, the exact next task is Phase 2 of the wait-state plan: prove a
+small local trace/sanitizer pipeline that can distinguish input delivery,
+API/RSC wait, main-thread work, and visible loading-state persistence before
+attempting new hosted captures. Production remains `NO-GO`; no deploy,
+push/PR, migration, dependency, secret, or production write is authorized.
+
 ## Latest Supplemental Observation - 12-Click Hosted Navigation - 2026-09-28
 
 After the user signed in, 12 clicks were sent through the visible Dashboard
@@ -4468,8 +4500,9 @@ browser/server/database root-cause finding. The previous 2026-09-22/23 local J1
 records remain valid for their local scope but do not clear the hosted release.
 
 Current local checkout is `C:\Users\Dell\OneDrive\Masaüstü\MANU-AI`, branch
-`codex/production-readiness-stage-1`, HEAD
-`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a`, with an intentionally dirty tree.
+`codex/production-readiness-stage-1`, verified HEAD
+`a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`, with current dirty work preserved
+by local commit `f7c29592`.
 The live release endpoint reports `hs-1c9756046b01-b55ed4ff550f`, commit
 `1c9756046b01cb1bd224fb601ec9094a7f471606`. Do not compare local J1 timing to
 that release as if they were the same build. A one-time quiet host snapshot at

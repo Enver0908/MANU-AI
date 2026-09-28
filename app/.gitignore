@@ -18,6 +18,7 @@
 
 # next.js
 /.next/
+/.next-dirty-*/
 /.next-fanout-baseline-*/
 /.next-post-response-envelope-*/
 /out/

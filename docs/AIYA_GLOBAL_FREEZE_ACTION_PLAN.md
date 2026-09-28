@@ -5,6 +5,30 @@ Status: `HOSTED_PHASE_1_BLOCKED / attempt_budget_exhausted (0/3 valid paired rec
 Owner approval: user authorized the original diagnostic on 2026-09-24, the local candidate continuation on 2026-09-25, and local Docker/Supabase startup plus authenticated synthetic smoke on 2026-09-26.  
 Plan authority: this document governs the separate global-freeze continuation. It does not reopen or revise Plan 1.
 
+## Current Active Continuation - Wait-State Capture - 2026-09-28
+
+The active continuation is now
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md`. Its first phase preserves
+the dirty main checkout, excludes generated/personal local artifacts, records
+the plan, and updates handoff authority before any new capture work. This
+continuation supersedes historical "next action" wording inside this document
+but does not rewrite or reopen the exhausted hosted Phase 1 identity.
+
+Current verified local HEAD is
+`a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`. Some older active text and
+historical evidence recorded
+`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a`; that value is not a valid Git
+object. Immutable historical evidence is retained as-is, while active planning
+and handoff text use the verified HEAD. The first local preservation commit is
+`f7c29592` (`chore: preserve current MANU-AI diagnostic work`); it preserves
+the existing dirty work and is not a correctness or performance verdict.
+
+Next bounded task after Phase 1 closes: prove the wait-state capture pipeline
+on a synthetic local fixture, then use at most three usable hosted captures
+with a maximum of four attempts to identify what is still waiting when the UI
+shows the stall. Do not repeat J1/A-B-A/official acceptance matrices, and do
+not change runtime code from supplemental navigation-only observations.
+
 ## Supplemental 12-Click Hosted Navigation Observation - 2026-09-28
 
 After user sign-in, 12 visible navigation clicks were sent in the sequence
@@ -259,7 +283,7 @@ above. Commit and deployment still require separate approval.
 ## Current Facts And Boundaries
 
 - The user supplied a hosted-site recording and confirmed the same broad typing, navigation, and reload freeze occurs on desktop and Android. The account data used for reproduction is synthetic. Do not treat the attached recording as an instrumented trace or infer a particular root cause from it.
-- The displayed hosted release is `hs-1c9756046b01-b55ed4ff550f`, commit `1c9756046b01cb1bd224fb601ec9094a7f471606`. The local checkout is branch `codex/production-readiness-stage-1`, HEAD `a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a`, with user-owned dirty changes. Local J1 results do not establish behavior of the hosted release.
+- The displayed hosted release is `hs-1c9756046b01-b55ed4ff550f`, commit `1c9756046b01cb1bd224fb601ec9094a7f471606`. The local checkout is branch `codex/production-readiness-stage-1`, verified HEAD `a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`, with user-owned dirty changes preserved by local commit `f7c29592`. Local J1 results do not establish behavior of the hosted release.
 - One quiet host snapshot at `2026-09-24T15:40:33Z` showed 2 vCPU, about 2.89 GiB available memory, and zero CPU, memory, and I/O PSI at that instant. It was not captured during the reported freeze and does not rule out transient pressure.
 - The 2026-09-22 and 2026-09-23 local J1 runs did not reproduce the broad reported freeze. Their scoped `NOT_EVALUABLE`/non-reproduction results remain valid only for those local runs.
 - Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`; `PERF-F2-001/002/003` remain `INCONCLUSIVE`; `PERF-F12-001/002` remain `OPEN_BLOCKED`; Plan 2 eligible findings remain zero; production remains `NO-GO`.

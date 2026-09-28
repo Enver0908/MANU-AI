@@ -1,5 +1,34 @@
 # MANU-AI Next Phase Execution Plan
 
+## Current Active Execution Lock - Wait-State Capture Phase 1 - 2026-09-28
+
+Active plan:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md`.
+
+The current work is Phase 1 of the wait-state capture plan: preserve the dirty
+main checkout, make generated/personal local artifacts disappear from Git
+status without deleting them, add the plan and evidence to the tree, and update
+active handoff authority. Start no hosted capture until this phase is cleanly
+closed.
+
+Verified main checkout: `C:\Users\Dell\OneDrive\Masaüstü\MANU-AI`, branch
+`codex/production-readiness-stage-1`, correct starting HEAD
+`a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`. The older value
+`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a` is not a valid Git object and must
+not be used as active source identity. Historical immutable evidence is kept
+unchanged.
+
+Local preservation commit:
+`f7c29592 chore: preserve current MANU-AI diagnostic work`. It is only a
+preservation checkpoint. It does not approve, deploy, or validate the
+performance behavior of the preserved changes.
+
+After Phase 1 closes, proceed only to Phase 2 of the wait-state plan: prove the
+small local trace/sanitizer pipeline on a synthetic fixture. Do not repeat old
+J1, A-B-A, official acceptance, or navigation-only observations. Production
+remains `NO-GO`; no deploy, push/PR, migration, dependency, secret, or
+production write is authorized.
+
 ## Latest Supplemental Observation - 12-Click Hosted Navigation - 2026-09-28
 
 After the user signed in, 12 navigation clicks were sent in the sequence
@@ -227,7 +256,8 @@ route that waits after phone entry, but it is not a cause finding and does not
 explain typing or reload delay.
 
 The live release is commit `1c9756046b01cb1bd224fb601ec9094a7f471606`; local
-HEAD `a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a` is a separate dirty checkout.
+verified HEAD `a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a` is a separate
+checkout whose dirty work is preserved by local commit `f7c29592`.
 The Phase 1 collector/descriptor/focused tests are
 `app/scripts/performance-global-freeze-diagnostic.mjs`,
 `app/scripts/lib/aiya-global-freeze-phase.mjs`, and
