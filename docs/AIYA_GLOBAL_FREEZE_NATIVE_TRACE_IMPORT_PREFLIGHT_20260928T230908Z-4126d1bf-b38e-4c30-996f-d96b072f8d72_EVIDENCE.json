@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "aiya-global-freeze-native-trace-import-preflight-v1",
+  "evidenceId": "aiya-global-freeze-native-trace-import-preflight-20260928T230908Z-4126d1bf-b38e-4c30-996f-d96b072f8d72",
+  "startedAtUtc": "2026-09-28T23:09:08Z",
+  "recordedAtUtc": "2026-09-28T23:16:07Z",
+  "phase": "PHASE_3_NATIVE_TRACE_IMPORT_PREFLIGHT",
+  "status": "PASS",
+  "sourceIdentity": {
+    "localHead": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "branch": "codex/production-readiness-stage-1",
+    "workingTreeWasAlreadyDirty": true,
+    "hostedRelease": {
+      "observedAtUtc": "2026-09-28T23:08:36Z",
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "source": "https://aiyaworkspace.com/api/health/release"
+    }
+  },
+  "toolchain": {
+    "node": "v22.16.0",
+    "runner": "app/scripts/performance-global-freeze-diagnostic.mjs",
+    "runnerSha256": "0ec79716e6256732f08fead11dd36a5b14b86a7eaa5b20f6945e49adfd22e006",
+    "testFile": "app/scripts/performance-global-freeze-diagnostic.test.mjs",
+    "testFileSha256": "33b6324714326ac2bed3ddd950b7692d481457d84f5e7a8d87001a79e7c0b2e2"
+  },
+  "checks": {
+    "focusedNativeTests": {
+      "command": "node --test --test-name-pattern=native scripts/performance-global-freeze-diagnostic.test.mjs",
+      "finalStatus": "PASS",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    "fullDiagnosticTestFile": {
+      "command": "node --test scripts/performance-global-freeze-diagnostic.test.mjs",
+      "status": "PASS",
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0
+    },
+    "syntaxCheck": {
+      "command": "node --check scripts/performance-global-freeze-diagnostic.mjs && node --check scripts/performance-global-freeze-diagnostic.test.mjs",
+      "status": "PASS"
+    },
+    "targetedESLint": {
+      "command": "npx eslint scripts/performance-global-freeze-diagnostic.mjs scripts/performance-global-freeze-diagnostic.test.mjs",
+      "status": "NOT_COMPLETED",
+      "reason": "No output after about 45 seconds; the process was interrupted. No package installation or dependency change occurred."
+    },
+    "outputIgnoredByGit": true,
+    "inputTraceUnchanged": true,
+    "hashesRecomputedFromPersistedBytes": true,
+    "rawPathOrTraceFieldsInSanitizedOutput": false,
+    "realHostedTraceCaptured": false
+  },
+  "attempts": [
+    {
+      "kind": "local-preflight-test",
+      "sequence": 1,
+      "status": "FAIL",
+      "reasonCode": "missing_wait_state_named_import",
+      "detail": "Two native summary tests exposed the same missing summarizeWaitState import; no hosted session or external side effect occurred."
+    },
+    {
+      "kind": "local-preflight-repair",
+      "sequence": 1,
+      "status": "COMPLETE",
+      "scope": "Added the existing helper as a named ES module import."
+    },
+    {
+      "kind": "local-preflight-test",
+      "sequence": 2,
+      "status": "PASS",
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "kind": "full-diagnostic-test-file",
+      "sequence": 1,
+      "status": "PASS",
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "kind": "targeted-eslint",
+      "sequence": 1,
+      "status": "INTERRUPTED_NO_RESULT",
+      "detail": "The process remained responsive but emitted no output; it was interrupted without changing dependencies."
+    }
+  ],
+  "method": {
+    "cli": "node scripts/performance-global-freeze-diagnostic.mjs --inspect-native-trace <saved-trace-file>",
+    "rawTraceHandling": "Read-only input; raw source path/content are not persisted in summary; sanitized files are written under ignored app/.manu-runtime/native-traces/.",
+    "retainedInputMetadata": [
+      "Allowlisted input event type",
+      "Observed input dispatch trace timestamp and duration",
+      "Numeric input delay, event processing duration, and reported EventTiming duration",
+      "Per-trace remapped interaction correlation label"
+    ],
+    "explicitLimitations": [
+      "Missing input observations do not prove an expected action was not delivered.",
+      "Unfinished requests are only missing a finish event at the recorded trace end.",
+      "No app loading-state marker is available unless the trace contains the existing fixed markers.",
+      "Browser events, requests, and main-thread tasks share a trace timeline; temporal proximity alone does not prove causation.",
+      "No host process, database, or production cause is established."
+    ]
+  },
+  "attemptBudget": {
+    "legacySummaryOnlyHostedProbes": {
+      "used": 4,
+      "maximum": 4,
+      "status": "CLOSED"
+    },
+    "nativeHostedCaptures": {
+      "used": 0,
+      "maximum": 1,
+      "status": "PENDING_USER_PERFORMED_CAPTURE"
+    }
+  },
+  "closure": {
+    "localImporterPreflight": "PASS",
+    "phase3": "PENDING_ONE_NATIVE_EDGE_CAPTURE",
+    "phase4": "BLOCKED_PENDING_USABLE_PHASE3_RECORD",
+    "rootCause": "NOT_ESTABLISHED",
+    "production": "NO-GO",
+    "rawTraceIncluded": false,
+    "runtimeDatabaseDeploymentOrRemoteMutation": false,
+    "nextAction": "Record one Edge DevTools Performance runtime trace in the signed-in synthetic account, save it locally outside the repository, then provide only its local file path for the local sanitizer."
+  }
+}

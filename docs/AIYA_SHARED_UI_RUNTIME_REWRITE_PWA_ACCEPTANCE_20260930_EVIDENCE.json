@@ -1,0 +1,79 @@
+{
+  "evidenceId": "aiya-shared-ui-runtime-rewrite-pwa-acceptance-20260930",
+  "schemaVersion": "aiya-shared-ui-runtime-rewrite-pwa-acceptance-v1",
+  "createdAt": "2026-09-30T11:06:14.0995421Z",
+  "status": "COMPLETE",
+  "outcome": "CURRENT_HOSTED_RELEASE_INSTALLED_AND_ACCEPTED_IN_PHYSICAL_ANDROID_PWA",
+  "source": {
+    "checkout": "C:\\Users\\Dell\\OneDrive\\Masaustu\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "commitSha": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+    "commitSubject": "feat: integrate shared UI runtime rewrite",
+    "deliveryEvidencePath": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json",
+    "deliveryEvidenceSha256": "a40d41ffe0cdb21870ae3f5e2efd0e366e6c6771e40193ee65f44dba5cbd9c3b"
+  },
+  "hosted": {
+    "origin": "https://aiyaworkspace.com",
+    "healthPath": "/api/health/release",
+    "httpStatus": 200,
+    "status": "ok",
+    "releaseId": "hs-a72404711ecf-292fb7b24203",
+    "commitSha": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+    "migrationFingerprint": "292fb7b24203b805211094c24ee38760c990af9bf14ab5af2cf40cbc0e79635d"
+  },
+  "device": {
+    "surface": "physical-android-pwa",
+    "model": "SM-S721B",
+    "androidVersion": "16",
+    "chromeVersion": "152.0.7977.83",
+    "viewport": {
+      "width": 384,
+      "height": 751,
+      "devicePixelRatio": 2.8125
+    },
+    "deviceSerialRecorded": false
+  },
+  "installation": {
+    "previousPackage": "org.chromium.webapk.a7748b3f7b57f800f_v2",
+    "previousOrigin": "https://65-21-52-249.sslip.io",
+    "newPackage": "org.chromium.webapk.a834ce69eba8c6ca1_v2",
+    "newActivity": "org.chromium.webapk.shell_apk.h2o.H2OOpaqueMainActivity",
+    "installMenuAvailable": true,
+    "installConfirmationAccepted": true,
+    "installationChanged": true
+  },
+  "acceptance": {
+    "standaloneDisplayMode": true,
+    "serviceWorkerControlled": true,
+    "serviceWorkerScope": "https://aiyaworkspace.com/",
+    "manifest": {
+      "httpStatus": 200,
+      "name": "AIya",
+      "startUrl": "/dashboard",
+      "display": "standalone",
+      "scope": "/"
+    },
+    "releaseIdentityInPwa": "PASS",
+    "messagesRouteNavigation": "PASS",
+    "syntheticSearchInputRoundTrip": {
+      "status": "PASS",
+      "value": "qa-pwa",
+      "cleared": true,
+      "urlQueryObserved": "conversationQuery=qa-pwa"
+    },
+    "businessMutationPerformed": false,
+    "credentialEnteredOrSavedDuringAcceptance": false,
+    "clientHealthDataRead": false
+  },
+  "checkpoint": {
+    "phaseId": "aiya-shared-ui-delivery-pwa-acceptance-v1",
+    "runId": "aiya-shared-ui-delivery-pwa-acceptance-v1-20260930T110614Z-d2454dbc-4b30-400b-bbff-fcdaa8402b96",
+    "status": "COMPLETE"
+  },
+  "limitations": [
+    "The prior delivery evidence intentionally excluded the old-origin WebAPK; this record covers the new-origin PWA installation and acceptance separately.",
+    "Acceptance used an already authenticated browser session without entering or recording credentials.",
+    "The PWA acceptance validates integration, release identity, standalone rendering, service-worker control, navigation, and synthetic input handling; it does not prove the historical global-freeze root cause is resolved.",
+    "Production remains NO-GO and no production data, provider/channel traffic, billing, worker, migration, push, merge, or PR operation was performed."
+  ]
+}

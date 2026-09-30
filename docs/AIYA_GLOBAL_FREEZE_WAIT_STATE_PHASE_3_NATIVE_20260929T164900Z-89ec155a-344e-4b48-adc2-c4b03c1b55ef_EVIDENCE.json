@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "aiya-global-freeze-wait-state-phase-3-native-evidence-v1",
+  "evidenceId": "AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_NATIVE_20260929T164900Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef",
+  "createdAt": "2026-09-29T16:49:00.594Z",
+  "status": "COMPLETE_MAIN_THREAD_BUSY_BOUNDARY_OBSERVED",
+  "phase": "Phase 3 - Separately Authorized Native Edge Performance Capture",
+  "activePlan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "captureId": "aiya-edge-native-20260929T164900594Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef",
+  "budget": {
+    "legacySummaryOnlyAppProbeAttempts": "4/4 CLOSED",
+    "nativeEdgeCaptureAttempts": "1/1 USED",
+    "retryAuthorized": false
+  },
+  "sourceTrace": {
+    "storage": "outside_repository_user_saved_edge_performance_trace",
+    "filename": "manu-ai-freeze-trace.devtools.json.gz",
+    "compressedBytes": 20143760,
+    "decodedBytes": 246536227,
+    "originalEventCount": 880312,
+    "sha256": "abc276bbdd4e63762778c39a62c9e82c73cf5651ba583f850a0957cdae052ad5",
+    "rawTraceCommitted": false
+  },
+  "sanitizedArtifacts": {
+    "outputDirectory": "app/.manu-runtime/native-traces/aiya-edge-native-20260929T164900594Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef",
+    "redactedTrace": "trace.redacted.json",
+    "redactedTraceBytes": 135075706,
+    "redactedTraceSha256": "8e88c20bb92da28b2576951b6230de8ee0d5e47de15a843d302f8e1a77290785",
+    "summary": "capture-summary.json",
+    "summaryBytes": 20644,
+    "summarySha256": "73a2b2acb246a18743b8f043cc99ff4f9aca58bb05c26671eae8cb1d42d933b4",
+    "eventArgsRetained": false,
+    "screenshotsRetained": false,
+    "sourceContentRetained": false
+  },
+  "importerRepair": {
+    "initialFailures": [
+      "trace_event_limit_exceeded at 500000 event cap",
+      "Maximum call stack size exceeded during trace-window min/max calculation"
+    ],
+    "narrowRepairs": [
+      "Raised GLOBAL_FREEZE_MAX_TRACE_EVENTS to 1000000 for long native recordings while retaining fail-closed behavior above the cap.",
+      "Changed native summary trace-window calculation from spread Math.min/Math.max over all timestamps to an iterative min/max pass."
+    ],
+    "runtimeBehaviorChanged": false
+  },
+  "summary": {
+    "traceWindowMs": 140925.752,
+    "sanitizedEventCount": 802196,
+    "droppedEventCount": 78116,
+    "profileChunkCount": 342,
+    "input": {
+      "observedDispatchCount": 212,
+      "dispatchEventTypeCounts": {
+        "pointerdown": 39,
+        "mousedown": 39,
+        "pointerup": 38,
+        "click": 50,
+        "keydown": 12,
+        "beforeinput": 11,
+        "input": 11,
+        "keyup": 12
+      },
+      "slowEventTimingCount": 0,
+      "expectedActionDelivery": "UNAVAILABLE_WITHOUT_ACTION_MARKERS"
+    },
+    "network": {
+      "requestCount": 128,
+      "rscRequestCount": 34,
+      "unfinishedAtRecordedEndCount": 2,
+      "unfinishedAtRecordedEnd": [
+        {
+          "route": "/api/session/activity",
+          "method": "POST",
+          "state": "WAITING_FOR_HEADERS"
+        },
+        {
+          "route": "/api/session/activity",
+          "method": "POST",
+          "state": "WAITING_FOR_HEADERS"
+        }
+      ],
+      "longestCompletedRequests": [
+        {
+          "route": "/api/shell/bootstrap",
+          "method": "GET",
+          "status": 200,
+          "state": "FAILED",
+          "responseWaitMs": 1717.626,
+          "bodyAfterResponseMs": 2.273,
+          "totalMs": 1719.899
+        },
+        {
+          "route": "/api/app-state",
+          "method": "GET",
+          "status": 200,
+          "state": "COMPLETE",
+          "responseWaitMs": 1676.905,
+          "bodyAfterResponseMs": 35.87,
+          "totalMs": 1712.775
+        },
+        {
+          "route": "/api/alerts",
+          "method": "GET",
+          "status": 200,
+          "state": "COMPLETE",
+          "responseWaitMs": 1675.426,
+          "bodyAfterResponseMs": 35.872,
+          "totalMs": 1711.298
+        }
+      ]
+    },
+    "mainThread": {
+      "taskCount": 20241,
+      "longTaskCount": 31,
+      "observation": "LONG_TASKS_OBSERVED_DURING_RECORDING",
+      "longestLongTasks": [
+        {
+          "startMsFromTraceStart": 63911.486,
+          "durationMs": 34390.426,
+          "name": "RunTask"
+        },
+        {
+          "startMsFromTraceStart": 39918.186,
+          "durationMs": 12405.865,
+          "name": "RunTask"
+        },
+        {
+          "startMsFromTraceStart": 29933.886,
+          "durationMs": 9984.258,
+          "name": "RunTask"
+        },
+        {
+          "startMsFromTraceStart": 56183.673,
+          "durationMs": 7727.73,
+          "name": "RunTask"
+        },
+        {
+          "startMsFromTraceStart": 24403.756,
+          "durationMs": 5530.091,
+          "name": "RunTask"
+        }
+      ]
+    },
+    "profileAttribution": {
+      "status": "MINIFIED_NATIVE_PROFILE_LABELS_ONLY",
+      "totalSamples": 1432,
+      "totalNodes": 4772,
+      "notableSafeLabels": [
+        {
+          "label": "i2 /_next/static/chunks/app/dashboard/page-<hash>.js",
+          "samples": 36
+        },
+        {
+          "label": "<anonymous> /_next/static/chunks/4bd1b696-<hash>.js",
+          "samples": 34
+        },
+        {
+          "label": "rC /_next/static/chunks/4bd1b696-<hash>.js",
+          "samples": 25
+        },
+        {
+          "label": "l /_next/static/chunks/1555-<hash>.js",
+          "samples": 16
+        },
+        {
+          "label": "<anonymous> /_next/static/chunks/1674-<hash>.js",
+          "samples": 14
+        }
+      ]
+    },
+    "visibleState": {
+      "availability": "UNAVAILABLE_NO_APP_STATE_MARKERS"
+    },
+    "waitBoundaryConclusion": "CLIENT_RENDERER_MAIN_THREAD_BUSY_OBSERVED",
+    "causalityConclusion": "BOUNDARY_IDENTIFIED_ROOT_CAUSE_NOT_PROVEN"
+  },
+  "userObservation": {
+    "postRecordingReloadDelay": {
+      "reportedByUser": true,
+      "description": "After stopping the Performance recording, the user attempted a page reload; the page still did not reload for about two minutes, then the user closed it.",
+      "traceCoverage": "OUT_OF_TRACE_POST_RECORDING_OBSERVATION",
+      "evidenceUse": "supports symptom severity but is not timestamped trace evidence"
+    }
+  },
+  "verification": {
+    "commands": [
+      {
+        "command": "node --test scripts/performance-global-freeze-diagnostic.test.mjs",
+        "workingDirectory": "app",
+        "result": "PASS",
+        "tests": 27,
+        "failed": 0
+      },
+      {
+        "command": "node scripts/performance-global-freeze-diagnostic.mjs --inspect-native-trace <user-saved-trace>",
+        "workingDirectory": "app",
+        "result": "PASS"
+      }
+    ]
+  },
+  "limitations": [
+    "The recording lacks expected-action markers, so missing expected input cannot be inferred as not delivered.",
+    "App loading visibility is unavailable because the fixed app state markers were not present in this native trace.",
+    "The two unfinished requests were /api/session/activity POSTs missing headers at recorded trace end; this does not by itself prove causality.",
+    "No host process, database, Supabase RPC/RLS, or mobile-device timing was captured.",
+    "Native profile labels are minified chunk/function labels; Phase 4 must map the deployed dashboard bundle to source before proposing a runtime fix.",
+    "The user-reported reload delay occurred after the recording stopped and is not part of the trace timeline."
+  ],
+  "nextStep": "Proceed to Phase 4 attribution: map the deployed dashboard/page and shared chunks from hosted commit 1c9756046b01cb1bd224fb601ec9094a7f471606 to owner source, focusing on renderer main-thread long-task work rather than API/RSC wait as the first boundary."
+}

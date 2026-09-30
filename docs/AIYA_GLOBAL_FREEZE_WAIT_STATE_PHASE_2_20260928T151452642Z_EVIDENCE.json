@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "aiya-global-freeze-wait-state-phase2-evidence-v1",
+  "evidenceId": "aiya-global-freeze-wait-state-phase2-20260928T151452642Z-48a2651f-a89c-45c5-b141-7b16d7590c13",
+  "createdAtUtc": "2026-09-28T15:14:54.440Z",
+  "status": "COMPLETE",
+  "outcome": "CAPTURE_PREFLIGHT_PASSED",
+  "phase": "Phase 2 - Prove The Capture Pipeline Before Hosted Diagnosis",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "identity": {
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "commitSha": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "sourceFingerprint": "0cf742a333042cb9d2da8844a17ff91d4bd09bdcbafc79de852ebdd27e9ff0b4",
+    "sourceHashes": {
+      "app/scripts/performance-global-freeze-diagnostic.mjs": "33075d0e18b6b33ae7b235d0dbba43f45e3b3c2837a466c4e81d6394bb679c8a",
+      "app/scripts/performance-global-freeze-diagnostic.test.mjs": "05a8b9583d0f22c1a60a29c1f49492a26e47ea6fa84d72fcbe228463592c8ed6",
+      "app/scripts/performance-global-freeze-wait-state-preflight.mjs": "915753d6031f0b0b865dcf634ad0b4308cab6281a864fd12c80f534f5c954fa9",
+      "app/scripts/lib/aiya-global-freeze-phase.mjs": "4d0a721a5c4203a6c9b8b4d56defae153b6762385fe8bb7c60f62c05fb3dc8a4",
+      "app/scripts/lib/aiya-global-freeze-wait-state.mjs": "9edd0854140a54441ff569c87421f075bd282893f6892660fd11e8b2f276de72"
+    }
+  },
+  "environment": {
+    "scope": "LOCAL_SYNTHETIC_BROWSER_ONLY",
+    "browser": "Chromium 148.0.7778.96",
+    "playwright": "1.60.0",
+    "hostedCaptureAttempts": 0,
+    "productionAccountOrClientDataUsed": false,
+    "liveAppOrProviderUsed": false
+  },
+  "fixture": {
+    "version": "wait-state-local-browser-fixture-v1",
+    "fingerprint": "8b2bac5f126756152e4074a1d6e30cf46635764319078fd7b7884ad9a76c6484",
+    "expectedInputs": 12,
+    "requestedInputMarkers": 12,
+    "pressedInputMarkers": 12,
+    "releasedInputMarkers": 12,
+    "handlerAcknowledgements": 12,
+    "inputDelivery": "DELIVERED",
+    "targetGapMs": 350,
+    "measuredPressedGapsMs": [
+      200.404,
+      351.166,
+      349.008,
+      349.213,
+      350.172,
+      349.794,
+      349.905,
+      350.52,
+      353.528,
+      331.051,
+      364.942
+    ],
+    "medianPressedGapMs": 349.794,
+    "minimumPressedGapMs": 200.404,
+    "maximumPressedGapMs": 364.942
+  },
+  "waitState": {
+    "traceComplete": true,
+    "waitClassesObservedInCapture": [
+      "request_in_flight",
+      "response_body_not_complete",
+      "main_thread_busy",
+      "visible_loading_after_work"
+    ],
+    "inputNotDeliveredClassVerifiedByFocusedSyntheticTest": true,
+    "inputNotDeliveredObservedInCapture": false,
+    "inputTimingAvailable": true,
+    "visibleState": {
+      "loadingVisibleCount": 2,
+      "workCompleteCount": 1,
+      "contentReadyCount": 0,
+      "loadingAfterWork": true
+    },
+    "network": {
+      "requestCount": 6,
+      "rscRequestCount": 1,
+      "waitingForHeadersCount": 1,
+      "responseBodyOpenCount": 2,
+      "completeCount": 2,
+      "failedCount": 1,
+      "unavailableSignals": []
+    },
+    "mainThread": {
+      "status": "BUSY",
+      "basis": "heartbeat_gap",
+      "maximumHeartbeatGapMs": 236.404,
+      "busyThresholdMs": 150,
+      "rendererLongTaskEvents": 0
+    }
+  },
+  "artifacts": {
+    "rawTrace": {
+      "path": "C:\\Users\\Dell\\AppData\\Local\\MANU-AI\\wait-state-preflight\\aiya-global-freeze-wait-state-20260928T151452642Z-48a2651f-a89c-45c5-b141-7b16d7590c13\\browser-trace.json",
+      "bytes": 489760,
+      "sha256": "b25bbeca2d0d1850067fa1403335557acc1c9a94953b29e816f361eb7bb851b0",
+      "outsideRepository": true
+    },
+    "sanitizedTrace": {
+      "path": "C:\\Users\\Dell\\AppData\\Local\\MANU-AI\\wait-state-preflight\\aiya-global-freeze-wait-state-20260928T151452642Z-48a2651f-a89c-45c5-b141-7b16d7590c13\\browser-trace.redacted.json",
+      "sha256": "850e47ad9fa211d08a7c26c234889a31ed6dd973adfaf1788ff91e5ca97ab41f",
+      "eventCount": 1467,
+      "eventArgsRetained": false,
+      "forbiddenSentinelPresent": false,
+      "outsideRepository": true
+    },
+    "checkpoint": {
+      "phaseId": "aiya-global-freeze-wait-state",
+      "runId": "aiya-global-freeze-wait-state-20260928T151454440Z-e033fa34-d6e4-424a-8c6d-79a326b06da4",
+      "status": "COMPLETE",
+      "lastSequence": 6,
+      "lastEventSha256": "8da6dce774f8dbbb9ca8ca4187a4badd7f5582f4519f3424879164521872522b",
+      "path": "C:\\Users\\Dell\\AppData\\Local\\MANU-AI\\wait-state-preflight\\aiya-global-freeze-wait-state-20260928T151452642Z-48a2651f-a89c-45c5-b141-7b16d7590c13\\checkpoints"
+    }
+  },
+  "verification": {
+    "focusedCommand": "node --test scripts/performance-global-freeze-diagnostic.test.mjs",
+    "focusedTestsPassed": 23,
+    "focusedTestsFailed": 0,
+    "syntaxChecks": "PASS",
+    "traceHashAndParse": "PASS",
+    "redactionCheck": "PASS",
+    "checkpointHashChain": "PASS"
+  },
+  "limitations": [
+    "One measured input gap was 200.404 ms; the other ten were 331.051-364.942 ms. The median met the approximately 350 ms target, and the outlier is retained rather than normalized away.",
+    "The fixture's aborted notification request appeared as a generic failed network finish. The trace did not distinguish cancellation from another failure; the explicit cancellation classification path was verified with a focused synthetic trace test.",
+    "The main-thread busy classification came from a 236.404 ms heartbeat gap. No renderer RunTask event was present, so this is a heartbeat observation, not a task attribution.",
+    "This validates local trace persistence, sanitizer, classification, and checkpoint behavior only. It does not reproduce or explain the hosted application freeze."
+  ],
+  "nextPhase": "Phase 3 - Hosted wait-state capture, pending its stated preconditions",
+  "rawTraceOrSensitiveValuesEmbedded": false
+}

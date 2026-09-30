@@ -6,6 +6,26 @@ The canonical v3 section in `docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md`
 governs current execution. The overengineering review and documentation
 revision are complete; no runtime cause or performance acceptance is added.
 
+## Shared UI Runtime Rewrite Delivery - 2026-09-30
+
+R-SUI-001: The shared UI runtime rewrite is integrated and deployed to the
+hosted sandbox at release `hs-a72404711ecf-292fb7b24203`. Local authenticated
+validation, artifact identity, hosted smoke, desktop Chrome, physical Android
+Chrome, and current-origin Android PWA acceptance passed. The old Android
+WebAPK still targets an older test origin as a retained legacy package, but a
+new `aiyaworkspace.com` WebAPK was installed and verified standalone with an
+active service worker and matching release identity. This rollout is not proof
+of the historical global-freeze root cause and does not change Plan 1
+disposition or production `NO-GO`. Delivery evidence:
+`docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json`
+(SHA-256 `a40d41ffe0cdb21870ae3f5e2efd0e366e6c6771e40193ee65f44dba5cbd9c3b`).
+PWA evidence:
+`docs/AIYA_SHARED_UI_RUNTIME_REWRITE_PWA_ACCEPTANCE_20260930_EVIDENCE.json`
+(SHA-256 `5a8a3efd1d5a4b5b07b85ccb9a735ae76097a0adf98350bfadcaf6f26d0497bd`).
+Current-identity reconciliation:
+`docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_RECONCILIATION_20260930_EVIDENCE.json`
+(SHA-256 `2b524752598741efb8a6fc2b276cf43e399b0152ecb06262e529331f03c40a88`).
+
 R-P5-016: The 2026-09-20 first-three-stage shared-runtime localization
 reproduced a J1 second-action boundary at the required
 `/api/clients/:clientId/food-rule-profile` read and the following
@@ -405,16 +425,74 @@ draft; that could explain deferred navigation only if rendered and cannot
 explain typing or reload delay. No form was submitted; root cause and risk
 disposition remain unchanged.
 
-R-P5-038: The 2026-09-28 wait-state continuation is opened to identify what is
-waiting during the visible hosted stall, because prior hosted attempts did not
-persist an aligned browser trace and supplemental navigation-only observations
-cannot attribute cause. Phase 1 preserves the dirty main checkout and records
-the new action plan before any new capture. Correct current local HEAD is
-`a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`; the older
-`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a` value in historical/older text is
-not a valid Git object. Status: open, measurement-preparation. This does not
-change root-cause status, Plan 2 eligibility, runtime-fix acceptance, or
-production `NO-GO`.
+R-P5-038: The 2026-09-28 wait-state continuation is intended to identify what
+is waiting during the visible hosted stall; prior hosted attempts did not
+persist aligned browser and host evidence, and supplemental navigation-only
+observations cannot attribute cause. Phase 1 preservation and Phase 2 local
+synthetic capture-pipeline validation are complete. The legacy summary-only
+Phase 3 method is blocked after four app-probe attempts with zero usable
+wait-state records. The fourth attempt's supported key dispatch timed out
+after 10,263 ms; a later read showed the page visibly ready but did not
+establish input delivery or rule out a transient stall. The separately
+authorized native Edge Performance capture is now complete and identified a
+client renderer main-thread busy boundary: 31 long tasks in a 140,925.752 ms
+trace window, including 34,390.426 ms, 12,405.865 ms, 9,984.258 ms,
+7,727.730 ms, and 5,530.091 ms tasks. Network lifecycle was observed, with
+128 requests and 34 RSC requests; the longest completed requests were about
+1.72 seconds, and two `/api/session/activity` POSTs were waiting for headers
+at recorded trace end. App loading visibility and exact expected-action
+delivery remain unavailable because fixed app/expected-action markers were not
+present. The user-reported post-recording two-minute reload delay is retained
+as an out-of-trace symptom observation. Status: open; renderer busy boundary
+observed, but Phase 4 source attribution is `INCONCLUSIVE` and the exact source
+owner and root cause remain unresolved.
+No Plan 2 eligibility, runtime-fix acceptance, production readiness, or
+server/database causality is established. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RETRY_20260928T220632Z-6d30b7d9-52b4-43fb-8ed5-b1560d79db97_EVIDENCE.json`
+(SHA-256 `69ad0c4f284a2fcff8a78fa88e90e4469f7639d381bbd02acb6d4e2cec413f44`).
+Native importer preflight:
+`docs/AIYA_GLOBAL_FREEZE_NATIVE_TRACE_IMPORT_PREFLIGHT_20260928T230908Z-4126d1bf-b38e-4c30-996f-d96b072f8d72_EVIDENCE.json`.
+(SHA-256 `2cbedc226f6dfcaccce327b8cb3354f464cb4b0115df350b2f5642011caa9721`).
+Phase 4 re-read `/api/health/release` and matched the captured dashboard/shared
+assets to hosted commit `1c9756046b01cb1bd224fb601ec9094a7f471606`. A small
+share of minified frames belongs to the Next Web Vitals bundle imported by
+`ShellWebVitalsReporter`, but most long-task samples are browser-native or
+source-unmapped. At the Phase 4 checkpoint the profile stream had not yet been
+matched to `CrRendererMain`; Phase 5A later resolved that mapping. Production
+source maps return 404 and the production metric sink defaults to a no-op; this
+is a limited candidate, not an accepted runtime cause. No Plan 2
+eligibility, runtime-fix acceptance, production readiness, or server/database
+causality is established. Phase 4 evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_4_20260929T172111Z-6f39804f-bd5b-4550-a6cb-952e78c27290_EVIDENCE.json`.
+(SHA-256 `494905382624315325b61b35e86f8ed84cd8378497203b697c5d088d74b14482`).
+Native capture:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_NATIVE_20260929T164900Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef_EVIDENCE.json`.
+
+R-P5-039: The matched local Phase 5C A/B comparison is complete and observation
+valid, but the reporter-only causal gate failed. The hosted commit
+`1c9756046b01cb1bd224fb601ec9094a7f471606` was built twice against loopback
+`manu-ai-local` Supabase with the existing synthetic fixture. Both action
+sequences passed. Reporter frames `U/m` were present in A (`3/8`) and absent in
+B (`0/0`), confirming the toggle. A recorded 4 renderer-main tasks with a
+`268.588 ms` maximum and `444.023 ms` total >=50 ms task time; B recorded 6,
+`288.242 ms`, and `639.539 ms`. A did not reproduce the hosted >=500 ms task,
+and B did not reduce work. Status: open; local reporter-only trigger not
+supported, global freeze/root cause unresolved. Do not accept a runtime fix or
+infer server/database causality. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5C_AB_20260929T210246Z-453a0a97-7a60-4333-beb6-89e70381a585_EVIDENCE.json`
+(SHA-256 `CCB172D212ABE3BA9F694EA8A56C95C29FCF15F4DEB17CD709BF530EC43518A6`).
+
+R-P5-040: The existing valid B redacted profile was analyzed without a new
+capture. All six remaining >=50 ms renderer tasks mapped to the renderer profile,
+but no stable application file/function owner was found. The longest task had
+`0.8%` sampled source coverage and `285.948 ms` unknown time with visible
+automation/injected-DOM-query candidate frames; the other five were
+inline/external/source-unmapped or DOM-mixed. No `U/m` Web Vitals frames
+remained. Status: open; the reporter candidate is stopped, the residual local
+owner is unresolved, and a supported cross-device/interactive owner-boundary
+capture is required before further attribution. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5C_PROFILE_BOUNDARY_20260929T210701Z-d1ae04b6-888a-4cd1-975b-fa70731beeaa_EVIDENCE.json`
+(SHA-256 `E6730FB0DCD3830621EF9023F5B880A44E1BE911B861DB0888847B3DAA95DC5B`).
 
 R-P5-011: The 2026-09-19 shared-runtime A-B-A continuation confirmed one
 repeatable contributing boundary. Passing the full `DashboardUrlState` object
@@ -1307,7 +1385,7 @@ export have not been proved, and no freeze/cause layer was measured. Hosted
 Phase 1 remains blocked at 5/5 attempts and 0/3 valid paired records. No new
 measurement identity is authorized by this sub-gate.
 
-## Browser Export Bridge Policy Block - 2026-09-28
+## Browser Export Bridge Policy Block - 2026-09-28 (Historical Raw-Trace Gate)
 
 R-P5-036/R-P5-037 remain open. A tiny synthetic transfer test in a new blank
 Chrome tab was stopped when browser URL policy rejected the requested
@@ -1319,9 +1397,82 @@ no hosted app or production state was touched. Evidence:
 (SHA-256 `804AE205B5C9A2F82CFBC3D1BAAD8923976A56298F0ABDAC512498DFA0AAF39F`).
 
 The synthetic local-file sanitizer test remains passed, but actual browser
-trace export is now explicitly blocked by the available browser capability.
-Do not attempt an alternate browser route or raw CDP to bypass this restriction.
-Resume only if the platform exposes an approved trace-to-file capability;
-Phase 1 remains `BLOCKED / attempt_budget_exhausted` (5/5, 0/3). Cause and
-responsible layer remain unknown; Plan 1 closure, Plan 2 eligibility zero, and
-production `NO-GO` are unchanged.
+trace export was blocked by the available browser capability. At this
+checkpoint, do not attempt another browser route or raw CDP to transfer the
+trace. Resuming the raw-trace method required an approved trace-to-file
+capability; the later user-authorized summary-only method and its result are
+recorded separately below. Phase 1 remains `BLOCKED / attempt_budget_exhausted`
+(5/5, 0/3). Cause and responsible layer remain unknown; Plan 1 closure, Plan 2
+eligibility zero, and production `NO-GO` are unchanged.
+
+## AIya Wait-State Summary-Only Hosted Capture - 2026-09-28
+
+The user authorized a separate summary-only Phase 3 method; this removes raw
+trace export as a prerequisite for this new diagnostic only. It does not retry
+or bypass the earlier prohibited trace-transfer route. The signed-in synthetic
+account was user-attested, and no account identifiers or client content were
+retained. One attempt stopped as
+`BLOCKED / CONTROL_DISPATCH_UNRELIABLE`: browser keyboard and safe-navigation
+calls were unacknowledged after 4.064-4.275 seconds. Search input was reflected
+in a later accessibility state, but no exact input timing or 350 ms sequence
+was captured. Network/RSC and paired main-thread signals were unavailable; a
+single late loading-state sample is not a duration measurement. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_20260928T184152Z-bec31aba-6b26-445e-8acb-da26bdfcf1f7_EVIDENCE.json`
+(SHA-256 `04322131f78f3a11189335fe36e64cb6c400cee33ce49a7e182512f147fb5cbb`).
+The CUA JavaScript kernel was reset, but browser debugging-session detachment
+and temporary Network/Performance domain disablement were not confirmed.
+This is not proof of an application freeze or any wait boundary. R-P5-036,
+R-P5-037, and R-P5-038 remain open/unattributed; Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 eligible findings remain zero, and
+production remains `NO-GO`. Do not restart the old hosted Phase 1 identity,
+retry raw trace export, or repeat the same dispatch sequence automatically.
+
+Resume preflight on 2026-09-28: after the user requested continuation, the
+read-only CUA inventory returned zero apps/browsers and `USER_UNAVAILABLE`; no
+page interaction, account read, or trace operation occurred. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RESUME_20260928T194136Z-f31c568f-1d70-4873-bf5f-2b80e3e52013_EVIDENCE.json`
+(SHA-256 `b5340c485252aa7f60b5a97fca905dcdc975798f03fca0052f9fb1484e8f2fc7`).
+At that preflight, the blocker was browser-provider availability, not an
+application result.
+Resume summary-only capture after the signed-in browser is available to the
+supported CUA integration; raw trace transfer remains unnecessary.
+
+Latest retry on 2026-09-28: Edge became available and the hosted release
+identity was read. The first synthetic search-key action returned
+unacknowledged after 5,092 ms, although a later accessibility state reflected
+one input; the 12-action burst was stopped immediately. After 33,064 ms, one
+full snapshot showed no loading label, but no continuous loading duration was
+measured. The Network read was truncated, and request/RSC/response-body and
+paired main-thread signals remain unavailable. Monitoring disable calls were
+acknowledged, the temporary tab was closed, and the user-owned tab was
+verified restored. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RETRY_20260928T201314Z-4c8fe285-6af5-4ba3-b69e-4e6403dd801b_EVIDENCE.json`
+(SHA-256 `8f8db5e7e882aecfe49ea92a830f5a186aba0ebadba37b4f450a239e8605e22a`).
+The earlier `USER_UNAVAILABLE` preflight is historical. At this 2026-09-28
+checkpoint, the blocker was unreliable browser-action dispatch rather than
+provider availability. This measurement does not establish an application
+freeze or wait boundary; the 2026-09-29 control-page and app probe follows.
+R-P5-036/037/038 remain open and unattributed; Plan 1 remains
+`COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2 eligible findings remain zero, and
+production remains `NO-GO`.
+
+## AIya Control-Page and MANU-AI Probe - 2026-09-29
+
+A single click on a public purpose-built UI interaction demo completed in
+136.8 ms and produced the expected visible control. On MANU-AI, a navigation
+click timed out after 1,987 ms; a fresh clients route loaded in 1,577 ms and
+showed a ready baseline with one empty search control. Search focus then timed
+out after 1,918 ms, and a single synthetic key dispatch timed out after
+2,729 ms. The post-key state could not be read, so delivery is unknown. The
+12-input paced capture did not run. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_CONTROL_TEST_20260928T210737Z-bce5f92a-19d7-4ab0-9b36-c2d70c1fea48_EVIDENCE.json`
+(SHA-256 `39d1eebed4e3e06c306b29054c0d9fc8b24da28aa12478d322a4809f8bb285e9`).
+
+The result is consistent with MANU-AI-specific page interaction trouble, but
+it does not distinguish an application main-thread stall from the browser
+control path. It does not establish the reported desktop/phone freeze cause
+or a wait boundary. No client content, key value, or raw trace was retained;
+no form was submitted or record changed. The test and health tabs were closed;
+the remaining Edge tab is at `dashboard.clients`. R-P5-036/037/038 remain open
+and unattributed. Plan 1 remains `COMPLETE / DIAGNOSIS_BLOCKED`, Plan 2
+eligible findings remain zero, and production remains `NO-GO`.

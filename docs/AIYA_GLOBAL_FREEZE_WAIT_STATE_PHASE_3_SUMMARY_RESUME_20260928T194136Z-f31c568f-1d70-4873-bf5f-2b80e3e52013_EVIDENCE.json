@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "aiya-global-freeze-wait-state-phase-3-summary-resume-20260928T194136Z-f31c568f-1d70-4873-bf5f-2b80e3e52013",
+  "createdAtUtc": "2026-09-28T19:41:36Z",
+  "status": "BLOCKED",
+  "outcome": "SUMMARY_ONLY_BROWSER_CONTROL_UNAVAILABLE",
+  "phase": "Phase 3 - Hosted Wait-State Capture",
+  "method": "summary-only-cua-inventory-preflight-v1",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "parentEvidence": {
+    "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_20260928T184152Z-bec31aba-6b26-445e-8acb-da26bdfcf1f7_EVIDENCE.json",
+    "sha256": "04322131f78f3a11189335fe36e64cb6c400cee33ce49a7e182512f147fb5cbb"
+  },
+  "identity": {
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "localCommitSha": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "hostedReleaseObservedInThisPreflight": false,
+    "lastObservedHostedRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "observedAtUtc": "2026-09-28T18:40:58Z",
+      "source": "Parent summary-only Phase 3 evidence; not revalidated in this preflight"
+    }
+  },
+  "preflight": {
+    "surface": "CUA browser inventory",
+    "readOnly": true,
+    "availableAppCount": 0,
+    "availableBrowserCount": 0,
+    "providerErrorCategory": "USER_UNAVAILABLE",
+    "browserActionDispatched": false,
+    "pageOrAccountStateRead": false,
+    "rawTraceAccessedOrTransferred": false
+  },
+  "classification": {
+    "observationValidity": "NOT_STARTED",
+    "functionalResult": "NOT_TESTED",
+    "performanceOrCauseResult": "INCONCLUSIVE",
+    "waitBoundary": "UNAVAILABLE"
+  },
+  "privacy": {
+    "accountIdentifiersRead": false,
+    "clientContentReadOrRetained": false,
+    "typedValuesRetained": false,
+    "rawTracePersistedOrTransferred": false
+  },
+  "limitations": [
+    "The CUA inventory reported no available apps or browsers and a USER_UNAVAILABLE provider error; no browser interaction was attempted.",
+    "The hosted release identity in this record is only the last observation from the parent evidence and was not revalidated.",
+    "This is an access/control preflight blocker, not an application freeze, performance observation, or wait-boundary finding."
+  ],
+  "nextGate": "Make the signed-in Edge/browser available to the supported CUA browser integration, then resume the bounded summary-only Phase 3 capture. Raw trace export is not required and must not be attempted."
+}

@@ -1,0 +1,256 @@
+{
+  "schemaVersion": "aiya-global-freeze-wait-state-phase-5c-ab-v1",
+  "evidenceId": "aiya-global-freeze-wait-state-phase-5c-ab-20260929T210246Z-453a0a97-7a60-4333-beb6-89e70381a585",
+  "createdAt": "2026-09-29T21:02:46.147Z",
+  "phase": "5C",
+  "status": "COMPLETE",
+  "outcome": "INCONCLUSIVE_LOCAL_AB_NONREPRODUCTION_REPORTER_SOLE_TRIGGER_NOT_SUPPORTED",
+  "sourceIdentity": {
+    "mainCheckout": {
+      "root": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+      "branch": "codex/production-readiness-stage-1",
+      "head": "38e727e0190f42f30768e1e56366b58c48a41285",
+      "workingTree": "dirty_preserved"
+    },
+    "hostedCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "localReleaseHealthId": "hs-1c9756046b01-fe7df69e1df4",
+    "hostedWorktree": {
+      "root": "C:\\Users\\Dell\\.codex\\worktrees\\freeze-profile-analysis\\MANU-AI",
+      "head": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "state": "detached_dirty_experiment_only",
+      "conditionBFileSha256": "4AA3403BBA6C75976A78A01E1CB2223964B3AE6E311F6614BE9B5739A8C9C0EC"
+    },
+    "experimentRunner": {
+      "path": "app/.manu-runtime/run-freeze-reporter-condition.mjs",
+      "sha256": "EFA681192D88E1551F442CADE94AEDC7AB9E79963C65F453437B558B6368D4D8",
+      "scope": "temporary_local_diagnostic_runner_not_production_code"
+    }
+  },
+  "environment": {
+    "supabaseProject": "manu-ai-local",
+    "supabaseTarget": "loopback_only",
+    "supabaseApiOrigin": "http://127.0.0.1:54321",
+    "serviceUrlsLoopback": true,
+    "supabaseStatus": "PASS",
+    "migrationListLocal": {
+      "status": "PASS",
+      "rowCount": 126,
+      "latestMigration": "20260911070000",
+      "migrationApplied": false
+    },
+    "syntheticFixture": {
+      "evidence": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_3_EVIDENCE.json",
+      "fixtureClass": "normal_synthetic",
+      "authAccountCount": 8,
+      "clientCount": 50,
+      "messageCount": 220,
+      "realClientDataRead": false,
+      "credentialValuesRetained": false
+    },
+    "build": {
+      "conditionA": "PASS",
+      "conditionB": "PASS",
+      "dependencyInstall": "npm_ci_lockfile_only",
+      "runtimeProviders": "disabled",
+      "serviceWorkers": "blocked_for_local_trace_isolation"
+    },
+    "browser": {
+      "channel": "msedge",
+      "mode": "headless",
+      "viewport": "1440x900",
+      "locale": "tr-TR",
+      "timezone": "Europe/Istanbul",
+      "traceMethod": "CDP_devtools.timeline_plus_V8_CPU_profile"
+    }
+  },
+  "comparisonContract": {
+    "variable": "ShellWebVitalsReporter mounted in A versus bypassed only in B",
+    "conditionA": "NEXT_PUBLIC_AIYA_FREEZE_DISABLE_WEB_VITALS unset; reporter mounted",
+    "conditionB": "NEXT_PUBLIC_AIYA_FREEZE_DISABLE_WEB_VITALS=true; reporter bypassed",
+    "sameHostedCommit": true,
+    "sameSyntheticTarget": true,
+    "sameBrowserViewportAndActionSequence": true,
+    "actionSequence": [
+      "synthetic login",
+      "Dashboard to Clients navigation",
+      "focus client search",
+      "type s, y, n with 350 ms spacing without submit",
+      "reload once",
+      "observe for 60 seconds"
+    ],
+    "predeclaredSupportGate": {
+      "conditionARequiresRendererTaskAtLeastMs": 500,
+      "conditionBRequiresNoRendererTaskAtLeastMs": 250,
+      "conditionBTotalAtLeast50msMustBeAtMostFractionOfA": 0.5,
+      "inclusiveAndSelfTimeSeparated": true
+    }
+  },
+  "attempts": [
+    {
+      "label": "A-initial",
+      "status": "NOT_COUNTED",
+      "reason": "hidden_navigation_locator_timed_out; corrected visible locator used for valid A"
+    },
+    {
+      "label": "B-initial",
+      "status": "NOT_COUNTED",
+      "reason": "synthetic_login_preflight_stopped_before_valid_trace"
+    },
+    {
+      "label": "B-large-trace",
+      "status": "NOT_COUNTED_FOR_ANALYZER_ONLY",
+      "reason": "97.4 MB raw trace exceeded the existing 80 MB analyzer input limit; compression repair was applied and valid B was rerun",
+      "rawArtifactRetainedOutsideRepository": true
+    },
+    {
+      "label": "A-valid",
+      "status": "COUNTED",
+      "runId": "reporter-a-20260929T204707507Z",
+      "origin": "http://127.0.0.1:3136",
+      "releaseId": "hs-1c9756046b01-fe7df69e1df4",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "actions": {
+        "loginMs": 2667,
+        "dashboardToClientsMs": 1335,
+        "focusSearchMs": 34,
+        "typeSMs": 36,
+        "typeYMs": 24,
+        "typeNMs": 30,
+        "reloadMs": 433,
+        "allPassed": true
+      },
+      "traceWindowMs": 62971.132,
+      "mainThread": {
+        "longTaskCount": 4,
+        "longestTaskMs": 268.588,
+        "totalTaskMsAtLeast50": 444.023,
+        "taskCountAtLeast50": 4
+      },
+      "profile": {
+        "status": "RENDERER_PROFILE_MAPPED",
+        "sampleCount": 142583,
+        "rendererProfileChunkCount": 106,
+        "reporterChunkFrameCount": 243,
+        "reporterChunkObserved": true,
+        "webVitalsFunctionFrames": {
+          "U": 3,
+          "m": 8,
+          "hasUM": true
+        }
+      },
+      "rawTrace": {
+        "path": "C:\\Users\\Dell\\AppData\\Local\\MANU-AI\\freeze-profile-analysis\\reporter-a-20260929T204707507Z\\edge-local.trace.json",
+        "bytes": 41327898,
+        "sha256": "408CF1B3B738B70420BBACD134F368A8E06C33985DC69B624F0CFF1EC3E56AEF"
+      },
+      "sanitizedAnalysis": {
+        "captureId": "aiya-edge-native-20260929T204827302Z-d56c8423-e4b7-4137-bf3e-9c9e14e4cd33",
+        "analysisInputSha256": "87d36d5f61c77f5f68274ca720a86149e3fdb811979c7cc2a38fd24ff7cbd7fc",
+        "sanitizedArtifact": "C:\\Users\\Dell\\AppData\\Local\\Temp\\aiya-global-freeze-local-analysis\\aiya-edge-native-20260929T204827302Z-d56c8423-e4b7-4137-bf3e-9c9e14e4cd33\\trace.redacted.json",
+        "sanitizedTraceSha256": "AB53E79F0E79D1D00ACBD9A4EE035DF09D0E3A2D7471D216095DEF643944EB1E",
+        "summarySha256": "8D0719F7FB9F361C633C6886C6761883B7A7B6F29EE2A0EC4C1E39BFE04674E0"
+      }
+    },
+    {
+      "label": "B-valid",
+      "status": "COUNTED",
+      "runId": "reporter-b-20260929T205801191Z",
+      "origin": "http://127.0.0.1:3137",
+      "releaseId": "hs-1c9756046b01-fe7df69e1df4",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "actions": {
+        "loginMs": 3319,
+        "dashboardToClientsMs": 597,
+        "focusSearchMs": 53,
+        "typeSMs": 27,
+        "typeYMs": 23,
+        "typeNMs": 14,
+        "reloadMs": 328,
+        "allPassed": true
+      },
+      "traceWindowMs": 62129.998,
+      "mainThread": {
+        "longTaskCount": 6,
+        "longestTaskMs": 288.242,
+        "totalTaskMsAtLeast50": 639.539,
+        "taskCountAtLeast50": 6
+      },
+      "profile": {
+        "status": "RENDERER_PROFILE_MAPPED",
+        "sampleCount": 246066,
+        "rendererProfileChunkCount": 19,
+        "reporterChunkFrameCount": 34,
+        "reporterChunkObserved": true,
+        "webVitalsFunctionFrames": {
+          "U": 0,
+          "m": 0,
+          "hasUM": false
+        }
+      },
+      "rawTrace": {
+        "path": "C:\\Users\\Dell\\AppData\\Local\\MANU-AI\\freeze-profile-analysis\\reporter-b-20260929T205801191Z\\edge-local.trace.json.gz",
+        "bytes": 8036276,
+        "sha256": "751FEC019017B8A7A2EF71A54C80D8FCB5C7A765DF56D6922125D1FBD75FD001"
+      },
+      "sanitizedAnalysis": {
+        "captureId": "aiya-edge-native-20260929T205941816Z-2addc792-4b76-4ed1-a5d0-b7085d2aeba6",
+        "analysisInputSha256": "cda083d3fd748e652223e006887c48981372e4c831e350668b402394890c927c",
+        "sanitizedArtifact": "C:\\Users\\Dell\\AppData\\Local\\Temp\\aiya-global-freeze-local-analysis\\aiya-edge-native-20260929T205941816Z-2addc792-4b76-4ed1-a5d0-b7085d2aeba6\\trace.redacted.json",
+        "sanitizedTraceSha256": "22AE881DC1CC99619A47B0180EF20D2ACA8D12AC3FCE00C6E2EF1783FB292863",
+        "summarySha256": "20C4EB0A23D7AED9B754FD55F434F9FEEEAB4F80A5F0735EA2BCD3FB50CAD03A"
+      }
+    }
+  ],
+  "pairedResult": {
+    "observationValidity": "PASS",
+    "functionalOutcome": "LOCAL_ACTION_SEQUENCE_COMPLETED_BOTH",
+    "performanceOutcome": "INCONCLUSIVE_LOCAL_NONREPRODUCTION",
+    "reporterSignal": {
+      "conditionA": {
+        "numericChunk1555Observed": true,
+        "U": 3,
+        "m": 8,
+        "hasUM": true
+      },
+      "conditionB": {
+        "numericChunk1555Observed": true,
+        "U": 0,
+        "m": 0,
+        "hasUM": false
+      },
+      "interpretation": "Chunk 1555 is shared with other application code; U/m absence in B is the condition signal."
+    },
+    "thresholdEvaluation": {
+      "aReproducedRendererTaskAtLeast500Ms": false,
+      "bHasNoRendererTaskAtLeast250Ms": false,
+      "bTotalAtLeast50msIsAtLeast50PercentLower": false,
+      "predeclaredCandidateSupportGatePassed": false,
+      "reporterSupportedAsSoleTrigger": false
+    },
+    "comparison": {
+      "longestTaskMsDeltaBMinusA": 19.654,
+      "totalAtLeast50msDeltaBMinusA": 195.516,
+      "totalAtLeast50msRatioBToA": 1.4403259292,
+      "localReporterOnlyCausalSupport": "NOT_SUPPORTED"
+    }
+  },
+  "limitations": [
+    "The 34.390 second hosted main-thread task was not reproduced in either local condition.",
+    "A valid local non-reproduction does not disprove the system-wide desktop and phone symptom.",
+    "The automated headless Edge channel and loopback synthetic environment are not the user's interactive hosted environment.",
+    "Service workers were blocked for isolation; this does not model every PWA runtime condition.",
+    "The trace lacks the hosted expected-action and app-loading markers; action completion was established only by the bounded runner assertions.",
+    "The A/B result does not exclude the reporter as a contributor under another load, browser state, or timing condition.",
+    "No database, server, network, auth, or mobile causal claim is inferred from the client trace."
+  ],
+  "conclusion": "The matched local A/B experiment verified that the reporter path was enabled in A and bypassed in B, but the predeclared support gate failed: A did not reproduce a 500 ms renderer task and B did not reduce main-thread work. Therefore ShellWebVitalsReporter is not supported as the sole local freeze trigger. The global freeze remains unresolved and no runtime fix or official finding disposition changes.",
+  "decision": {
+    "phase5C": "COMPLETE / INCONCLUSIVE_LOCAL_NONREPRODUCTION / REPORTER_SOLE_TRIGGER_NOT_SUPPORTED",
+    "plan1": "COMPLETE / DIAGNOSIS_BLOCKED_UNCHANGED",
+    "plan2EligibleFindings": 0,
+    "production": "NO-GO_UNCHANGED",
+    "runtimeChangeAccepted": false,
+    "deployMigrationOrExternalProviderUsed": false,
+    "rawTracesOutsideRepository": true
+  }
+}

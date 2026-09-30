@@ -1,0 +1,74 @@
+{
+  "evidenceId": "aiya-shared-ui-runtime-rewrite-delivery-reconciliation-20260930",
+  "schemaVersion": "aiya-shared-ui-runtime-rewrite-delivery-reconciliation-v1",
+  "createdAt": "2026-09-30T11:10:00.000Z",
+  "status": "COMPLETE",
+  "outcome": "SIX_ITEM_SHARED_UI_RUNTIME_REWRITE_DELIVERY_RECONCILED_WITH_CURRENT_PWA_ACCEPTANCE",
+  "source": {
+    "checkout": "C:\\Users\\Dell\\OneDrive\\Masaustu\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "commitSha": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+    "commitSubject": "feat: integrate shared UI runtime rewrite",
+    "workingTreePolicy": "prior diagnostic and evidence changes preserved"
+  },
+  "hostedRelease": {
+    "origin": "https://aiyaworkspace.com",
+    "releaseId": "hs-a72404711ecf-292fb7b24203",
+    "commitSha": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+    "migrationFingerprint": "292fb7b24203b805211094c24ee38760c990af9bf14ab5af2cf40cbc0e79635d",
+    "healthStatus": "PASS"
+  },
+  "stages": {
+    "projectIntegration": {
+      "status": "PASS",
+      "sourceEvidence": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json"
+    },
+    "localAuthenticatedValidation": {
+      "status": "PASS",
+      "dockerSupabase": "http://127.0.0.1:54321",
+      "appOrigin": "http://127.0.0.1:3137",
+      "fallbackStore": false,
+      "sourceEvidence": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json"
+    },
+    "releaseIdentityAndArtifact": {
+      "status": "PASS",
+      "releaseId": "hs-a72404711ecf-292fb7b24203",
+      "sourceEvidence": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json"
+    },
+    "hostedDeploy": {
+      "status": "PASS",
+      "sourceEvidence": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json"
+    },
+    "realDeviceAcceptance": {
+      "status": "PASS",
+      "desktopChrome": "PASS",
+      "androidChrome": "PASS",
+      "androidPwa": "PASS",
+      "pwaEvidence": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_PWA_ACCEPTANCE_20260930_EVIDENCE.json"
+    },
+    "deliveryClosure": {
+      "status": "PASS",
+      "sourceEvidence": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json",
+      "pwaEvidence": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_PWA_ACCEPTANCE_20260930_EVIDENCE.json"
+    }
+  },
+  "evidenceRefs": {
+    "priorDeliveryEvidencePath": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json",
+    "priorDeliveryEvidenceSha256": "a40d41ffe0cdb21870ae3f5e2efd0e366e6c6771e40193ee65f44dba5cbd9c3b",
+    "pwaAcceptanceEvidencePath": "docs/AIYA_SHARED_UI_RUNTIME_REWRITE_PWA_ACCEPTANCE_20260930_EVIDENCE.json",
+    "pwaAcceptanceEvidenceSha256": "5a8a3efd1d5a4b5b07b85ccb9a735ae76097a0adf98350bfadcaf6f26d0497bd"
+  },
+  "checkpoint": {
+    "phaseId": "aiya-shared-ui-delivery-v1",
+    "runId": "aiya-shared-ui-delivery-v1-20260930T111000Z-454aa7d6-7b24-4ae4-9aec-75d59412b8be",
+    "status": "COMPLETE",
+    "supersedesForCurrentIdentity": "aiya-shared-ui-delivery-v1-20260930T093033914Z-d5b4c008-500e-4bf7-9fda-99e000ece6c2",
+    "historicalCheckpointModified": false
+  },
+  "limitations": [
+    "This reconciliation does not alter the historical delivery evidence or historical checkpoint; it binds the final closure to the current source identity and current-origin PWA evidence.",
+    "The legacy old-origin WebAPK remains installed but is not the current release target; the current-origin WebAPK is separately installed and accepted.",
+    "The rollout and device acceptance do not prove the historical global-freeze root cause is resolved.",
+    "Production remains NO-GO; no production data, provider/channel traffic, billing, worker, remote migration, push, merge, or PR operation was performed."
+  ]
+}

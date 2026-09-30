@@ -1,0 +1,186 @@
+{
+  "schemaVersion": "aiya-global-freeze-wait-state-phase-4-evidence-v1",
+  "evidenceId": "AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_4_20260929T172111Z-6f39804f-bd5b-4550-a6cb-952e78c27290",
+  "createdAt": "2026-09-29T17:21:11.509Z",
+  "phase": "Phase 4 - Attribution And Next Fix Gate",
+  "activePlan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "status": "INCONCLUSIVE",
+  "outcome": {
+    "observationValidity": "VALID_NATIVE_CAPTURE_AND_HOSTED_RELEASE_ASSET_IDENTITY_MATCHED",
+    "functionalOutcome": "EXPECTED_ACTION_DELIVERY_AND_APP_VISIBLE_STATE_UNAVAILABLE; USER_REPORTED_POST_CAPTURE_RELOAD_DELAY_IS_OUT_OF_TRACE",
+    "waitBoundary": "CLIENT_RENDERER_MAIN_THREAD_BUSY_OBSERVED_IN_PHASE_3",
+    "sourceAttribution": "INCONCLUSIVE_OWNER_FUNCTION_NOT_PROVEN",
+    "causality": "NOT_PROVEN",
+    "productionReadiness": "NO_GO",
+    "plan2EligibleFindingCount": 0
+  },
+  "sourceIdentity": {
+    "analysisCheckoutHead": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "analysisBranch": "codex/production-readiness-stage-1",
+    "hostedReleaseEndpoint": "https://aiyaworkspace.com/api/health/release",
+    "hostedReleaseCheckedAt": "2026-09-29T17:07:27.788Z",
+    "hostedReleaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "hostedCommitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "hostedAndTraceBundleIdentityMatch": true,
+    "analysisCheckoutIsHostedRelease": false
+  },
+  "traceEvidence": {
+    "phase3Evidence": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_NATIVE_20260929T164900Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef_EVIDENCE.json",
+    "phase3EvidenceSha256": "7af835bbbd3f36163a078aecc277806e09d9cff5ce5c9feb0da99e6fe9afe875",
+    "sourceTraceStorage": "outside_repository_user_saved_download",
+    "sourceTraceSha256": "abc276bbdd4e63762778c39a62c9e82c73cf5651ba583f850a0957cdae052ad5",
+    "sanitizedTraceSha256": "8e88c20bb92da28b2576951b6230de8ee0d5e47de15a843d302f8e1a77290785",
+    "captureSummaryPath": "app/.manu-runtime/native-traces/aiya-edge-native-20260929T164900594Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef/capture-summary.json",
+    "captureSummarySha256": "73a2b2acb246a18743b8f043cc99ff4f9aca58bb05c26671eae8cb1d42d933b4",
+    "traceWindowMs": 140925.752,
+    "rendererMainThreadLongTaskCount": 31,
+    "longestRendererTasksMs": [34390.426, 12405.865, 9984.258, 7727.73, 5530.091],
+    "networkRequestCount": 128,
+    "rscRequestCount": 34,
+    "longestCompletedRequestMs": 1719.899,
+    "unfinishedRequestsAtTraceEnd": 2
+  },
+  "hostedAssetInspection": {
+    "checkedAt": "2026-09-29T17:21:11.509Z",
+    "assets": [
+      {
+        "path": "/_next/static/chunks/1555-513e674b1ddece93.js",
+        "httpStatus": 200,
+        "bytes": 121458,
+        "sha256": "aa4113fcf869ce756fb907e575c9e3c0326721a4b295e6244e3c4c6b205fcfb3",
+        "sourceMapComment": false,
+        "sourceMapHttpStatus": 404
+      },
+      {
+        "path": "/_next/static/chunks/4bd1b696-8a4ab4fdf0ae305a.js",
+        "httpStatus": 200,
+        "bytes": 201060,
+        "sha256": "5cf2fcfae6b221476479e25b2883f9052b18a7eb97bd3d069f3cc44112852610",
+        "sourceMapComment": false,
+        "sourceMapHttpStatus": 404
+      },
+      {
+        "path": "/_next/static/chunks/app/dashboard/page-f3887b30ae8c1d02.js",
+        "httpStatus": 200,
+        "bytes": 318832,
+        "sha256": "5504a8b45b8aa0a7142ac3dd0def86a4bb027337953afd119f2e2ba6607b5809",
+        "sourceMapComment": false,
+        "sourceMapHttpStatus": 404
+      }
+    ],
+    "productionBrowserSourceMapsExplicitlyEnabledInHostedNextConfig": false
+  },
+  "hostedSourceHashesSha256": {
+    "app/src/components/dashboard/shell-web-vitals-reporter.tsx": "6cc076ffe5f2fec81e7c396eda65ee9fc2f044c39ea72e77288a93b129333ae1",
+    "app/src/components/dashboard/shell-provider.tsx": "07aaf5a429701f493d5bf53c23e4828f9fe2788c423b18a58ebea02421b4d4da",
+    "app/src/components/dashboard/authenticated-shell-boundary.tsx": "007d887d982316ccb1af4c907e56e5d3d2c66538f253a766b5a8eccf77f87792",
+    "app/src/lib/phase-85-stage-5-shell-metric-sink.ts": "e2e2dd83cc4c19ceedd86983af92effe4b09dd51d60fd3074af1386456ea1306",
+    "app/src/app/dashboard/page.tsx": "b679c53dc3b2545ea0d4da625a01d95f168262ccc868ff9e2658b8ffa07131c4",
+    "app/next.config.ts": "f266abfaeb05456c950c89767db39f9e2f83655085c41d86a99c43eb0ec4ae20"
+  },
+  "profileAnalysis": {
+    "performedOn": "user_saved_raw_trace_read_in_memory; no new raw trace artifact written",
+    "rawProfileChunkEventCount": 7566,
+    "profileSampleCountsByUnmappedStream": [512671, 234300],
+    "profileThreadNameMappingToCrRendererMain": "UNAVAILABLE",
+    "longTaskTimestampOverlay": "SHARED_TRACE_CLOCK; ASSOCIATION_ONLY",
+    "largestLongTaskSamples": [
+      {
+        "taskDurationMs": 34390.426,
+        "samplesInTaskWindow": 101367,
+        "minifiedFrame": "U at /_next/static/chunks/1555-513e674b1ddece93.js:16:8994",
+        "minifiedFrameSamples": 366,
+        "anonymousFrameAt16_10218Samples": 31,
+        "interpretation": "small sample share; not evidence this frame caused the task"
+      },
+      {
+        "taskDurationMs": 12405.865,
+        "samplesInTaskWindow": 39793,
+        "minifiedFrame": "U at /_next/static/chunks/1555-513e674b1ddece93.js:16:8994",
+        "minifiedFrameSamples": 172,
+        "anonymousFrameAt16_10218Samples": 14,
+        "interpretation": "small sample share; not evidence this frame caused the task"
+      },
+      {
+        "taskDurationMs": 9984.258,
+        "samplesInTaskWindow": 35308,
+        "minifiedFrame": "U at /_next/static/chunks/1555-513e674b1ddece93.js:16:8994",
+        "minifiedFrameSamples": 164,
+        "anonymousFrameAt16_10218Samples": 15,
+        "interpretation": "small sample share; not evidence this frame caused the task"
+      },
+      {
+        "taskDurationMs": 7727.73,
+        "samplesInTaskWindow": 23961,
+        "minifiedFrame": "U at /_next/static/chunks/1555-513e674b1ddece93.js:16:8994",
+        "minifiedFrameSamples": 91,
+        "anonymousFrameAt16_10218Samples": 6,
+        "interpretation": "small sample share; not evidence this frame caused the task"
+      },
+      {
+        "taskDurationMs": 5530.091,
+        "samplesInTaskWindow": 19832,
+        "minifiedFrame": "U at /_next/static/chunks/1555-513e674b1ddece93.js:16:8994",
+        "minifiedFrameSamples": 77,
+        "anonymousFrameAt16_10218Samples": 14,
+        "interpretation": "small sample share; not evidence this frame caused the task"
+      }
+    ],
+    "traceWideSampleCountFor1555Bundle": 2706,
+    "traceWideSampleCountForDashboardPageBundle": 98,
+    "otherObservedFrames": "browser native/API frames and frames without a source URL dominated the inspected long-task windows; React/focus frames were sparse",
+    "limitations": [
+      "Profile stream thread identity did not map to the CrRendererMain thread metadata; overlaying timestamps does not prove same-thread causality.",
+      "The production bundle is minified and its source maps are not served, so minified positions cannot be mapped to an exact application source function.",
+      "Expected-action markers and fixed app visible-state markers were absent, so long tasks cannot be tied to a specific input, loading state, or the reported reload.",
+      "No host process, database, Supabase RPC/RLS, or mobile-device timing was captured."
+    ]
+  },
+  "sourceAttribution": {
+    "status": "INCONCLUSIVE",
+    "limitedCandidate": {
+      "file": "app/src/components/dashboard/shell-web-vitals-reporter.tsx",
+      "function": "ShellWebVitalsReporter / useReportWebVitals callback",
+      "basis": "Hosted shell-provider imports and mounts this reporter; the hosted 1555 bundle contains Next Web Vitals LCP/idle-callback code, and a small number of its minified frames overlap the long-task windows.",
+      "productionSink": "phase-85-stage-5-shell-metric-sink defaults to a no-op; no production metric network write was observed.",
+      "causalConfidence": "LOW; candidate only"
+    },
+    "notAttributed": [
+      "DashboardApp or ClientWorkspace rendering",
+      "useStage6ClientWorkspace data loading",
+      "React focus restoration",
+      "API/RSC server or database work"
+    ],
+    "reason": "The profile is dominated by browser-native or source-unmapped frames, the profile stream is not matched to CrRendererMain metadata, and production source maps are unavailable."
+  },
+  "userObservation": {
+    "postRecordingReloadDelay": {
+      "reportedByUser": true,
+      "description": "The user said a reload after stopping the recording did not complete for about two minutes before they closed the page.",
+      "traceCoverage": "OUT_OF_TRACE",
+      "evidenceUse": "symptom context only; not timestamped performance evidence"
+    }
+  },
+  "nextStep": {
+    "action": "Run one isolated local single-variable comparison from the hosted commit, with ShellWebVitalsReporter mounted versus bypassed, while collecting the same synthetic UI interaction and renderer long-task profile.",
+    "purpose": "Test whether this limited candidate materially changes renderer main-thread work before considering a targeted runtime fix.",
+    "constraints": [
+      "Local isolated build only; no production deploy or hosted code change.",
+      "A local non-reproduction does not disprove the reported system-wide desktop and phone symptom.",
+      "Do not change the reporter in the main checkout or implement a fix without separate authorization."
+    ]
+  },
+  "changesAndChecks": {
+    "runtimeSourceChanged": false,
+    "productionChanged": false,
+    "newRawTraceStoredOrCommitted": false,
+    "testsRun": false,
+    "testsReason": "Phase 4 was source attribution and documentation only; no runtime code was changed.",
+    "requiredFollowUpChecks": [
+      "JSON parse and identity/hash checks",
+      "sensitive-data scan of the new evidence",
+      "document consistency review",
+      "git diff --check and git status"
+    ]
+  }
+}

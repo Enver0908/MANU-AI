@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "aiya-global-freeze-wait-state-phase-5c-profile-boundary-v1",
+  "evidenceId": "aiya-global-freeze-wait-state-phase-5c-profile-boundary-20260929T210701Z-d1ae04b6-888a-4cd1-975b-fa70731beeaa",
+  "createdAt": "2026-09-29T21:07:01.852Z",
+  "phase": "5C_PROFILE_BOUNDARY_CONTINUATION",
+  "status": "INCONCLUSIVE",
+  "outcome": "REMAINING_LOCAL_LONG_TASKS_UNATTRIBUTED_AFTER_REPORTER_BYPASS",
+  "sourceIdentity": {
+    "mainCheckout": {
+      "root": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+      "branch": "codex/production-readiness-stage-1",
+      "head": "38e727e0190f42f30768e1e56366b58c48a41285",
+      "workingTree": "dirty_preserved"
+    },
+    "hostedCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "releaseId": "hs-1c9756046b01-fe7df69e1df4",
+    "inputCapture": {
+      "condition": "B",
+      "runId": "reporter-b-20260929T205801191Z",
+      "sanitizedArtifact": "C:\\Users\\Dell\\AppData\\Local\\Temp\\aiya-global-freeze-local-analysis\\aiya-edge-native-20260929T205941816Z-2addc792-4b76-4ed1-a5d0-b7085d2aeba6\\trace.redacted.json",
+      "sanitizedTraceSha256": "22AE881DC1CC99619A47B0180EF20D2ACA8D12AC3FCE00C6E2EF1783FB292863",
+      "analysisInputSha256": "cda083d3fd748e652223e006887c48981372e4c831e350668b402394890c927c"
+    },
+    "analyzer": {
+      "path": "app/scripts/lib/aiya-global-freeze-profile-analysis.mjs",
+      "sha256": "5960146877DF10BE1AF14FAFA6ACF3C5DFD54830F6229CFC679815DCBA8A96A0",
+      "operation": "read_only_existing_redacted_profile_analysis"
+    }
+  },
+  "profileSummary": {
+    "status": "RENDERER_PROFILE_MAPPED",
+    "ownerThreadMapping": "PROFILE_HEADER_TO_RENDERER_MAIN",
+    "profileCount": 1,
+    "profileChunkCount": 2543,
+    "sampleCount": 246066,
+    "longTaskCount": 6,
+    "attributedLongTaskCount": 6,
+    "reporterFunctionFrames": {
+      "U": 0,
+      "m": 0,
+      "hasUM": false
+    }
+  },
+  "taskClassification": [
+    {
+      "rank": 1,
+      "durationMs": 288.242,
+      "threadDurationMs": 235.935,
+      "sourceCoveragePercent": 0.8,
+      "unknownMs": 285.948,
+      "topSelfFrames": ["<anonymous>@<script>", "query@<script>", "computeBox@<script>"],
+      "classification": "AUTOMATION_OR_INJECTED_DOM_QUERY_CANDIDATE",
+      "basis": "evaluate/querySelectorAll/_queryEngineAll/queryAll/query/_cached frames are visible, but no application URL or stable owner is present"
+    },
+    {
+      "rank": 2,
+      "durationMs": 81.067,
+      "threadDurationMs": 67.733,
+      "sourceCoveragePercent": 100,
+      "unknownMs": 0,
+      "topSelfFrames": ["<anonymous>@<script> (76.654 ms)", "cs@<external-script>", "R@<external-script>", "n@<external-script>"],
+      "classification": "UNMAPPED_INLINE_EXTERNAL_MIXED",
+      "basis": "dominant inline script self time and minified external frames have no source-map owner"
+    },
+    {
+      "rank": 3,
+      "durationMs": 81.011,
+      "threadDurationMs": 63.781,
+      "sourceCoveragePercent": 100,
+      "unknownMs": 0,
+      "topSelfFrames": ["<anonymous>@<script> (43.849 ms)", "appendChild@<script>", "ax@<external-script>", "setAttribute@<script>"],
+      "classification": "UNMAPPED_INLINE_EXTERNAL_DOM_MIXED",
+      "basis": "DOM mutation and minified external frames are visible without a stable application owner"
+    },
+    {
+      "rank": 4,
+      "durationMs": 68.855,
+      "threadDurationMs": 57.569,
+      "sourceCoveragePercent": 100,
+      "unknownMs": 0,
+      "topSelfFrames": ["<anonymous>@<script> (61.296 ms)", "sk@<external-script>", "ik@<external-script>", "t.createElement@<external-script>"],
+      "classification": "UNMAPPED_INLINE_EXTERNAL_DOM_MIXED",
+      "basis": "dominant inline script self time with scattered minified external and DOM frames"
+    },
+    {
+      "rank": 5,
+      "durationMs": 62.36,
+      "threadDurationMs": 54.207,
+      "sourceCoveragePercent": 100,
+      "unknownMs": 0,
+      "topSelfFrames": ["<anonymous>@<script> (58.456 ms)", "o@<external-script>", "rC@<external-script>", "getRootNode@<script>"],
+      "classification": "UNMAPPED_INLINE_EXTERNAL_DOM_MIXED",
+      "basis": "dominant inline script self time with DOM and minified external frames"
+    },
+    {
+      "rank": 6,
+      "durationMs": 58.004,
+      "threadDurationMs": 43.364,
+      "sourceCoveragePercent": 100,
+      "unknownMs": 0,
+      "topSelfFrames": ["<anonymous>@<script> (58.004 ms)"],
+      "classification": "UNMAPPED_INLINE_SCRIPT",
+      "basis": "the entire sampled task is an unnamed inline script frame"
+    }
+  ],
+  "observationValidity": "PASS",
+  "functionalOutcome": "REUSED_VALID_B_TRACE_NO_NEW_CAPTURE",
+  "causalResult": "NO_STABLE_APPLICATION_OWNER_IDENTIFIED",
+  "limitations": [
+    "The B profile was collected in the isolated headless Edge synthetic environment, not the hosted interactive session.",
+    "Sanitization intentionally retains safe frame names but does not provide production source maps for external scripts.",
+    "The largest task has only 0.8% sampled source coverage and therefore cannot support an owner claim.",
+    "The inline and external script frames in ranks 2-6 are source-unmapped; temporal presence is not causation.",
+    "No new capture, runtime change, database read, migration, deployment, or provider call was made."
+  ],
+  "conclusion": "With ShellWebVitalsReporter absent, the six remaining local renderer tasks are either dominated by an automation/injected DOM-query candidate or remain inline/external/source-unmapped. No stable application file/function owner is supported. The reporter-only candidate should remain unsupported locally, while the global freeze diagnosis remains unresolved."
+}

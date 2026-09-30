@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "aiya-global-freeze-wait-state-phase-3-summary-retry-20260928T201314Z-4c8fe285-6af5-4ba3-b69e-4e6403dd801b",
+  "createdAtUtc": "2026-09-28T20:13:14Z",
+  "status": "BLOCKED",
+  "outcome": "SUMMARY_ONLY_CAPTURE_BLOCKED_DISPATCH_LATENCY",
+  "phase": "Phase 3 - Hosted Wait-State Capture",
+  "method": "summary-only-cua-browser-metrics-v2",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "parentEvidence": [
+    {
+      "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_20260928T184152Z-bec31aba-6b26-445e-8acb-da26bdfcf1f7_EVIDENCE.json",
+      "sha256": "04322131f78f3a11189335fe36e64cb6c400cee33ce49a7e182512f147fb5cbb"
+    },
+    {
+      "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RESUME_20260928T194136Z-f31c568f-1d70-4873-bf5f-2b80e3e52013_EVIDENCE.json",
+      "sha256": "b5340c485252aa7f60b5a97fca905dcdc975798f03fca0052f9fb1484e8f2fc7"
+    }
+  ],
+  "identity": {
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "localCommitSha": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "hostedRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560",
+      "source": "GET /api/health/release",
+      "observedBeforeFirstAction": true,
+      "observedAtUtc": null,
+      "observationTimeLimitation": "The release identity was read before the first dispatch at 2026-09-28T20:06:04.651Z; its exact read timestamp was not retained."
+    },
+    "sourceHashes": {
+      "activePlanAtAttemptStart": "61f6ebfd6d22fe85ddd890ffe8899dca593db8a96f3365472eccbdd3786066f7",
+      "phase2Evidence": "878a70e7c519bb2b3afe3da12b3786c06930e7ed4197fa8f0cb2129c35400699"
+    }
+  },
+  "environment": {
+    "browser": "Microsoft Edge through the supported CUA browser integration",
+    "syntheticAccount": "USER_ATTESTED",
+    "accountIdentifiersRead": false,
+    "clientContentReadOrRetained": false,
+    "initialRouteCategory": "dashboard.clients",
+    "baseline": {
+      "readyStateObserved": true,
+      "loadingLabelObserved": false,
+      "searchFieldLength": 0,
+      "stableReadyStateObservedAfterMs": 1100,
+      "createFormTouched": false,
+      "clientRowsRead": false
+    }
+  },
+  "capture": {
+    "rawTraceExportRequired": false,
+    "rawTracePersistedOrTransferred": false,
+    "plannedInteractions": 12,
+    "completedBeforeAbort": 1,
+    "rapidSequenceCompleted": false,
+    "targetInputSpacingMs": 350,
+    "actualBrowserEventTiming": "UNAVAILABLE",
+    "attempt": {
+      "attemptId": "summary-only-retry-20260928T200604Z",
+      "status": "INVALID_CONTROL_PATH",
+      "actions": [
+        {
+          "index": 1,
+          "kind": "synthetic_search_key_dispatch",
+          "dispatchStartedAtUtc": "2026-09-28T20:06:04.651Z",
+          "dispatchCompletedAtUtc": "2026-09-28T20:06:09.743Z",
+          "roundTripMs": 5092,
+          "automationAcknowledged": false,
+          "laterAccessibilityState": "search_field_length_1",
+          "exactPageEventTime": "UNAVAILABLE"
+        }
+      ],
+      "abortedAfterFirstAction": true,
+      "failureReason": "The supported browser action returned without acknowledgement after 5092 ms. A later read-only accessibility check showed the search field length had changed; the key value was not retained."
+    },
+    "postInputQuietInterval": {
+      "startedAtUtc": "2026-09-28T20:08:13.468Z",
+      "elapsedMs": 33064,
+      "incrementalAccessibilityReadCount": 6,
+      "incrementalReadsProvidedIndependentFullState": false,
+      "finalFullSnapshot": {
+        "routeCategory": "dashboard.clients",
+        "dashboardMainVisible": true,
+        "loadingLabelObserved": false,
+        "searchFieldLength": 1
+      },
+      "continuousLoadingDuration": "UNAVAILABLE"
+    },
+    "cleanup": {
+      "networkDisableAcknowledged": true,
+      "performanceDisableAcknowledged": true,
+      "temporaryDiagnosticTabClosed": true,
+      "userOwnedTabRestored": true,
+      "restoredRouteCategory": "dashboard.home"
+    }
+  },
+  "waitState": {
+    "input": {
+      "delivery": "REFLECTED_IN_LATER_ACCESSIBILITY_STATE",
+      "observedSearchFieldLengthBeforeAndAfter": [0, 1],
+      "typedValueRetained": false,
+      "exactBrowserInputTiming": "UNAVAILABLE",
+      "hostDispatchRoundTripMs": 5092,
+      "automationAcknowledged": false
+    },
+    "apiAndResponseBody": {
+      "status": "UNAVAILABLE",
+      "reason": "No request lifecycle or response-body completion was paired to the attempted input."
+    },
+    "network": {
+      "status": "UNAVAILABLE",
+      "afterActionMatchingEventCount": 0,
+      "afterActionCursor": 83,
+      "afterActionReadTruncated": true,
+      "laterEventsAfterCursor": 0,
+      "laterReadTruncated": false,
+      "reason": "The first after-action event read was truncated; the later empty interval cannot establish whether an input-correlated request or response occurred."
+    },
+    "rsc": {
+      "status": "UNAVAILABLE",
+      "reason": "No request or RSC lifecycle was correlated to the input."
+    },
+    "mainThread": {
+      "status": "UNAVAILABLE",
+      "pairedBeforeAfterMetrics": false,
+      "afterActionMetricNamesReturned": 0,
+      "eventTimingSupported": true,
+      "eventTimingEntriesInSingleRead": 0,
+      "longTaskEntriesInSingleRead": 0,
+      "baselineMetrics": {
+        "TaskDurationSeconds": 0.076421,
+        "ScriptDurationSeconds": 0.064414,
+        "LayoutDurationSeconds": 0,
+        "RecalcStyleDurationSeconds": 0,
+        "LayoutCount": 0
+      },
+      "reason": "The post-action Performance.getMetrics response contained no selected metrics. A single Event Timing/Long Task read with zero entries is not a paired responsiveness measurement."
+    },
+    "applicationLoadingState": {
+      "baselineLoadingLabelObserved": false,
+      "finalFullSnapshotLoadingLabelObserved": false,
+      "continuousLoadingDuration": "UNAVAILABLE",
+      "interpretation": "One complete snapshot after the quiet interval showed no loading label; the six intervening reads were incremental and did not provide independent full-state observations."
+    },
+    "workCompletionToLoadingCorrelation": {
+      "status": "UNAVAILABLE",
+      "reason": "No API/RSC or response-body completion was correlated to the input, so it is unknown whether all work had finished before the final snapshot or whether loading remained visible after completion."
+    }
+  },
+  "artifacts": {
+    "rawTrace": null,
+    "sanitizedTrace": null,
+    "checkpoint": null,
+    "summaryEvidence": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RETRY_20260928T201314Z-4c8fe285-6af5-4ba3-b69e-4e6403dd801b_EVIDENCE.json"
+  },
+  "verification": {
+    "formSubmitted": false,
+    "clientRecordCreatedOrUpdated": false,
+    "productionOrExternalWrite": false,
+    "rawTraceOrSensitiveValuesEmbedded": false,
+    "networkAndPerformanceMonitoringDisabledConfirmed": true,
+    "temporaryDiagnosticTabClosed": true,
+    "userOwnedTabRestored": true
+  },
+  "limitations": [
+    "The planned 12-action sequence stopped after one action; no 350 ms-paced burst was captured.",
+    "The 5092 ms duration is the host-side automation call round trip, not browser input processing time and not evidence that the application itself froze.",
+    "The later search-field length change confirms only that the synthetic key was reflected in accessible state; the actual browser event timestamp is unavailable.",
+    "Network/RSC and response-body completion were not correlated to the input; the first post-action Network snapshot was truncated.",
+    "Main-thread signals were unpaired. Zero Event Timing and Long Task entries in a single sample do not establish responsiveness or absence of work.",
+    "One complete accessibility snapshot after 33064 ms showed no loading label; the intervening incremental snapshots do not establish a continuous loading interval.",
+    "This browser-control measurement is invalid for the rapid burst and does not establish a wait boundary, root cause, or absence of the reported system-wide symptom."
+  ],
+  "classification": {
+    "observationValidity": "INVALID_FOR_RAPID_BURST",
+    "functionalResult": "One synthetic search key was later reflected in accessible state; no submission or record mutation occurred.",
+    "performanceOrCauseResult": "INCONCLUSIVE",
+    "waitBoundary": "UNAVAILABLE"
+  },
+  "nextGate": "Phase 3 remains blocked by delayed unacknowledged browser action dispatch. Do not repeat this sequence automatically. Continue only if a supported browser-control action can acknowledge promptly and expose usable, correlated wait-state signals; do not attempt raw trace export.",
+  "rawTraceOrSensitiveValuesEmbedded": false
+}

@@ -1,31 +1,192 @@
 # MANU-AI Next Phase Execution Plan
 
-## Current Active Execution Lock - Wait-State Capture Phase 1 - 2026-09-28
+## Current Delivery - Shared UI Runtime Rewrite Complete - 2026-09-30
+
+The approved `MANU-AI Ortak Arayüz Yeniden Yazım Planı` delivery track is
+complete for the hosted sandbox. Current-identity closure reconciliation:
+`docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_RECONCILIATION_20260930_EVIDENCE.json`
+(SHA-256 `2b524752598741efb8a6fc2b276cf43e399b0152ecb06262e529331f03c40a88`).
+Original delivery evidence, preserved unchanged:
+`docs/AIYA_SHARED_UI_RUNTIME_REWRITE_DELIVERY_20260930_EVIDENCE.json`.
+Original evidence SHA-256:
+`a40d41ffe0cdb21870ae3f5e2efd0e366e6c6771e40193ee65f44dba5cbd9c3b`.
+
+Integrated source commit: `a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37`.
+Release: `hs-a72404711ecf-292fb7b24203`. Artifact archive SHA-256:
+`5ebcb7cd2ec8465c4a4e9ebf02438566f1b5ab59578d5d3c0da742e4802eee3d`.
+Hosted health, public route smoke, local Docker-authenticated validation,
+desktop Chrome, physical Android Chrome, and current-origin Android PWA
+acceptance passed. No credentials were entered or saved, and no real client
+health data, provider/channel traffic, billing, production worker, or remote
+migration was used. The old test-origin WebAPK remains installed as a legacy
+package; the new `aiyaworkspace.com` WebAPK is covered by the separate evidence
+record `docs/AIYA_SHARED_UI_RUNTIME_REWRITE_PWA_ACCEPTANCE_20260930_EVIDENCE.json`
+with SHA-256
+`5a8a3efd1d5a4b5b07b85ccb9a735ae76097a0adf98350bfadcaf6f26d0497bd`.
+
+This delivery is a product-runtime rollout record only. It does not revise the
+wait-state evidence, Plan 1 diagnosis, or production `NO-GO` decision. Existing
+diagnostic working-tree changes remain preserved and uncommitted.
+
+Post-delivery user observation, recorded 2026-09-30: the user reported that
+the day-to-day stutter/freezing symptoms are no longer occurring after the
+shared UI runtime rewrite delivery. Treat this as a current usage outcome, not
+as proof of the historical global-freeze root cause. Do not reopen the old
+wait-state diagnostics unless a new symptom is reported or separately approved.
+
+## Current Active Execution - Wait-State Phase 5C Complete; Reporter-Only Trigger Not Supported Locally - 2026-09-30
 
 Active plan:
 `docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md`.
 
-The current work is Phase 1 of the wait-state capture plan: preserve the dirty
-main checkout, make generated/personal local artifacts disappear from Git
-status without deleting them, add the plan and evidence to the tree, and update
-active handoff authority. Start no hosted capture until this phase is cleanly
-closed.
+Current Phase 3 status:
+`NATIVE_CAPTURE_COMPLETE / MAIN_THREAD_BUSY_BOUNDARY_OBSERVED`. Legacy
+summary-only probes remain `BLOCKED / ATTEMPT_BUDGET_EXHAUSTED` at 4/4.
 
-Verified main checkout: `C:\Users\Dell\OneDrive\Masaüstü\MANU-AI`, branch
-`codex/production-readiness-stage-1`, correct starting HEAD
-`a2b1e0908b29ece40c797aa9c0a5dda0bbb6513a`. The older value
-`a2b1e0908b29ece40c797aa9a0c5dda0bbb6513a` is not a valid Git object and must
-not be used as active source identity. Historical immutable evidence is kept
-unchanged.
+Phase 1 and Phase 2 of the wait-state capture plan are complete. Phase 1
+evidence: `docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_1_EVIDENCE.json`. Phase 2
+evidence: `docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_2_20260928T151452642Z_EVIDENCE.json`.
+The initial raw trace-export gate was blocked and is retained in
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_20260928T180903Z-fd14e889-d6cf-4346-8abf-402b674b7e1e_EVIDENCE.json`
+(SHA-256 `feed4111bc4e4c9f9a6f1434e0feec29737a6cc379b4edb8bb291a99d27a987b`).
+The user authorized a summary-only Phase 3 method and attested to the signed-in
+synthetic account. The preceding control-page test completed one click in
+136.8 ms. In the latest fresh-tab MANU-AI retry, a ready `dashboard.clients`
+baseline showed one empty search control and no visible busy indicator. One
+synthetic key dispatch timed out after 10,263 ms; a later accessibility read
+took 6,147 ms and showed the field still empty and focused. A separate
+fixed-schema Runtime read returned in 84.67 ms with a complete document and no
+visible busy/progress indicator. Input delivery remains unknown. The filtered
+Network snapshot was empty and truncated; Event Timing/Long Task entries were
+empty and therefore unavailable, not proof of no work. No request/body
+correlation, paired main-thread result, 12-action burst, 350 ms pacing, or
+30-second quiet observation was obtained. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RETRY_20260928T220632Z-6d30b7d9-52b4-43fb-8ed5-b1560d79db97_EVIDENCE.json`
+(SHA-256 `69ad0c4f284a2fcff8a78fa88e90e4469f7639d381bbd02acb6d4e2cec413f44`);
+checkpoint `aiya-global-freeze-wait-state-phase-3-20260928T220632882Z-dbadb519-02dd-4986-851f-62f41059e3c5`.
+The earlier control-page and first MANU-AI retry evidence remains:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_CONTROL_TEST_20260928T210737Z-bce5f92a-19d7-4ab0-9b36-c2d70c1fea48_EVIDENCE.json`
+(SHA-256 `39d1eebed4e3e06c306b29054c0d9fc8b24da28aa12478d322a4809f8bb285e9`).
+
+The control-page result confirms one click worked there only. The old MANU-AI
+summary-only evidence did not distinguish application input handling from the
+browser-control/protocol path. Do not repeat the old summary-only probe or use
+the blocked browser-control surface. The user authorized a separate single
+native Edge Performance capture. Local import/sanitization preflight passed;
+evidence:
+`docs/AIYA_GLOBAL_FREEZE_NATIVE_TRACE_IMPORT_PREFLIGHT_20260928T230908Z-4126d1bf-b38e-4c30-996f-d96b072f8d72_EVIDENCE.json`.
+(SHA-256 `2cbedc226f6dfcaccce327b8cb3354f464cb4b0115df350b2f5642011caa9721`).
+The pre-delivery hosted release was re-read from `/api/health/release` at
+`2026-09-29T17:07:27.788Z`: `hs-1c9756046b01-b55ed4ff550f`, commit
+`1c9756046b01cb1bd224fb601ec9094a7f471606`. The current hosted sandbox
+release is recorded in the delivery evidence above; the historical trace
+mapping remains bound to the pre-delivery release.
+
+The one native capture was completed from the user-saved Edge trace. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_NATIVE_20260929T164900Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef_EVIDENCE.json`.
+The source trace remained outside the repository; SHA-256
+`abc276bbdd4e63762778c39a62c9e82c73cf5651ba583f850a0957cdae052ad5`.
+Sanitized artifacts were written under ignored
+`app/.manu-runtime/native-traces/aiya-edge-native-20260929T164900594Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef/`.
+The trace window was 140,925.752 ms and observed 212 input dispatches,
+128 network requests, 34 RSC requests, and 31 renderer main-thread long tasks.
+The longest long tasks were 34,390.426 ms, 12,405.865 ms, 9,984.258 ms,
+7,727.730 ms, and 5,530.091 ms. The longest completed network requests were
+about 1.72 seconds; two `/api/session/activity` POSTs were waiting for headers
+at recorded trace end. App loading state remains unavailable because fixed app
+markers were absent, and expected-action delivery remains unavailable because
+there were no expected-action markers. The user also reported a post-recording
+reload attempt that did not reload for about two minutes; that is an
+out-of-trace symptom observation.
+
+Phase 4 source attribution is complete with result `INCONCLUSIVE`; evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_4_20260929T172111Z-6f39804f-bd5b-4550-a6cb-952e78c27290_EVIDENCE.json`.
+(SHA-256 `494905382624315325b61b35e86f8ed84cd8378497203b697c5d088d74b14482`).
+The release identity and trace asset hashes match. A small number of minified
+frames map to the Next Web Vitals path imported by
+`ShellWebVitalsReporter`, whose production metric sink defaults to a no-op.
+Most long-task samples are browser-native or lack source URLs and production
+source maps return 404. Phase 5A subsequently mapped the retained Profile
+header to the renderer main thread and attributed all 31 long-task windows;
+frames `U` and `m` from the hosted `1555` chunk recur in the top ten of 30/31
+tasks. Phase 5A evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5A_20260929T191002Z-9c8d56c9-01b7-4afe-b389-9dc718d8d868_EVIDENCE.json`.
+Phase 5B identifies the shared-shell `ShellWebVitalsReporter`/Next Web Vitals
+registration path as the strongest actionable app-code candidate, but its
+self-time is small compared with inclusive and native-frame time; causality is
+unproven. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5B_20260929T191002Z-607115e1-07b2-4fa9-91f8-d0136eb384f2_EVIDENCE.json`.
+
+The historical Phase 5C preflight found a running `manu-ai-local` Supabase stack
+but stopped before build/start. That historical evidence remains unchanged:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5C_20260929T191002Z-c531c6f5-75ce-48d3-85da-47027957325d_EVIDENCE.json`.
+That blocker was resolved safely and the existing hosted-commit worktree produced
+one valid matched local A/B pair. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5C_AB_20260929T210246Z-453a0a97-7a60-4333-beb6-89e70381a585_EVIDENCE.json`
+(SHA-256 `CCB172D212ABE3BA9F694EA8A56C95C29FCF15F4DEB17CD709BF530EC43518A6`).
+Both runs completed the identical synthetic login, Dashboard -> Clients,
+search, three-character, reload, and 60-second trace sequence. A measured 4
+long tasks / `268.588 ms` maximum / `444.023 ms` total >=50 ms task time;
+B measured 6 / `288.242 ms` / `639.539 ms`. Reporter frames `U/m` were
+present only in A (`3/8` versus `0/0`), so the toggle was effective, but A did
+not reproduce a >=500 ms task and B did not reduce work. Phase 5C is
+`COMPLETE / INCONCLUSIVE_LOCAL_NONREPRODUCTION / REPORTER_SOLE_TRIGGER_NOT_SUPPORTED`.
+A local non-reproduction does not disprove the system-wide desktop/phone
+symptom; no runtime fix or official finding changed.
+
+The existing valid B redacted profile was then analyzed read-only. Evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5C_PROFILE_BOUNDARY_20260929T210701Z-d1ae04b6-888a-4cd1-975b-fa70731beeaa_EVIDENCE.json`
+(SHA-256 `E6730FB0DCD3830621EF9023F5B880A44E1BE911B861DB0888847B3DAA95DC5B`).
+All six remaining >=50 ms tasks map to the renderer profile but no stable
+application file/function owner. The longest task has only `0.8%` sampled source
+coverage and `285.948 ms` unknown time; the other five are dominated by
+inline/external/source-unmapped and DOM-mixed frames. No `U/m` reporter frames
+remain. Phase 5C profile-boundary continuation is
+`INCONCLUSIVE / REMAINING_LOCAL_LONG_TASKS_UNATTRIBUTED_AFTER_REPORTER_BYPASS`.
+
+Next exact action: stop the reporter candidate. Do not repeat the A/B, build a new
+harness, deploy, apply a migration, infer database/server causality, or make a
+reporter optimization. Any further diagnosis requires separate approval for a
+supported cross-device/interactive owner-boundary capture with stable app markers
+and source ownership. Until then the global freeze, Plan 1 diagnosis, and
+production `NO-GO` remain unchanged.
+The earlier 2026-09-28 summary retry and resume
+preflight remain historical evidence:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RETRY_20260928T201314Z-4c8fe285-6af5-4ba3-b69e-4e6403dd801b_EVIDENCE.json`
+(SHA-256 `8f8db5e7e882aecfe49ea92a830f5a186aba0ebadba37b4f450a239e8605e22a`),
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RESUME_20260928T194136Z-f31c568f-1d70-4873-bf5f-2b80e3e52013_EVIDENCE.json`
+(SHA-256 `b5340c485252aa7f60b5a97fca905dcdc975798f03fca0052f9fb1484e8f2fc7`),
+and the earlier bounded attempt:
+`docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_20260928T184152Z-bec31aba-6b26-445e-8acb-da26bdfcf1f7_EVIDENCE.json`
+(SHA-256 `04322131f78f3a11189335fe36e64cb6c400cee33ce49a7e182512f147fb5cbb`).
+The latest hosted release identity remains:
+`hs-1c9756046b01-b55ed4ff550f`, commit
+`1c9756046b01cb1bd224fb601ec9094a7f471606`; local HEAD is not deployed.
+The summary-only method is blocked after four app-probe attempts, with zero
+usable wait-state records. The separately authorized native recording route has
+now used its one capture and identified a main-thread busy boundary, not a
+final root cause. Do not repeat old probes, retry the old trace-transfer
+bridge, or change permissions.
+
+Current main checkout: `C:\Users\Dell\OneDrive\Masaüstü\MANU-AI`, branch
+`codex/production-readiness-stage-1`, HEAD
+`38e727e0190f42f30768e1e56366b58c48a41285`. The local branch was observed four
+commits ahead of its tracking ref, which is not a live remote query. Phase 2
+through Phase 5 diagnostic code, tests, evidence, and active-plan documentation
+are uncommitted working-tree changes.
 
 Local preservation commit:
 `f7c29592 chore: preserve current MANU-AI diagnostic work`. It is only a
 preservation checkpoint. It does not approve, deploy, or validate the
 performance behavior of the preserved changes.
 
-After Phase 1 closes, proceed only to Phase 2 of the wait-state plan: prove the
-small local trace/sanitizer pipeline on a synthetic fixture. Do not repeat old
-J1, A-B-A, official acceptance, or navigation-only observations. Production
+The local fixture recorded 12/12 inputs with 349.794 ms median pressed gaps
+and a persistent raw trace outside the repository. The sanitized summary
+observed a request waiting for headers, open response bodies, a 236.404 ms
+heartbeat gap, and loading visible after work completed. One gap was 200.404 ms;
+the aborted request was only identifiable as a generic failure. This validates
+the local pipeline, not the hosted freeze or its cause. Do not repeat old J1,
+A-B-A, official acceptance, or navigation-only observations. Production
 remains `NO-GO`; no deploy, push/PR, migration, dependency, secret, or
 production write is authorized.
 

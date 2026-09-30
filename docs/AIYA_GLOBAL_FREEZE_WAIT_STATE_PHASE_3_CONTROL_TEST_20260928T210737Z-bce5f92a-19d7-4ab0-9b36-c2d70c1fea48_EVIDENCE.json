@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "aiya-global-freeze-wait-state-phase-3-control-test-20260928T210737Z-bce5f92a-19d7-4ab0-9b36-c2d70c1fea48",
+  "createdAtUtc": "2026-09-28T21:07:37Z",
+  "status": "BLOCKED",
+  "outcome": "SUMMARY_ONLY_CAPTURE_BLOCKED_MANU_APP_ACTIONS_AND_STATE",
+  "phase": "Phase 3 - Hosted Wait-State Capture",
+  "method": "summary-only-control-page-and-app-probe-v1",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "parentEvidence": [
+    {
+      "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RETRY_20260928T201314Z-4c8fe285-6af5-4ba3-b69e-4e6403dd801b_EVIDENCE.json",
+      "sha256": "8f8db5e7e882aecfe49ea92a830f5a186aba0ebadba37b4f450a239e8605e22a"
+    },
+    {
+      "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_2_20260928T151452642Z_EVIDENCE.json",
+      "sha256": "878a70e7c519bb2b3afe3da12b3786c06930e7ed4197fa8f0cb2129c35400699"
+    }
+  ],
+  "testPageSetup": {
+    "createTabVisibilityOption": "UNSUPPORTED; no tab was created by that call",
+    "inlineDataUrl": "BLOCKED_BY_BROWSER_URL_POLICY",
+    "exampleDomain": "Loaded but excluded from the interaction test after its page stated it is not intended for testing or monitoring",
+    "chosenAlternative": "Public purpose-built UI interaction demo in the same Edge browser; no custom script was injected into the page"
+  },
+  "identity": {
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "localCommitSha": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "hostedRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560",
+      "source": "GET /api/health/release",
+      "observedBeforeSyntheticInput": true,
+      "observedAtUtc": null,
+      "observationTimeLimitation": "The release was read in this session before the app input probe; its exact read timestamp was not retained."
+    },
+    "sourceHashes": {
+      "activePlanBeforeEvidenceUpdate": "6302340c27cdaf851dacd5a3d2d77abc644193f40ae145fc15813f0c64a1b1d0",
+      "parentSummaryRetryEvidence": "8f8db5e7e882aecfe49ea92a830f5a186aba0ebadba37b4f450a239e8605e22a",
+      "phase2Evidence": "878a70e7c519bb2b3afe3da12b3786c06930e7ed4197fa8f0cb2129c35400699"
+    }
+  },
+  "controlPageProbe": {
+    "browser": "Microsoft Edge through the supported extension integration",
+    "target": "Public browser-interaction demo page",
+    "interaction": "One click on its Add Element control",
+    "roundTripMs": 136.8,
+    "automationAcknowledged": true,
+    "visibleResult": "One Delete control appeared in the page state",
+    "userProvidedDataEntered": false,
+    "temporaryTestTabClosed": true,
+    "limitations": [
+      "This establishes that one click completed promptly on the demo page only; it does not establish that MANU-AI or the system-wide symptom is healthy.",
+      "A preceding example-domain page explicitly said it should not be relied on for testing; it was not used for the interaction result."
+    ]
+  },
+  "appProbe": {
+    "syntheticAccount": "USER_ATTESTED",
+    "accountIdentifiersRead": false,
+    "clientContentReadOrRetained": false,
+    "originalDashboardNavigation": {
+      "targetRouteCategory": "dashboard.clients",
+      "action": "visible_navigation_click",
+      "roundTripMs": 1987,
+      "automationAcknowledged": false,
+      "errorCategory": "CDP Input.dispatchMouseEvent timeout",
+      "immediateInventoryRouteCategory": "dashboard.home"
+    },
+    "originalTabObservations": {
+      "accessibilityRead": "TIMED_OUT",
+      "screenshotRead": "TIMED_OUT",
+      "errorCategory": "CDP Emulation.setFocusEmulationEnabled timeout",
+      "browserInventoryRead": "SUCCEEDED"
+    },
+    "freshClientsRoute": {
+      "navigationRoundTripMs": 1577,
+      "routeCategory": "dashboard.clients",
+      "readyState": "complete",
+      "visibleMainCount": 1,
+      "visibleSearchControlCount": 1,
+      "searchControlKind": "input:search",
+      "searchLengthBeforeInput": 0,
+      "visibleBusyIndicatorCount": 0,
+      "formMethod": null,
+      "submitControlCount": 0,
+      "clientRowsRead": false
+    },
+    "searchFocusProbe": {
+      "action": "visible_search_control_click",
+      "roundTripMs": 1918,
+      "automationAcknowledged": false,
+      "errorCategory": "CDP Input.dispatchMouseEvent timeout",
+      "firstPostActionRead": "TIMED_OUT_BEFORE_DISPATCH",
+      "laterSafeRead": {
+        "routeCategory": "dashboard.clients",
+        "readyState": "complete",
+        "searchLength": 0,
+        "searchFocused": false,
+        "visibleBusyIndicatorCount": 0
+      }
+    },
+    "syntheticInputProbe": {
+      "action": "single_synthetic_search_key",
+      "roundTripMs": 2729,
+      "automationAcknowledged": false,
+      "errorCategory": "CDP Input.dispatchKeyEvent timeout",
+      "postActionSearchLength": "UNAVAILABLE",
+      "postActionRead": "TIMED_OUT_BEFORE_DISPATCH",
+      "actualBrowserInputTiming": "UNAVAILABLE",
+      "typedValueRetained": false
+    },
+    "plannedInteractions": 12,
+    "completedWithAcknowledgement": 0,
+    "rapidSequenceCompleted": false,
+    "targetSpacingMs": 350,
+    "postInputQuietIntervalMs": 0,
+    "temporaryTestAndHealthTabsClosed": true,
+    "remainingEdgeRouteCategory": "dashboard.clients"
+  },
+  "waitState": {
+    "inputDelivery": {
+      "status": "UNKNOWN",
+      "reason": "The single key dispatch timed out, and its post-action state could not be read. Do not infer delivery or failure from this trace."
+    },
+    "apiAndResponseBody": {
+      "status": "UNAVAILABLE",
+      "reason": "No request or response-body lifecycle was correlated to the input probe."
+    },
+    "networkAndRsc": {
+      "status": "UNAVAILABLE",
+      "reason": "No attempt-correlated request lifecycle was captured."
+    },
+    "mainThread": {
+      "status": "UNAVAILABLE",
+      "reason": "No paired main-thread or Event Timing measurement was returned for the attempted input."
+    },
+    "applicationLoading": {
+      "baselineBusyIndicatorsVisible": 0,
+      "postActionState": "UNAVAILABLE",
+      "workCompletionToLoadingCorrelation": "UNAVAILABLE"
+    }
+  },
+  "artifacts": {
+    "rawTrace": null,
+    "sanitizedTrace": null,
+    "checkpoint": null
+  },
+  "verification": {
+    "clientFormSubmitted": false,
+    "clientRecordCreatedOrUpdated": false,
+    "manuProductionOrDatabaseWrite": false,
+    "rawTracePersistedOrTransferred": false,
+    "clientContentOrInputValueRetained": false,
+    "agentCreatedTestTabClosed": true,
+    "agentCreatedHealthTabClosed": true,
+    "temporaryAppTabClosed": true
+  },
+  "limitations": [
+    "The public demo click succeeded quickly, while navigation, focus, and keyboard actions on MANU-AI timed out; the control methods and pages were not identical in every comparison.",
+    "MANU-AI rendered a ready clients view and exposed an empty search control before the input probe. The focus click and key dispatch then timed out, and the final input state could not be read.",
+    "These observations are consistent with an app-page-specific responsiveness problem or a browser-control interaction with this page; they do not distinguish the page main thread from the browser protocol path.",
+    "No 12-input burst, 350 ms pacing, 30-second post-input observation, network/RSC correlation, response-body completion, or paired main-thread measurement was obtained.",
+    "This does not establish the cause or duration of the reported desktop and phone freezes, and it does not show that the issue is absent outside MANU-AI."
+  ],
+  "classification": {
+    "observationValidity": "INVALID_FOR_RAPID_BURST",
+    "functionalResult": "The public demo interaction succeeded; MANU-AI input delivery and post-action state remain unknown.",
+    "performanceOrCauseResult": "INCONCLUSIVE",
+    "waitBoundary": "UNAVAILABLE"
+  },
+  "nextGate": "Do not continue the 12-input sequence until a harmless MANU-AI page action and its immediate sanitized post-action state both return promptly. The current result is a concrete Phase 3 blocker after a successful control-page probe; raw trace export is not required.",
+  "rawTraceOrSensitiveValuesEmbedded": false
+}

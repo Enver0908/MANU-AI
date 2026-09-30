@@ -1,0 +1,3107 @@
+{
+  "schemaVersion": "aiya-performance-plan1-v3-phase4-4-evidence-v1",
+  "planRevision": "plan1-final-v3",
+  "phase": "4",
+  "stage": "4.4",
+  "stageId": "4.4",
+  "runId": "aiya-performance-plan1-phase4-4-local-v3-20260930T095829728Z-dacbbbeb-b398-4067-b9bb-0b97ed0a0b54",
+  "generatedAt": "2026-09-30T10:00:57.405Z",
+  "status": "IN_PROGRESS",
+  "outcome": "LOCAL_CAPTURE_PROBE_COMPLETE",
+  "productionDecision": "NO-GO",
+  "executionScope": {
+    "purpose": "Verify capture semantics with one authenticated local J1 observation before expansion.",
+    "executionMode": "targeted_capture_probe",
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": true,
+    "causalExperimentStarted": false,
+    "runtimeChangeAcceptedAsFix": false,
+    "externalOperations": [],
+    "preservedExistingChanges": true,
+    "countedAsOfficialSample": false
+  },
+  "activeContract": {
+    "path": "docs/AIYA_PERFORMANCE_PLAN_1_ACTION_PLAN.md",
+    "revision": "plan1-final-v3",
+    "historicalContentUsedAsInstruction": false,
+    "completedPrerequisites": [
+      "4.1 IDENTITY_LOCKED",
+      "4.2 REFERENCE_SEPARATED",
+      "4.3 GENERAL_DIAGNOSTIC_HARNESS_READY"
+    ],
+    "currentStage": "4.4",
+    "nextEligibleStage": "4.4"
+  },
+  "sourceIdentity": {
+    "worktreePath": "C:/Users/Dell/OneDrive/Masaüstü/MANU-AI",
+    "branchMode": "ATTACHED",
+    "head": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "branch": "codex/production-readiness-stage-1",
+    "detachedHeadUpstream": "origin/codex/production-readiness-stage-1",
+    "remoteSymbolicHead": "refs/heads/codex/phase-29-baseline-checkpoint\tHEAD",
+    "remoteHeadSha": "00729e53cf6c8617e9655c03eb519e16214e8727",
+    "remoteProductionReadinessSha": "568a1ffba833db0dd182a3d9fad5b034f7cf98e5",
+    "modifiedTrackedCount": 29,
+    "untrackedCount": 27,
+    "dirtyTreePreserved": true,
+    "diffCheck": "PASS",
+    "sourceFiles": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "a25a530846bf1c28a870ac135710ffda83eae41fdf51de6387a5edde8d31f189"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.test.mjs",
+        "sha256": "77c4c4a95ae7b349e74238d13fdc50cf7c22fe3011d0d6e0d6585525e93bcceb"
+      },
+      {
+        "path": "docs/AIYA_PERFORMANCE_PLAN_1_PHASE_4_3_EVIDENCE.json",
+        "sha256": "a7c3b3ae7897c8f4ca28090ae18c62ff51d8fc00430cbcbb7c9a4a54e91059ac"
+      }
+    ],
+    "harnessSourceIdentity": [
+      {
+        "path": "app/package.json",
+        "sha256": "6da44d167c0df735caeacb71cfeb3dd84cc6a685762de86dd346558eadeb9795"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4.mjs",
+        "sha256": "7a2168419d2bab11d1d0afac0b29a1ae1dfe4f717076248f9dd1e125589a0027"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-3-diagnostic.mjs",
+        "sha256": "cfe9561561ed0a75f1e1aa4ecc07b573cebaaa47e7f4e2da42307a2522317b0f"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.mjs",
+        "sha256": "a25a530846bf1c28a870ac135710ffda83eae41fdf51de6387a5edde8d31f189"
+      },
+      {
+        "path": "app/scripts/performance-plan-1-phase-4-4-local.test.mjs",
+        "sha256": "77c4c4a95ae7b349e74238d13fdc50cf7c22fe3011d0d6e0d6585525e93bcceb"
+      }
+    ],
+    "localConfigurationIdentity": {
+      "sourceKinds": [
+        "active_worktree_app_env_local"
+      ],
+      "availableKeys": [
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "MANU_DEV_FALLBACK_STORE"
+      ],
+      "credentialSource": "<redacted>",
+      "phase3FixtureReady": true
+    },
+    "referenceIdentity": null
+  },
+  "parentRunReferences": [
+    "aiya-performance-plan1-phase4-4-local-20260916T232938491Z-c7e89cae-3ff5-4595-ac8f-ed5c3ff9923d"
+  ],
+  "measurementIdentity": {
+    "checkpointPhaseId": "aiya-performance-plan1-phase4-4-local-v3",
+    "checkpointSchemaVersion": "aiya-performance-plan1-phase4-4-local-v3",
+    "checkpointStore": "tools/phase-execution/checkpoint-store.mjs",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "storePath": "normal_rls_api_path_required",
+    "journeyIds": [
+      "J1",
+      "J2",
+      "J3"
+    ],
+    "normalRepetitions": 3,
+    "diagnosticRepetitions": 3,
+    "executionMode": "targeted_capture_probe",
+    "plannedUnitKeys": [
+      "probe:normal:J1:r1"
+    ],
+    "secondActionDelayMs": 2000,
+    "serverControl": "managed_same_port_per_mode",
+    "localConfigurationIdentity": {
+      "sourceKinds": [
+        "active_worktree_app_env_local"
+      ],
+      "availableKeys": [
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "MANU_DEV_FALLBACK_STORE"
+      ],
+      "credentialSource": "<redacted>",
+      "phase3FixtureReady": true
+    },
+    "parentRunReferences": [
+      "aiya-performance-plan1-phase4-4-local-20260916T232938491Z-c7e89cae-3ff5-4595-ac8f-ed5c3ff9923d"
+    ],
+    "supersedesRunId": null,
+    "countedAsOfficialSample": false
+  },
+  "stageLedger": [
+    {
+      "stageId": "4.4.1",
+      "name": "Local normal fixture and authenticated path preflight",
+      "prerequisites": [
+        "4.3 COMPLETE"
+      ],
+      "status": "PASS"
+    },
+    {
+      "stageId": "4.4.2",
+      "name": "Targeted capture verification and one local J1 observation",
+      "prerequisites": [
+        "4.4.1 PASS"
+      ],
+      "status": "PASS"
+    },
+    {
+      "stageId": "4.4.3",
+      "name": "Scoped local observations after trustworthy capture",
+      "prerequisites": [
+        "4.4.2 PASS"
+      ],
+      "status": "NOT_STARTED"
+    },
+    {
+      "stageId": "4.4.4",
+      "name": "Trace integrity and failure-boundary reconciliation",
+      "prerequisites": [
+        "4.4.3 COMPLETE"
+      ],
+      "status": "NOT_STARTED"
+    }
+  ],
+  "captureChecks": {
+    "status": "PASS",
+    "failures": [],
+    "checks": {
+      "timerAnchoredToTrustedClick": true,
+      "visibleSelectors": true,
+      "navigationAwayIsRepresentable": true,
+      "slowResponseObservationBounded": true,
+      "genuineTargetFailureIsObservable": true
+    }
+  },
+  "stageScheduler": {
+    "4.4.1": "PASS",
+    "4.4.2": "PASS",
+    "4.4.3": "NOT_STARTED",
+    "4.4.4": "NOT_STARTED",
+    "summaries": {
+      "probe": {
+        "status": "COMPLETE",
+        "plannedCount": 1,
+        "attemptedCount": 1,
+        "validCount": 0,
+        "observationValidCount": 1,
+        "observationInvalidCount": 0,
+        "invalidCount": 0,
+        "remainingCount": 0,
+        "attemptedKeys": {},
+        "acceptedKeys": {},
+        "validKeys": {},
+        "observationValidKeys": {},
+        "invalidKeys": {},
+        "observationInvalidKeys": {},
+        "remainingKeys": {}
+      },
+      "normal": {
+        "status": "IN_PROGRESS",
+        "plannedCount": 9,
+        "attemptedCount": 0,
+        "validCount": 0,
+        "observationValidCount": 0,
+        "observationInvalidCount": 0,
+        "invalidCount": 0,
+        "remainingCount": 9,
+        "attemptedKeys": {},
+        "acceptedKeys": {},
+        "validKeys": {},
+        "observationValidKeys": {},
+        "invalidKeys": {},
+        "observationInvalidKeys": {},
+        "remainingKeys": {}
+      },
+      "diagnostic": {
+        "status": "IN_PROGRESS",
+        "plannedCount": 9,
+        "attemptedCount": 0,
+        "validCount": 0,
+        "observationValidCount": 0,
+        "observationInvalidCount": 0,
+        "invalidCount": 0,
+        "remainingCount": 9,
+        "attemptedKeys": {},
+        "acceptedKeys": {},
+        "validKeys": {},
+        "observationValidKeys": {},
+        "invalidKeys": {},
+        "observationInvalidKeys": {},
+        "remainingKeys": {}
+      }
+    }
+  },
+  "inputPreflight": {
+    "status": "PASS",
+    "fixtureId": "local-normal",
+    "fixtureClass": "synthetic_normal_owner",
+    "authentication": "real_password_session_required",
+    "storePath": "normal_rls_api_path_required",
+    "fallbackStoreAllowed": false,
+    "credentialsAvailable": "<redacted>",
+    "app": {
+      "label": "local_app",
+      "status": "PASS",
+      "httpStatus": 200,
+      "targetOrigin": "http://127.0.0.1:3136",
+      "failureBoundary": null
+    },
+    "supabase": {
+      "label": "local_supabase",
+      "status": "PASS",
+      "httpStatus": 200,
+      "targetOrigin": "http://127.0.0.1:54321",
+      "failureBoundary": null
+    },
+    "blockers": [],
+    "runtime": {
+      "configuration": {
+        "sourceKinds": [
+          "active_worktree_app_env_local"
+        ],
+        "activeEnvFilePresent": true,
+        "mainCheckoutEnvFilePresent": false,
+        "availableKeys": [
+          "NEXT_PUBLIC_APP_URL",
+          "NEXT_PUBLIC_SUPABASE_URL",
+          "MANU_DEV_FALLBACK_STORE"
+        ],
+        "credentialSource": "<redacted>",
+        "credentialsAvailable": "<redacted>",
+        "phase3FixtureReady": true,
+        "sourceFiles": [
+          {
+            "source": "active_worktree_app_env_local",
+            "present": true,
+            "keys": [
+              "MANU_DEV_FALLBACK_STORE",
+              "NEXT_PUBLIC_APP_URL",
+              "NEXT_PUBLIC_SUPABASE_URL"
+            ]
+          }
+        ]
+      },
+      "localSupabase": {
+        "status": "PASS",
+        "apiUrl": "/",
+        "urlIsLocal": true,
+        "credentialsPresent": "<redacted>",
+        "reason": null
+      },
+      "serverControl": "managed_same_port_per_mode",
+      "managedServerMode": "normal"
+    }
+  },
+  "sampleSummary": {
+    "attemptedSamples": 1,
+    "plannedSamples": 1,
+    "validSamples": 0,
+    "invalidSamples": 1,
+    "observationValidSamples": 1,
+    "observationInvalidSamples": 0,
+    "byMode": {
+      "normal": {
+        "attemptedSamples": 1,
+        "validSamples": 0,
+        "observationValidSamples": 1,
+        "plannedSamples": 1
+      },
+      "diagnostic": {
+        "attemptedSamples": 0,
+        "validSamples": 0,
+        "observationValidSamples": 0,
+        "plannedSamples": 0
+      }
+    },
+    "validSamplesAreNotOfficialBaseline": true,
+    "commonValidTraceThresholdFor4_7": 3
+  },
+  "samples": [
+    {
+      "unitKey": "probe:normal:J1:r1",
+      "mode": "normal",
+      "journeyId": "J1",
+      "repetition": 1,
+      "scope": "targeted_capture_probe",
+      "status": "INVALID",
+      "validSample": false,
+      "observationValidity": "VALID",
+      "functionalOutcome": "FAILURE",
+      "performanceOutcome": "NOT_EVALUABLE",
+      "auth": {
+        "status": "PASS",
+        "timing": {
+          "sessionStartedAtWallMs": 1790762405299,
+          "loginPageResponseStatus": 200,
+          "loginPageReadyAtMs": 105,
+          "passwordLoginRequestStartAtMs": "<redacted>",
+          "passwordLoginResponseHeaderAtMs": "<redacted>",
+          "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+          "authenticatedShellReadyAtMs": 2305,
+          "passwordLoginStatus": "<redacted>"
+        },
+        "failureBoundary": null
+      },
+      "trace": {
+        "schemaVersion": "aiya-performance-plan1-phase4-diagnostic-v3",
+        "journeyId": "J1",
+        "mode": "normal",
+        "secondActionDelayMs": 2000,
+        "autoRetryMissingClick": false,
+        "controlVariant": null,
+        "traceVariant": null,
+        "startedAtWallMs": 1790762408666,
+        "actions": {
+          "first": {
+            "actionId": "first",
+            "plannedActionAtMs": 0,
+            "dispatchAtMs": 12,
+            "trustedEventAtMs": 76,
+            "routeCommittedAtMs": 77,
+            "requiredRequestStartAtMs": 1285,
+            "responseHeaderAtMs": 1472,
+            "responseBodyFinishedAtMs": 1472,
+            "parseRenderCompletedAtMs": 1855,
+            "readyStateAtMs": 1828,
+            "secondActionAccepted": null,
+            "clickAttemptCount": 3,
+            "failureClass": null,
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "method": "GET",
+                "startedAtMs": 1285,
+                "responseHeaderAtMs": 1472,
+                "bodyFinishedAtMs": 1472,
+                "status": 200,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "SUCCESS",
+            "targetReadyStatus": "READY",
+            "targetUnmounted": null
+          },
+          "second": {
+            "actionId": "second",
+            "plannedActionAtMs": 3271,
+            "dispatchAtMs": 3277,
+            "trustedEventAtMs": 3292,
+            "routeCommittedAtMs": 3293,
+            "requiredRequestStartAtMs": 3300,
+            "responseHeaderAtMs": 3417,
+            "responseBodyFinishedAtMs": 3417,
+            "parseRenderCompletedAtMs": null,
+            "readyStateAtMs": null,
+            "secondActionAccepted": true,
+            "clickAttemptCount": 1,
+            "failureClass": "missing_click_or_not_ready",
+            "requiredRequestTimings": [
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                "method": "GET",
+                "startedAtMs": 3300,
+                "responseHeaderAtMs": 3417,
+                "bodyFinishedAtMs": 3417,
+                "status": 404,
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "functionalOutcome": "INCOMPLETE",
+            "targetReadyStatus": "FAILED",
+            "targetUnmounted": null
+          }
+        },
+        "secondActionAnchor": {
+          "status": "RESOLVED",
+          "actionId": "first",
+          "stepLabel": "select_forms",
+          "trustedEventAtMs": 1271
+        },
+        "functionalOutcome": "INCOMPLETE",
+        "observationValidity": "VALID",
+        "performanceOutcome": "NOT_EVALUABLE",
+        "timing": {
+          "actionId": "second",
+          "plannedActionAtMs": 3271,
+          "dispatchAtMs": 3277,
+          "trustedEventAtMs": 3292,
+          "routeCommittedAtMs": 3293,
+          "requiredRequestStartAtMs": 3300,
+          "responseHeaderAtMs": 3417,
+          "responseBodyFinishedAtMs": 3417,
+          "parseRenderCompletedAtMs": null,
+          "readyStateAtMs": null,
+          "secondActionAccepted": true,
+          "clickAttemptCount": 1,
+          "failureClass": "missing_click_or_not_ready",
+          "requiredRequestTimings": [
+            {
+              "route": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+              "method": "GET",
+              "startedAtMs": 3300,
+              "responseHeaderAtMs": 3417,
+              "bodyFinishedAtMs": 3417,
+              "status": 404,
+              "failed": false,
+              "failureReason": null
+            }
+          ],
+          "functionalOutcome": "INCOMPLETE",
+          "targetReadyStatus": "FAILED",
+          "targetUnmounted": null
+        },
+        "events": [
+          {
+            "type": "action.planned",
+            "actionId": "first",
+            "atMs": 0,
+            "action": "open_client_workspace_and_forms"
+          },
+          {
+            "type": "action.dispatch",
+            "actionId": "first",
+            "atMs": 12,
+            "label": "select_clients"
+          },
+          {
+            "type": "trusted.event",
+            "actionId": "first",
+            "atMs": 76,
+            "targetTestId": null,
+            "route": "/dashboard?section=clients"
+          },
+          {
+            "type": "route.committed",
+            "actionId": "first",
+            "atMs": 77,
+            "route": "/dashboard?section=clients",
+            "source": "pushState"
+          },
+          {
+            "type": "action.planned",
+            "actionId": "second",
+            "atMs": 3271,
+            "action": "select_nutrition",
+            "anchorAtMs": 1271
+          },
+          {
+            "type": "ready.state",
+            "actionId": "first",
+            "atMs": 1828
+          },
+          {
+            "type": "parse.render.completed",
+            "actionId": "first",
+            "atMs": 1855
+          },
+          {
+            "type": "action.dispatch",
+            "actionId": "second",
+            "atMs": 3277,
+            "label": "select_nutrition"
+          },
+          {
+            "type": "second.action.accepted",
+            "actionId": "second",
+            "atMs": 3302,
+            "label": "select_nutrition"
+          },
+          {
+            "type": "trusted.event",
+            "actionId": "second",
+            "atMs": 3292,
+            "targetTestId": "tab-tab_food_rules",
+            "route": null
+          },
+          {
+            "type": "route.committed",
+            "actionId": "second",
+            "atMs": 3293,
+            "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+            "source": "pushState"
+          },
+          {
+            "type": "required.request.start",
+            "actionId": "first",
+            "atMs": 1285
+          },
+          {
+            "type": "required.response.header",
+            "actionId": "first",
+            "atMs": 1472
+          },
+          {
+            "type": "required.response.body.finished",
+            "actionId": "first",
+            "atMs": 1472
+          },
+          {
+            "type": "required.request.start",
+            "actionId": "second",
+            "atMs": 3300
+          },
+          {
+            "type": "required.response.header",
+            "actionId": "second",
+            "atMs": 3417
+          },
+          {
+            "type": "required.response.body.finished",
+            "actionId": "second",
+            "atMs": 3417
+          }
+        ],
+        "requiredRequests": [
+          {
+            "route": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 1285,
+            "requiredFor": [
+              "first"
+            ],
+            "status": 200,
+            "responseHeaderAtMs": 1472,
+            "bodyFinishedAtMs": 1472,
+            "failed": false,
+            "failureReason": null
+          },
+          {
+            "route": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+            "method": "GET",
+            "resourceType": "fetch",
+            "startedAtMs": 3300,
+            "requiredFor": [
+              "second"
+            ],
+            "status": 404,
+            "responseHeaderAtMs": 3417,
+            "bodyFinishedAtMs": 3417,
+            "failed": false,
+            "failureReason": null
+          }
+        ],
+        "failures": [
+          {
+            "actionId": "second",
+            "failureClass": "missing_click_or_not_ready",
+            "label": "select_nutrition"
+          }
+        ],
+        "browserObservers": "off",
+        "status": "INCOMPLETE",
+        "expectedRoute": {
+          "pathname": "/dashboard",
+          "query": {
+            "section": "clients",
+            "clientId": "present",
+            "clientTask": "nutrition"
+          }
+        },
+        "control": null,
+        "preferenceIntentTiming": null,
+        "validation": {
+          "status": "PASS",
+          "failures": [],
+          "completenessStatus": "INCOMPLETE",
+          "missingTimingFields": [
+            "parseRenderCompletedAtMs",
+            "readyStateAtMs"
+          ]
+        },
+        "requestTracking": {
+          "bodyFinishTimedOut": false
+        },
+        "measurement": {
+          "unitKey": "probe:normal:J1:r1",
+          "mode": "normal",
+          "fixtureId": "local-normal",
+          "repetition": 1,
+          "scope": "targeted_capture_probe",
+          "countedAsOfficialSample": false,
+          "controlVariant": null,
+          "traceVariant": null,
+          "authSessionTiming": {
+            "sessionStartedAtWallMs": 1790762405299,
+            "loginPageResponseStatus": 200,
+            "loginPageReadyAtMs": 105,
+            "passwordLoginRequestStartAtMs": "<redacted>",
+            "passwordLoginResponseHeaderAtMs": "<redacted>",
+            "passwordLoginResponseBodyFinishedAtMs": "<redacted>",
+            "authenticatedShellReadyAtMs": 2305,
+            "passwordLoginStatus": "<redacted>",
+            "status": "PASS"
+          },
+          "startRouteTiming": {
+            "navigationStartedAtMs": 0,
+            "authenticatedShellReadyAtMs": 1061
+          },
+          "requestSummary": {
+            "captureStartedAtWallMs": 1790762405298,
+            "captureFinishedAtWallMs": 1790762456993,
+            "requestCount": 39,
+            "apiRequestCount": 15,
+            "documentRequestCount": 3,
+            "requests": [
+              {
+                "route": "/login",
+                "method": "GET",
+                "resourceType": "document",
+                "requestKind": "document",
+                "startedAtMs": 0,
+                "responseHeaderAtMs": 25,
+                "bodyFinishedAtMs": 41,
+                "status": 200,
+                "bodySizeBytes": 15493,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 186,
+                "responseHeaderAtMs": 207,
+                "bodyFinishedAtMs": 211,
+                "status": 200,
+                "bodySizeBytes": 256,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 210,
+                "responseHeaderAtMs": 234,
+                "bodyFinishedAtMs": 244,
+                "status": 200,
+                "bodySizeBytes": 33939,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/auth/password-login",
+                "method": "POST",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 337,
+                "responseHeaderAtMs": 746,
+                "bodyFinishedAtMs": 1880,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard",
+                "method": "GET",
+                "resourceType": "document",
+                "requestKind": "document",
+                "startedAtMs": 754,
+                "responseHeaderAtMs": 1864,
+                "bodyFinishedAtMs": 1910,
+                "status": 200,
+                "bodySizeBytes": 9260,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/shell/bootstrap",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 1985,
+                "responseHeaderAtMs": 2241,
+                "bodyFinishedAtMs": 2266,
+                "status": 200,
+                "bodySizeBytes": 1814,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/session/activity",
+                "method": "POST",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 1985,
+                "responseHeaderAtMs": 2221,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/api/shell/version",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 1985,
+                "responseHeaderAtMs": 2201,
+                "bodyFinishedAtMs": 2203,
+                "status": 200,
+                "bodySizeBytes": 481,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/app-state",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 2277,
+                "responseHeaderAtMs": 2846,
+                "bodyFinishedAtMs": 2948,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard/ai-chat",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2281,
+                "responseHeaderAtMs": 2487,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard/more",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2281,
+                "responseHeaderAtMs": 2507,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard/settings",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2281,
+                "responseHeaderAtMs": 2549,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2281,
+                "responseHeaderAtMs": 2602,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard",
+                "method": "GET",
+                "resourceType": "document",
+                "requestKind": "document",
+                "startedAtMs": 2300,
+                "responseHeaderAtMs": 2923,
+                "bodyFinishedAtMs": 2954,
+                "status": 200,
+                "bodySizeBytes": 9260,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard?section=clients",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2590,
+                "responseHeaderAtMs": 2893,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard?section=messages",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2677,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard?section=alerts",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2714,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard/ai-chat",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2748,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard/more",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2901,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard/settings",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 2931,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/shell/bootstrap",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 3089,
+                "responseHeaderAtMs": 3297,
+                "bodyFinishedAtMs": 3314,
+                "status": 200,
+                "bodySizeBytes": 1814,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/session/activity",
+                "method": "POST",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 3089,
+                "responseHeaderAtMs": 3263,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": null
+              },
+              {
+                "route": "/api/shell/version",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 3090,
+                "responseHeaderAtMs": 3245,
+                "bodyFinishedAtMs": 3248,
+                "status": 200,
+                "bodySizeBytes": 481,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/app-state",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 3321,
+                "responseHeaderAtMs": 4005,
+                "bodyFinishedAtMs": 4028,
+                "status": 200,
+                "bodySizeBytes": 224939,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard/ai-chat",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3329,
+                "responseHeaderAtMs": 3646,
+                "bodyFinishedAtMs": 3651,
+                "status": 200,
+                "bodySizeBytes": 332,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard/more",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3329,
+                "responseHeaderAtMs": 3739,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard/settings",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3329,
+                "responseHeaderAtMs": 3825,
+                "bodyFinishedAtMs": 3832,
+                "status": 200,
+                "bodySizeBytes": 333,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3329,
+                "responseHeaderAtMs": 3746,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/dashboard?section=clients",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3436,
+                "responseHeaderAtMs": 3908,
+                "bodyFinishedAtMs": null,
+                "status": 200,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/api/shell/bootstrap",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 3448,
+                "responseHeaderAtMs": 4246,
+                "bodyFinishedAtMs": 4253,
+                "status": 200,
+                "bodySizeBytes": 1814,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard?section=messages",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3771,
+                "responseHeaderAtMs": 4112,
+                "bodyFinishedAtMs": 4114,
+                "status": 200,
+                "bodySizeBytes": 1555,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard/ai-chat",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3788,
+                "responseHeaderAtMs": 4144,
+                "bodyFinishedAtMs": 4147,
+                "status": 200,
+                "bodySizeBytes": 1567,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard/more",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3826,
+                "responseHeaderAtMs": 4174,
+                "bodyFinishedAtMs": 4177,
+                "status": 200,
+                "bodySizeBytes": 1564,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/dashboard/settings",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "rsc",
+                "startedAtMs": 3911,
+                "responseHeaderAtMs": 4210,
+                "bodyFinishedAtMs": 4213,
+                "status": 200,
+                "bodySizeBytes": 1568,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/shell/preferences",
+                "method": "PATCH",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 4357,
+                "responseHeaderAtMs": 4500,
+                "bodyFinishedAtMs": 4510,
+                "status": 200,
+                "bodySizeBytes": 237,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 4512,
+                "responseHeaderAtMs": null,
+                "bodyFinishedAtMs": null,
+                "status": null,
+                "bodySizeBytes": null,
+                "bodySizeSource": "content-length-header",
+                "serverTiming": [],
+                "failed": true,
+                "failureReason": "net::ERR_ABORTED"
+              },
+              {
+                "route": "/api/shell/bootstrap",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 4513,
+                "responseHeaderAtMs": 4748,
+                "bodyFinishedAtMs": 4754,
+                "status": 200,
+                "bodySizeBytes": 1814,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 4641,
+                "responseHeaderAtMs": 4827,
+                "bodyFinishedAtMs": 4833,
+                "status": 200,
+                "bodySizeBytes": 346,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              },
+              {
+                "route": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                "method": "GET",
+                "resourceType": "fetch",
+                "requestKind": "api_or_other",
+                "startedAtMs": 6656,
+                "responseHeaderAtMs": 6773,
+                "bodyFinishedAtMs": 6774,
+                "status": 404,
+                "bodySizeBytes": 46,
+                "bodySizeSource": "playwright-body-length",
+                "serverTiming": [],
+                "failed": false,
+                "failureReason": null
+              }
+            ],
+            "overlappingRequests": [
+              {
+                "leftRoute": "/",
+                "leftMethod": "GET",
+                "rightRoute": "/",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 222,
+                "overlapEndAtMs": 223
+              },
+              {
+                "leftRoute": "/api/auth/password-login",
+                "leftMethod": "POST",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 766,
+                "overlapEndAtMs": 1892
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/session/activity",
+                "rightMethod": "POST",
+                "overlapStartAtMs": 1997,
+                "overlapEndAtMs": 2233
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 1997,
+                "overlapEndAtMs": 2215
+              },
+              {
+                "leftRoute": "/api/session/activity",
+                "leftMethod": "POST",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 1997,
+                "overlapEndAtMs": 2215
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2499
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2519
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2561
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2614
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2312,
+                "overlapEndAtMs": 2960
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2602,
+                "overlapEndAtMs": 2905
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2689,
+                "overlapEndAtMs": 2960
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2726,
+                "overlapEndAtMs": 2960
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2760,
+                "overlapEndAtMs": 2960
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2913,
+                "overlapEndAtMs": 2960
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2943,
+                "overlapEndAtMs": 2960
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2499
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2499
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2499
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2312,
+                "overlapEndAtMs": 2499
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2519
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2519
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2312,
+                "overlapEndAtMs": 2519
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2293,
+                "overlapEndAtMs": 2561
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2312,
+                "overlapEndAtMs": 2561
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2312,
+                "overlapEndAtMs": 2614
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2602,
+                "overlapEndAtMs": 2614
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2602,
+                "overlapEndAtMs": 2905
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2689,
+                "overlapEndAtMs": 2966
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2726,
+                "overlapEndAtMs": 2966
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2760,
+                "overlapEndAtMs": 2966
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2913,
+                "overlapEndAtMs": 2966
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2943,
+                "overlapEndAtMs": 2966
+              },
+              {
+                "leftRoute": "/dashboard?section=clients",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2689,
+                "overlapEndAtMs": 2905
+              },
+              {
+                "leftRoute": "/dashboard?section=clients",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2726,
+                "overlapEndAtMs": 2905
+              },
+              {
+                "leftRoute": "/dashboard?section=clients",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2760,
+                "overlapEndAtMs": 2905
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=alerts",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2726,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2760,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2913,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2943,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3326
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/session/activity",
+                "rightMethod": "POST",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3275
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3102,
+                "overlapEndAtMs": 3260
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/app-state",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3333,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 4265
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 4159
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4189
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4225
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 4369,
+                "overlapEndAtMs": 4522
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4524,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4525,
+                "overlapEndAtMs": 4766
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4653,
+                "overlapEndAtMs": 4845
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 6668,
+                "overlapEndAtMs": 6786
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2760,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2913,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2943,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3326
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/session/activity",
+                "rightMethod": "POST",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3275
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3102,
+                "overlapEndAtMs": 3260
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/app-state",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3333,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 4265
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 4159
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4189
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4225
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 4369,
+                "overlapEndAtMs": 4522
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4524,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4525,
+                "overlapEndAtMs": 4766
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4653,
+                "overlapEndAtMs": 4845
+              },
+              {
+                "leftRoute": "/dashboard?section=alerts",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 6668,
+                "overlapEndAtMs": 6786
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2913,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2943,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3326
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/session/activity",
+                "rightMethod": "POST",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3275
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3102,
+                "overlapEndAtMs": 3260
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/app-state",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3333,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 4265
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 4159
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4189
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4225
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 4369,
+                "overlapEndAtMs": 4522
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4524,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4525,
+                "overlapEndAtMs": 4766
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4653,
+                "overlapEndAtMs": 4845
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 6668,
+                "overlapEndAtMs": 6786
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 2943,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3326
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/session/activity",
+                "rightMethod": "POST",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3275
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3102,
+                "overlapEndAtMs": 3260
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/app-state",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3333,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 4265
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 4159
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4189
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4225
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 4369,
+                "overlapEndAtMs": 4522
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4524,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4525,
+                "overlapEndAtMs": 4766
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4653,
+                "overlapEndAtMs": 4845
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 6668,
+                "overlapEndAtMs": 6786
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3326
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/session/activity",
+                "rightMethod": "POST",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3275
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3102,
+                "overlapEndAtMs": 3260
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/app-state",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3333,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 4265
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 4159
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4189
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4225
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/preferences",
+                "rightMethod": "PATCH",
+                "overlapStartAtMs": 4369,
+                "overlapEndAtMs": 4522
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4524,
+                "overlapEndAtMs": 51695
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4525,
+                "overlapEndAtMs": 4766
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4653,
+                "overlapEndAtMs": 4845
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 6668,
+                "overlapEndAtMs": 6786
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/session/activity",
+                "rightMethod": "POST",
+                "overlapStartAtMs": 3101,
+                "overlapEndAtMs": 3275
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3102,
+                "overlapEndAtMs": 3260
+              },
+              {
+                "leftRoute": "/api/session/activity",
+                "leftMethod": "POST",
+                "rightRoute": "/api/shell/version",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3102,
+                "overlapEndAtMs": 3260
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/api/app-state",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4040
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 3663
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 3751
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3341,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard/settings",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 3844
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=clients",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3448,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/dashboard",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 3758
+              },
+              {
+                "leftRoute": "/dashboard?section=clients",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3460,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/dashboard?section=clients",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/dashboard?section=clients",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/dashboard?section=clients",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 3920
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard?section=messages",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3783,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 4159
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4189
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4225
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/ai-chat",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3800,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/dashboard?section=messages",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4126
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/more",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3838,
+                "overlapEndAtMs": 4159
+              },
+              {
+                "leftRoute": "/dashboard/ai-chat",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4159
+              },
+              {
+                "leftRoute": "/dashboard/more",
+                "leftMethod": "GET",
+                "rightRoute": "/dashboard/settings",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 3923,
+                "overlapEndAtMs": 4189
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "leftMethod": "GET",
+                "rightRoute": "/api/shell/bootstrap",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4525,
+                "overlapEndAtMs": 4766
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4653,
+                "overlapEndAtMs": 4845
+              },
+              {
+                "leftRoute": "/api/clients/00000000-0000-4000-8000-000000005001",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 6668,
+                "overlapEndAtMs": 6786
+              },
+              {
+                "leftRoute": "/api/shell/bootstrap",
+                "leftMethod": "GET",
+                "rightRoute": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                "rightMethod": "GET",
+                "overlapStartAtMs": 4653,
+                "overlapEndAtMs": 4766
+              }
+            ],
+            "overlapCount": 189,
+            "serverTimingResponseCount": 0,
+            "bodySizeAvailableCount": 21,
+            "bodyFinishTimedOut": true,
+            "requestTimeOriginWallMs": 1790762405310,
+            "requestTimebase": "first_request_relative"
+          },
+          "serverStoreTiming": {
+            "expected": "off",
+            "serverEnvironmentPatch": {
+              "AIYA_PERF_DIAGNOSTIC": "0"
+            },
+            "observedResponseCount": 0,
+            "metrics": []
+          },
+          "browserParseRenderTiming": {
+            "first": {
+              "actionId": "first",
+              "plannedActionAtMs": 0,
+              "dispatchAtMs": 12,
+              "trustedEventAtMs": 76,
+              "routeCommittedAtMs": 77,
+              "requiredRequestStartAtMs": 1285,
+              "responseHeaderAtMs": 1472,
+              "responseBodyFinishedAtMs": 1472,
+              "parseRenderCompletedAtMs": 1855,
+              "readyStateAtMs": 1828,
+              "secondActionAccepted": null,
+              "clickAttemptCount": 3,
+              "failureClass": null,
+              "requiredRequestTimings": [
+                {
+                  "route": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                  "method": "GET",
+                  "startedAtMs": 1285,
+                  "responseHeaderAtMs": 1472,
+                  "bodyFinishedAtMs": 1472,
+                  "status": 200,
+                  "failed": false,
+                  "failureReason": null
+                }
+              ],
+              "functionalOutcome": "SUCCESS",
+              "targetReadyStatus": "READY",
+              "targetUnmounted": null
+            },
+            "second": {
+              "actionId": "second",
+              "plannedActionAtMs": 3271,
+              "dispatchAtMs": 3277,
+              "trustedEventAtMs": 3292,
+              "routeCommittedAtMs": 3293,
+              "requiredRequestStartAtMs": 3300,
+              "responseHeaderAtMs": 3417,
+              "responseBodyFinishedAtMs": 3417,
+              "parseRenderCompletedAtMs": null,
+              "readyStateAtMs": null,
+              "secondActionAccepted": true,
+              "clickAttemptCount": 1,
+              "failureClass": "missing_click_or_not_ready",
+              "requiredRequestTimings": [
+                {
+                  "route": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                  "method": "GET",
+                  "startedAtMs": 3300,
+                  "responseHeaderAtMs": 3417,
+                  "bodyFinishedAtMs": 3417,
+                  "status": 404,
+                  "failed": false,
+                  "failureReason": null
+                }
+              ],
+              "functionalOutcome": "INCOMPLETE",
+              "targetReadyStatus": "FAILED",
+              "targetUnmounted": null
+            }
+          },
+          "phase44TraceValidation": {
+            "status": "PASS",
+            "failures": [],
+            "completenessStatus": "INCOMPLETE",
+            "missingTimingFields": [
+              "parseRenderCompletedAtMs",
+              "readyStateAtMs"
+            ],
+            "toleratedMissingTimingFields": []
+          },
+          "longTasks": {
+            "observersEnabled": false,
+            "longTaskCount": 0,
+            "longTasks": [],
+            "eventTimings": [],
+            "routeHistoryEvents": [
+              {
+                "atMs": 77,
+                "route": "/dashboard?section=clients",
+                "source": "pushState"
+              },
+              {
+                "atMs": 1145,
+                "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+                "source": "pushState"
+              },
+              {
+                "atMs": 1272,
+                "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+                "source": "pushState"
+              },
+              {
+                "atMs": 3293,
+                "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+                "source": "pushState"
+              }
+            ],
+            "trustedEvents": [
+              {
+                "atMs": 76,
+                "testId": null,
+                "href": "/dashboard?section=clients"
+              },
+              {
+                "atMs": 996,
+                "testId": "client-roster-item",
+                "href": null
+              },
+              {
+                "atMs": 1271,
+                "testId": "tab-tab_personal_form",
+                "href": null
+              },
+              {
+                "atMs": 3292,
+                "testId": "tab-tab_food_rules",
+                "href": null
+              }
+            ],
+            "phase52Events": [],
+            "phase55Events": [],
+            "lcpAtMs": null,
+            "cls": 0,
+            "longTaskObserverUnavailable": false,
+            "eventTimingObserverUnavailable": false,
+            "lcpObserverUnavailable": false,
+            "clsObserverUnavailable": false
+          },
+          "preferenceIntentTiming": null,
+          "routeHistory": {
+            "events": [
+              {
+                "atMs": 77,
+                "route": "/dashboard?section=clients",
+                "source": "pushState"
+              },
+              {
+                "atMs": 1145,
+                "route": "/dashboard?section=clients&clientId=%3Cpresent%3E",
+                "source": "pushState"
+              },
+              {
+                "atMs": 1272,
+                "route": "/dashboard?section=clients&clientTask=forms&clientId=%3Cpresent%3E",
+                "source": "pushState"
+              },
+              {
+                "atMs": 3293,
+                "route": "/dashboard?section=clients&clientTask=nutrition&clientId=%3Cpresent%3E",
+                "source": "pushState"
+              }
+            ],
+            "trustedEvents": [
+              {
+                "atMs": 76,
+                "testId": null,
+                "href": "/dashboard?section=clients"
+              },
+              {
+                "atMs": 996,
+                "testId": "client-roster-item",
+                "href": null
+              },
+              {
+                "atMs": 1271,
+                "testId": "tab-tab_personal_form",
+                "href": null
+              },
+              {
+                "atMs": 3292,
+                "testId": "tab-tab_food_rules",
+                "href": null
+              }
+            ]
+          },
+          "requiredReads": [
+            {
+              "actionId": "first",
+              "pattern": "/api/clients/:clientId/forms",
+              "count": 1,
+              "records": [
+                {
+                  "route": "/api/clients/00000000-0000-4000-8000-000000005001/forms",
+                  "method": "GET",
+                  "status": 200,
+                  "responseHeaderAtMs": 1472,
+                  "bodyFinishedAtMs": 1472,
+                  "failed": false
+                }
+              ],
+              "valid": true
+            },
+            {
+              "actionId": "second",
+              "pattern": "/api/clients/:clientId/food-rule-profile",
+              "count": 1,
+              "records": [
+                {
+                  "route": "/api/clients/00000000-0000-4000-8000-000000005001/food-rule-profile",
+                  "method": "GET",
+                  "status": 404,
+                  "responseHeaderAtMs": 3417,
+                  "bodyFinishedAtMs": 3417,
+                  "failed": false
+                }
+              ],
+              "valid": false
+            }
+          ],
+          "j2DataReady": {
+            "status": "NOT_APPLICABLE",
+            "valid": true,
+            "route": "/api/conversations",
+            "linkedTo": []
+          },
+          "expectedRouteMatched": true,
+          "expectedMutationRequests": [
+            {
+              "route": "/api/shell/preferences",
+              "method": "PATCH",
+              "resourceType": "fetch",
+              "requestKind": "api_or_other",
+              "startedAtMs": 4369,
+              "responseHeaderAtMs": 4512,
+              "bodyFinishedAtMs": 4522,
+              "status": 200,
+              "bodySizeBytes": 237,
+              "bodySizeSource": "playwright-body-length",
+              "serverTiming": [],
+              "failed": false,
+              "failureReason": null
+            }
+          ],
+          "backgroundMutationRequests": [
+            {
+              "route": "/api/session/activity",
+              "method": "POST",
+              "resourceType": "fetch",
+              "requestKind": "api_or_other",
+              "startedAtMs": 1997,
+              "responseHeaderAtMs": 2233,
+              "bodyFinishedAtMs": null,
+              "status": 200,
+              "bodySizeBytes": null,
+              "bodySizeSource": "content-length-header",
+              "serverTiming": [],
+              "failed": true,
+              "failureReason": "net::ERR_ABORTED"
+            },
+            {
+              "route": "/api/session/activity",
+              "method": "POST",
+              "resourceType": "fetch",
+              "requestKind": "api_or_other",
+              "startedAtMs": 3101,
+              "responseHeaderAtMs": 3275,
+              "bodyFinishedAtMs": null,
+              "status": 200,
+              "bodySizeBytes": null,
+              "bodySizeSource": "content-length-header",
+              "serverTiming": [],
+              "failed": true,
+              "failureReason": null
+            }
+          ],
+          "mutationRequests": [],
+          "foregroundBodyFinishTimedOut": true,
+          "failureBoundary": {
+            "phase": "second_action",
+            "actionId": "second",
+            "reason": "missing_click_or_not_ready"
+          },
+          "observationValidity": "VALID",
+          "functionalOutcome": "FAILURE",
+          "firstActionOutcome": "SUCCESS",
+          "secondActionOutcome": "INCOMPLETE",
+          "performanceOutcome": "NOT_EVALUABLE",
+          "performanceBoundary": {
+            "name": "second_action_dispatch_to_ready",
+            "durationMs": null
+          },
+          "validSample": false
+        }
+      },
+      "failureBoundary": {
+        "phase": "second_action",
+        "actionId": "second",
+        "reason": "missing_click_or_not_ready"
+      },
+      "countedAsOfficialSample": false
+    }
+  ],
+  "blockers": [],
+  "deferredToLaterStages": [
+    "Phase 4.5 hosted comparison remains out of scope.",
+    "Phase 4.6 Android and installed-PWA comparison remains out of scope.",
+    "No root cause is claimed from diagnostic traces until Phase 4.7 closure criteria are met."
+  ],
+  "constraints": [
+    "No official nine-scenario baseline was started.",
+    "No small fixture run was started because Phase 4.3 did not identify data volume as a candidate variable.",
+    "No runtime change is accepted as a Plan 1 fix.",
+    "Production remains NO-GO.",
+    "No credentials, cookies, tokens, raw bodies, prompts, clinical data, or device serials are recorded."
+  ],
+  "evidenceIntegrity": {
+    "status": "PASS",
+    "redactionCheck": "PASS",
+    "officialMeasurementStarted": false,
+    "historicalPhase4EvidenceRewritten": false,
+    "checkpointIdentitySeparateFromPhase4_3": true,
+    "incompleteSamplesRemainInvalid": true,
+    "observedFailuresRemainNonSamples": true
+  },
+  "closure": {
+    "status": "IN_PROGRESS",
+    "outcome": "LOCAL_CAPTURE_PROBE_COMPLETE",
+    "phase4Closed": false,
+    "plan1Closed": false,
+    "officialMeasurementStarted": false,
+    "diagnosticJourneyStarted": true,
+    "causalExperimentStarted": false,
+    "runtimeFixAccepted": false,
+    "nextAction": "Review the J1 capture trace; expand to three normal observations per J1-J3 only after the capture boundary remains trustworthy."
+  }
+}

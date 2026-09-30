@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "aiya-global-freeze-wait-state-phase-5c-ab-preflight-v1",
+  "evidenceId": "AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5C_20260929T191002Z-c531c6f5-75ce-48d3-85da-47027957325d",
+  "createdAt": "2026-09-29T19:10:02Z",
+  "phase": "5C - Bounded local single-variable reporter comparison",
+  "status": "BLOCKED_SYNTHETIC_DATA_AND_BUILD_ENV_UNVERIFIED",
+  "sourceIdentity": {
+    "requiredHostedCommit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "isolatedManagedWorktree": "C:\\Users\\Dell\\.codex\\worktrees\\freeze-profile-analysis\\MANU-AI",
+    "worktreeHead": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "worktreeDependenciesPresent": false,
+    "mainCheckoutChangesPreserved": true
+  },
+  "safePreflight": {
+    "environmentFilePresent": true,
+    "nextPublicSupabaseUrlConfigured": true,
+    "nextPublicSupabaseUrlIsLoopback": false,
+    "anonKeyConfiguredValueOmitted": true,
+    "serviceRoleConfiguredValueOmitted": true,
+    "allBuildTimeNextPublicValuesVerified": false,
+    "buildTimeVerificationStoppedBeforeBuild": true,
+    "localSupabaseStackPresent": true,
+    "localSupabaseListenerPorts": [54321, 54322, 54323],
+    "localSupabaseAuthHealthHttpStatus": 200,
+    "runningDockerContainerCount": 15,
+    "runningSupabaseContainerCount": 11,
+    "repoLocalSupabaseProjectId": "manu-ai-local",
+    "runningProjectMatchesRepoConfig": true,
+    "syntheticOnlyDatasetVerified": false,
+    "databaseRowsReadForClassification": false,
+    "supabaseCliResolvable": false,
+    "supabaseCliResolution": "ENOENT",
+    "supabaseTargetStatus": "LOCAL_STACK_HEALTHY_DATA_CLASSIFICATION_UNVERIFIED",
+    "buildStarted": false,
+    "applicationStarted": false,
+    "databaseReadOrWritePerformed": false,
+    "migrationApplied": false
+  },
+  "stopReason": "A local Supabase stack is running and its project label matches the repo, but its database is not confirmed synthetic-only. The current app environment points to a non-loopback Supabase URL, the local Supabase CLI is unavailable, and other build-time NEXT_PUBLIC_* values were not fully validated. The database was not queried; the comparison stopped before build or application startup.",
+  "predeclaredComparison": {
+    "singleVariable": "ShellWebVitalsReporter mounted versus bypassed",
+    "sourceBase": "hosted commit 1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "conditions": [
+      "A: build from the hosted commit with ShellWebVitalsReporter mounted.",
+      "B: same isolated worktree and build configuration, bypassing only the ShellWebVitalsReporter mount; no other source, dependency, environment, or data change."
+    ],
+    "fixedInteraction": "On synthetic dashboard.clients, focus the client search field; type three synthetic characters with 350 ms gaps and do not submit; navigate Dashboard then Clients once; reload once.",
+    "capture": "Use the same Edge version, viewport, synthetic account/data, local target, and clean browser state. Record 60 seconds from the first input in native Edge Performance. Run A then B. Keep the temporary B-only edit in the managed hosted-commit worktree and do not commit it.",
+    "prerequisites": [
+      "Confirm the existing local stack is disposable and synthetic-only without querying client rows, or provide a fresh isolated local target; do not install a CLI to work around the unresolved data classification.",
+      "Before package installation, build, or app startup, verify without printing values that NEXT_PUBLIC_APP_URL and every NEXT_PUBLIC_* service URL are loopback/safe, and that Supabase keys belong only to this local synthetic target. Do not reuse the main checkout .env.local.",
+      "The isolated worktree has no node_modules. If required, install exactly from its committed lockfile using npm ci without modifying package or lock files."
+    ],
+    "measurement": "Record input dispatch timestamps, renderer-main RunTask count/max/total for tasks >=50 ms, and call trees. Preserve inclusive and self time separately; compare only the same 60-second window and sequence.",
+    "decisionRules": {
+      "candidateSupportedLocally": "A contains a renderer-main task >=500 ms during the fixed interaction with a 1555 Web Vitals U/m frame; B has no renderer-main task >=250 ms and its total >=50 ms RunTask time is at least 50 percent lower than A.",
+      "candidateNotSupportedAsSoleLocalTrigger": "B still contains a renderer-main task >=500 ms and its total >=50 ms RunTask time is at least 80 percent of A.",
+      "inconclusive": "A has no >=500 ms renderer-main task; the input/navigation/reload sequence differs; required input/profile markers are missing; or the result meets neither numeric rule above. Local non-reproduction must not be used to dismiss the reported system-wide symptom."
+    },
+    "stopConditions": [
+      "Stop before startup if Supabase URL is not verified loopback or credentials are not local-only synthetic.",
+      "Do not create or migrate a database without separate explicit authorization.",
+      "Do not use real client data, hosted services, or live providers.",
+      "Do not deploy, change dependencies or secrets, or implement a runtime fix as part of this comparison."
+    ]
+  },
+  "nextRequiredInput": "Confirm the running manu-ai-local database is disposable and contains synthetic-only data, and provide local-only build-time configuration. If that cannot be confirmed without reading client rows, use a fresh isolated local synthetic target instead. If setup requires migrations, obtain separate explicit migration authorization first.",
+  "conclusion": "The trace-based candidate assessment is complete, but the controlled A/B comparison did not run. Causality remains unproven."
+}

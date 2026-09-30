@@ -1,0 +1,160 @@
+{
+  "evidenceId": "aiya-shared-ui-runtime-rewrite-delivery-20260930-a7240471",
+  "schemaVersion": "aiya-shared-ui-delivery-v1",
+  "generatedAt": "2026-09-30T10:50:08Z",
+  "status": "COMPLETE",
+  "outcome": "SHARED_UI_RUNTIME_REWRITE_DELIVERED_TO_HOSTED_SANDBOX",
+  "productionDecision": "NO-GO",
+  "source": {
+    "branch": "codex/production-readiness-stage-1",
+    "commitSha": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+    "commitSubject": "feat: integrate shared UI runtime rewrite",
+    "historicalDiagnosticsPreserved": true,
+    "dirtyTreePreserved": true,
+    "productionEffects": false,
+    "remoteMigrationsApplied": false,
+    "realProviderEgress": false,
+    "realChannelTraffic": false,
+    "realBilling": false,
+    "realClientHealthData": false
+  },
+  "checkpoint": {
+    "phaseId": "aiya-shared-ui-delivery-v1",
+    "runId": "aiya-shared-ui-delivery-v1-20260930T093033914Z-d5b4c008-500e-4bf7-9fda-99e000ece6c2",
+    "stage5EventSequence": 10,
+    "stage6EventSequence": 11,
+    "completionEventSequence": 12
+  },
+  "stages": {
+    "projectIntegration": {
+      "status": "PASS",
+      "sourceCommit": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+      "transferredFiles": 26,
+      "descriptorValidation": "PASS",
+      "typecheck": "PASS",
+      "changedFileLint": "PASS",
+      "targetedVitest": { "files": 8, "tests": 70, "skipped": 0 }
+    },
+    "localAuthenticatedValidation": {
+      "status": "PASS",
+      "appOrigin": "http://127.0.0.1:3137",
+      "supabaseOrigin": "http://127.0.0.1:54321",
+      "fallbackStore": false,
+      "fixture": "local-normal",
+      "passwordAuth": "PASS",
+      "productionBuild": "PASS",
+      "smoke": {
+        "status": "PASS",
+        "shellMounted": true,
+        "clientWorkspaceMounted": true,
+        "formsMounted": true,
+        "nutritionEmptyState": true,
+        "workspaceError": false,
+        "expectedNutritionAbsence": {
+          "status": 404,
+          "code": "client_food_rule_profile_not_found",
+          "handledAs": "empty-state"
+        }
+      },
+      "focusedRegressionTests": { "files": 2, "tests": 10, "skipped": 0 }
+    },
+    "releaseIdentityAndArtifact": {
+      "status": "PASS",
+      "releaseId": "hs-a72404711ecf-292fb7b24203",
+      "commitSha": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+      "migrationFingerprint": "292fb7b24203b805211094c24ee38760c990af9bf14ab5af2cf40cbc0e79635d",
+      "manifestPath": ".manu-runtime/hosted-sandbox/artifacts/a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37/release-manifest.json",
+      "archivePath": "app/.manu-runtime/release-artifacts/hs-a72404711ecf-292fb7b24203.tar.gz",
+      "archiveSha256": "5ebcb7cd2ec8465c4a4e9ebf02438566f1b5ab59578d5d3c0da742e4802eee3d",
+      "archiveBytes": 17872367,
+      "fileCount": 2737,
+      "manifestVerification": "PASS",
+      "localDryRun": "PASS",
+      "artifactTests": { "releaseArtifact": "PASS", "deployContract": "PASS" }
+    },
+    "hostedDeploy": {
+      "status": "PASS",
+      "target": "https://aiyaworkspace.com",
+      "remote": "root@siriusai.store",
+      "remoteRoot": "/opt/manu-ai",
+      "remoteStage": "/opt/manu-ai/staging/a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+      "apply": "PASS",
+      "health": {
+        "httpStatus": 200,
+        "status": "ok",
+        "releaseId": "hs-a72404711ecf-292fb7b24203",
+        "commitSha": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+        "migrationFingerprint": "292fb7b24203b805211094c24ee38760c990af9bf14ab5af2cf40cbc0e79635d",
+        "compatibilityVersion": "0.0.0+a724047"
+      },
+      "smoke": {
+        "status": "PASS",
+        "checked": 8,
+        "attempts": 1,
+        "routes": {
+          "/": 200,
+          "/login": 200,
+          "/purchase": 200,
+          "/app-install": 307,
+          "/manifest.webmanifest": 200,
+          "/api/app-state": 401,
+          "/api/clients": 401
+        }
+      },
+      "remoteCurrent": "a72404711ecfb95b8b1fe33d1fa0ac8bb3cceb37",
+      "rollbackTarget": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "pm2": { "process": "manu-ai", "status": "online", "restartCount": 0 }
+    },
+    "realDeviceAcceptance": {
+      "status": "PASS",
+      "desktopChrome": {
+        "status": "PASS",
+        "hostedOrigin": "https://aiyaworkspace.com",
+        "dashboardNavigation": "PASS",
+        "messagesNavigation": "PASS",
+        "messageSearchInputRoundTrip": "PASS",
+        "credentialEnteredDuringAcceptance": false
+      },
+      "androidChrome": {
+        "status": "PASS",
+        "model": "SM-S721B",
+        "androidVersion": "16",
+        "chromeVersion": "152.0.7977.83",
+        "viewport": { "width": 384, "height": 695, "devicePixelRatio": 2.8125 },
+        "hostedReleaseHealth": "PASS",
+        "purchaseNavigation": "PASS",
+        "loginInputRoundTrip": "PASS",
+        "deviceSerialRecorded": false,
+        "credentialEnteredDuringAcceptance": false
+      },
+      "installedAndroidPwa": {
+        "status": "NOT_CURRENT_RELEASE",
+        "observedOrigin": "https://65-21-52-249.sslip.io",
+        "observedReleaseId": "hs-a2b1e0908b29-ea9021bd6c91",
+        "newReleaseAcceptanceCounted": false,
+        "installationChanged": false,
+        "followUp": "Install or refresh the AIya PWA for a separate PWA-specific acceptance; this delivery used physical Android Chrome."
+      }
+    },
+    "deliveryClosure": {
+      "status": "PASS",
+      "releaseHealthRechecked": true,
+      "currentPointerRechecked": true,
+      "rollbackTargetRechecked": true,
+      "handoffUpdated": true,
+      "nextPhaseUpdated": true,
+      "globalFreezeConclusionChanged": false,
+      "productionGoChanged": false
+    }
+  },
+  "limitations": [
+    "Hosted acceptance did not enter credentials or inspect client health data; desktop used an existing browser session only for generic shell/navigation checks.",
+    "The installed Android WebAPK belongs to a different test origin and release, so it was observed but excluded from this new-release acceptance.",
+    "This delivery proves integration, release packaging, hosted smoke, and public/device UI responsiveness; it does not prove the historical global freeze root cause is resolved."
+  ],
+  "historicalStatusPreserved": {
+    "globalFreezeDiagnosis": "PHASE_5C_COMPLETE / INCONCLUSIVE_LOCAL_NONREPRODUCTION / REPORTER_SOLE_TRIGGER_NOT_SUPPORTED_LOCALLY",
+    "plan1Diagnosis": "COMPLETE / DIAGNOSIS_BLOCKED",
+    "production": "NO-GO"
+  }
+}

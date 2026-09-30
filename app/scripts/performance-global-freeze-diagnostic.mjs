@@ -22,10 +22,15 @@ import {
   assertPhaseOneRunHistory,
   validatePhaseOneBlockReason,
 } from "./lib/aiya-global-freeze-phase.mjs";
+import {
+  GLOBAL_FREEZE_WAIT_STATE_MARKERS,
+  summarizeWaitState,
+} from "./lib/aiya-global-freeze-wait-state.mjs";
+import { summarizeNativeProfileAttribution } from "./lib/aiya-global-freeze-profile-analysis.mjs";
 export { GLOBAL_FREEZE_PHASE_DEFINITION };
 
 export const GLOBAL_FREEZE_MAX_COMPRESSED_BYTES = 64 * 1024 * 1024;
-export const GLOBAL_FREEZE_MAX_TRACE_EVENTS = 500_000;
+export const GLOBAL_FREEZE_MAX_TRACE_EVENTS = 1_000_000;
 export const GLOBAL_FREEZE_MAX_PROFILE_NODES = 250_000;
 export const GLOBAL_FREEZE_MAX_PROFILE_SAMPLES = 1_000_000;
 export const GLOBAL_FREEZE_DEFAULT_HOST_CAPTURE_SECONDS = 150;
@@ -38,6 +43,10 @@ export const GLOBAL_FREEZE_CHECKPOINT_ROOT = join(
   "..",
   ".manu-runtime",
   "phase-execution",
+);
+export const GLOBAL_FREEZE_NATIVE_TRACE_ROOT = join(
+  dirname(GLOBAL_FREEZE_CHECKPOINT_ROOT),
+  "native-traces",
 );
 export const GLOBAL_FREEZE_SOURCE_FILES = Object.freeze([
   "app/src/components/dashboard-app.tsx",
@@ -63,6 +72,7 @@ const SAFE_EVENT_NAMES = new Set([
   "Commit",
   "EvaluateScript",
   "EventDispatch",
+  "EventTiming",
   "FireAnimationFrame",
   "FireIdleCallback",
   "FunctionCall",
@@ -95,6 +105,18 @@ const SAFE_EVENT_NAMES = new Set([
 ]);
 
 const SAFE_APP_EVENT = /^(?:inbox|messaging)_[a-z0-9_]{1,60}$/;
+const SAFE_INPUT_EVENT_TYPES = new Set([
+  "beforeinput",
+  "click",
+  "input",
+  "keydown",
+  "keyup",
+  "mousedown",
+  "pointerdown",
+  "pointerup",
+  "touchend",
+  "touchstart",
+]);
 const SAFE_PHASES = new Set(["B", "E", "X", "I", "i", "P", "R", "s", "t", "f"]);
 const SAFE_CATEGORIES = new Set([
   "blink",
@@ -131,10 +153,12 @@ const ROUTE_ALLOWLIST = new Set([
   "/api/shell/preferences",
   "/api/shell/version",
 ]);
+const LOCAL_SYNTHETIC_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const CLOCK_MARKERS = new Set([
   "aiya-global-freeze-sync-start",
   "aiya-global-freeze-sync-end",
 ]);
+const WAIT_STATE_MARKERS = new Set(Object.values(GLOBAL_FREEZE_WAIT_STATE_MARKERS));
 
 function isRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -171,7 +195,9 @@ export function sanitizeApiRoute(value) {
   } catch {
     return "<route>";
   }
-  if (url.hostname !== "aiyaworkspace.com") return "<external>";
+  if (url.hostname !== "aiyaworkspace.com" && !LOCAL_SYNTHETIC_HOSTS.has(url.hostname)) {
+    return "<external>";
+  }
   const path = url.pathname;
   if (ROUTE_ALLOWLIST.has(path)) return path;
   if (/^\/api\/clients\/[^/]+$/.test(path)) return "/api/clients/:id";
@@ -186,16 +212,18 @@ export function sanitizeApiRoute(value) {
 }
 
 function sanitizeProfile(profile) {
-  if (!isRecord(profile) || !Array.isArray(profile.nodes) || !Array.isArray(profile.samples)) {
+  if (!isRecord(profile) || !Array.isArray(profile.samples)) {
     return null;
   }
-  if (profile.nodes.length > GLOBAL_FREEZE_MAX_PROFILE_NODES) {
+  const rawNodes = Array.isArray(profile.nodes) ? profile.nodes : [];
+  if (rawNodes.length > GLOBAL_FREEZE_MAX_PROFILE_NODES) {
     throw new Error("trace_profile_node_limit_exceeded");
   }
-  const nodes = profile.nodes.flatMap((node) => {
+  const nodes = rawNodes.flatMap((node) => {
     if (!isRecord(node) || !Number.isInteger(node.id) || !isRecord(node.callFrame)) return [];
     return [{
       id: node.id,
+      parent: Number.isInteger(node.parent) ? node.parent : null,
       functionName: safeFunctionName(node.callFrame.functionName),
       script: safeScriptLabel(node.callFrame.url),
       line: Number.isInteger(node.callFrame.lineNumber) ? node.callFrame.lineNumber : null,
@@ -203,10 +231,9 @@ function sanitizeProfile(profile) {
       children: Array.isArray(node.children) ? node.children.filter(Number.isInteger) : [],
     }];
   });
-  const nodeIds = new Set(nodes.map((node) => node.id));
-  const samples = profile.samples.filter((id) => Number.isInteger(id) && nodeIds.has(id));
+  const samples = profile.samples.map((id) => Number.isInteger(id) ? id : null);
   const timeDeltas = Array.isArray(profile.timeDeltas)
-    ? profile.timeDeltas.filter((value) => Number.isFinite(value) && value >= 0)
+    ? profile.timeDeltas.map((value) => Number.isFinite(value) ? value : null)
     : [];
   return {
     startTimeUs: Number.isFinite(profile.startTime) ? profile.startTime : null,
@@ -219,8 +246,11 @@ function sanitizeProfile(profile) {
 
 function profileFromEvent(event) {
   const data = event?.args?.data;
-  if (!isRecord(data)) return null;
-  return sanitizeProfile(data.cpuProfile);
+  if (!isRecord(data) || !isRecord(data.cpuProfile)) return null;
+  return sanitizeProfile({
+    ...data.cpuProfile,
+    timeDeltas: Array.isArray(data.timeDeltas) ? data.timeDeltas : data.cpuProfile.timeDeltas,
+  });
 }
 
 function routeFromEvent(event) {
@@ -250,16 +280,73 @@ function safeNetworkStatus(event) {
   return Number.isInteger(status) && status >= 100 && status <= 599 ? status : null;
 }
 
+function safeNetworkOutcome(event) {
+  if (event?.name !== "ResourceFinish") return null;
+  const data = event?.args?.data;
+  if (data?.canceled === true) return "canceled";
+  if (data?.didFail === true) return "failed";
+  return "finished";
+}
+
 function clockMarkerFromEvent(event) {
   if (event?.name !== "TimeStamp") return null;
   const message = event?.args?.data?.message;
   return CLOCK_MARKERS.has(message) ? message : null;
 }
 
+function waitStateMarkerFromEvent(event) {
+  if (event?.name !== "TimeStamp") return null;
+  const message = event?.args?.data?.message;
+  return WAIT_STATE_MARKERS.has(message) ? message : null;
+}
+
 function eventName(value) {
   if (typeof value !== "string") return null;
   if (SAFE_EVENT_NAMES.has(value) || SAFE_APP_EVENT.test(value)) return value;
   return "<event>";
+}
+
+function safeInputEventType(event) {
+  if (event?.name !== "EventDispatch" && event?.name !== "EventTiming") return null;
+  const data = event?.args?.data;
+  const type = data?.type ?? data?.eventType ?? event?.args?.type;
+  return SAFE_INPUT_EVENT_TYPES.has(type) ? type : null;
+}
+
+function safeInteractionTiming(event, interactionIds) {
+  if (event?.name !== "EventTiming") return null;
+  const data = event?.args?.data;
+  const type = safeInputEventType(event);
+  if (type === null) return null;
+  const timeStamp = data?.timeStamp;
+  const processingStart = data?.processingStart;
+  const processingEnd = data?.processingEnd;
+  const duration = data?.duration;
+  const rawInteractionId = data?.interactionId;
+  let interactionId = null;
+  if (Number.isSafeInteger(rawInteractionId) && rawInteractionId > 0) {
+    if (!interactionIds.has(rawInteractionId)) {
+      interactionIds.set(rawInteractionId, `interaction-${interactionIds.size + 1}`);
+    }
+    interactionId = interactionIds.get(rawInteractionId);
+  }
+  const inputDelayMs = Number.isFinite(timeStamp) && Number.isFinite(processingStart) &&
+    processingStart >= timeStamp
+    ? Number((processingStart - timeStamp).toFixed(3))
+    : null;
+  const processingMs = Number.isFinite(processingStart) && Number.isFinite(processingEnd) &&
+    processingEnd >= processingStart
+    ? Number((processingEnd - processingStart).toFixed(3))
+    : null;
+  return {
+    eventType: type,
+    inputDelayMs,
+    processingMs,
+    reportedDurationMs: Number.isFinite(duration) && duration >= 0
+      ? Number(duration.toFixed(3))
+      : null,
+    interactionId,
+  };
 }
 
 export function sanitizeChromeTrace(input, { runId = null } = {}) {
@@ -277,11 +364,35 @@ export function sanitizeChromeTrace(input, { runId = null } = {}) {
   for (const event of input.traceEvents) {
     if (event?.ph !== "M" || event?.name !== "thread_name" || !Number.isInteger(event.tid)) continue;
     const name = event?.args?.name;
-    threadLabels.set(event.tid, THREAD_NAMES.has(name) ? name : "<other-thread>");
+    threadLabels.set(`${event.pid}:${event.tid}`, THREAD_NAMES.has(name) ? name : "<other-thread>");
+  }
+
+  const profileIds = new Map();
+  const profileHeaders = new Map();
+  const profileKeyFor = (event) => {
+    if (!Number.isInteger(event?.pid)) return null;
+    const value = event.id ?? (isRecord(event.id2) ? event.id2.global ?? event.id2.local : event.id2);
+    if (typeof value !== "string" && !Number.isSafeInteger(value)) return null;
+    return `${event.pid}:${typeof value}:${value}`;
+  };
+  for (const event of input.traceEvents) {
+    if (event?.name !== "Profile" || event?.ph !== "P" || !Number.isInteger(event.tid)) continue;
+    const key = profileKeyFor(event);
+    if (key === null) continue;
+    const profileId = `profile-${profileIds.size + 1}`;
+    profileIds.set(key, profileId);
+    const source = event.args?.data?.source;
+    profileHeaders.set(key, {
+      profileId,
+      ownerThread: threadLabels.get(`${event.pid}:${event.tid}`) ?? "<unmapped-thread>",
+      startedAtMs: Number((event.ts / 1_000).toFixed(3)),
+      source: ["Internal", "Inspector", "SelfProfiling"].includes(source) ? source : null,
+    });
   }
 
   const requestIds = new Map();
   const requestRoutes = new Map();
+  const interactionIds = new Map();
   let nextRequestId = 0;
   const events = [];
   const profiles = [];
@@ -306,11 +417,20 @@ export function sanitizeChromeTrace(input, { runId = null } = {}) {
       timestampMs: Number((event.ts / 1_000).toFixed(3)),
       pid: Number.isInteger(event.pid) ? event.pid : null,
       tid: Number.isInteger(event.tid) ? event.tid : null,
-      thread: Number.isInteger(event.tid) ? threadLabels.get(event.tid) ?? "<unmapped-thread>" : "<unmapped-thread>",
+      thread: Number.isInteger(event.tid)
+        ? threadLabels.get(`${event.pid}:${event.tid}`) ?? "<unmapped-thread>"
+        : "<unmapped-thread>",
     };
     if (Number.isFinite(event.dur) && event.dur >= 0) {
       normalized.durationMs = Number((event.dur / 1_000).toFixed(3));
     }
+    if (Number.isFinite(event.tdur) && event.tdur >= 0) {
+      normalized.threadDurationMs = Number((event.tdur / 1_000).toFixed(3));
+    }
+    const inputEventType = safeInputEventType(event);
+    if (inputEventType !== null) normalized.inputEventType = inputEventType;
+    const interactionTiming = safeInteractionTiming(event, interactionIds);
+    if (interactionTiming !== null) normalized.interactionTiming = interactionTiming;
     const rawId = rawRequestId(event);
     const routeForEvent = routeFromEvent(event);
     if (routeForEvent !== null && rawId !== null) requestRoutes.set(rawId, routeForEvent);
@@ -323,10 +443,13 @@ export function sanitizeChromeTrace(input, { runId = null } = {}) {
       }
       const method = safeNetworkMethod(event);
       const status = safeNetworkStatus(event);
-      normalized.network = { route, correlationId, method, status };
+      const outcome = safeNetworkOutcome(event);
+      normalized.network = { route, correlationId, method, status, outcome };
     }
     const clockMarker = clockMarkerFromEvent(event);
     if (clockMarker) normalized.clockMarker = clockMarker;
+    const waitStateMarker = waitStateMarkerFromEvent(event);
+    if (waitStateMarker) normalized.waitStateMarker = waitStateMarker;
     events.push(normalized);
 
     const profile = profileFromEvent(event);
@@ -337,7 +460,18 @@ export function sanitizeChromeTrace(input, { runId = null } = {}) {
         profileSampleCount > GLOBAL_FREEZE_MAX_PROFILE_SAMPLES) {
         throw new Error("trace_profile_total_limit_exceeded");
       }
-      profiles.push({ timestampMs: normalized.timestampMs, thread: normalized.thread, profile });
+      const profileKey = profileKeyFor(event);
+      const header = profileKey === null ? null : profileHeaders.get(profileKey);
+      profiles.push({
+        profileId: header?.profileId ?? null,
+        processId: normalized.pid,
+        timestampMs: normalized.timestampMs,
+        thread: normalized.thread,
+        ownerThread: header?.ownerThread ?? null,
+        startedAtMs: header?.startedAtMs ?? null,
+        source: header?.source ?? null,
+        profile,
+      });
     }
   }
 
@@ -365,6 +499,10 @@ export function readChromeTrace(filePath, { runId = null } = {}) {
     throw new Error("trace_input_size_out_of_range");
   }
   const bytes = readFileSync(filePath);
+  return parseChromeTraceBytes(bytes, { runId });
+}
+
+function parseChromeTraceBytes(bytes, { runId = null } = {}) {
   const decoded = bytes[0] === 0x1f && bytes[1] === 0x8b
     ? gunzipSync(bytes, { maxOutputLength: 256 * 1024 * 1024 })
     : bytes;
@@ -375,6 +513,17 @@ export function readChromeTrace(filePath, { runId = null } = {}) {
     throw new Error("trace_json_invalid");
   }
   return sanitizeChromeTrace(input, { runId });
+}
+
+function readChromeTraceWithHash(filePath) {
+  const stat = lstatSync(filePath);
+  if (!stat.isFile() || stat.isSymbolicLink()) throw new Error("trace_input_must_be_regular_file");
+  if (stat.size <= 0 || stat.size > GLOBAL_FREEZE_MAX_COMPRESSED_BYTES) {
+    throw new Error("trace_input_size_out_of_range");
+  }
+  const bytes = readFileSync(filePath);
+  if (bytes.length !== stat.size) throw new Error("trace_input_changed_during_read");
+  return { trace: parseChromeTraceBytes(bytes), sourceSha256: sha256(bytes) };
 }
 
 export function summarizeChromeTrace(trace) {
@@ -442,6 +591,167 @@ export function summarizeChromeTrace(trace) {
     profileChunkCount: trace.profiles.length,
     profileSampleCount,
     profilerEnabled: trace.profiles.length > 0,
+  };
+}
+
+export function summarizeNativeChromeTrace(trace) {
+  if (!isRecord(trace) || !Array.isArray(trace.events) || !Array.isArray(trace.profiles) ||
+    trace.metadata?.eventArgsRetained !== false) {
+    throw new Error("native_trace_summary_requires_sanitized_trace");
+  }
+  const chrome = summarizeChromeTrace(trace);
+  const waitState = summarizeWaitState(trace, { traceComplete: false });
+  const dispatchEvents = trace.events.filter((event) =>
+    event.name === "EventDispatch" && event.inputEventType);
+  const dispatchEventTypeCounts = {};
+  for (const event of dispatchEvents) {
+    dispatchEventTypeCounts[event.inputEventType] = (dispatchEventTypeCounts[event.inputEventType] ?? 0) + 1;
+  }
+  const observedDispatches = dispatchEvents
+    .map(({ timestampMs, durationMs, inputEventType }) => ({ timestampMs, durationMs: durationMs ?? null, eventType: inputEventType }))
+    .sort((a, b) => a.timestampMs - b.timestampMs);
+  const eventTimings = trace.events
+    .filter((event) => event.interactionTiming)
+    .map(({ timestampMs, interactionTiming }) => ({ timestampMs, ...interactionTiming }))
+    .sort((a, b) => a.timestampMs - b.timestampMs);
+  const slowEventTypeCounts = {};
+  for (const event of eventTimings) {
+    slowEventTypeCounts[event.eventType] = (slowEventTypeCounts[event.eventType] ?? 0) + 1;
+  }
+  const timedRequests = waitState.network.requests.map((request) => ({
+    ...request,
+    responseWaitMs: request.requestStartMs !== null && request.responseStartMs !== null
+      ? Number((request.responseStartMs - request.requestStartMs).toFixed(3))
+      : null,
+    bodyAfterResponseMs: request.responseStartMs !== null && request.finishMs !== null
+      ? Number((request.finishMs - request.responseStartMs).toFixed(3))
+      : null,
+    totalMs: request.requestStartMs !== null && request.finishMs !== null
+      ? Number((request.finishMs - request.requestStartMs).toFixed(3))
+      : null,
+  }));
+  const requestsAtEnd = timedRequests.filter((request) =>
+    request.state === "WAITING_FOR_HEADERS" || request.state === "RESPONSE_BODY_OPEN");
+  const visibleStateAvailable = waitState.visibleState.loadingVisibleCount > 0 ||
+    waitState.visibleState.contentReadyCount > 0 || waitState.visibleState.workCompleteCount > 0;
+  let windowStartMs = null;
+  let windowEndMs = null;
+  for (const event of trace.events) {
+    if (!Number.isFinite(event.timestampMs)) continue;
+    windowStartMs = windowStartMs === null ? event.timestampMs : Math.min(windowStartMs, event.timestampMs);
+    windowEndMs = windowEndMs === null ? event.timestampMs : Math.max(windowEndMs, event.timestampMs);
+  }
+
+  return {
+    schemaVersion: "aiya-global-freeze-native-trace-summary-v1",
+    traceCompleteness: "NOT_VERIFIABLE_FROM_JSON_PARSE",
+    traceWindowMs: windowStartMs === null ? null : Number((windowEndMs - windowStartMs).toFixed(3)),
+    input: {
+      expectedActionCount: null,
+      observedDispatchCount: dispatchEvents.length,
+      dispatchEventTypeCounts,
+      observedDispatches: observedDispatches.slice(0, 50),
+      slowEventTimingCount: eventTimings.length,
+      slowEventTypeCounts,
+      slowEventTimings: eventTimings.slice(0, 50),
+      expectedActionDelivery: "UNAVAILABLE_WITHOUT_ACTION_MARKERS",
+    },
+    network: {
+      requestCount: waitState.network.requestCount,
+      rscRequestCount: waitState.network.rscRequestCount,
+      unfinishedAtRecordedEndCount: requestsAtEnd.length,
+      unfinishedAtRecordedEnd: requestsAtEnd.slice(0, 25),
+      longestCompletedRequests: timedRequests
+        .filter((request) => request.totalMs !== null)
+        .sort((a, b) => b.totalMs - a.totalMs)
+        .slice(0, 20),
+      lifecycleCoverage: waitState.network.requestCount > 0 ? "OBSERVED" : "UNAVAILABLE",
+    },
+    mainThread: {
+      taskCount: chrome.mainThreadTaskCount,
+      longTaskCount: chrome.longTaskCount,
+      longestLongTasks: chrome.longestMainThreadTasks,
+      profileAttribution: summarizeNativeProfileAttribution(trace),
+      observation: chrome.longTaskCount > 0
+        ? "LONG_TASKS_OBSERVED_DURING_RECORDING"
+        : "NO_LONG_TASK_OBSERVED_NOT_PROOF_OF_RESPONSIVENESS",
+    },
+    visibleState: visibleStateAvailable
+      ? {
+        availability: "APP_MARKERS_OBSERVED",
+        ...waitState.visibleState,
+        loadingAfterWork: waitState.visibleState.workCompleteCount > 0 &&
+          waitState.visibleState.loadingVisibleCount > 0
+          ? waitState.visibleState.loadingAfterWork
+          : null,
+      }
+      : { availability: "UNAVAILABLE_NO_APP_STATE_MARKERS" },
+    interactionCorrelation: "TIMELINE_ORDER_AVAILABLE_CAUSAL_LINK_NOT_ESTABLISHED",
+    limitations: [
+      "Missing input events do not prove that an expected action was not delivered.",
+      "Unfinished requests are only missing a completion event at the recorded trace end.",
+      "Browser events, requests, and long tasks share a trace timeline; temporal proximity alone does not prove causation.",
+      "No host process, database, or real-time visible loading measurement is included.",
+    ],
+  };
+}
+
+export function inspectNativeTraceFile(tracePath, { outputRoot = GLOBAL_FREEZE_NATIVE_TRACE_ROOT } = {}) {
+  const { trace, sourceSha256 } = readChromeTraceWithHash(tracePath);
+  const summary = summarizeNativeChromeTrace(trace);
+  const captureId = `aiya-edge-native-${new Date().toISOString().replaceAll(/[-:.]/g, "")}-${randomUUID()}`;
+  mkdirSync(outputRoot, { recursive: true, mode: 0o700 });
+  const outputDirectory = join(outputRoot, captureId);
+  mkdirSync(outputDirectory, { mode: 0o700 });
+  const sanitizedBytes = Buffer.from(`${JSON.stringify(trace)}\n`);
+  const sanitizedTracePath = join(outputDirectory, "trace.redacted.json");
+  writeFileSync(sanitizedTracePath, sanitizedBytes, { flag: "wx", mode: 0o600 });
+  const summaryDocument = {
+    schemaVersion: "aiya-global-freeze-native-capture-v1",
+    captureId,
+    sourceTraceSha256: sourceSha256,
+    sanitizedTraceSha256: sha256(sanitizedBytes),
+    sanitizedArtifact: "trace.redacted.json",
+    summary,
+  };
+  const summaryBytes = Buffer.from(`${JSON.stringify(summaryDocument, null, 2)}\n`);
+  const summaryPath = join(outputDirectory, "capture-summary.json");
+  writeFileSync(summaryPath, summaryBytes, { flag: "wx", mode: 0o600 });
+  return {
+    captureId,
+    outputDirectory,
+    sanitizedTracePath,
+    summaryPath,
+    sourceTraceSha256: sourceSha256,
+    sanitizedTraceSha256: summaryDocument.sanitizedTraceSha256,
+    summarySha256: sha256(summaryBytes),
+    summary,
+  };
+}
+
+export function inspectNativeProfileFile(tracePath, {
+  outputRoot = join(GLOBAL_FREEZE_NATIVE_TRACE_ROOT, "profile-analysis"),
+} = {}) {
+  const { trace, sourceSha256 } = readChromeTraceWithHash(tracePath);
+  const analysisId = `aiya-profile-analysis-${new Date().toISOString().replaceAll(/[-:.]/g, "")}-${randomUUID()}`;
+  mkdirSync(outputRoot, { recursive: true, mode: 0o700 });
+  const outputDirectory = join(outputRoot, analysisId);
+  mkdirSync(outputDirectory, { mode: 0o700 });
+  const profileAttribution = summarizeNativeProfileAttribution(trace);
+  const bytes = Buffer.from(`${JSON.stringify({
+    schemaVersion: "aiya-global-freeze-native-profile-analysis-v1",
+    analysisId,
+    sourceTraceSha256: sourceSha256,
+    profileAttribution,
+  }, null, 2)}\n`);
+  const summaryPath = join(outputDirectory, "profile-analysis.json");
+  writeFileSync(summaryPath, bytes, { flag: "wx", mode: 0o600 });
+  return {
+    analysisId,
+    summaryPath,
+    sourceTraceSha256: sourceSha256,
+    summarySha256: sha256(bytes),
+    profileAttribution,
   };
 }
 
@@ -1461,6 +1771,12 @@ async function finalizePhaseOne(blockedReason = null) {
 
 export function parseArguments(argv) {
   if (argv[0] === "--check-host-script" && argv.length === 1) return { mode: "host-script-check" };
+  if (argv[0] === "--inspect-native-trace" && argv.length === 2) {
+    return { mode: "native-trace", tracePath: argv[1] };
+  }
+  if (argv[0] === "--inspect-native-profile" && argv.length === 2) {
+    return { mode: "native-profile", tracePath: argv[1] };
+  }
   if (argv[0] === "--finalize-phase1" && argv.length === 1) return { mode: "finalize-phase1", blockedReason: null };
   if (argv[0] === "--finalize-phase1" && argv.length === 3 && argv[1] === "--blocked") {
     return { mode: "finalize-phase1", blockedReason: validatePhaseOneBlockReason(argv[2]) };
@@ -1487,7 +1803,7 @@ export function parseArguments(argv) {
       observation: validateInteractionObservation({ freeze: argv[3], keyboard: argv[5], navigation: argv[7], reload: argv[9] }),
     };
   }
-  throw new Error("usage: node performance-global-freeze-diagnostic.mjs --check-host-script | --start | --capture-host <run-id> [duration-seconds] | --inspect-trace <trace.json[.gz]> --run-id <run-id> --start-epoch-ms <number> --end-epoch-ms <number> | --record-observation <run-id> --freeze <observed|not_observed> --keyboard <responsive|unresponsive|not_tested> --navigation <responsive|unresponsive|not_tested> --reload <responsive|delayed|not_tested> | --finalize-phase1 [--blocked <authenticated_session_unavailable|host_access_blocked|browser_trace_harness_blocked|attempt_budget_exhausted>]");
+  throw new Error("usage: node performance-global-freeze-diagnostic.mjs --check-host-script | --inspect-native-trace <saved-trace-file> | --inspect-native-profile <saved-trace-file> | --start | --capture-host <run-id> [duration-seconds] | --inspect-trace <trace.json[.gz]> --run-id <run-id> --start-epoch-ms <number> --end-epoch-ms <number> | --record-observation <run-id> --freeze <observed|not_observed> --keyboard <responsive|unresponsive|not_tested> --navigation <responsive|unresponsive|not_tested> --reload <responsive|delayed|not_tested> | --finalize-phase1 [--blocked <authenticated_session_unavailable|host_access_blocked|browser_trace_harness_blocked|attempt_budget_exhausted>]");
 }
 
 async function main() {
@@ -1500,6 +1816,16 @@ async function main() {
   if (options.mode === "host-script-check") {
     checkRemoteHostScriptSyntax();
     process.stdout.write(`${JSON.stringify({ status: "PASS", check: "remote_bash_syntax", hostAlias: GLOBAL_FREEZE_SSH_ALIAS })}\n`);
+    return;
+  }
+  if (options.mode === "native-trace") {
+    const result = inspectNativeTraceFile(options.tracePath);
+    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    return;
+  }
+  if (options.mode === "native-profile") {
+    const result = inspectNativeProfileFile(options.tracePath);
+    process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
     return;
   }
   if (options.mode === "start") {

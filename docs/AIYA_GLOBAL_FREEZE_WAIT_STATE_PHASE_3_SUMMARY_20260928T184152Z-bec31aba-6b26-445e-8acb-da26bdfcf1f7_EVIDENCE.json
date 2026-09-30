@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "aiya-global-freeze-wait-state-phase-3-summary-20260928T184152Z-bec31aba-6b26-445e-8acb-da26bdfcf1f7",
+  "createdAtUtc": "2026-09-28T18:41:52Z",
+  "status": "BLOCKED",
+  "outcome": "SUMMARY_ONLY_CAPTURE_BLOCKED_CONTROL_PATH",
+  "phase": "Phase 3 - Hosted Wait-State Capture",
+  "method": "summary-only-cua-scalar-v1",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "identity": {
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "localCommitSha": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "hostedRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560",
+      "observedAtUtc": "2026-09-28T18:40:58Z",
+      "source": "GET /api/health/release"
+    },
+    "sourceHashes": {
+      "activePlanAtMethodStart": "dba571bddce7b6a4b1e09766f661463a8594963e1f2edbd7b9e656eb9163c805",
+      "app/scripts/performance-global-freeze-diagnostic.mjs": "33075d0e18b6b33ae7b235d0dbba43f45e3b3c2837a466c4e81d6394bb679c8a",
+      "app/scripts/lib/aiya-global-freeze-wait-state.mjs": "9edd0854140a54441ff569c87421f075bd282893f6892660fd11e8b2f276de72",
+      "phase2Evidence": "878a70e7c519bb2b3afe3da12b3786c06930e7ed4197fa8f0cb2129c35400699",
+      "earlierTraceExportPolicyEvidence": "804ae205b5c9a2f82cfbc3d1baad8923976a56298f0abdac512498dfa0aaf39f"
+    }
+  },
+  "environment": {
+    "browser": "Microsoft Edge through the supported CUA browser integration",
+    "syntheticAccount": "USER_ATTESTED",
+    "accountIdentifiersRead": false,
+    "clientContentRetained": false,
+    "baseline": {
+      "routeCategory": "dashboard.clients",
+      "readyStateObserved": true,
+      "stableForMs": 1100,
+      "loadingLabelObserved": false,
+      "clientListRowsRead": false,
+      "createFormTouched": false
+    }
+  },
+  "capture": {
+    "rawTraceExportRequired": false,
+    "rawTracePersistedOrTransferred": false,
+    "plannedInteractions": 13,
+    "rapidSequenceCompleted": false,
+    "actualBrowserEventTiming": "UNAVAILABLE",
+    "attempts": [
+      {
+        "attemptId": "summary-only-capture-1",
+        "status": "INVALID_CONTROL_PATH",
+        "plannedInteractions": 13,
+        "completedBeforeAbort": 1,
+        "actions": [
+          {
+            "index": 1,
+            "kind": "synthetic_search_key_dispatch",
+            "dispatchStartedAtUtc": "2026-09-28T18:32:59.154Z",
+            "dispatchCompletedAtUtc": "2026-09-28T18:33:03.236Z",
+            "roundTripMs": 4082,
+            "automationAcknowledged": false,
+            "laterAccessibilityState": "search_field_length_1",
+            "exactPageEventTime": "UNAVAILABLE"
+          }
+        ],
+        "failureReason": "The browser action call did not acknowledge within its control deadline; the follow-up accessibility state reflected a changed search field."
+      }
+    ],
+    "followUpControlProbes": [
+      {
+        "kind": "synthetic_search_key_dispatch",
+        "dispatchStartedAtUtc": "2026-09-28T18:37:04.553Z",
+        "dispatchCompletedAtUtc": "2026-09-28T18:37:08.617Z",
+        "roundTripMs": 4064,
+        "automationAcknowledged": false,
+        "laterAccessibilityState": "search_field_length_2",
+        "exactPageEventTime": "UNAVAILABLE"
+      },
+      {
+        "kind": "safe_navigation_dispatch",
+        "destinationCategory": "dashboard.more",
+        "dispatchStartedAtUtc": "2026-09-28T18:39:22.338Z",
+        "dispatchCompletedAtUtc": "2026-09-28T18:39:26.613Z",
+        "roundTripMs": 4275,
+        "automationAcknowledged": false,
+        "routeChanged": false
+      }
+    ],
+    "postInputQuietInterval": {
+      "atLeast30SecondsElapsed": true,
+      "continuousSamples": false,
+      "finalRouteCategory": "dashboard.clients",
+      "loadingLabelAtFinalAccessibilitySample": false,
+      "interpretation": "One late state sample only; no persistent loading interval was established."
+    }
+  },
+  "waitState": {
+    "input": {
+      "delivery": "PARTIALLY_OBSERVED_IN_ACCESSIBILITY_STATE",
+      "observedSearchFieldLength": 2,
+      "typedValueRetained": false,
+      "timing": "UNAVAILABLE",
+      "dispatchRoundTripMs": [4082, 4064]
+    },
+    "visibleState": {
+      "baselineReady": true,
+      "finalLoadingLabelObserved": false,
+      "finalRouteUnchangedAfterNavigationProbe": true,
+      "continuousLoadingDuration": "UNAVAILABLE"
+    },
+    "network": {
+      "status": "UNAVAILABLE",
+      "reason": "The filtered CDP Network event read returned zero matching events with a truncated event cursor; older PerformanceResourceTiming entries were not correlated to this attempt."
+    },
+    "rsc": {
+      "status": "UNAVAILABLE",
+      "reason": "No request lifecycle was paired to the attempted inputs."
+    },
+    "mainThread": {
+      "status": "UNAVAILABLE",
+      "reason": "Event Timing was supported but no entries were present in the pre-action probe; the post-action read timed out. A single pre-action Performance.getMetrics sample has no paired after value.",
+      "unpairedBeforeActionMetrics": {
+        "TaskDurationSeconds": 0.112885,
+        "ScriptDurationSeconds": 0.111929,
+        "LayoutDurationSeconds": 0,
+        "RecalcStyleDurationSeconds": 0,
+        "LayoutCount": 0
+      }
+    }
+  },
+  "artifacts": {
+    "rawTrace": null,
+    "sanitizedTrace": null,
+    "checkpoint": null,
+    "summaryEvidence": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_20260928T184152Z-bec31aba-6b26-445e-8acb-da26bdfcf1f7_EVIDENCE.json"
+  },
+  "verification": {
+    "formSubmitted": false,
+    "clientRecordCreatedOrUpdated": false,
+    "productionOrExternalWrite": false,
+    "rawTraceOrSensitiveValuesEmbedded": false,
+    "networkAndPerformanceMonitoringDisabledConfirmed": false,
+    "cleanupDisableCallsAcknowledged": false,
+    "cuaJavascriptKernelResetAfterCapture": true,
+    "browserDebuggingSessionDetachedConfirmed": false
+  },
+  "limitations": [
+    "The 350 ms input spacing was not achieved; two synthetic search keystrokes were reflected in the accessible field state, but exact browser event timestamps were unavailable.",
+    "The visible navigation control did not change route, and its automation call took 4.275 seconds before returning unacknowledged.",
+    "The Network event cursor was truncated and no attempt-correlated request or RSC lifecycle was available.",
+    "Main-thread metrics were sampled only before the follow-up key action; no paired delta or event timing was obtained.",
+    "The later accessibility state showed no loading label, but there was no continuous 30-second sample series.",
+    "Requests to disable the temporary Network and Performance observation domains were not acknowledged. The CUA JavaScript kernel was reset after capture, but browser debugging-session detachment and domain disablement were not independently confirmed.",
+    "This is a browser-control measurement blocker, not evidence of an application freeze, wait boundary, backend/database cause, or absence of the reported system-wide symptom."
+  ],
+  "classification": {
+    "observationValidity": "INVALID_FOR_RAPID_BURST",
+    "functionalResult": "Synthetic search input was reflected in the accessible field state; no form was submitted.",
+    "performanceOrCauseResult": "INCONCLUSIVE",
+    "waitBoundary": "UNAVAILABLE"
+  },
+  "nextGate": "Resume summary-only Phase 3 only when the browser control surface can acknowledge visible input and navigation promptly enough to capture a paced sequence and post-action signals. Raw trace export is not required.",
+  "rawTraceOrSensitiveValuesEmbedded": false
+}

@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "aiya-global-freeze-wait-state-phase-3-summary-retry-20260928T220632Z-6d30b7d9-52b4-43fb-8ed5-b1560d79db97",
+  "createdAtUtc": "2026-09-28T22:06:33Z",
+  "status": "BLOCKED",
+  "outcome": "PHASE3_ATTEMPT_BUDGET_EXHAUSTED_AFTER_INPUT_DISPATCH_TIMEOUT",
+  "phase": "Phase 3 - Hosted Wait-State Capture",
+  "method": "summary-only-cua-runtime-network-v1",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "parentEvidence": [
+    {
+      "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_CONTROL_TEST_20260928T210737Z-bce5f92a-19d7-4ab0-9b36-c2d70c1fea48_EVIDENCE.json",
+      "sha256": "39d1eebed4e3e06c306b29054c0d9fc8b24da28aa12478d322a4809f8bb285e9"
+    },
+    {
+      "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RETRY_20260928T201314Z-4c8fe285-6af5-4ba3-b69e-4e6403dd801b_EVIDENCE.json",
+      "sha256": "8f8db5e7e882aecfe49ea92a830f5a186aba0ebadba37b4f450a239e8605e22a"
+    },
+    {
+      "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_20260928T184152Z-bec31aba-6b26-445e-8acb-da26bdfcf1f7_EVIDENCE.json",
+      "sha256": "04322131f78f3a11189335fe36e64cb6c400cee33ce49a7e182512f147fb5cbb"
+    },
+    {
+      "path": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_2_20260928T151452642Z_EVIDENCE.json",
+      "sha256": "878a70e7c519bb2b3afe3da12b3786c06930e7ed4197fa8f0cb2129c35400699"
+    }
+  ],
+  "identity": {
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "localCommitSha": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "hostedRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "source": "GET /api/health/release",
+      "observedBeforeSyntheticInput": true,
+      "observedAtUtc": null,
+      "observationTimeLimitation": "The release identity was checked before the hosted probe; its exact read timestamp was not retained."
+    },
+    "sourceHashes": {
+      "activePlanBeforeEvidenceUpdate": "b23a59f67f9486433c34d07c7bd6babcccc2952b38392e34b863157dbc0452aa",
+      "diagnosticScript": "33075d0e18b6b33ae7b235d0dbba43f45e3b3c2837a466c4e81d6394bb679c8a",
+      "diagnosticTest": "05a8b9583d0f22c1a60a29c1f49492a26e47ea6fa84d72fcbe228463592c8ed6",
+      "phaseHelper": "4d0a721a5c4203a6c9b8b4d56defae153b6762385fe8bb7c60f62c05fb3dc8a4",
+      "waitStateHelper": "9edd0854140a54441ff569c87421f075bd282893f6892660fd11e8b2f276de72",
+      "preflightScript": "915753d6031f0b0b865dcf634ad0b4308cab6281a864fd12c80f534f5c954fa9",
+      "phase2Evidence": "878a70e7c519bb2b3afe3da12b3786c06930e7ed4197fa8f0cb2129c35400699",
+      "previousHostedProbeEvidence": "39d1eebed4e3e06c306b29054c0d9fc8b24da28aa12478d322a4809f8bb285e9"
+    }
+  },
+  "probe": {
+    "browser": "Microsoft Edge through the supported browser integration",
+    "syntheticAccount": "USER_ATTESTED",
+    "accountIdentifiersRead": false,
+    "clientContentReadOrRetained": false,
+    "freshTab": true,
+    "routeCategory": "dashboard.clients",
+    "baseline": {
+      "stableWaitMs": 1000,
+      "readyState": "complete",
+      "documentVisible": true,
+      "visibleMainCount": 1,
+      "visibleBusyIndicatorCount": 0,
+      "visibleProgressIndicatorCount": 0,
+      "searchControlCount": 1,
+      "searchLength": 0,
+      "runtimeReadRoundTripMs": 56.07,
+      "eventTimingEntriesObserved": 0,
+      "longTaskEntriesObserved": 0,
+      "eventTimingAndLongTaskInterpretation": "UNAVAILABLE; empty entry samples do not establish that no such events occurred"
+    },
+    "selectedUnpairedPerformanceMetrics": {
+      "jsEventListeners": 123152,
+      "nodes": 401,
+      "taskDurationSeconds": 0.112754,
+      "scriptDurationSeconds": 0.098054,
+      "interpretation": "One baseline sample only; anomalous listener count was not corroborated and is not causal evidence"
+    },
+    "syntheticInput": {
+      "actionStartedAtUtc": "2026-09-28T22:02:44.543Z",
+      "action": "single synthetic key dispatch to the visible non-submitting search control",
+      "hostDispatchRoundTripMs": 10263.11,
+      "automationAcknowledged": false,
+      "errorCategory": "CDP Input.dispatchKeyEvent timeout",
+      "inputValueRetained": false,
+      "postActionAccessibilityReadRoundTripMs": 6146.51,
+      "postActionSearchLength": 0,
+      "postActionSearchFocused": true,
+      "postActionRouteCategory": "dashboard.clients"
+    },
+    "postActionRead": {
+      "readyState": "complete",
+      "documentVisible": true,
+      "visibleMainCount": 1,
+      "visibleBusyIndicatorCount": 0,
+      "visibleProgressIndicatorCount": 0,
+      "runtimeFollowupRoundTripMs": 84.67,
+      "continuousLoadingDuration": "UNAVAILABLE"
+    },
+    "networkSnapshot": {
+      "filteredLifecycleEvents": 0,
+      "truncated": true,
+      "cursor": 48,
+      "attemptCorrelatedRequestLifecycle": "UNAVAILABLE",
+      "responseBodyCompletion": "UNAVAILABLE"
+    },
+    "burst": {
+      "targetInputs": 12,
+      "completed": false,
+      "pacedAtApproximately350Ms": false,
+      "postInputQuietIntervalMs": 0
+    },
+    "otherControlObservations": {
+      "olderTabSyntheticInputRoundTripMs": 4390,
+      "olderTabInputAcknowledged": false,
+      "olderTabInitialAndLaterSearchLength": 1,
+      "olderTabAccessibilityReadRoundTripMs": 570.86,
+      "olderTabInputChangeObserved": false,
+      "navigationCallTimedOut": true,
+      "navigationTimeoutMs": 30000,
+      "laterInventoryRouteCategory": "dashboard.home",
+      "navigationTransitionTime": "UNKNOWN"
+    }
+  },
+  "attemptBudget": {
+    "maximumAppProbeAttempts": 4,
+    "appProbeAttemptsIncludingThisEvidence": 4,
+    "usableWaitStateRecords": 0,
+    "budgetExhausted": true,
+    "countedPriorAttempts": [
+      "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_20260928T184152Z-bec31aba-6b26-445e-8acb-da26bdfcf1f7_EVIDENCE.json",
+      "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_SUMMARY_RETRY_20260928T201314Z-4c8fe285-6af5-4ba3-b69e-4e6403dd801b_EVIDENCE.json",
+      "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_CONTROL_TEST_20260928T210737Z-bce5f92a-19d7-4ab0-9b36-c2d70c1fea48_EVIDENCE.json"
+    ],
+    "resumeRequires": "A separately approved new bounded diagnostic plan; do not exceed the current four-attempt authorization."
+  },
+  "waitState": {
+    "inputDelivery": {
+      "status": "UNKNOWN",
+      "reason": "The supported key-dispatch call timed out; a later read showed the empty field still focused, but does not establish whether the key reached the application."
+    },
+    "apiAndResponseBody": {
+      "status": "UNAVAILABLE",
+      "reason": "No attempt-correlated request, response headers, or body-completion lifecycle was obtained."
+    },
+    "networkAndRsc": {
+      "status": "UNAVAILABLE",
+      "reason": "The filtered snapshot was truncated and contained no usable attempt-correlated lifecycle."
+    },
+    "mainThread": {
+      "status": "UNAVAILABLE",
+      "reason": "No paired post-input Event Timing, Long Task, or main-thread sample was obtained."
+    },
+    "applicationLoading": {
+      "baselineBusyIndicatorsVisible": 0,
+      "postActionBusyIndicatorsVisible": 0,
+      "postActionState": "READY_STATE_COMPLETE; MAIN_VISIBLE; NO_BUSY_OR_PROGRESS_INDICATOR",
+      "workCompletionToLoadingCorrelation": "UNAVAILABLE"
+    }
+  },
+  "artifacts": {
+    "rawTrace": null,
+    "sanitizedTrace": null,
+    "checkpoint": {
+      "root": "%LOCALAPPDATA%\\MANU-AI\\wait-state-phase3-summary",
+      "runId": "aiya-global-freeze-wait-state-phase-3-20260928T220632882Z-dbadb519-02dd-4986-851f-62f41059e3c5",
+      "status": "BLOCKED",
+      "eventCount": 4,
+      "lastEventSha256": "32f3b3a4bbd65a3f090129ea62a509959c276452bdbd732a9afc258f0f4b809a"
+    }
+  },
+  "verification": {
+    "clientFormSubmitted": false,
+    "clientRecordCreatedOrUpdated": false,
+    "productionOrDatabaseWrite": false,
+    "rawTracePersistedOrTransferred": false,
+    "clientContentOrInputValueRetained": false,
+    "pacedBurstStarted": false,
+    "codeOrRuntimeBehaviorChanged": false,
+    "networkAndPerformanceObservationDomainsEnabled": true,
+    "observationDomainDisableOrDetachmentAcknowledgement": "UNAVAILABLE"
+  },
+  "limitations": [
+    "The host-side dispatch timeout is not the browser input-processing duration and does not by itself prove an application freeze.",
+    "The ready state after the timed-out action does not establish input delivery, absence of a transient stall, or desktop/phone system-wide behavior.",
+    "The zero Event Timing and Long Task entry counts are missing/empty samples, not proof that no input delay or main-thread work occurred.",
+    "The one-off JSEventListeners metric was not corroborated and cannot identify a cause.",
+    "No 10-15 input sequence, approximately 350 ms pacing, 30-second quiet observation, network/RSC correlation, response-body completion, or paired main-thread measurement was obtained.",
+    "A separate timed-out navigation was later seen at the home route in browser inventory; its transition time is unknown and no causal inference is made.",
+    "This was the fourth app-probe attempt; the approved four-attempt budget is exhausted, so no additional input attempt is authorized by the current plan.",
+    "This probe cannot distinguish application input handling from the browser-control/protocol path, and it does not establish the reported global freeze cause or duration."
+  ],
+  "classification": {
+    "observationValidity": "INVALID_FOR_RAPID_BURST",
+    "functionalResult": "The MANU-AI page remained visibly ready after a timed-out synthetic key dispatch; the search field remained empty, so input delivery is unknown.",
+    "performanceOrCauseResult": "INCONCLUSIVE",
+    "waitBoundary": "UNAVAILABLE"
+  },
+  "nextGate": "Phase 3 is closed as BLOCKED after the fourth app-probe attempt with zero usable wait-state records. Do not perform another MANU-AI input attempt or resume raw trace export under the current plan. Any further measurement requires a separately approved bounded method and attempt budget.",
+  "rawTraceOrSensitiveValuesEmbedded": false
+}

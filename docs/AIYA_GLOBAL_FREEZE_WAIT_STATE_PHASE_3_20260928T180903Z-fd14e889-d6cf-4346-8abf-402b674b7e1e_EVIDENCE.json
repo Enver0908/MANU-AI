@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "evidenceId": "aiya-global-freeze-wait-state-phase-3-20260928T180903Z-fd14e889-d6cf-4346-8abf-402b674b7e1e",
+  "createdAtUtc": "2026-09-28T18:09:03Z",
+  "status": "BLOCKED",
+  "outcome": "TRACE_EXPORT_BLOCKED",
+  "phase": "Phase 3 - Hosted Wait-State Capture",
+  "plan": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_ACTION_PLAN.md",
+  "identity": {
+    "workspace": "C:\\Users\\Dell\\OneDrive\\Masaüstü\\MANU-AI",
+    "branch": "codex/production-readiness-stage-1",
+    "localCommitSha": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "hostedRelease": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commitSha": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "migrationFingerprint": "b55ed4ff550f7e9ba8fc25957774341a19b7b05c1a35a891633369b4aff95f25",
+      "compatibilityVersion": "0.0.0+1c97560",
+      "observedAtUtc": "2026-09-28T18:09:03Z",
+      "source": "GET /api/health/release"
+    },
+    "basisHashes": {
+      "activePlanAtAssessment": "912b43e6b37f0561e2e775ea11969ebfd044b19909002b9a213f59c889898674",
+      "phase2Evidence": "878a70e7c519bb2b3afe3da12b3786c06930e7ed4197fa8f0cb2129c35400699",
+      "priorTraceExportPolicyBlockEvidence": "804ae205b5c9a2f82cfbc3d1baad8923976a56298f0abdac512498dfa0aaf39f",
+      "waitStateParser": "9edd0854140a54441ff569c87421f075bd282893f6892660fd11e8b2f276de72"
+    }
+  },
+  "environment": {
+    "browser": "Microsoft Edge via the supported browser integration",
+    "visibleRoute": "/dashboard",
+    "dashboardAccessibilityStateObserved": true,
+    "syntheticAccount": "UNVERIFIED",
+    "accountIdentifiersInspected": false,
+    "stableReadyBaseline": "NOT_CHECKED"
+  },
+  "capture": {
+    "hostedCaptureAttemptsStarted": 0,
+    "traceRecordingStarted": false,
+    "pageObserverStarted": false,
+    "inputEventsSent": 0,
+    "rapidInteractionSequenceStarted": false,
+    "postInteractionObservationSeconds": 0,
+    "rawCdpCommandsSent": false,
+    "reason": "Stopped at preconditions: no approved trace-to-local-file export path was available, and the visible session was not verified as the synthetic account."
+  },
+  "blockers": [
+    {
+      "code": "TRACE_EXPORT_BLOCKED",
+      "detail": "The available browser integration documents raw CDP access but exposes no approved direct trace-to-local-file export method. The prior browser URL policy evidence explicitly bars retrying the rejected transfer through raw CDP, another browser surface, or a workaround."
+    },
+    {
+      "code": "SYNTHETIC_ACCOUNT_UNVERIFIED",
+      "detail": "A Dashboard accessibility state was visible, but no account identity was inspected and synthetic-account status was not established."
+    }
+  ],
+  "artifacts": {
+    "rawTrace": null,
+    "sanitizedTrace": null,
+    "checkpoint": null,
+    "priorPolicyBlockEvidence": {
+      "path": "docs/AIYA_GLOBAL_FREEZE_TRACE_EXPORT_POLICY_BLOCK_20260928T095640Z-b69eaddf-a297-4bfb-a5ea-7291a6c44c22_EVIDENCE.json",
+      "sha256": "804ae205b5c9a2f82cfbc3d1baad8923976a56298f0abdac512498dfa0aaf39f"
+    }
+  },
+  "verification": {
+    "releaseIdentityReadOnly": true,
+    "preexistingPhase2ChangesPreserved": true,
+    "applicationMutation": false,
+    "formSubmission": false,
+    "hostedInput": false,
+    "hostSample": false,
+    "testsRun": false
+  },
+  "limitations": [
+    "No trace, fixed-field observer output, checkpoint, input timing, request/RSC timing, or main-thread measurement was captured in this phase.",
+    "Dashboard visibility does not establish a stable ready baseline or synthetic-account identity.",
+    "This is a browser-capability/precondition blocker, not evidence about application performance, functionality, the wait boundary, or a backend/database cause.",
+    "Hosted release identity matches the previously observed release; local HEAD is not the deployed source."
+  ],
+  "nextGate": "Resume Phase 3 only when a platform-approved trace-to-local-file export path is available and the signed-in account is verified as synthetic; do not use raw CDP or alternate surfaces to reproduce the blocked transfer.",
+  "rawTraceOrSensitiveValuesEmbedded": false
+}

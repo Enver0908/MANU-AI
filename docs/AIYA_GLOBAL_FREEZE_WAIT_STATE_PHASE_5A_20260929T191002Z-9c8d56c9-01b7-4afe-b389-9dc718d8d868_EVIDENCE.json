@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "aiya-global-freeze-wait-state-phase-5a-profile-analysis-v1",
+  "evidenceId": "AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5A_20260929T191002Z-9c8d56c9-01b7-4afe-b389-9dc718d8d868",
+  "createdAt": "2026-09-29T19:10:02Z",
+  "phase": "5A - Native renderer profile ownership and long-task call-tree attribution",
+  "status": "COMPLETE_PROFILE_THREAD_MAPPING_AND_LONG_TASK_ATTRIBUTION",
+  "repository": {
+    "branch": "codex/production-readiness-stage-1",
+    "head": "38e727e0190f42f30768e1e56366b58c48a41285",
+    "worktreeState": "DIRTY_PRESERVED",
+    "hostedReleaseIdentityFromPhase4": {
+      "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+      "commit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+      "identityObservedAt": "2026-09-29T17:07:27.788Z"
+    }
+  },
+  "input": {
+    "rawTraceStorage": "outside_repository_user_saved_edge_trace",
+    "rawTraceFilename": "manu-ai-freeze-trace.devtools.json.gz",
+    "rawTraceSha256": "abc276bbdd4e63762778c39a62c9e82c73cf5651ba583f850a0957cdae052ad5",
+    "priorNativeCaptureEvidence": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_3_NATIVE_20260929T164900Z-89ec155a-344e-4b48-adc2-c4b03c1b55ef_EVIDENCE.json",
+    "rawTraceCommitted": false
+  },
+  "profileAnalysis": {
+    "analysisId": "aiya-profile-analysis-20260929T190425014Z-dc731945-5769-422f-8002-b36a34297c3b",
+    "summaryPath": "app/.manu-runtime/native-traces/profile-analysis/aiya-profile-analysis-20260929T190425014Z-dc731945-5769-422f-8002-b36a34297c3b/profile-analysis.json",
+    "summarySha256": "218664241431cf938980b80b195bf696c17e7df9ae88cd4cdc32f6c3b5ed92ad",
+    "status": "RENDERER_PROFILE_MAPPED",
+    "profileCount": 1,
+    "profileChunkCount": 5223,
+    "sampleCount": 512671,
+    "timeDeltaCount": 512671,
+    "negativeTimeDeltaCount": 1901,
+    "invalidSampleCount": 0,
+    "sampleDeltaCountMismatch": false,
+    "nodeConflictCount": 0,
+    "profileOwnerMapping": "PROFILE_HEADER_TO_RENDERER_MAIN",
+    "longTaskCount": 31,
+    "longTaskWindowsAttributed": 31,
+    "longestTask": {
+      "wallDurationMs": 34390.426,
+      "threadDurationMs": 34066.955,
+      "sampleIntervalCoveragePercent": 100,
+      "unknownMs": 0,
+      "unresolvedParentSamples": 0
+    },
+    "recurringMinifiedFramesInTop10": {
+      "U_in_1555_chunk": 30,
+      "m_in_1555_chunk": 30,
+      "longTaskCount": 31
+    },
+    "longestTaskFrameSamplesMs": {
+      "U": {
+        "inclusive": 33832.579,
+        "self": 19.213
+      },
+      "m": {
+        "inclusive": 29023.922,
+        "self": 8.879
+      },
+      "nativeAddEventListener": {
+        "self": 29015.043
+      },
+      "nativeRequestIdleCallback": {
+        "self": 4788.763
+      }
+    },
+    "interpretationLimits": [
+      "100 percent sample-interval coverage means the sampled duration was accounted for; it is not source-URL coverage or proof of a complete JavaScript source map.",
+      "Inclusive frame durations overlap across parent and child frames and must not be summed.",
+      "The large native addEventListener and requestIdleCallback self-time, compared with the small U and m self-time, prevents attributing the long CPU duration to those JavaScript functions alone.",
+      "Production source maps remain unavailable; minified bundle positions are not exact TypeScript function attribution."
+    ]
+  },
+  "verification": {
+    "focusedTests": {
+      "command": "node --test scripts/performance-global-freeze-diagnostic.test.mjs",
+      "workingDirectory": "app",
+      "result": "PASS",
+      "passed": 29,
+      "failed": 0
+    },
+    "sourceSha256": {
+      "app/scripts/performance-global-freeze-diagnostic.mjs": "d6331a0a6cd425e93f5148c48dbda7bec51709558331af42ca3358a98b6f92da",
+      "app/scripts/performance-global-freeze-diagnostic.test.mjs": "982007b044c1caef8cc010b3815231fba761ef1d2a02080b4ce294ebd66e5a6d",
+      "app/scripts/lib/aiya-global-freeze-profile-analysis.mjs": "5960146877df10be1af14fafa6acfc3c5dfd54830f6229cfc679815dcba8a96a0"
+    },
+    "rawTraceOrUserContentPrinted": false,
+    "runtimeApplicationStarted": false
+  },
+  "conclusion": "The profile stream is now mapped to the renderer main thread and all 31 long-task windows have sampled attribution. This completes profile attribution mechanics; it does not identify a proven freeze cause."
+}

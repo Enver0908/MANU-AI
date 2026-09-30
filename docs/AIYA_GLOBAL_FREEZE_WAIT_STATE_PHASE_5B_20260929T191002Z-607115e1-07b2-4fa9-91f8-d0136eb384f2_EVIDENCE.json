@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "aiya-global-freeze-wait-state-phase-5b-candidate-assessment-v1",
+  "evidenceId": "AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5B_20260929T191002Z-607115e1-07b2-4fa9-91f8-d0136eb384f2",
+  "createdAt": "2026-09-29T19:10:02Z",
+  "phase": "5B - Deployed source-context and candidate-strength assessment",
+  "status": "INCONCLUSIVE_STRONG_CANDIDATE_CAUSALITY_UNPROVEN",
+  "basedOn": {
+    "profileEvidence": "docs/AIYA_GLOBAL_FREEZE_WAIT_STATE_PHASE_5A_20260929T191002Z-9c8d56c9-01b7-4afe-b389-9dc718d8d868_EVIDENCE.json",
+    "profileSummarySha256": "218664241431cf938980b80b195bf696c17e7df9ae88cd4cdc32f6c3b5ed92ad",
+    "rawTraceSha256": "abc276bbdd4e63762778c39a62c9e82c73cf5651ba583f850a0957cdae052ad5"
+  },
+  "deployedAsset": {
+    "releaseId": "hs-1c9756046b01-b55ed4ff550f",
+    "commit": "1c9756046b01cb1bd224fb601ec9094a7f471606",
+    "path": "/_next/static/chunks/1555-<hash>.js",
+    "bytes": 121458,
+    "sha256": "aa4113fcf869ce756fb907e575c9e3c0326721a4b295e6244e3c4c6b205fcfb3",
+    "sourceMap": "UNAVAILABLE_HTTP_404"
+  },
+  "candidate": {
+    "classification": "STRONGEST_CURRENT_APPLICATION_CODE_CANDIDATE_NOT_CONFIRMED_CAUSE",
+    "applicationIntegration": "app/src/components/dashboard/shell-web-vitals-reporter.tsx via ShellProvider",
+    "hostedSourceBlobIds": {
+      "shell-web-vitals-reporter.tsx": "9d077cd689b77e8b3f9d6aff60cb5516d80bca28",
+      "shell-provider.tsx": "b9099a3a88714de22550e8e9b5e4bae7de168fa0"
+    },
+    "observedBundleContext": [
+      "The minified m frame installs a visibilitychange handler.",
+      "The minified U frame selects requestIdleCallback or setTimeout.",
+      "A neighboring anonymous frame registers keydown and click listeners that call U."
+    ],
+    "profileCorrelation": {
+      "U_frame_in_top10_tasks": 30,
+      "m_frame_in_top10_tasks": 30,
+      "total_long_tasks": 31,
+      "longestTaskUInclusiveMs": 33832.579,
+      "longestTaskUSelfMs": 19.213,
+      "longestTaskMInclusiveMs": 29023.922,
+      "longestTaskMSelfMs": 8.879,
+      "longestTaskNativeAddEventListenerSelfMs": 29015.043,
+      "longestTaskNativeRequestIdleCallbackSelfMs": 4788.763
+    },
+    "sourceCodeFacts": [
+      "The hosted ShellWebVitalsReporter invokes useReportWebVitals and passes an inline metric callback.",
+      "The hosted ShellProvider mounts ShellWebVitalsReporter in the shared shell.",
+      "The production ShellMetricSink defaults to a no-op; this limits the downstream sink path but does not eliminate hook registration or callback scheduling."
+    ]
+  },
+  "causalAssessment": {
+    "strongerThanPhase4": true,
+    "whyCandidateIsMeaningful": "The hosted Web Vitals registration and scheduling frames recur in the renderer-main long-task call trees, and the exact hosted asset hash and source integration are identified.",
+    "whyCauseIsNotProven": [
+      "High inclusive time is not self time: U and m themselves account for only 19.213 ms and 8.879 ms of self time in the longest task.",
+      "Browser-native addEventListener and requestIdleCallback frames carry large sampled self time; the profile alone does not resolve whether the reporter triggers, observes, or merely coexists with the busy callback path.",
+      "The trace lacks expected-action and app-visible-loading markers; the reported two-minute reload delay occurred after recording ended.",
+      "Only one saved Edge trace exists; it does not establish the cause of the full desktop-and-phone symptom across sessions or devices."
+    ],
+    "conclusion": "The Web Vitals reporter/hook registration and scheduling path is the strongest actionable application-code candidate in the current trace. It is not a confirmed trigger, not a proven root cause, and not a basis for a runtime fix."
+  },
+  "nextStep": "A/B assessment is separately recorded in Phase 5C. Do not repeat the hosted capture or infer causality from call-tree correlation alone."
+}

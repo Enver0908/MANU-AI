@@ -2,6 +2,8 @@ import { defineResumablePhase } from "../../../tools/phase-execution/phase-defin
 
 export const GLOBAL_FREEZE_PHASE_ID = "aiya-global-freeze-diagnostic-v1";
 export const GLOBAL_FREEZE_SCHEMA_VERSION = "aiya-global-freeze-diagnostic-v1";
+export const GLOBAL_FREEZE_WAIT_STATE_PHASE_ID = "aiya-global-freeze-wait-state";
+export const GLOBAL_FREEZE_WAIT_STATE_SCHEMA_VERSION = "aiya-global-freeze-wait-state-v1";
 export const GLOBAL_FREEZE_MAX_ATTEMPTS = 5;
 export const GLOBAL_FREEZE_REQUIRED_RECORDS = 3;
 export const GLOBAL_FREEZE_PHASE1_BLOCK_REASONS = new Set([
@@ -99,6 +101,35 @@ export const GLOBAL_FREEZE_PHASE_DEFINITION = defineResumablePhase({
           result?.matchedReproductions?.beforeFreezeCount === 3 &&
           result?.matchedReproductions?.afterRecords === 3 &&
           result?.matchedReproductions?.afterFreezeCount === 0;
+      },
+    },
+  ],
+});
+
+export const GLOBAL_FREEZE_WAIT_STATE_PHASE_DEFINITION = defineResumablePhase({
+  phaseId: GLOBAL_FREEZE_WAIT_STATE_PHASE_ID,
+  phaseSchemaVersion: GLOBAL_FREEZE_WAIT_STATE_SCHEMA_VERSION,
+  stages: [
+    {
+      stageId: "phase-2-local-capture-preflight",
+      prerequisites: [],
+      verify: (evidence) => {
+        const result = evidence?.phase2;
+        return result?.status === "COMPLETE" &&
+          result?.traceComplete === true &&
+          /^[a-f0-9]{64}$/.test(String(result?.rawTraceSha256 ?? "")) &&
+          /^[a-f0-9]{64}$/.test(String(result?.sanitizedTraceSha256 ?? "")) &&
+          typeof result?.checkpointRunId === "string" &&
+          result?.input?.expectedCount === 12 &&
+          result?.input?.requestedCount === 12 &&
+          result?.input?.pressedCount === 12 &&
+          result?.input?.delivery === "DELIVERED" &&
+          Number.isFinite(result?.input?.medianPressedGapMs) &&
+          result.input.medianPressedGapMs >= 250 &&
+          result.input.medianPressedGapMs <= 500 &&
+          ["request_in_flight", "response_body_not_complete", "main_thread_busy", "visible_loading_after_work"]
+            .every((classification) => result.waitClasses?.includes(classification)) &&
+          result?.redactionStatus === "PASS";
       },
     },
   ],
