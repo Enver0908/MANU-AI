@@ -144,6 +144,36 @@ type ShellProviderContextValue = {
 
 const ShellProviderContext = createContext<ShellProviderContextValue | null>(null);
 
+type ShellNavigationContextValue = Pick<
+  ShellProviderContextValue,
+  | "activeDestination"
+  | "shellDestination"
+  | "effectiveActiveClientId"
+  | "showActiveClientControl"
+  | "navigateToDestination"
+  | "navigateToSection"
+  | "requestHrefNavigation"
+  | "setFocusMode"
+  | "canNavigateAway"
+  | "selectActiveClient"
+  | "clearActiveClient"
+  | "requestLogout"
+>;
+
+type ShellChromeContextValue = Pick<
+  ShellProviderContextValue,
+  | "focusMode"
+  | "headerSlots"
+  | "setHeaderSlots"
+  | "scopedAiChatClient"
+  | "setScopedAiChatClient"
+  | "hideCompactNavigation"
+  | "setHideCompactNavigation"
+>;
+
+const ShellNavigationContext = createContext<ShellNavigationContextValue | null>(null);
+const ShellChromeContext = createContext<ShellChromeContextValue | null>(null);
+
 async function fetchShellBootstrap(activeClientId: string | null, signal: AbortSignal) {
   const params = new URLSearchParams();
   if (activeClientId) params.set("activeClientId", activeClientId);
@@ -207,13 +237,23 @@ export function ShellProvider({
   );
   const sequenceRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
+  const bootstrapFetchRef = useRef<{
+    key: string;
+    controller: AbortController;
+    promise: Promise<ShellBootstrapDto>;
+  } | null>(null);
   const activityPendingRef = useRef(false);
+  const activityInFlightRef = useRef(false);
+  const activityAbortRef = useRef<AbortController | null>(null);
   const lastActivitySentAtRef = useRef(0);
   const waitingWorkerRef = useRef<ServiceWorker | null>(null);
   const reconnectingRef = useRef(false);
   const bootstrapRetryRef = useRef(0);
+  const bootstrapRetryTimerRef = useRef<number | null>(null);
   const preferenceRevisionRef = useRef<number | null>(null);
-  const bootstrapRefreshRef = useRef<() => void>(() => undefined);
+  const bootstrapRefreshRef = useRef<() => Promise<ShellServerSessionCheck>>(
+    async () => "failed",
+  );
   const preferenceCoordinatorRef = useRef<ShellPreferenceCoordinator | null>(null);
   const currentBrowserHrefRef = useRef("");
   const bootstrapRef = useRef(state.bootstrap);
@@ -289,18 +329,32 @@ export function ShellProvider({
         return "active";
       }
 
-      abortRef.current?.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
       const sequence = sequenceRef.current + 1;
       sequenceRef.current = sequence;
       dispatch({ type: "bootstrap_started", sequence });
 
       // General AI Chat must not bind global client context into the request.
       const bootstrapClientId = shellDestination === "ai_chat" ? null : urlState.clientId;
+      const requestKey = `${shellDestination}|${bootstrapClientId ?? ""}`;
+      const existingRequest = bootstrapFetchRef.current;
+      let controller: AbortController;
+      let requestPromise: Promise<ShellBootstrapDto>;
+      if (existingRequest?.key === requestKey) {
+        controller = existingRequest.controller;
+        requestPromise = existingRequest.promise;
+      } else {
+        existingRequest?.controller.abort();
+        controller = new AbortController();
+        abortRef.current = controller;
+        requestPromise = fetchShellBootstrap(bootstrapClientId, controller.signal);
+        bootstrapFetchRef.current = { key: requestKey, controller, promise: requestPromise };
+      }
 
       try {
-        const bootstrap = await fetchShellBootstrap(bootstrapClientId, controller.signal);
+        const bootstrap = await requestPromise;
+        if (bootstrapFetchRef.current?.promise === requestPromise) {
+          bootstrapFetchRef.current = null;
+        }
         bootstrapRetryRef.current = 0;
         const nextBootstrap =
           shellDestination === "ai_chat" ? { ...bootstrap, activeClient: null } : bootstrap;
@@ -308,6 +362,9 @@ export function ShellProvider({
         recordPhase52ClientEvent("shell_bootstrap_completed", { status: "success" });
         return "active";
       } catch (error: unknown) {
+        if (bootstrapFetchRef.current?.promise === requestPromise) {
+          bootstrapFetchRef.current = null;
+        }
         if (controller.signal.aborted) return "failed";
         const status =
           typeof error === "object" && error && "status" in error
@@ -326,9 +383,20 @@ export function ShellProvider({
         // navigator.onLine can be true while network still fails — one short retry then unavailable.
         if (!offline && bootstrapRetryRef.current < 1 && status >= 500) {
           bootstrapRetryRef.current += 1;
-          await new Promise((resolve) => {
-            window.setTimeout(resolve, 400);
+          await new Promise<void>((resolve) => {
+            const timer = window.setTimeout(() => {
+              bootstrapRetryTimerRef.current = null;
+              resolve();
+            }, 400);
+            bootstrapRetryTimerRef.current = timer;
+            const onAbort = () => {
+              window.clearTimeout(timer);
+              bootstrapRetryTimerRef.current = null;
+              resolve();
+            };
+            controller.signal.addEventListener("abort", onAbort, { once: true });
           });
+          if (controller.signal.aborted) return "failed";
           return runBootstrap("explicit");
         }
         bootstrapRetryRef.current = 0;
@@ -371,6 +439,7 @@ export function ShellProvider({
   }, [state.bootstrap?.preferences.revision]);
 
   const searchKey = searchParams.toString();
+  const bootstrapScopeKey = `${pathname}|${shellDestination}|${shellDestination === "ai_chat" ? "" : urlState.clientId ?? ""}`;
 
   useEffect(() => {
     currentBrowserHrefRef.current = `${pathname}${searchKey ? `?${searchKey}` : ""}`;
@@ -380,8 +449,14 @@ export function ShellProvider({
     runBootstrap("route");
     return () => {
       abortRef.current?.abort();
+      activityAbortRef.current?.abort();
+      bootstrapFetchRef.current = null;
+      if (bootstrapRetryTimerRef.current !== null) {
+        window.clearTimeout(bootstrapRetryTimerRef.current);
+        bootstrapRetryTimerRef.current = null;
+      }
     };
-  }, [pathname, searchKey, runBootstrap]);
+  }, [bootstrapScopeKey, runBootstrap]);
 
   const touchSessionActivity = useCallback(async () => {
     // Fallback store has no server session; a 503 must not wipe the shell.
@@ -403,9 +478,13 @@ export function ShellProvider({
     ) {
       return;
     }
+    if (activityInFlightRef.current) return;
 
     activityPendingRef.current = false;
     lastActivitySentAtRef.current = now;
+    activityInFlightRef.current = true;
+    const controller = new AbortController();
+    activityAbortRef.current = controller;
 
     try {
       const response = await fetch("/api/session/activity", {
@@ -420,6 +499,7 @@ export function ShellProvider({
           [SIRIUSAI_MUTATION_KIND_HEADER]: "other",
         },
         body: "{}",
+        signal: controller.signal,
       });
       if (response.ok) return;
       const failure = resolveShellSessionActivityHttpFailure({
@@ -455,6 +535,7 @@ export function ShellProvider({
         error: "session_activity_failed",
       });
     } catch {
+      if (controller.signal.aborted) return;
       const failure = resolveShellSessionActivityHttpFailure({
         status: null,
         offline: typeof navigator !== "undefined" && navigator.onLine === false,
@@ -470,6 +551,9 @@ export function ShellProvider({
         runtime: "service_unavailable",
         error: "session_activity_failed",
       });
+    } finally {
+      activityInFlightRef.current = false;
+      if (activityAbortRef.current === controller) activityAbortRef.current = null;
     }
   }, [mode, router]);
   const markActivity = useCallback(() => {
@@ -695,9 +779,12 @@ export function ShellProvider({
             clientId: shellDestinationAcceptsClientId(safe) ? effectiveActiveClientId : null,
             focusMode: false,
           });
-          commitDashboardHref(href, "push");
           currentBrowserHrefRef.current = href;
-          if (!shouldUseClientOnlyDashboardNavigation(pathname, href)) router.push(href);
+          if (shouldUseClientOnlyDashboardNavigation(pathname, href)) {
+            commitDashboardHref(href, "push");
+          } else {
+            router.push(href);
+          }
           void preferenceCoordinatorRef.current?.update({ lastDestinationId: safe }).then((preferences) => {
             if (preferences) preferenceRevisionRef.current = preferences.revision;
           });
@@ -705,9 +792,12 @@ export function ShellProvider({
           return;
         }
         case "href":
-          commitDashboardHref(pending.href, "push");
           currentBrowserHrefRef.current = pending.href;
-          if (!shouldUseClientOnlyDashboardNavigation(pathname, pending.href)) router.push(pending.href);
+          if (shouldUseClientOnlyDashboardNavigation(pathname, pending.href)) {
+            commitDashboardHref(pending.href, "push");
+          } else {
+            router.push(pending.href);
+          }
           return;
         case "logout": {
           const form = document.createElement("form");
@@ -824,10 +914,13 @@ export function ShellProvider({
                 chatId: extractAiChatId(pathname),
                 focusMode: state.focusMode,
               });
-            commitDashboardHref(fallbackHref, "push");
             currentBrowserHrefRef.current = fallbackHref;
             try {
-              if (!shouldUseClientOnlyDashboardNavigation(pathname, fallbackHref)) router.push(fallbackHref);
+              if (shouldUseClientOnlyDashboardNavigation(pathname, fallbackHref)) {
+                commitDashboardHref(fallbackHref, "push");
+              } else {
+                router.push(fallbackHref);
+              }
             } catch {
               // Same-page query updates are already applied through history.
             }
@@ -856,10 +949,13 @@ export function ShellProvider({
             return true;
           }
 
-          commitDashboardHref(nextHref, "push");
           currentBrowserHrefRef.current = nextHref;
           try {
-            if (!shouldUseClientOnlyDashboardNavigation(pathname, nextHref)) router.push(nextHref);
+            if (shouldUseClientOnlyDashboardNavigation(pathname, nextHref)) {
+              commitDashboardHref(nextHref, "push");
+            } else {
+              router.push(nextHref);
+            }
           } catch {
             // Same-page query updates are already applied through history.
           }
@@ -1085,6 +1181,57 @@ export function ShellProvider({
     ],
   );
 
+  const navigationValue = useMemo<ShellNavigationContextValue>(
+    () => ({
+      activeDestination,
+      shellDestination,
+      effectiveActiveClientId: shellDestination === "ai_chat" ? null : effectiveActiveClientId,
+      showActiveClientControl,
+      navigateToDestination,
+      navigateToSection,
+      requestHrefNavigation,
+      setFocusMode,
+      canNavigateAway,
+      selectActiveClient,
+      clearActiveClient,
+      requestLogout,
+    }),
+    [
+      activeDestination,
+      canNavigateAway,
+      clearActiveClient,
+      effectiveActiveClientId,
+      navigateToDestination,
+      navigateToSection,
+      requestHrefNavigation,
+      requestLogout,
+      selectActiveClient,
+      setFocusMode,
+      shellDestination,
+      showActiveClientControl,
+    ],
+  );
+
+  const chromeValue = useMemo<ShellChromeContextValue>(
+    () => ({
+      focusMode: state.focusMode,
+      headerSlots,
+      setHeaderSlots,
+      scopedAiChatClient,
+      setScopedAiChatClient,
+      hideCompactNavigation: hideCompactNavigation || state.focusMode,
+      setHideCompactNavigation,
+    }),
+    [
+      headerSlots,
+      hideCompactNavigation,
+      scopedAiChatClient,
+      setHeaderSlots,
+      setHideCompactNavigation,
+      state.focusMode,
+    ],
+  );
+
   const canSaveAndContinue =
     dirtySnapshot.entries
       .filter((entry) => entry.state === "dirty" || entry.state === "error")
@@ -1093,30 +1240,34 @@ export function ShellProvider({
 
   return (
     <ShellProviderContext.Provider value={value}>
-      <ShellWebVitalsReporter />
-      {children}
-      {pendingNavigation ? (
-        <ShellDirtyNavigationDialog
-          busy={confirmBusy || dirtySnapshot.isSaving}
-          uiLanguage={uiLanguage}
-          request={{
-            snapshot: dirtySnapshot,
-            canSaveAndContinue,
-            onStay: () => void resolveDirtyConfirm("stay"),
-            onDiscard: () => void resolveDirtyConfirm("discard"),
-            onSaveAndContinue: canSaveAndContinue
-              ? () => void resolveDirtyConfirm("save")
-              : undefined,
-            onFocusError: dirtySnapshot.hasError
-              ? () => {
-                  const errored = dirtySnapshot.entries.find((entry) => entry.state === "error");
-                  errored?.focus?.();
-                  setPendingNavigation(null);
-                }
-              : undefined,
-          }}
-        />
-      ) : null}
+      <ShellNavigationContext.Provider value={navigationValue}>
+        <ShellChromeContext.Provider value={chromeValue}>
+          <ShellWebVitalsReporter />
+          {children}
+          {pendingNavigation ? (
+            <ShellDirtyNavigationDialog
+              busy={confirmBusy || dirtySnapshot.isSaving}
+              uiLanguage={uiLanguage}
+              request={{
+                snapshot: dirtySnapshot,
+                canSaveAndContinue,
+                onStay: () => void resolveDirtyConfirm("stay"),
+                onDiscard: () => void resolveDirtyConfirm("discard"),
+                onSaveAndContinue: canSaveAndContinue
+                  ? () => void resolveDirtyConfirm("save")
+                  : undefined,
+                onFocusError: dirtySnapshot.hasError
+                  ? () => {
+                      const errored = dirtySnapshot.entries.find((entry) => entry.state === "error");
+                      errored?.focus?.();
+                      setPendingNavigation(null);
+                    }
+                  : undefined,
+              }}
+            />
+          ) : null}
+        </ShellChromeContext.Provider>
+      </ShellNavigationContext.Provider>
     </ShellProviderContext.Provider>
   );
 }
@@ -1136,4 +1287,16 @@ export function useShellProvider() {
 
 export function useOptionalShellProvider() {
   return useContext(ShellProviderContext);
+}
+
+export function useShellNavigation() {
+  const value = useContext(ShellNavigationContext);
+  if (!value) throw new Error("shell_navigation_provider_missing");
+  return value;
+}
+
+export function useShellChrome() {
+  const value = useContext(ShellChromeContext);
+  if (!value) throw new Error("shell_chrome_provider_missing");
+  return value;
 }

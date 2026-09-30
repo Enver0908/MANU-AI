@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach, vi } from "vitest";
 import {
   ShellDirtyRegistry,
   buildShellDirtyConfirmMessage,
@@ -118,5 +118,21 @@ describe("phase-85-stage-5-shell-dirty-registry", () => {
     expect(result.ok).toBe(false);
     expect(result.failedId).toBe("remaining_unsaved");
     expect(registry.get("composer")?.state).toBe("dirty");
+  });
+
+  it("keeps a stable snapshot and skips equivalent updates", () => {
+    const listener = vi.fn();
+    registry.subscribe(listener);
+    const entry = {
+      id: "profile",
+      label: "Profil",
+      state: "clean" as const,
+      canSave: false,
+    };
+    registry.register(entry);
+    const first = registry.snapshot();
+    registry.update("profile", { state: "clean", canSave: false });
+    expect(registry.snapshot()).toBe(first);
+    expect(listener).toHaveBeenCalledTimes(1);
   });
 });

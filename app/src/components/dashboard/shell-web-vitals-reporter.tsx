@@ -2,6 +2,8 @@
 
 import { useReportWebVitals } from "next/web-vitals";
 import { usePathname } from "next/navigation";
+import { useCallback, useRef } from "react";
+import type { NextWebVitalsMetric } from "next/app";
 import {
   reportShellMetric,
   resolveShellMetricRouteClass,
@@ -14,17 +16,21 @@ import {
  */
 export function ShellWebVitalsReporter() {
   const pathname = usePathname() || "/dashboard";
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
 
-  useReportWebVitals((metric) => {
+  const report = useCallback((metric: NextWebVitalsMetric) => {
     if (typeof window === "undefined") return;
     reportShellMetric({
       name: metric.name,
       value: metric.value,
       rating: "rating" in metric && typeof metric.rating === "string" ? metric.rating : null,
       responsiveClass: resolveShellResponsiveClass(window.innerWidth),
-      routeClass: resolveShellMetricRouteClass(pathname),
+      routeClass: resolveShellMetricRouteClass(pathnameRef.current),
     });
-  });
+  }, []);
+
+  useReportWebVitals(report);
 
   return null;
 }

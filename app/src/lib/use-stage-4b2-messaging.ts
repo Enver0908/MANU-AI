@@ -121,6 +121,8 @@ export function useStage4B2Messaging({
   const markReadInflightRef = useRef(new Map<string, Promise<ConversationMutationResponse>>());
   const pollTimerRef = useRef<number | null>(null);
   const pollActiveRef = useRef(false);
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
   const listAbortRef = useRef<AbortController | null>(null);
   const detailAbortRef = useRef<AbortController | null>(null);
   const paginationAbortRef = useRef<AbortController | null>(null);
@@ -177,9 +179,11 @@ export function useStage4B2Messaging({
         cursor: options?.cursor,
         limit: 50,
       }).toString();
+      const inflightKey = `conversation-detail:${targetConversationId}:${query}`;
+      detailInflightRef.current.delete(inflightKey);
       const payload = await fetchWithInflightDedupe<ConversationDetailResponse>(
         detailInflightRef.current,
-        `conversation-detail:${targetConversationId}:${query}`,
+        inflightKey,
         () =>
           requestJson<ConversationDetailResponse>(
             `/api/conversations/${encodeURIComponent(targetConversationId)}/messages?${query}`,
@@ -201,6 +205,8 @@ export function useStage4B2Messaging({
       const controller = new AbortController();
       listAbortRef.current = controller;
       const query = buildStage4B2ConversationsRequestQuery(filters, { cursor }).toString();
+      // An aborted request must not remain reusable under the same query key.
+      listInflightRef.current.delete(`conversations:${query}`);
       const payload = await fetchWithInflightDedupe<ConversationListResponse>(
         listInflightRef.current,
         `conversations:${query}`,
@@ -392,6 +398,17 @@ export function useStage4B2Messaging({
   }, []);
 
   useEffect(() => {
+    if (enabledRef.current) return;
+    listAbortRef.current?.abort();
+    detailAbortRef.current?.abort();
+    paginationAbortRef.current?.abort();
+    if (pollTimerRef.current != null) {
+      window.clearTimeout(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+  }, [enabled]);
+
+  useEffect(() => {
     if (!enabled) return;
     const timeout = window.setTimeout(() => {
       void refreshAll({ resetBackoff: true, reason: "mount_or_filter_change" });
@@ -404,6 +421,7 @@ export function useStage4B2Messaging({
     const schedule = () => {
       if (pollTimerRef.current != null) window.clearTimeout(pollTimerRef.current);
       if (
+        !enabledRef.current ||
         shouldPauseStage4B2MessagingPolling(document.visibilityState === "visible") ||
         isPhase55NavigationWindowActive()
       ) return;

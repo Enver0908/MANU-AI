@@ -65,11 +65,14 @@ function hydrateFromError(error: unknown, setHydrateError: (value: string | null
 export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
   const autoHydrate = options.autoHydrate ?? true;
   const [state, setState] = useState<ManuAppState>(() => createInitialState());
+  const stateRef = useRef(state);
+  stateRef.current = state;
   const [hydrated, setHydrated] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [hydrateError, setHydrateError] = useState<string | null>(null);
   const [hydrateRequestId, setHydrateRequestId] = useState<string | null>(null);
   const hydrationInFlightRef = useRef<Promise<void> | null>(null);
+  const hydrationAbortRef = useRef<AbortController | null>(null);
   const previousDiagnosticStateRef = useRef<ManuAppState | null>(null);
   const usesHostedStore = getSupabaseStatus() === "configured";
 
@@ -143,18 +146,17 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
       const data = (await requestJson(url, init)) as {
         profile?: { displayName?: string; uiLanguage?: SupportedLanguageCode };
       };
-      let mergedState = createInitialState();
-      setState((current) => {
-        mergedState = {
-          ...current,
-          dietitian: {
-            ...current.dietitian,
-            ...(data.profile?.displayName !== undefined ? { displayName: data.profile.displayName } : {}),
-            ...(data.profile?.uiLanguage !== undefined ? { uiLanguage: data.profile.uiLanguage } : {}),
-          },
-        };
-        return mergedState;
-      });
+      const current = stateRef.current;
+      const mergedState = {
+        ...current,
+        dietitian: {
+          ...current.dietitian,
+          ...(data.profile?.displayName !== undefined ? { displayName: data.profile.displayName } : {}),
+          ...(data.profile?.uiLanguage !== undefined ? { uiLanguage: data.profile.uiLanguage } : {}),
+        },
+      };
+      stateRef.current = mergedState;
+      setState(mergedState);
       return mergedState;
     },
     [requestJson],
@@ -162,6 +164,7 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
 
   const replaceFromApi = useCallback(async (url: string, init?: RequestInit) => {
     const nextState = (await requestJson(url, init)) as ManuAppState;
+    stateRef.current = nextState;
     setState(nextState);
     setHydrateError(null);
     setHydrateRequestId(null);
@@ -173,25 +176,36 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
       return hydrationInFlightRef.current;
     }
 
+    const controller = new AbortController();
+    hydrationAbortRef.current?.abort();
+    hydrationAbortRef.current = controller;
     const operation = (async () => {
       recordPhase52ClientEvent("app_state_hydration_started");
       setHydrateError(null);
       setHydrateRequestId(null);
       try {
-        await replaceFromApi("/api/app-state");
+        await replaceFromApi("/api/app-state", { signal: controller.signal });
       } catch (error) {
+        if (controller.signal.aborted) return;
         if (usesHostedStore) {
           hydrateFromError(error, setHydrateError, setHydrateRequestId);
         } else {
-          setState(createInitialState());
+          const resetState = createInitialState();
+          stateRef.current = resetState;
+          setState(resetState);
         }
       } finally {
-        setHydrated(true);
-        recordPhase52ClientEvent("app_state_hydration_completed");
+        if (!controller.signal.aborted) {
+          setHydrated(true);
+          recordPhase52ClientEvent("app_state_hydration_completed");
+        }
       }
     })().finally(() => {
       if (hydrationInFlightRef.current === operation) {
         hydrationInFlightRef.current = null;
+      }
+      if (hydrationAbortRef.current === controller) {
+        hydrationAbortRef.current = null;
       }
     });
     hydrationInFlightRef.current = operation;
@@ -205,35 +219,29 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
   const mergeStage6MutationFromApi = useCallback(
     async (url: string, expectedClientId: string, init?: RequestInit) => {
       const payload = (await requestJson(url, init)) as ClientScopedMutationResponse<unknown>;
-      let mergedState = createInitialState();
-      setState((current) => {
-        if (expectedClientId !== "*" && !shouldApplyStage6Response(payload, expectedClientId)) {
-          mergedState = current;
-          return current;
-        }
-        mergedState = mergeStage6MutationIntoAppState(current, payload);
-        return mergedState;
-      });
+      const current = stateRef.current;
+      if (expectedClientId !== "*" && !shouldApplyStage6Response(payload, expectedClientId)) {
+        return current;
+      }
+      const mergedState = mergeStage6MutationIntoAppState(current, payload);
+      stateRef.current = mergedState;
+      setState(mergedState);
       return mergedState;
     },
     [requestJson],
   );
 
   const mergeConversationDetailIntoState = useCallback((detail: ConversationDetailResponse) => {
-    let mergedState = createInitialState();
-    setState((current) => {
-      mergedState = mergeConversationDetailResponseIntoAppState(current, detail);
-      return mergedState;
-    });
+    const mergedState = mergeConversationDetailResponseIntoAppState(stateRef.current, detail);
+    stateRef.current = mergedState;
+    setState(mergedState);
     return mergedState;
   }, []);
 
   const mergeConversationMutationIntoState = useCallback((mutation: ConversationMutationResponse) => {
-    let mergedState = createInitialState();
-    setState((current) => {
-      mergedState = mergeConversationMutationResponseIntoAppState(current, mutation);
-      return mergedState;
-    });
+    const mergedState = mergeConversationMutationResponseIntoAppState(stateRef.current, mutation);
+    stateRef.current = mergedState;
+    setState(mergedState);
     return mergedState;
   }, []);
 
@@ -259,9 +267,12 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
     return () => window.clearTimeout(timeout);
   }, [autoHydrate, hydrate]);
 
-  return useMemo(
+  useEffect(() => {
+    return () => hydrationAbortRef.current?.abort();
+  }, []);
+
+  const actionValue = useMemo(
     () => ({
-      state,
       hydrated,
       authError,
       hydrateError,
@@ -293,7 +304,7 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
           body: JSON.stringify({
             ...patch,
             requestId: crypto.randomUUID(),
-            expectedRevision: state.clients.find((item) => item.id === clientId)?.contextRevision ?? 0,
+            expectedRevision: stateRef.current.clients.find((item) => item.id === clientId)?.contextRevision ?? 0,
           }),
         }),
       removeClient: (clientId: string) =>
@@ -370,6 +381,7 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
         }
 
         const nextVisualState = (await response.json()) as ManuAppState;
+        stateRef.current = nextVisualState;
         setState(nextVisualState);
         return nextVisualState;
       },
@@ -417,11 +429,12 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
         }
 
         const nextState = (await response.json()) as ManuAppState;
+        stateRef.current = nextState;
         setState(nextState);
         return nextState;
       },
       sendManualReply: (input: { clientId: string; body: string; aiChatDraftTransferId?: string }) => {
-        const conversation = state.conversations.find((item) => item.clientId === input.clientId);
+        const conversation = stateRef.current.conversations.find((item) => item.clientId === input.clientId);
         if (!conversation) {
           throw new Error("conversation_not_found");
         }
@@ -437,9 +450,9 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
         });
       },
       approveDraft: (messageId: string) => {
-        const message = state.messages.find((item) => item.id === messageId);
+        const message = stateRef.current.messages.find((item) => item.id === messageId);
         const conversation = message
-          ? state.conversations.find((item) => item.id === message.conversationId)
+          ? stateRef.current.conversations.find((item) => item.id === message.conversationId)
           : undefined;
         if (!conversation) {
           throw new Error("conversation_not_found");
@@ -454,9 +467,9 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
         });
       },
       editAndSendDraft: (messageId: string, body: string) => {
-        const message = state.messages.find((item) => item.id === messageId);
+        const message = stateRef.current.messages.find((item) => item.id === messageId);
         const conversation = message
-          ? state.conversations.find((item) => item.id === message.conversationId)
+          ? stateRef.current.conversations.find((item) => item.id === message.conversationId)
           : undefined;
         if (!conversation) {
           throw new Error("conversation_not_found");
@@ -472,9 +485,9 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
         });
       },
       dismissDraft: (messageId: string) => {
-        const message = state.messages.find((item) => item.id === messageId);
+        const message = stateRef.current.messages.find((item) => item.id === messageId);
         const conversation = message
-          ? state.conversations.find((item) => item.id === message.conversationId)
+          ? stateRef.current.conversations.find((item) => item.id === message.conversationId)
           : undefined;
         if (!conversation) {
           throw new AppRequestError(404, "conversation_not_found");
@@ -489,12 +502,12 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
         });
       },
       reviewSendManualFromDraft: (messageId: string, body?: string) => {
-        const message = state.messages.find((item) => item.id === messageId);
+        const message = stateRef.current.messages.find((item) => item.id === messageId);
         const conversation = message
-          ? state.conversations.find((item) => item.id === message.conversationId)
+          ? stateRef.current.conversations.find((item) => item.id === message.conversationId)
           : undefined;
         const client = conversation
-          ? state.clients.find((item) => item.id === conversation.clientId)
+          ? stateRef.current.clients.find((item) => item.id === conversation.clientId)
           : undefined;
         if (!conversation) {
           throw new AppRequestError(404, "conversation_not_found");
@@ -578,8 +591,8 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
             ...input,
             requestId: crypto.randomUUID(),
             expectedClientContextRevision:
-              state.clients.find((item) => item.id === input.clientId)?.contextRevision ?? 0,
-            expectedSchemaRevision: getActiveFormSchema(state)?.version ?? 0,
+              stateRef.current.clients.find((item) => item.id === input.clientId)?.contextRevision ?? 0,
+            expectedSchemaRevision: getActiveFormSchema(stateRef.current)?.version ?? 0,
           }),
         }),
       saveClientFoodRuleProfile: (
@@ -615,7 +628,7 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
           method: "POST",
           body: JSON.stringify({
             requestId: crypto.randomUUID(),
-            expectedPlanRevision: state.clientMenuPlans.find((plan) => plan.id === planId)?.revision ?? 0,
+            expectedPlanRevision: stateRef.current.clientMenuPlans.find((plan) => plan.id === planId)?.revision ?? 0,
           }),
         }),
       addClientContextUpdate: (
@@ -702,25 +715,75 @@ export function useAiyaState(options: { autoHydrate?: boolean } = {}) {
       mergeOwnProfileFromApi,
       mergeStage6MutationFromApi,
       replaceFromApi,
-      state,
     ],
   );
+
+  return useMemo(() => ({ state, actions: actionValue, ...actionValue }), [actionValue, state]);
 }
 
 type AiyaStateContextValue = ReturnType<typeof useAiyaState>;
+type AiyaStateReadContextValue = Pick<
+  AiyaStateContextValue,
+  "state" | "hydrated" | "authError" | "hydrateError" | "hydrateRequestId" | "usesHostedStore"
+>;
+type AiyaStateActionsContextValue = AiyaStateContextValue["actions"];
 
 const AiyaStateContext = createContext<AiyaStateContextValue | null>(null);
+const AiyaStateReadContext = createContext<AiyaStateReadContextValue | null>(null);
+const AiyaStateActionsContext = createContext<AiyaStateActionsContextValue | null>(null);
 
 export function AiyaStateProvider({ children }: { children: ReactNode }) {
   const value = useAiyaState({ autoHydrate: false });
+  const readValue = useMemo<AiyaStateReadContextValue>(
+    () => ({
+      state: value.state,
+      hydrated: value.hydrated,
+      authError: value.authError,
+      hydrateError: value.hydrateError,
+      hydrateRequestId: value.hydrateRequestId,
+      usesHostedStore: value.usesHostedStore,
+    }),
+    [
+      value.authError,
+      value.hydrateError,
+      value.hydrateRequestId,
+      value.hydrated,
+      value.state,
+      value.usesHostedStore,
+    ],
+  );
 
-  return createElement(AiyaStateContext.Provider, { value }, children);
+  return createElement(
+    AiyaStateActionsContext.Provider,
+    { value: value.actions },
+    createElement(
+      AiyaStateReadContext.Provider,
+      { value: readValue },
+      createElement(AiyaStateContext.Provider, { value }, children),
+    ),
+  );
 }
 
 export function useAiyaStateContext() {
   const value = useContext(AiyaStateContext);
   if (!value) {
     throw new Error("useAiyaStateContext must be used inside AiyaStateProvider");
+  }
+  return value;
+}
+
+export function useAiyaStateReadContext() {
+  const value = useContext(AiyaStateReadContext);
+  if (!value) {
+    throw new Error("useAiyaStateReadContext must be used inside AiyaStateProvider");
+  }
+  return value;
+}
+
+export function useAiyaStateActionsContext() {
+  const value = useContext(AiyaStateActionsContext);
+  if (!value) {
+    throw new Error("useAiyaStateActionsContext must be used inside AiyaStateProvider");
   }
   return value;
 }

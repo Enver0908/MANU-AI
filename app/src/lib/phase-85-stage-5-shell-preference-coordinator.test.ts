@@ -49,13 +49,15 @@ describe("phase-85-stage-5-shell-preference-coordinator", () => {
   it("refreshes bootstrap and retries once on revision conflict", async () => {
     let calls = 0;
     let refreshes = 0;
+    let releaseRefresh: (() => void) | null = null;
     const coordinator = new ShellPreferenceCoordinator({
       getRevision: () => 3,
       createRequestId: () => `req-conflict-${calls + 1}`,
       getClientBuildVersion: () => "1.0.0",
-      refreshBootstrap: () => {
+      refreshBootstrap: () => new Promise<void>((resolve) => {
         refreshes += 1;
-      },
+        releaseRefresh = resolve;
+      }),
       fetchImpl: async () => {
         calls += 1;
         return calls === 1
@@ -71,11 +73,45 @@ describe("phase-85-stage-5-shell-preference-coordinator", () => {
       },
     });
 
-    await expect(coordinator.update({ lastDestinationId: "clients" })).resolves.toMatchObject({
+    const pending = coordinator.update({ lastDestinationId: "clients" });
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    expect(calls).toBe(1);
+    expect(refreshes).toBe(1);
+    expect(releaseRefresh).not.toBeNull();
+    releaseRefresh?.();
+
+    await expect(pending).resolves.toMatchObject({
       revision: 4,
       lastDestinationId: "clients",
     });
     expect(calls).toBe(2);
     expect(refreshes).toBe(1);
+  });
+
+  it("releases the queue after a rejected request", async () => {
+    let calls = 0;
+    const coordinator = new ShellPreferenceCoordinator({
+      getRevision: () => 1,
+      createRequestId: () => `req-${++calls}`,
+      getClientBuildVersion: () => "1.0.0",
+      refreshBootstrap: () => undefined,
+      fetchImpl: async () => {
+        if (calls === 1) throw new TypeError("network down");
+        return jsonResponse(200, {
+          contractVersion: "p85-stage-5-shell-v1",
+          revision: 2,
+          activeClientId: null,
+          lastDestinationId: "home",
+          destinationState: {},
+          requestId: "req-2",
+        });
+      },
+    });
+
+    await expect(coordinator.update({ lastDestinationId: "clients" })).resolves.toBeNull();
+    await expect(coordinator.update({ lastDestinationId: "home" })).resolves.toMatchObject({
+      lastDestinationId: "home",
+    });
+    expect(calls).toBe(2);
   });
 });

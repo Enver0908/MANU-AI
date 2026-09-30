@@ -63,8 +63,12 @@ describe("P7.1 unused frontend import graph", () => {
 
     const dashboardApp = readSrc("components/dashboard-app.tsx");
     expect(dashboardApp).toContain("OverviewPanel");
-    expect(dashboardApp).toContain("MessagingPanel");
-    expect(dashboardApp).toContain("VoicePanel");
+    expect(dashboardApp).toContain("MessagesRoute");
+    expect(dashboardApp).toContain("VoiceRoute");
+    expect(dashboardApp).toContain("FormsRoute");
+    expect(readSrc("components/dashboard/messages-route.tsx")).toContain("Phase55MessagingPanel");
+    expect(readSrc("components/dashboard/voice-route.tsx")).toContain("VoicePanel");
+    expect(readSrc("components/dashboard/forms-route.tsx")).toContain("FormsPanel");
     expect(dashboardApp).not.toContain("SimulatorPanel");
     expect(dashboardApp).not.toContain("OperationalFoundationPanel");
     expect(dashboardApp).not.toContain("CopilotPanel");

@@ -36,8 +36,19 @@ function syncKeyboardInset() {
  */
 export function useMobileKeyboardScroll(containerRef?: RefObject<HTMLElement | null>) {
   useEffect(() => {
+    let scrollTimer: number | null = null;
+
+    const cancelScheduledScroll = () => {
+      if (scrollTimer === null) return;
+      window.clearTimeout(scrollTimer);
+      scrollTimer = null;
+    };
+
     const scrollFieldIntoView = (target: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
-      window.setTimeout(() => {
+      cancelScheduledScroll();
+      scrollTimer = window.setTimeout(() => {
+        scrollTimer = null;
+        if (!target.isConnected || document.activeElement !== target) return;
         target.scrollIntoView({ block: "center", behavior: "smooth" });
       }, 280);
     };
@@ -66,6 +77,7 @@ export function useMobileKeyboardScroll(containerRef?: RefObject<HTMLElement | n
     syncKeyboardInset();
 
     return () => {
+      cancelScheduledScroll();
       root.removeEventListener("focusin", onFocusIn);
       viewport?.removeEventListener("resize", onViewportResize);
       viewport?.removeEventListener("scroll", onViewportResize);
@@ -75,24 +87,41 @@ export function useMobileKeyboardScroll(containerRef?: RefObject<HTMLElement | n
   }, [containerRef]);
 }
 
-/**
- * Keeps sticky action bars / composers above the compact bottom nav and the
- * on-screen keyboard via Visual Viewport + CSS `--keyboard-inset`.
- */
-export function useShellKeyboardInset() {
-  useEffect(() => {
+let shellKeyboardInsetSubscriberCount = 0;
+let removeShellKeyboardInsetListeners: (() => void) | null = null;
+
+function subscribeShellKeyboardInset() {
+  shellKeyboardInsetSubscriberCount += 1;
+  if (shellKeyboardInsetSubscriberCount === 1) {
     const viewport = window.visualViewport;
     const onChange = () => syncKeyboardInset();
     viewport?.addEventListener("resize", onChange);
     viewport?.addEventListener("scroll", onChange);
     window.addEventListener("resize", onChange);
     syncKeyboardInset();
-    return () => {
+    removeShellKeyboardInsetListeners = () => {
       viewport?.removeEventListener("resize", onChange);
       viewport?.removeEventListener("scroll", onChange);
       window.removeEventListener("resize", onChange);
-      document.documentElement.style.setProperty("--keyboard-inset", "0px");
+      removeShellKeyboardInsetListeners = null;
     };
+  }
+
+  return () => {
+    shellKeyboardInsetSubscriberCount = Math.max(0, shellKeyboardInsetSubscriberCount - 1);
+    if (shellKeyboardInsetSubscriberCount !== 0) return;
+    removeShellKeyboardInsetListeners?.();
+    document.documentElement.style.setProperty("--keyboard-inset", "0px");
+  };
+}
+
+/**
+ * Keeps sticky action bars / composers above the compact bottom nav and the
+ * on-screen keyboard via Visual Viewport + CSS `--keyboard-inset`.
+ */
+export function useShellKeyboardInset() {
+  useEffect(() => {
+    return subscribeShellKeyboardInset();
   }, []);
 }
 

@@ -144,6 +144,7 @@ export function reduceShellProviderState(
         lastError: action.error,
       };
     case "set_focus_mode":
+      if (state.focusMode === action.focusMode) return state;
       return { ...state, focusMode: action.focusMode };
     case "reset_to_booting":
       return {
@@ -169,8 +170,10 @@ export function reduceShellProviderState(
         focusMode: false,
       };
     case "set_update_waiting":
+      if (state.updateWaiting === action.waiting) return state;
       return { ...state, updateWaiting: action.waiting };
     case "set_update_required":
+      if (state.updateRequired === action.required) return state;
       return {
         ...state,
         updateRequired: action.required,

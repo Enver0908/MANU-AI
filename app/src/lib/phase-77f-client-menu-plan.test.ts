@@ -46,6 +46,15 @@ describe("phase 77f client menu plan v1", () => {
     expect(listClientMenuPlanV1Records(state, "client-mert")).toHaveLength(1);
   });
 
+  it("treats a partial legacy diet plan as empty instead of crashing the workspace", () => {
+    const state = createInitialState();
+    const client = state.clients.find((item) => item.id === "client-mert")!;
+    const partialClient = { ...client, dietPlan: {} } as typeof client;
+
+    expect(migrateLegacyDietPlanToMenuPlanV1(state, partialClient)).toBeNull();
+    expect(listClientMenuPlanV1Records({ ...state, clients: [partialClient] }, partialClient.id)).toEqual([]);
+  });
+
   it("creates, saves, and activates a menu plan with derived legacy summary", () => {
     let state = seedPublishedFormResponse();
     state = createClientMenuPlanV1InState(state, "client-mert", { templateType: "weekly_meal_framework" });

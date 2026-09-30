@@ -28,6 +28,7 @@ type Listener = () => void;
 export class ShellDirtyRegistry {
   private readonly store = new Map<string, ShellDirtyEntry>();
   private readonly listeners = new Set<Listener>();
+  private snapshotCache: ShellDirtySnapshot | null = null;
 
   subscribe(listener: Listener) {
     this.listeners.add(listener);
@@ -37,18 +38,24 @@ export class ShellDirtyRegistry {
   }
 
   private emit() {
+    this.snapshotCache = null;
     for (const listener of this.listeners) listener();
   }
 
   register(entry: ShellDirtyEntry) {
-    this.store.set(entry.id, { ...entry });
+    const next = { ...entry };
+    const previous = this.store.get(entry.id);
+    if (previous && areDirtyEntriesEqual(previous, next)) return;
+    this.store.set(entry.id, next);
     this.emit();
   }
 
   update(id: string, patch: Partial<Omit<ShellDirtyEntry, "id">>) {
     const current = this.store.get(id);
     if (!current) return;
-    this.store.set(id, { ...current, ...patch, id });
+    const next = { ...current, ...patch, id };
+    if (areDirtyEntriesEqual(current, next)) return;
+    this.store.set(id, next);
     this.emit();
   }
 
@@ -62,9 +69,10 @@ export class ShellDirtyRegistry {
   }
 
   snapshot(): ShellDirtySnapshot {
+    if (this.snapshotCache) return this.snapshotCache;
     const entries = [...this.store.values()];
     const blocking = entries.filter((entry) => entry.state === "dirty" || entry.state === "saving" || entry.state === "error");
-    return {
+    this.snapshotCache = {
       entries,
       isDirty: blocking.some((entry) => entry.state === "dirty" || entry.state === "error"),
       isSaving: blocking.some((entry) => entry.state === "saving"),
@@ -74,6 +82,7 @@ export class ShellDirtyRegistry {
         .map((entry) => entry.label)
         .filter(Boolean),
     };
+    return this.snapshotCache;
   }
 
   listBlocking() {
@@ -115,9 +124,22 @@ export class ShellDirtyRegistry {
   }
 
   clear() {
+    if (this.store.size === 0) return;
     this.store.clear();
     this.emit();
   }
+}
+
+function areDirtyEntriesEqual(a: ShellDirtyEntry, b: ShellDirtyEntry) {
+  return (
+    a.id === b.id &&
+    a.label === b.label &&
+    a.state === b.state &&
+    a.canSave === b.canSave &&
+    a.save === b.save &&
+    a.discard === b.discard &&
+    a.focus === b.focus
+  );
 }
 
 export const shellDirtyRegistry = new ShellDirtyRegistry();

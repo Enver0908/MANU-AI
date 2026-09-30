@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-import { useShellProvider } from "@/components/dashboard/shell-provider";
+import { useShellChrome, useShellNavigation } from "@/components/dashboard/shell-provider";
 import { SettingsActiveSection } from "@/components/settings/settings-sections";
 import { Tabs } from "@/components/ui";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
@@ -32,7 +32,8 @@ export function SettingsPageClient({
   aiChatEnabled: boolean;
 }) {
   void _aiChatEnabled;
-  const { setHeaderSlots, requestHrefNavigation } = useShellProvider();
+  const { setHeaderSlots } = useShellChrome();
+  const { requestHrefNavigation } = useShellNavigation();
   const uiLanguage = model.profile.uiLanguage;
 
   useEffect(() => {

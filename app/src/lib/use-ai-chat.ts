@@ -17,12 +17,13 @@ import type {
 // Independent from `useAiyaState`/internal-copilot state per Stage 4C Faz 4
 // architecture decisions: AI Chat owns its own bounded request/response cycle.
 
-async function requestAiChatJson<T>(url: string, init?: RequestInit): Promise<T> {
+async function requestAiChatJson<T>(url: string, init?: RequestInit, signal?: AbortSignal): Promise<T> {
   const method = (init?.method ?? "GET").toUpperCase();
   const isMutation = method === "POST" || method === "PUT" || method === "PATCH" || method === "DELETE";
   const response = isMutation
     ? await authenticatedMutationFetch(url, {
         ...init,
+          signal,
         mutationKind: "other",
         headers: {
           "content-type": "application/json",
@@ -31,6 +32,7 @@ async function requestAiChatJson<T>(url: string, init?: RequestInit): Promise<T>
       })
     : await fetch(url, {
         ...init,
+        signal,
         headers: {
           "content-type": "application/json",
           ...init?.headers,
@@ -120,37 +122,52 @@ export function useAiChatHistory({ scope, query }: AiChatHistoryFilters) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestSeq = useRef(0);
+  const requestAbortRef = useRef<AbortController | null>(null);
+  const loadMoreAbortRef = useRef<AbortController | null>(null);
 
   const refresh = useCallback(async () => {
     const seq = ++requestSeq.current;
+    requestAbortRef.current?.abort();
+    loadMoreAbortRef.current?.abort();
+    const controller = new AbortController();
+    requestAbortRef.current = controller;
     setIsLoading(true);
     setError(null);
     try {
       const response = await requestAiChatJson<AiChatConversationListResponse>(
         buildAiChatHistoryUrl(scope, query, null),
+        undefined,
+        controller.signal,
       );
-      if (seq !== requestSeq.current) return;
+      if (seq !== requestSeq.current || controller.signal.aborted) return;
       setItems(response.items);
       setNextCursor(response.nextCursor);
     } catch (err) {
-      if (seq !== requestSeq.current) return;
+      if (seq !== requestSeq.current || controller.signal.aborted) return;
       setError(err instanceof AppRequestError ? err.code : "ai_chat_history_error");
     } finally {
-      if (seq === requestSeq.current) setIsLoading(false);
+      if (seq === requestSeq.current && !controller.signal.aborted) setIsLoading(false);
     }
   }, [query, scope]);
 
   const loadMore = useCallback(async () => {
     if (!nextCursor || isLoadingMore) return;
+    loadMoreAbortRef.current?.abort();
+    const controller = new AbortController();
+    loadMoreAbortRef.current = controller;
     setIsLoadingMore(true);
     try {
       const response = await requestAiChatJson<AiChatConversationListResponse>(
         buildAiChatHistoryUrl(scope, query, nextCursor),
+        undefined,
+        controller.signal,
       );
+      if (controller.signal.aborted) return;
       setItems((current) => [...current, ...response.items]);
       setNextCursor(response.nextCursor);
       setError(null);
     } catch (err) {
+      if (controller.signal.aborted) return;
       setError(err instanceof AppRequestError ? err.code : "ai_chat_history_error");
     } finally {
       setIsLoadingMore(false);
@@ -159,7 +176,11 @@ export function useAiChatHistory({ scope, query }: AiChatHistoryFilters) {
 
   useEffect(() => {
     const timer = window.setTimeout(() => void refresh(), 0);
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      requestAbortRef.current?.abort();
+      loadMoreAbortRef.current?.abort();
+    };
   }, [refresh]);
 
   return { items, nextCursor, isLoading, isLoadingMore, error, refresh, loadMore };
@@ -170,23 +191,32 @@ export function useAiChatConversation(chatId: string | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const requestAbortRef = useRef<AbortController | null>(null);
 
   const refresh = useCallback(async () => {
+    requestAbortRef.current?.abort();
     if (!chatId) {
       setDetail(null);
       setNotFound(false);
       setError(null);
+      setIsLoading(false);
       return;
     }
+    const controller = new AbortController();
+    requestAbortRef.current = controller;
     setIsLoading(true);
     setError(null);
     setNotFound(false);
     try {
       const response = await requestAiChatJson<AiChatConversationDetail>(
         `/api/ai-chat/conversations/${encodeURIComponent(chatId)}`,
+        undefined,
+        controller.signal,
       );
+      if (controller.signal.aborted) return;
       setDetail(response);
     } catch (err) {
+      if (controller.signal.aborted) return;
       if (err instanceof AppRequestError && err.status === 404) {
         setNotFound(true);
         setDetail(null);
@@ -194,13 +224,16 @@ export function useAiChatConversation(chatId: string | null) {
         setError(err instanceof AppRequestError ? err.code : "ai_chat_history_error");
       }
     } finally {
-      setIsLoading(false);
+      if (!controller.signal.aborted) setIsLoading(false);
     }
   }, [chatId]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => void refresh(), 0);
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      requestAbortRef.current?.abort();
+    };
   }, [refresh]);
 
   const rename = useCallback(
@@ -224,11 +257,13 @@ export function useAiChatClientSearch(query: string, debounceMs = 250) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestSeq = useRef(0);
+  const requestAbortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 2) {
       requestSeq.current += 1;
+      requestAbortRef.current?.abort();
       const resetTimer = window.setTimeout(() => {
         setResults([]);
         setError(null);
@@ -238,25 +273,35 @@ export function useAiChatClientSearch(query: string, debounceMs = 250) {
     }
 
     const seq = ++requestSeq.current;
+    requestAbortRef.current?.abort();
+    const controller = new AbortController();
+    requestAbortRef.current = controller;
     const timer = window.setTimeout(() => {
       setIsLoading(true);
       const params = new URLSearchParams({ query: trimmed });
-      requestAiChatJson<AiChatClientSearchItem[]>(`/api/ai-chat/clients?${params.toString()}`)
+      requestAiChatJson<AiChatClientSearchItem[]>(
+        `/api/ai-chat/clients?${params.toString()}`,
+        undefined,
+        controller.signal,
+      )
         .then((response) => {
-          if (seq !== requestSeq.current) return;
+          if (seq !== requestSeq.current || controller.signal.aborted) return;
           setResults(response);
           setError(null);
         })
         .catch((err: unknown) => {
-          if (seq !== requestSeq.current) return;
+          if (seq !== requestSeq.current || controller.signal.aborted) return;
           setError(err instanceof AppRequestError ? err.code : "aiChatActionFailed");
         })
         .finally(() => {
-          if (seq === requestSeq.current) setIsLoading(false);
+          if (seq === requestSeq.current && !controller.signal.aborted) setIsLoading(false);
         });
     }, debounceMs);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
   }, [debounceMs, query]);
 
   return { results, isLoading, error };
@@ -454,15 +499,25 @@ export async function subscribeToAiChatRun(input: {
   return { terminalSeen: false, lastSequence: sequence };
 }
 
-export function useAiChatRunStream(_chatId: string | null, onTerminal?: () => void) {
+export function useAiChatRunStream(chatId: string | null, onTerminal?: () => void) {
   const [state, setState] = useState<AiChatStreamingState>(INITIAL_AI_CHAT_STREAMING_STATE);
-  const activeRunRef = useRef<{ runId: string; controller: AbortController } | null>(null);
+  const chatIdRef = useRef(chatId);
+  const onTerminalRef = useRef(onTerminal);
+  const activeRunRef = useRef<{
+    runId: string;
+    chatId: string;
+    controller: AbortController;
+  } | null>(null);
+  chatIdRef.current = chatId;
+  onTerminalRef.current = onTerminal;
 
   const subscribe = useCallback(
     async (runId: string, afterSequence = 0) => {
+      const ownerChatId = chatIdRef.current;
+      if (!ownerChatId) return;
       activeRunRef.current?.controller.abort();
       const controller = new AbortController();
-      activeRunRef.current = { runId, controller };
+      activeRunRef.current = { runId, chatId: ownerChatId, controller };
       setState({
         runId,
         status: "queued",
@@ -480,25 +535,38 @@ export function useAiChatRunStream(_chatId: string | null, onTerminal?: () => vo
           signal: controller.signal,
           onEvent: (event) => {
             setState((current) => {
-              if (current.runId !== runId) return current;
+              const active = activeRunRef.current;
+              if (!active || active.runId !== runId || active.chatId !== ownerChatId) return current;
               return reduceAiChatRunEvent(current, event);
             });
           },
         });
-        if (activeRunRef.current?.runId === runId && result.terminalSeen) {
-          onTerminal?.();
+        if (
+          activeRunRef.current?.runId === runId &&
+          activeRunRef.current.chatId === ownerChatId &&
+          result.terminalSeen
+        ) {
+          onTerminalRef.current?.();
         }
       } catch (error) {
         if (controller.signal.aborted) return;
         const code = error instanceof AppRequestError ? error.code : "ai_chat_stream_failed";
-        setState((current) => (current.runId === runId ? { ...current, isStreaming: false, error: code } : current));
+        setState((current) => {
+          const active = activeRunRef.current;
+          return active?.runId === runId && active.chatId === ownerChatId
+            ? { ...current, isStreaming: false, error: code }
+            : current;
+        });
       } finally {
-        if (activeRunRef.current?.runId === runId) {
+        if (
+          activeRunRef.current?.runId === runId &&
+          activeRunRef.current.chatId === ownerChatId
+        ) {
           activeRunRef.current = null;
         }
       }
     },
-    [onTerminal],
+    [],
   );
 
   const reset = useCallback(() => {
@@ -506,6 +574,12 @@ export function useAiChatRunStream(_chatId: string | null, onTerminal?: () => vo
     activeRunRef.current = null;
     setState(INITIAL_AI_CHAT_STREAMING_STATE);
   }, []);
+
+  useEffect(() => {
+    activeRunRef.current?.controller.abort();
+    activeRunRef.current = null;
+    setState(INITIAL_AI_CHAT_STREAMING_STATE);
+  }, [chatId]);
 
   useEffect(() => {
     return () => {

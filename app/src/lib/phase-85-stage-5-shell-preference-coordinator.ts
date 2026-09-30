@@ -16,7 +16,8 @@ export type ShellPreferenceCoordinatorOptions = {
   getRevision: () => number | null;
   createRequestId: () => string;
   getClientBuildVersion: () => string;
-  refreshBootstrap: () => void;
+  /** Resolve only after the revision source has been refreshed. */
+  refreshBootstrap: () => Promise<unknown> | void;
   fetchImpl?: typeof fetch;
 };
 
@@ -49,18 +50,26 @@ export class ShellPreferenceCoordinator {
     this.inFlight = true;
     const entry = this.pending;
     this.pending = null;
-    const result = await this.sendWithSingleConflictRetry(entry.intent);
-    entry.resolvers.forEach((resolve) => resolve(result));
-    this.inFlight = false;
-    if (this.pending) {
-      void this.flush();
+    let result: ShellPreferencesPatchResultDto | null = null;
+    try {
+      result = await this.sendWithSingleConflictRetry(entry.intent);
+    } catch {
+      // A rejected fetch must settle the current callers and release the queue.
+      // The caller can explicitly retry; an automatic retry could duplicate a save.
+      result = null;
+    } finally {
+      entry.resolvers.forEach((resolve) => resolve(result));
+      this.inFlight = false;
+      if (this.pending) {
+        void this.flush();
+      }
     }
   }
 
   private async sendWithSingleConflictRetry(intent: ShellPreferenceIntent) {
     const first = await this.sendOnce(intent);
     if (first.status !== 409) return first.result;
-    this.options.refreshBootstrap();
+    await this.options.refreshBootstrap();
     const second = await this.sendOnce(intent);
     return second.result;
   }

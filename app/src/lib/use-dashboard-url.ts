@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   buildDashboardHref,
@@ -42,20 +42,29 @@ export function useDashboardUrl() {
   const pathname = usePathname();
   const searchParams = useCommittedDashboardSearchParams();
   const urlState = useMemo(() => parseDashboardSearchParams(searchParams), [searchParams]);
+  const urlStateRef = useRef(urlState);
+  urlStateRef.current = urlState;
 
   const navigateDashboard = useCallback(
     (patch: Partial<DashboardUrlState>, options?: { replace?: boolean }) => {
-      const next = mergeDashboardUrlState(urlState, patch);
+      const current =
+        typeof window === "undefined"
+          ? urlStateRef.current
+          : parseDashboardSearchParams(new URLSearchParams(window.location.search));
+      const next = mergeDashboardUrlState(current, patch);
+      urlStateRef.current = next;
       const href = buildDashboardHref(pathname, next);
-      commitDashboardHref(href, options?.replace ? "replace" : "push");
-      if (shouldUseClientOnlyDashboardNavigation(pathname, href)) return;
+      if (shouldUseClientOnlyDashboardNavigation(pathname, href)) {
+        commitDashboardHref(href, options?.replace ? "replace" : "push");
+        return;
+      }
       if (options?.replace) {
         router.replace(href);
         return;
       }
       router.push(href);
     },
-    [pathname, router, urlState],
+    [pathname, router],
   );
 
   const openSection = useCallback(

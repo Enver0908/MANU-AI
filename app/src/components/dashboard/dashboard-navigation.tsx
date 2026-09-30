@@ -16,7 +16,7 @@ import type { SupportedLanguageCode } from "@/lib/languages";
 import type { TenantRole } from "@/lib/types";
 import Link from "next/link";
 import { Bell } from "lucide-react";
-import { useShellProvider } from "@/components/dashboard/shell-provider";
+import { useShellNavigation } from "@/components/dashboard/shell-provider";
 import { beginPhase55NavigationWindow } from "@/lib/phase-55-polling-diagnostic";
 
 export type ShellNavBadges = { alerts: number; notifications: number; messages: number };
@@ -59,7 +59,7 @@ function ShellNavLink({
   layout: "wide" | "rail" | "compact";
   navigationLocked?: boolean;
 }) {
-  const { requestHrefNavigation } = useShellProvider();
+  const { requestHrefNavigation } = useShellNavigation();
   const enabled = item.enabled && !navigationLocked;
   const Icon = item.icon;
   const className = navClass(active, enabled, layout);

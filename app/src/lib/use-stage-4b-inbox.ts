@@ -48,6 +48,8 @@ export type Stage4BInboxSnapshot = {
   notificationsBadgeCount: number;
 };
 
+export type Stage4BInboxSurface = "all" | "alerts" | "notifications" | "none";
+
 async function requestJson<T>(url: string, signal?: AbortSignal) {
   const response = await fetch(url, {
     headers: { "content-type": "application/json" },
@@ -71,7 +73,10 @@ export function useStage4BInbox(filters: Pick<
   | "notificationPriority"
   | "notificationCategory"
   | "notificationQuery"
->) {
+>, options?: { surface?: Stage4BInboxSurface }) {
+  const surface = options?.surface ?? "all";
+  const readsAlerts = surface === "all" || surface === "alerts";
+  const readsNotifications = surface === "all" || surface === "notifications";
   const [alerts, setAlerts] = useState<ClinicalAlertsListResponse | null>(null);
   const [alertItems, setAlertItems] = useState<ClinicalAlertListItem[]>([]);
   const [alertsNextCursor, setAlertsNextCursor] = useState<string | null>(null);
@@ -87,6 +92,8 @@ export function useStage4BInbox(filters: Pick<
   const consecutiveErrorsRef = useRef(0);
   const pollTimerRef = useRef<number | null>(null);
   const pollActiveRef = useRef(false);
+  const surfaceRef = useRef(surface);
+  surfaceRef.current = surface;
   const mountedRef = useRef(true);
   const alertsOwnerKey = buildStage4BAlertsRequestQuery(filters).toString();
   const notificationsOwnerKey = buildStage4BNotificationsRequestQuery(filters).toString();
@@ -163,6 +170,7 @@ export function useStage4BInbox(filters: Pick<
 
   const refresh = useCallback(
     async (options?: { resetBackoff?: boolean; reason?: string }) => {
+      if (surface === "none") return;
       const refreshSequence = ++refreshSequenceRef.current;
       const reason = options?.reason ?? "manual";
       recordPhase52ClientEvent("inbox_refresh_started", { reason });
@@ -172,8 +180,10 @@ export function useStage4BInbox(filters: Pick<
       setIsRefreshing(true);
       try {
         const [alertsResult, notificationsResult] = await Promise.allSettled([
-          fetchAlertsPage(null, false),
-          fetchNotificationsPage(null, false),
+          readsAlerts ? fetchAlertsPage(null, false) : Promise.resolve({ payload: null, applied: true }),
+          readsNotifications
+            ? fetchNotificationsPage(null, false)
+            : Promise.resolve({ payload: null, applied: true }),
         ]);
 
         if (!mountedRef.current || refreshSequence !== refreshSequenceRef.current) return;
@@ -213,10 +223,11 @@ export function useStage4BInbox(filters: Pick<
         recordPhase52ClientEvent("inbox_refresh_finished", { reason });
       }
     },
-    [fetchAlertsPage, fetchNotificationsPage],
+    [fetchAlertsPage, fetchNotificationsPage, readsAlerts, readsNotifications, surface],
   );
 
   const loadMoreAlerts = useCallback(async () => {
+    if (!readsAlerts) return;
     if (!alertsNextCursor || isLoadingMoreAlerts || alertsOperationRef.current != null) return;
     setIsLoadingMoreAlerts(true);
     try {
@@ -230,9 +241,10 @@ export function useStage4BInbox(filters: Pick<
         setIsLoadingMoreAlerts(false);
       }
     }
-  }, [alertsNextCursor, fetchAlertsPage, isLoadingMoreAlerts]);
+  }, [alertsNextCursor, fetchAlertsPage, isLoadingMoreAlerts, readsAlerts]);
 
   const loadMoreNotifications = useCallback(async () => {
+    if (!readsNotifications) return;
     if (!notificationsNextCursor || isLoadingMoreNotifications || notificationsOperationRef.current != null) return;
     setIsLoadingMoreNotifications(true);
     try {
@@ -246,7 +258,7 @@ export function useStage4BInbox(filters: Pick<
         setIsLoadingMoreNotifications(false);
       }
     }
-  }, [fetchNotificationsPage, isLoadingMoreNotifications, notificationsNextCursor]);
+  }, [fetchNotificationsPage, isLoadingMoreNotifications, notificationsNextCursor, readsNotifications]);
 
   const refreshAfterMutation = useCallback(() => {
     void refresh({ resetBackoff: true, reason: "mutation" });
@@ -281,6 +293,16 @@ export function useStage4BInbox(filters: Pick<
     };
   }, []);
 
+  useEffect(() => {
+    if (surfaceRef.current === "all") return;
+    if (surfaceRef.current !== "alerts") alertsAbortRef.current?.abort();
+    if (surfaceRef.current !== "notifications") notificationsAbortRef.current?.abort();
+    if (surfaceRef.current === "none" && pollTimerRef.current != null) {
+      window.clearTimeout(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+  }, [surface]);
+
   useLayoutEffect(() => {
     alertsGateRef.current.setOwner(alertsOwnerKey);
     alertsAbortRef.current?.abort();
@@ -308,7 +330,7 @@ export function useStage4BInbox(filters: Pick<
       void refresh({ resetBackoff: true, reason: "mount_or_filter_change" });
     }, 0);
     return () => window.clearTimeout(timeout);
-  }, [refresh]);
+  }, [refresh, surface]);
 
   useEffect(() => {
     const schedule = () => {
@@ -316,6 +338,7 @@ export function useStage4BInbox(filters: Pick<
         window.clearTimeout(pollTimerRef.current);
       }
       if (
+        surfaceRef.current === "none" ||
         shouldPauseStage4BInboxPolling(document.visibilityState === "visible") ||
         isPhase55NavigationWindowActive()
       ) {
@@ -334,14 +357,14 @@ export function useStage4BInbox(filters: Pick<
     };
 
     const onVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === "visible" && surfaceRef.current !== "none") {
         void refresh({ reason: "visibility" });
       }
       schedule();
     };
 
     const onFocus = () => {
-      void refresh({ reason: "focus" });
+      if (surfaceRef.current !== "none") void refresh({ reason: "focus" });
     };
 
     const onPhase55NavigationWindowChange = () => {
@@ -368,7 +391,7 @@ export function useStage4BInbox(filters: Pick<
       window.removeEventListener("focus", onFocus);
       window.removeEventListener("aiya-phase55-navigation-window-changed", onPhase55NavigationWindowChange);
     };
-  }, [refresh]);
+  }, [refresh, surface]);
 
   const snapshot = useMemo<Stage4BInboxSnapshot>(
     () => ({

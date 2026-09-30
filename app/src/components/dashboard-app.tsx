@@ -3,48 +3,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type {
-  Channel,
-  ClientContextUpdateImportance,
-  ClientContextUpdateSource,
   ClientRecord,
-  ManuAppState,
-  Phase77FMenuPlanTemplateType,
 } from "@/lib/types";
 import { useDashboardUrl } from "@/lib/use-dashboard-url";
-import { useStage4BInbox } from "@/lib/use-stage-4b-inbox";
-import { useStage4B2Messaging } from "@/lib/use-stage-4b2-messaging";
-import { AppRequestError } from "@/lib/app-errors";
 import { createAiChatConversation, generateAiChatRequestId } from "@/lib/use-ai-chat";
 import type { ClinicalAlertListItem, SystemNotificationListItem } from "@/lib/phase-85-stage-4b-contracts";
 import {
-  getClientFoodRuleProfileV2Record,
-  getClientFoodRuleProfileV2State,
-  type ClientFoodRuleProfileV2State,
-} from "@/lib/phase-77e-client-food-rule-profile";
-import {
-  getActiveClientMenuPlanV1Record,
-  listClientMenuPlanV1Records,
-  menuPlanV1RecordToState,
-  type ClientMenuPlanV1State,
-} from "@/lib/phase-77f-client-menu-plan";
-import { getActiveFormSchema } from "@/lib/client-forms";
-import { useAiyaStateContext } from "@/lib/use-aiya-state";
-import { type SupportedLanguageCode } from "@/lib/languages";
+  useAiyaStateActionsContext,
+  useAiyaStateReadContext,
+} from "@/lib/use-aiya-state";
 import { t } from "@/lib/i18n";
 import type { CommercialEntitlementStatus } from "@/lib/phase-83b-commercial-entitlement-model";
-import {
-  fromDateTimeLocal,
-  parseAnswerLines,
-  parseSchemaFields,
-} from "@/components/dashboard/shared";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
 import {
   buildDashboardHref,
-  commitDashboardHref,
   currentDashboardHref,
   dashboardSectionToShellDestination,
   mergeDashboardUrlState,
-  parseClientWorkspaceTask,
   resolveRetiredDashboardSectionRedirect,
   resolveMessagingRouteSelection,
   resolveStage6CommunicationDestination,
@@ -59,23 +34,20 @@ import {
   runStage6CommunicationOpen,
 } from "@/lib/phase-85-stage-6-client-selection";
 import {
-  refreshStage4B2OperationalSurfaces,
   resolveMessagingTargetValidity,
 } from "@/lib/phase-85-stage-4b2-messaging-integration";
 import { useShellProvider } from "@/components/dashboard/shell-provider";
-import { AlertsPanel } from "@/components/dashboard/alerts-panel";
-import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 import {
   OverviewPanel,
   type OverviewAiChatAvailability,
   type OverviewClientWorkAreaAvailability,
 } from "@/components/dashboard/overview-panel";
 import { ShellHomeLauncher } from "@/components/dashboard/shell-home-launcher";
-import { ClientWorkspace } from "@/components/dashboard/client-workspace";
-import { ConversationPanel } from "@/components/dashboard/conversation-panel";
-import { Phase55MessagingPanel } from "@/components/dashboard/phase-55-messaging-panel-target";
-import { VoicePanel } from "@/components/dashboard/voice-panel";
-import { FormsPanel } from "@/components/dashboard/forms-panel";
+import { ClientWorkspaceRoute } from "@/components/dashboard/client-workspace-route";
+import { VoiceRoute } from "@/components/dashboard/voice-route";
+import { FormsRoute } from "@/components/dashboard/forms-route";
+import { MessagesRoute } from "@/components/dashboard/messages-route";
+import { InboxRoute } from "@/components/dashboard/inbox-route";
 import { useMobileKeyboardScroll } from "@/components/dashboard/mobile-ergonomics";
 import { DashboardLoadingSkeleton, EmptyState, ErrorState } from "@/components/dashboard/state-primitives";
 import { resolveEffectiveShellActiveClientId } from "@/lib/phase-85-stage-5-shell-contracts";
@@ -98,6 +70,8 @@ export function DashboardApp({
     authError,
     hydrateError,
     hydrateRequestId,
+  } = useAiyaStateReadContext();
+  const {
     hydrate,
     retryHydrate,
     createClient,
@@ -123,7 +97,7 @@ export function DashboardApp({
     addClientContextUpdate,
     mergeConversationDetailIntoState,
     mergeConversationMutationIntoState,
-  } = useAiyaStateContext();
+  } = useAiyaStateActionsContext();
   const router = useRouter();
   const {
     setHeaderSlots,
@@ -138,25 +112,6 @@ export function DashboardApp({
     dirtySnapshot,
   } = useShellProvider();
   const { urlState, section, navigateDashboard } = useDashboardUrl();
-  const stage4bInboxFilters = useMemo(
-    () => ({
-      alertSeverity: urlState.alertSeverity,
-      alertQuery: urlState.alertQuery,
-      notificationStatus: urlState.notificationStatus,
-      notificationPriority: urlState.notificationPriority,
-      notificationCategory: urlState.notificationCategory,
-      notificationQuery: urlState.notificationQuery,
-    }),
-    [
-      urlState.alertQuery,
-      urlState.alertSeverity,
-      urlState.notificationCategory,
-      urlState.notificationPriority,
-      urlState.notificationQuery,
-      urlState.notificationStatus,
-    ],
-  );
-  const stage4bInbox = useStage4BInbox(stage4bInboxFilters);
   const phase52SharedReadStartPolicy = resolvePhase52SharedReadStartPolicy();
   useEffect(() => {
     if (hydrated) return;
@@ -166,31 +121,11 @@ export function DashboardApp({
     });
     void hydrate();
   }, [bootstrap, hydrate, hydrated, phase52SharedReadStartPolicy]);
-  const [search, setSearch] = useState("");
-  const [manualReply, setManualReply] = useState("");
-  const [isSendingManualReply, setIsSendingManualReply] = useState(false);
   const [messagingListScrollTop, setMessagingListScrollTop] = useState<number | null>(null);
-  const [newClientName, setNewClientName] = useState("");
-  const [newClientChannel, setNewClientChannel] = useState<Channel>("whatsapp");
-  const [newClientHandle, setNewClientHandle] = useState("");
-  const [newClientPhone, setNewClientPhone] = useState("");
-  const [newClientLanguage, setNewClientLanguage] = useState<SupportedLanguageCode>("tr");
-  const [voiceRawInput, setVoiceRawInput] = useState("");
-  const [schemaTitle, setSchemaTitle] = useState("Client intake");
-  const [schemaLanguage, setSchemaLanguage] = useState<SupportedLanguageCode>("tr");
-  const [schemaFieldsRaw, setSchemaFieldsRaw] = useState("daily_routine | Daily routine | textarea | prompt_allowed");
-  const [formAnswersRaw, setFormAnswersRaw] = useState("");
   const [isActivatingAi, setIsActivatingAi] = useState(false);
   const [isReleasingHumanTakeover, setIsReleasingHumanTakeover] = useState(false);
   const [isEvaluatingWithAi, setIsEvaluatingWithAi] = useState(false);
   const [evaluateWithAiError, setEvaluateWithAiError] = useState<string | null>(null);
-  const [contextUpdateSource, setContextUpdateSource] = useState<ClientContextUpdateSource>("phone");
-  const [contextUpdateImportance, setContextUpdateImportance] =
-    useState<ClientContextUpdateImportance>("important");
-  const [contextUpdateOccurredAt, setContextUpdateOccurredAt] = useState("");
-  const [contextUpdateTitle, setContextUpdateTitle] = useState("");
-  const [contextUpdateSummary, setContextUpdateSummary] = useState("");
-  const [contextUpdateDetails, setContextUpdateDetails] = useState("");
 
   const activeClients = useMemo(
     () => state.clients.filter((client) => client.lifecycleStatus !== "removed_anonymized"),
@@ -238,24 +173,6 @@ export function DashboardApp({
     [urlState.conversationQuery, urlState.conversationStatus],
   );
 
-  const stage4bMessaging = useStage4B2Messaging({
-    enabled: hydrated,
-    conversationId: section === "messages" ? messagingRoute.conversationId : null,
-    anchorMessageId: urlState.messageId,
-    filters: messagingListFilters,
-    mergeDetailIntoState: mergeConversationDetailIntoState,
-    mergeMutationIntoState: mergeConversationMutationIntoState,
-  });
-
-  const refreshStage4B2Surfaces = (options?: { anchorMessageId?: string | null }) => {
-    refreshStage4B2OperationalSurfaces(
-      {
-        refreshMessaging: (refreshOptions) => void stage4bMessaging.refreshAfterMutation(refreshOptions),
-        refreshInbox: () => void stage4bInbox.refreshAfterMutation(),
-      },
-      options,
-    );
-  };
 
   useEffect(() => {
     const retiredRedirect = resolveRetiredDashboardSectionRedirect(section);
@@ -310,31 +227,12 @@ export function DashboardApp({
   }, [activeClients, resolvedClientId]);
 
 
-  const filteredClients = useMemo(() => {
-    const needle = search.trim().toLocaleLowerCase("tr-TR");
-    if (!needle) return activeClients;
-    return activeClients.filter((client) =>
-      [client.fullName, client.channelUserId, client.aiMode, client.aiStatus]
-        .join(" ")
-        .toLocaleLowerCase("tr-TR")
-        .includes(needle),
-    );
-  }, [activeClients, search]);
-
   const workspaceUrlState = urlState;
 
   const workspaceClient = useMemo(() => {
     if (section !== "clients" || !workspaceUrlState.clientId) return null;
     return activeClients.find((client) => client.id === workspaceUrlState.clientId) ?? null;
   }, [activeClients, section, workspaceUrlState.clientId]);
-
-  const selectedContextUpdates = useMemo(() => {
-    const client = workspaceClient ?? selectedClient;
-    if (!client) return [];
-    return state.clientContextUpdates
-      .filter((update) => update.clientId === client.id)
-      .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
-  }, [selectedClient, state.clientContextUpdates, workspaceClient]);
 
   const mainContentRef = useRef<HTMLDivElement>(null);
   useMobileKeyboardScroll(mainContentRef);
@@ -344,13 +242,6 @@ export function DashboardApp({
     const previous = previousSectionRef.current;
     if (previous !== section) {
       const previousDestination = dashboardSectionToShellDestination(previous);
-      if (previous === "clients") {
-        saveDestinationViewState(previousDestination, {
-          search,
-          tab: urlState.clientTask ?? "summary",
-          windowScrollY: window.scrollY,
-        });
-      }
       if (previous === "messages") {
         const list = document.querySelector("[data-testid='messaging-list-scroll']");
         saveDestinationViewState(previousDestination, {
@@ -361,20 +252,6 @@ export function DashboardApp({
       }
       const nextDestination = dashboardSectionToShellDestination(section);
       const snapshot = restoreDestinationViewState(nextDestination);
-      if (section === "clients" && snapshot) {
-        if (typeof snapshot.search === "string") setSearch(snapshot.search);
-        const restoredTask = parseClientWorkspaceTask(typeof snapshot.tab === "string" ? snapshot.tab : null);
-        if (restoredTask && !urlState.clientTask) {
-          navigateDashboard({ clientTask: restoredTask }, { replace: true });
-        }
-        const windowScrollY =
-          typeof snapshot.windowScrollY === "number" ? snapshot.windowScrollY : snapshot.scrollTop;
-        if (typeof windowScrollY === "number") {
-          requestAnimationFrame(() => {
-            window.scrollTo({ top: windowScrollY, behavior: "auto" });
-          });
-        }
-      }
       if (section === "messages" && snapshot && typeof snapshot.scrollTop === "number") {
         setMessagingListScrollTop(snapshot.scrollTop);
       }
@@ -383,23 +260,13 @@ export function DashboardApp({
   }, [
     restoreDestinationViewState,
     saveDestinationViewState,
-    search,
     section,
-    urlState.clientTask,
     urlState.conversationQuery,
     urlState.conversationStatus,
     messagingListScrollTop,
-    navigateDashboard,
   ]);
   useEffect(() => {
     return () => {
-      if (section === "clients") {
-        saveDestinationViewState("clients", {
-          search,
-          tab: urlState.clientTask ?? "summary",
-          windowScrollY: window.scrollY,
-        });
-      }
       if (section === "messages") {
         const list = document.querySelector("[data-testid='messaging-list-scroll']");
         saveDestinationViewState("messages", {
@@ -409,7 +276,7 @@ export function DashboardApp({
         });
       }
     };
-  }, [saveDestinationViewState, search, section, urlState.clientTask, urlState.conversationQuery, urlState.conversationStatus, messagingListScrollTop]);
+  }, [saveDestinationViewState, section, urlState.conversationQuery, urlState.conversationStatus, messagingListScrollTop]);
 
   const uiLanguage = state.dietitian.uiLanguage || "tr";
   const canManageAiControls =
@@ -476,12 +343,6 @@ export function DashboardApp({
       />
     );
   }
-
-  const updateSelectedClient = async (patch: Partial<ClientRecord>) => {
-    const client = workspaceClient ?? selectedClient;
-    if (!client) return;
-    await updateClient(client.id, patch);
-  };
 
   const selectClient = async (
     clientId: string,
@@ -565,7 +426,6 @@ export function DashboardApp({
         requestHrefNavigation(destination.href);
         return "opened" as const;
       }
-      commitDashboardHref(destination.href, "push");
       navigateDashboard(destination.urlPatch);
     }
     return "opened" as const;
@@ -612,58 +472,6 @@ export function DashboardApp({
     }
   };
 
-  const addClient = async () => {
-    const fullName = newClientName.trim();
-    if (!fullName) return null;
-    const nextState = await createClient({
-      fullName,
-      channel: newClientChannel,
-      channelUserId: newClientHandle.trim(),
-      primaryPhoneE164: newClientPhone.trim(),
-      communicationLanguage: newClientLanguage,
-    });
-    const createdClient = nextState.clients[nextState.clients.length - 1];
-    setNewClientName("");
-    setNewClientHandle("");
-    setNewClientPhone("");
-    setNewClientChannel("whatsapp");
-    setNewClientLanguage("tr");
-    return createdClient?.id ?? null;
-  };
-
-  const sendManualReply = async () => {
-    if (!selectedClient || !manualReply.trim() || isSendingManualReply) return;
-    const body = manualReply;
-    const aiChatDraftTransferId = stage4bMessaging.detail?.pendingAiChatDraftTransfer?.transferId;
-    setIsSendingManualReply(true);
-    try {
-      await sendManualReplyRequest({ clientId: selectedClient.id, body, aiChatDraftTransferId });
-      setManualReply("");
-      refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
-    } catch (error) {
-      if (error instanceof AppRequestError && error.status === 409) {
-        refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
-        return;
-      }
-      throw error;
-    } finally {
-      setIsSendingManualReply(false);
-    }
-  };
-
-  const runConversationMutation = async (operation: () => Promise<ManuAppState>) => {
-    try {
-      const result = await operation();
-      refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
-      return result;
-    } catch (error) {
-      if (error instanceof AppRequestError && error.status === 409) {
-        refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
-      }
-      throw error;
-    }
-  };
-
   const activateSelectedClientAi = async (clientId: string, requestedAiMode?: "copilot" | "autopilot") => {
     const client = state.clients.find((item) => item.id === clientId);
     const conversation = state.conversations.find((item) => item.clientId === clientId);
@@ -677,7 +485,6 @@ export function DashboardApp({
         expectedConversationRevision: conversation.revision,
         expectedClientContextRevision: client.contextRevision,
       });
-      refreshStage4B2Surfaces({ anchorMessageId: urlState.messageId });
       return nextState;
     } finally {
       setIsActivatingAi(false);
@@ -717,93 +524,6 @@ export function DashboardApp({
     });
   };
 
-  const addVoiceSamplesFromInput = async () => {
-    if (!voiceRawInput.trim()) return;
-    await addVoiceSamples(voiceRawInput);
-    setVoiceRawInput("");
-  };
-
-  const createSchemaFromInput = async () => {
-    const fields = parseSchemaFields(schemaFieldsRaw);
-    if (!schemaTitle.trim() || fields.length === 0) return;
-    await createFormSchema({ title: schemaTitle, fields, languageCode: schemaLanguage });
-  };
-
-  const saveSelectedFormResponse = async (input?: {
-    clientId: string;
-    schemaId: string;
-    answers: Record<string, unknown>;
-    submittedPhoneE164?: string;
-  }) => {
-    if (input) {
-      await saveFormResponse(input);
-      return;
-    }
-    if (!selectedClient) return;
-    const activeSchema = getActiveFormSchema(state);
-    if (!activeSchema) return;
-    await saveFormResponse({
-      clientId: selectedClient.id,
-      schemaId: activeSchema.id,
-      answers: parseAnswerLines(formAnswersRaw),
-      submittedPhoneE164: selectedClient.primaryPhoneE164 || undefined,
-    });
-    setFormAnswersRaw("");
-  };
-
-  const saveSelectedFoodRules = async (profile: Omit<ClientFoodRuleProfileV2State, "conflicts">) => {
-    const client = workspaceClient ?? selectedClient;
-    if (!client) return;
-    const { revision, ...profileBody } = profile;
-    await saveClientFoodRuleProfile(client.id, {
-      revision,
-      profile: profileBody,
-    });
-  };
-
-  const menuPlansForSelectedClient = (workspaceClient ?? selectedClient)
-    ? listClientMenuPlanV1Records(state, (workspaceClient ?? selectedClient)!.id).map((plan) =>
-        menuPlanV1RecordToState(plan, getClientFoodRuleProfileV2Record(state, (workspaceClient ?? selectedClient)!.id)),
-      )
-    : [];
-  const activeMenuPlanId = (workspaceClient ?? selectedClient)
-    ? getActiveClientMenuPlanV1Record(state, (workspaceClient ?? selectedClient)!.id)?.id || null
-    : null;
-
-  const createSelectedMenuPlan = async (templateType: Phase77FMenuPlanTemplateType) => {
-    const client = workspaceClient ?? selectedClient;
-    if (!client) return;
-    await createMenuPlan(client.id, { templateType });
-  };
-
-  const saveSelectedMenuPlan = async (plan: Omit<ClientMenuPlanV1State, "conflicts">) => {
-    const client = workspaceClient ?? selectedClient;
-    if (!client) return;
-    const { revision, id, ...planBody } = plan;
-    await saveMenuPlan(client.id, id, { revision, plan: planBody });
-  };
-
-  const activateSelectedMenuPlan = async (planId: string) => {
-    const client = workspaceClient ?? selectedClient;
-    if (!client) return;
-    await activateMenuPlan(client.id, planId);
-  };
-
-  const addSelectedContextUpdate = async () => {
-    const client = workspaceClient ?? selectedClient;
-    if (!client) return;
-    await addClientContextUpdate(client.id, {
-      source: contextUpdateSource,
-      occurredAt: contextUpdateOccurredAt ? fromDateTimeLocal(contextUpdateOccurredAt) : null,
-      title: contextUpdateTitle,
-      summary: contextUpdateSummary,
-      details: contextUpdateDetails,
-      importance: contextUpdateImportance,
-    });
-    setContextUpdateTitle("");
-    setContextUpdateSummary("");
-    setContextUpdateDetails("");
-  };
   const viewsWithMobileStickyActions: DashboardSection[] = ["messages"];
   const mainMobilePadding = viewsWithMobileStickyActions.includes(section)
     ? "lg:pb-5"
@@ -831,16 +551,13 @@ export function DashboardApp({
                 <OverviewPanel
                   selectedClient={selectedClient}
                   pendingMessageCount={
-                    bootstrap?.homeActions.find((action) => action.id === "messages")?.count ??
-                    stage4bMessaging.unreadMessageCount
+                    bootstrap?.homeActions.find((action) => action.id === "messages")?.count ?? 0
                   }
                   pendingAlertCount={
-                    bootstrap?.homeActions.find((action) => action.id === "alerts")?.count ??
-                    stage4bInbox.alertsBadgeCount
+                    bootstrap?.homeActions.find((action) => action.id === "alerts")?.count ?? 0
                   }
                   pendingNotificationCount={
-                    bootstrap?.homeActions.find((action) => action.id === "notifications")?.count ??
-                    stage4bInbox.notificationsBadgeCount
+                    bootstrap?.homeActions.find((action) => action.id === "notifications")?.count ?? 0
                   }
                   clientWorkAreaAvailability={overviewClientWorkAreaAvailability}
                   aiChatAvailability={overviewAiChatAvailability}
@@ -869,63 +586,31 @@ export function DashboardApp({
             )}
 
             {section === "clients" && (
-              <ClientWorkspace
+              <ClientWorkspaceRoute
                 urlState={workspaceUrlState}
-                clients={filteredClients}
+                clients={activeClients}
                 selectedClient={workspaceClient}
-                search={search}
-                newClientName={newClientName}
-                newClientChannel={newClientChannel}
-                newClientHandle={newClientHandle}
-                newClientPhone={newClientPhone}
-                newClientLanguage={newClientLanguage}
+                state={state}
                 uiLanguage={uiLanguage}
                 canManageAiControls={canManageAiControls}
-                onSearch={setSearch}
                 onSelect={(id) => void selectClient(id, { section: "clients", clientTask: "summary" })}
                 onCloseWorkspace={() => {
                   requestHrefNavigation("/dashboard?section=clients");
                 }}
                 onClientTask={openClientTask}
-                onAddClient={addClient}
-                onNewClientName={setNewClientName}
-                onNewClientChannel={setNewClientChannel}
-                onNewClientHandle={setNewClientHandle}
-                onNewClientPhone={setNewClientPhone}
-                onNewClientLanguage={setNewClientLanguage}
-                onUpdateClient={updateSelectedClient}
+                onCreateClient={createClient}
+                onUpdateClient={updateClient}
                 onActivateAi={activateSelectedClientAi}
                 onReleaseHumanTakeover={releaseSelectedHumanTakeover}
                 isActivatingAi={isActivatingAi}
                 isReleasingHumanTakeover={isReleasingHumanTakeover}
                 onRemoveClient={removeSelectedClient}
-                contextUpdates={selectedContextUpdates}
-                contextUpdateSource={contextUpdateSource}
-                contextUpdateImportance={contextUpdateImportance}
-                contextUpdateOccurredAt={contextUpdateOccurredAt}
-                contextUpdateTitle={contextUpdateTitle}
-                contextUpdateSummary={contextUpdateSummary}
-                contextUpdateDetails={contextUpdateDetails}
-                onContextUpdateSource={setContextUpdateSource}
-                onContextUpdateImportance={setContextUpdateImportance}
-                onContextUpdateOccurredAt={setContextUpdateOccurredAt}
-                onContextUpdateTitle={setContextUpdateTitle}
-                onContextUpdateSummary={setContextUpdateSummary}
-                onContextUpdateDetails={setContextUpdateDetails}
-                onAddContextUpdate={addSelectedContextUpdate}
-                state={state}
-                foodRuleProfile={
-                  (workspaceClient ?? selectedClient)
-                    ? getClientFoodRuleProfileV2State(state, (workspaceClient ?? selectedClient)!.id)
-                    : null
-                }
-                menuPlans={menuPlansForSelectedClient}
-                activeMenuPlanId={activeMenuPlanId}
-                onSaveFoodRules={saveSelectedFoodRules}
-                onCreateMenuPlan={createSelectedMenuPlan}
-                onSaveMenuPlan={saveSelectedMenuPlan}
-                onActivateMenuPlan={activateSelectedMenuPlan}
-                onSaveFormResponse={saveSelectedFormResponse}
+                onSaveClientFoodRuleProfile={saveClientFoodRuleProfile}
+                onCreateMenuPlan={createMenuPlan}
+                onSaveMenuPlan={saveMenuPlan}
+                onActivateMenuPlan={activateMenuPlan}
+                onSaveFormResponse={saveFormResponse}
+                onAddClientContextUpdate={addClientContextUpdate}
                 aiChatEnabled={aiChatEnabled}
                 onEvaluateWithAi={evaluateClientWithAi}
                 isEvaluatingWithAi={isEvaluatingWithAi}
@@ -937,38 +622,36 @@ export function DashboardApp({
                     conversationId: state.conversations.find((item) => item.clientId === clientId)?.id ?? null,
                   })
                 }
+                saveDestinationViewState={saveDestinationViewState}
+                restoreDestinationViewState={restoreDestinationViewState}
               />
             )}
 
             {section === "messages" && (
-              <Phase55MessagingPanel
+              <MessagesRoute
                 uiLanguage={uiLanguage}
                 filters={urlState}
-                items={stage4bMessaging.listItems}
-                filteredTotal={stage4bMessaging.list?.filteredTotal ?? 0}
-                unreadConversationCount={stage4bMessaging.unreadConversationCount}
-                unreadMessageCount={stage4bMessaging.unreadMessageCount}
-                nextCursor={stage4bMessaging.listNextCursor}
-                listError={stage4bMessaging.listError}
-                detailError={stage4bMessaging.detailError}
-                isListRefreshing={stage4bMessaging.isListRefreshing}
-                isDetailRefreshing={stage4bMessaging.isDetailRefreshing}
-                isLoadingMore={stage4bMessaging.isLoadingMoreList}
-                lastSuccessAt={stage4bMessaging.lastSuccessAt}
+                enabled={hydrated && section === "messages"}
+                conversationId={messagingRoute.conversationId}
+                anchorMessageId={urlState.messageId}
+                listFilters={messagingListFilters}
+                mergeDetailIntoState={mergeConversationDetailIntoState}
+                mergeMutationIntoState={mergeConversationMutationIntoState}
                 selectedConversationId={messagingRoute.conversationId}
-                onFiltersChange={(patch) => navigateDashboard(patch)}
-                onRefreshList={() => void stage4bMessaging.refreshList({ resetBackoff: true })}
-                onLoadMore={() => void stage4bMessaging.loadMoreList()}
-                onSelectConversation={(item) => {
-                  const list = document.querySelector("[data-testid='messaging-list-scroll']");
-                  if (list instanceof HTMLElement) {
-                    setMessagingListScrollTop(list.scrollTop);
-                    saveDestinationViewState("messages", {
-                      search: urlState.conversationQuery,
-                      filter: urlState.conversationStatus,
-                      scrollTop: list.scrollTop,
-                    });
-                  }
+                detailUnavailable={Boolean(messagingRoute.conversationId && !messagingTargetValidity.valid)}
+                restoreListScrollTop={messagingListScrollTop}
+                state={state}
+                selectedClient={selectedClient ?? null}
+                canManageAiControls={canManageAiControls}
+                isActivatingAi={isActivatingAi}
+                onActivateAi={activateSelectedClientAi}
+                onSetAiPassive={setSelectedClientAiPassive}
+                onSendManualReplyRequest={sendManualReplyRequest}
+                onApproveDraft={approveDraft}
+                onEditAndSendDraft={editAndSendDraft}
+                onDismissDraft={dismissDraft}
+                onReviewSendManualFromDraft={reviewSendManualFromDraft}
+                onOpenConversation={(item) => {
                   void openCommunicationDestination({
                     section: "messages",
                     conversationId: item.id,
@@ -981,118 +664,59 @@ export function DashboardApp({
                     messageId: null,
                   })
                 }
-                restoreListScrollTop={messagingListScrollTop}
-                detailUnavailable={Boolean(
-                  messagingRoute.conversationId && !messagingTargetValidity.valid,
-                )}
-                detail={
-                  stage4bMessaging.detail?.conversation ? (
-                    <ConversationPanel
-                      client={selectedClient ?? null}
-                      conversation={stage4bMessaging.detail.conversation}
-                      messages={stage4bMessaging.detailMessages}
-                      pagination={stage4bMessaging.detail.pagination}
-                      permissions={stage4bMessaging.permissions}
-                      anchorMessageId={urlState.messageId}
-                      state={state}
-                      uiLanguage={uiLanguage}
-                      canManageAiControls={canManageAiControls}
-                      manualReply={manualReply}
-                      onManualReply={setManualReply}
-                      onSendManualReply={sendManualReply}
-                      isSendingManualReply={isSendingManualReply}
-                      pendingAiChatDraftTransfer={stage4bMessaging.detail?.pendingAiChatDraftTransfer ?? null}
-                      onActivateAi={activateSelectedClientAi}
-                      onSetAiPassive={setSelectedClientAiPassive}
-                      isActivatingAi={isActivatingAi}
-                      onApproveDraft={(messageId) => runConversationMutation(() => approveDraft(messageId))}
-                      onEditAndSendDraft={(messageId, body) =>
-                        runConversationMutation(() => editAndSendDraft(messageId, body))
-                      }
-                      onDismissDraft={(messageId) => runConversationMutation(() => dismissDraft(messageId))}
-                      onReviewSendManualFromDraft={(messageId, body) =>
-                        runConversationMutation(() => reviewSendManualFromDraft(messageId, body))
-                      }
-                      onOpenClientWorkspace={() =>
-                        void openCommunicationDestination({
-                          section: "clients",
-                          clientId: selectedClient?.id ?? messagingRoute.clientId,
-                          clientTask: "summary",
-                        })
-                      }
-                      onLoadOlder={() => void stage4bMessaging.loadOlderMessages()}
-                      onLoadNewer={() => void stage4bMessaging.loadNewerMessages()}
-                      onRetryDetail={() => void stage4bMessaging.refreshDetail({ resetBackoff: true })}
-                      isLoadingOlder={stage4bMessaging.isLoadingOlderMessages}
-                      isLoadingNewer={stage4bMessaging.isLoadingNewerMessages}
-                      isDetailRefreshing={stage4bMessaging.isDetailRefreshing}
-                      detailError={stage4bMessaging.detailError}
-                      onSubmitVisualCorrection={(input) =>
-                        stage4bMessaging.submitVisualCorrection(messagingRoute.conversationId!, input)
-                      }
-                      onSubmitTranscriptCorrection={(input) =>
-                        stage4bMessaging.submitTranscriptCorrection(messagingRoute.conversationId!, input)
-                      }
-                    />
-                  ) : stage4bMessaging.isDetailRefreshing ? (
-                    <div className="rounded-lg border border-stone-200 bg-white p-6 text-sm text-stone-600" aria-busy="true">
-                      {t(uiLanguage, "refreshInbox")}
-                    </div>
-                  ) : null
+                onOpenClientWorkspace={() =>
+                  void openCommunicationDestination({
+                    section: "clients",
+                    clientId: selectedClient?.id ?? messagingRoute.clientId,
+                    clientTask: "summary",
+                  })
+                }
+                onFiltersChange={(patch) => navigateDashboard(patch)}
+                onSetListScrollTop={setMessagingListScrollTop}
+                onSaveListViewState={(scrollTop) =>
+                  saveDestinationViewState("messages", {
+                    search: urlState.conversationQuery,
+                    filter: urlState.conversationStatus,
+                    scrollTop,
+                  })
                 }
               />
             )}
 
             {section === "alerts" && (
-              <AlertsPanel
+              <InboxRoute
+                section="alerts"
                 uiLanguage={uiLanguage}
-                filters={urlState}
-                items={stage4bInbox.alertItems}
-                counts={stage4bInbox.alerts?.counts ?? null}
-                filteredTotal={stage4bInbox.alerts?.filteredTotal ?? 0}
-                nextCursor={stage4bInbox.alertsNextCursor}
-                error={stage4bInbox.alertsError}
-                isRefreshing={stage4bInbox.isRefreshing}
-                isLoadingMore={stage4bInbox.isLoadingMoreAlerts}
-                lastSuccessAt={stage4bInbox.lastSuccessAt}
+                urlState={urlState}
+                dietitianId={notificationActorContext.dietitianId}
+                role={notificationActorContext.role}
+                activeClientIds={activeClientIds}
                 onFiltersChange={(patch) => navigateDashboard(patch)}
-                onRefresh={() => void stage4bInbox.refresh({ resetBackoff: true })}
-                onLoadMore={() => void stage4bInbox.loadMoreAlerts()}
                 onOpenAlertTarget={openAlertTarget}
+                onOpenNotificationTarget={openNotificationTarget}
               />
             )}
 
             {section === "notifications" && (
-              <NotificationsPanel
+              <InboxRoute
+                section="notifications"
                 uiLanguage={uiLanguage}
-                filters={urlState}
-                items={stage4bInbox.notificationItems}
-                counts={stage4bInbox.notifications?.counts ?? null}
-                filteredTotal={stage4bInbox.notifications?.filteredTotal ?? 0}
-                nextCursor={stage4bInbox.notificationsNextCursor}
-                error={stage4bInbox.notificationsError}
-                isRefreshing={stage4bInbox.isRefreshing}
-                isLoadingMore={stage4bInbox.isLoadingMoreNotifications}
-                lastSuccessAt={stage4bInbox.lastSuccessAt}
-                actorContext={notificationActorContext}
+                urlState={urlState}
+                dietitianId={notificationActorContext.dietitianId}
+                role={notificationActorContext.role}
                 activeClientIds={activeClientIds}
                 onFiltersChange={(patch) => navigateDashboard(patch)}
-                onRefresh={() => void stage4bInbox.refresh({ resetBackoff: true })}
-                onLoadMore={() => void stage4bInbox.loadMoreNotifications()}
                 onOpenNotificationTarget={openNotificationTarget}
-                onReceiptMutated={(payload) => stage4bInbox.applyNotificationMutation(payload)}
-                onReadAllMutated={(payload) => stage4bInbox.applyNotificationReadAll(payload)}
+                onOpenAlertTarget={openAlertTarget}
               />
             )}
 
             {section === "voice" && (
-              <VoicePanel
+              <VoiceRoute
                 state={state}
-                rawInput={voiceRawInput}
-                onRawInput={setVoiceRawInput}
-                onAddSamples={addVoiceSamplesFromInput}
-                onUpdateSampleStatus={updateVoiceSampleStatus}
-                onGenerateProfile={generateVoiceProfile}
+                onAddVoiceSamples={addVoiceSamples}
+                onUpdateVoiceSampleStatus={updateVoiceSampleStatus}
+                onGenerateVoiceProfile={generateVoiceProfile}
               />
             )}
 
@@ -1104,21 +728,13 @@ export function DashboardApp({
             ) : null}
 
             {section === "forms" && selectedClient && (
-              <FormsPanel
+              <FormsRoute
                 state={state}
                 selectedClient={selectedClient}
-                schemaTitle={schemaTitle}
-                schemaLanguage={schemaLanguage}
-                schemaFieldsRaw={schemaFieldsRaw}
-                formAnswersRaw={formAnswersRaw}
                 uiLanguage={uiLanguage}
-                onSchemaTitle={setSchemaTitle}
-                onSchemaLanguage={setSchemaLanguage}
-                onSchemaFieldsRaw={setSchemaFieldsRaw}
-                onFormAnswersRaw={setFormAnswersRaw}
-                onCreateSchema={createSchemaFromInput}
-                onPublishSchema={publishFormSchema}
-                onSaveResponse={saveSelectedFormResponse}
+                onCreateFormSchema={createFormSchema}
+                onPublishFormSchema={publishFormSchema}
+                onSaveFormResponse={saveFormResponse}
               />
             )}
           </div>

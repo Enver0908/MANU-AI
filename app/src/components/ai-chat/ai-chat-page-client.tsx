@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useShellProvider } from "@/components/dashboard/shell-provider";
+import { useShellChrome, useShellNavigation } from "@/components/dashboard/shell-provider";
 import { AiChatWorkspace } from "@/components/ai-chat/ai-chat-workspace";
 import { EmptyState } from "@/components/dashboard/state-primitives";
 import { DASHBOARD_MAIN_ID } from "@/lib/phase-83e6-states-polish";
@@ -28,12 +28,11 @@ export function AiChatPageClient({
   const {
     focusMode,
     setHeaderSlots,
-    setFocusMode,
     setScopedAiChatClient,
     scopedAiChatClient,
     setHideCompactNavigation,
-    requestHrefNavigation,
-  } = useShellProvider();
+  } = useShellChrome();
+  const { requestHrefNavigation, setFocusMode: setNavigationFocusMode } = useShellNavigation();
   const urlFocus = searchParams.get("focus") === "1";
 
   useEffect(() => {
@@ -74,8 +73,8 @@ export function AiChatPageClient({
   );
 
   const toggleFocusMode = useCallback(() => {
-    setFocusMode(!urlFocus);
-  }, [setFocusMode, urlFocus]);
+    setNavigationFocusMode(!urlFocus);
+  }, [setNavigationFocusMode, urlFocus]);
 
   return (
     <div id={DASHBOARD_MAIN_ID} tabIndex={-1} className="flex min-h-screen min-w-0 flex-1 flex-col outline-none">

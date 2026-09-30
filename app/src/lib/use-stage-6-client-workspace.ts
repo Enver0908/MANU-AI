@@ -23,9 +23,17 @@ export type Stage6WorkspaceDomain = "summary" | "forms" | "nutrition" | "menu" |
 
 export type Stage6NutritionRead = {
   clientId: string;
-  profile: ClientFoodRuleProfileV2State;
+  profile: ClientFoodRuleProfileV2State | null;
   revision: number;
 };
+
+export function isStage6EmptyNutritionResponse(
+  domain: Stage6WorkspaceDomain,
+  status: number,
+  code: unknown,
+) {
+  return domain === "nutrition" && status === 404 && code === "client_food_rule_profile_not_found";
+}
 
 function domainPath(clientId: string, domain: Stage6WorkspaceDomain) {
   switch (domain) {
@@ -122,7 +130,15 @@ export function useStage6ClientWorkspace(options: {
       const response = await fetch(path, { cache: "no-store", signal: controller.signal });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        throw new AppRequestError(response.status, body.error || `request_failed_${response.status}`);
+        const code = body.error || `request_failed_${response.status}`;
+        if (isStage6EmptyNutritionResponse(options.domain, response.status, code)) {
+          if (sequence !== sequenceRef.current) return;
+          setNutrition({ clientId: options.clientId, profile: null, revision: 0 });
+          setError(null);
+          setStatus("empty");
+          return;
+        }
+        throw new AppRequestError(response.status, code);
       }
       const payload = await response.json();
       if (sequence !== sequenceRef.current) return;

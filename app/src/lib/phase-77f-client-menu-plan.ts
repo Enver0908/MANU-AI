@@ -253,11 +253,16 @@ export function migrateLegacyDietPlanToMenuPlanV1(
   client: ClientRecord,
   createdAt = new Date().toISOString(),
 ): ClientMenuPlanV1Record | null {
+  const legacyDietPlan = client.dietPlan ?? {};
+  const summary = typeof legacyDietPlan.summary === "string" ? legacyDietPlan.summary : "";
+  const breakfast = typeof legacyDietPlan.breakfast === "string" ? legacyDietPlan.breakfast : "";
+  const lunch = typeof legacyDietPlan.lunch === "string" ? legacyDietPlan.lunch : "";
+  const dinner = typeof legacyDietPlan.dinner === "string" ? legacyDietPlan.dinner : "";
   const hasLegacy =
-    Boolean(client.dietPlan.summary.trim()) ||
-    Boolean(client.dietPlan.breakfast?.trim()) ||
-    Boolean(client.dietPlan.lunch?.trim()) ||
-    Boolean(client.dietPlan.dinner?.trim());
+    Boolean(summary.trim()) ||
+    Boolean(breakfast.trim()) ||
+    Boolean(lunch.trim()) ||
+    Boolean(dinner.trim());
 
   if (!hasLegacy) return null;
 
@@ -267,14 +272,14 @@ export function migrateLegacyDietPlanToMenuPlanV1(
   });
 
   const items: ClientMenuPlanV1MealItemNormalized[] = [];
-  if (client.dietPlan.breakfast?.trim()) {
-    items.push({ ...emptyMealItem(), label: "Breakfast", freeText: client.dietPlan.breakfast });
+  if (breakfast.trim()) {
+    items.push({ ...emptyMealItem(), label: "Breakfast", freeText: breakfast });
   }
-  if (client.dietPlan.lunch?.trim()) {
-    items.push({ ...emptyMealItem(), label: "Lunch", freeText: client.dietPlan.lunch });
+  if (lunch.trim()) {
+    items.push({ ...emptyMealItem(), label: "Lunch", freeText: lunch });
   }
-  if (client.dietPlan.dinner?.trim()) {
-    items.push({ ...emptyMealItem(), label: "Dinner", freeText: client.dietPlan.dinner });
+  if (dinner.trim()) {
+    items.push({ ...emptyMealItem(), label: "Dinner", freeText: dinner });
   }
 
   return {
@@ -287,7 +292,7 @@ export function migrateLegacyDietPlanToMenuPlanV1(
     ],
     preferredFoods: [],
     avoidFoods: [...client.restrictedFoods],
-    clientFacingNotes: client.dietPlan.summary,
+    clientFacingNotes: summary,
     migratedFromLegacyDietPlan: true,
     updatedAt: createdAt,
   };

@@ -133,18 +133,18 @@ describe("useShellDirtyRegistration", () => {
     render(registration({ state: "saving", onSave: async () => true }));
 
     expect(shellDirtyRegistry.snapshot().isSaving).toBe(true);
-    expect(register).toHaveBeenCalledTimes(2);
-    expect(unregister).toHaveBeenCalledTimes(1);
+    expect(register).toHaveBeenCalledTimes(1);
+    expect(unregister).not.toHaveBeenCalled();
   });
 
-  it("keeps the explicit legacy policy available", () => {
+  it("does not restore the callback-driven legacy registration policy", () => {
     vi.stubEnv("NEXT_PUBLIC_AIYA_PERF_SHELL_DIRTY_REGISTRATION_POLICY", "legacy");
     const register = vi.spyOn(shellDirtyRegistry, "register");
     const unregister = vi.spyOn(shellDirtyRegistry, "unregister");
     render(registration());
     render(registration({ onSave: async () => true }));
 
-    expect(register).toHaveBeenCalledTimes(2);
-    expect(unregister).toHaveBeenCalledTimes(1);
+    expect(register).toHaveBeenCalledTimes(1);
+    expect(unregister).not.toHaveBeenCalled();
   });
 });
